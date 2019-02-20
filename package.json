@@ -1,0 +1,20 @@
+{
+  "name": "ant",
+  "version": "1.0.0",
+  "description": "Generic query manager.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Roberto Pintos López",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^11.9.4",
+    "gulp": "^4.0.0",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-typescript": "^5.0.0",
+    "merge2": "^1.2.3",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.3"
+  }
+}

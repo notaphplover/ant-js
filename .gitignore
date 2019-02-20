@@ -1,0 +1,5 @@
+# Visual studio code
+/.vscode
+
+# npm dependencies
+/node_modules
