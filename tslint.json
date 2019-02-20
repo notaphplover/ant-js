@@ -6,13 +6,16 @@
     "jsRules": {},
     "rules": {
         "curly": true,
+        "eofline": true,
+        "indent": [true, "spaces", 2],
         "no-empty-interface": false,
         "no-var-keyword": false,
         "no-var-requires": false,
         "no-shadowed-variable": false,
         "object-literal-shorthand": [true, "never"],
         "only-arrow-functions": true,
-        "quotemark": [true, "single", "avoid-escape"]
+        "quotemark": [true, "single", "avoid-escape"],
+        "variable-name": [true, "check-format", "allow-leading-underscore"]
     },
     "rulesDirectory": []
 }

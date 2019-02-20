@@ -4,7 +4,7 @@ const sourcemaps = require('gulp-sourcemaps');
 const ts = require('gulp-typescript');
 
 const TASKS = {
-    COMPILE_TYPESCRIPT_SRC: 'compile-typescript-src',
+    COMPILE_TYPESCRIPT: 'compile-typescript',
     COMPILE_TYPESCRIPT_COMMONJS: 'compile-typescript-commonjs',
 };
 
@@ -38,7 +38,7 @@ gulp.task(TASKS.COMPILE_TYPESCRIPT_COMMONJS, function () {
                     {
                         debug: false,
                         includeContent: true,
-                        sourceRoot: '../../../../../src'
+                        sourceRoot: '../src'
                     }
                 )
             )
@@ -50,7 +50,7 @@ gulp.task(TASKS.COMPILE_TYPESCRIPT_COMMONJS, function () {
 });
 
 gulp.task(
-    TASKS.BUILD,
+    TASKS.COMPILE_TYPESCRIPT,
     gulp.series(
         TASKS.COMPILE_TYPESCRIPT_COMMONJS,
     )

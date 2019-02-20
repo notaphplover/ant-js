@@ -5,7 +5,8 @@
         "module": "CommonJS",
         "noImplicitAny": true,
         "removeComments": true,
-        "target": "es6"
+        "target": "es6",
+        "types": ["node"]
     },
     "exclude" : [
 
