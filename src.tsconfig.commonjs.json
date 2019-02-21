@@ -1,17 +1,20 @@
 {
-    "compilerOptions": {
-        "declaration": true,
-        "declarationMap": true,
-        "module": "CommonJS",
-        "noImplicitAny": true,
-        "removeComments": true,
-        "target": "es6",
-        "types": ["node"]
-    },
-    "exclude" : [
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "declarationMap": true,
+    "module": "CommonJS",
+    "noImplicitAny": true,
+    "outDir": "dist",
+    "removeComments": true,
+    "rootDir": "src",
+    "target": "es6",
+    "types": ["ioredis", "node"]
+  },
+  "exclude" : [
 
-    ],
-    "include": [
-        "src/**/*.ts"
-    ]
+  ],
+  "include": [
+    "src/**/*.ts"
+  ]
 }
