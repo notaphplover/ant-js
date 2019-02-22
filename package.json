@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "./node_modules/typescript/bin/tsc --build src.tsconfig.commonjs.json",
-    "test": "npm run build && npm run test-only",
+    "build-and-test": "npm run build && npm run test-only",
+    "test": "npm run test-docker",
     "test-debug": "npm run build && npm run test-debug-only",
     "test-docker": "docker-compose -f docker-compose.yml up --abort-on-container-exit --exit-code-from ant_lib",
     "test-debug-only": "node --inspect-brk ./dist/test/main.test.debug.js",
