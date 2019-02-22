@@ -5,13 +5,17 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "./node_modules/typescript/bin/tsc --build src.tsconfig.commonjs.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node_modules/nyc/bin/nyc.js --reporter=lcov node ./node_modules/jasmine/bin/jasmine.js ./dist/test/main.test.js",
+    "test-debug": "node --inspect-brk ./dist/test/main.test.debug.js"
   },
   "author": "Roberto Pintos López",
   "license": "ISC",
   "devDependencies": {
     "@types/ioredis": "^4.0.7",
+    "@types/jasmine": "^3.3.9",
     "@types/node": "^11.9.4",
+    "jasmine": "^3.3.1",
+    "nyc": "^13.3.0",
     "tslint": "^5.12.1",
     "typescript": "^3.3.3"
   },

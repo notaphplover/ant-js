@@ -7,14 +7,14 @@ export abstract class Model {
   /**
    * Model's properties.
    */
-  protected _properties: Iterable<string>;
+  protected _properties: string[];
 
   /**
    * Constructor.
    * @param id Model's id.
    * @param properties Model's properties.
    */
-  public constructor(id: string, properties: Iterable<string>) {
+  public constructor(id: string, properties: string[]) {
     this._id = id;
     this._properties = properties;
   }
@@ -23,7 +23,7 @@ export abstract class Model {
     return this._id;
   }
 
-  public get properties(): Iterable<string> {
+  public get properties(): string[] {
     return this._properties;
   }
 }

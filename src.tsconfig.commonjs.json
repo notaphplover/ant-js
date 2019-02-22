@@ -7,9 +7,10 @@
     "noImplicitAny": true,
     "outDir": "dist",
     "removeComments": true,
+    "sourceMap": true,
     "rootDir": "src",
     "target": "es2017",
-    "types": ["ioredis", "node"]
+    "types": ["ioredis", "jasmine", "node"]
   },
   "exclude" : [
 

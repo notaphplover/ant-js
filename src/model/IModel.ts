@@ -10,5 +10,5 @@ export interface IModel {
   /**
    * Model's properties
    */
-  properties: Iterable<string>;
+  properties: string[];
 }
