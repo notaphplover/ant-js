@@ -3,7 +3,6 @@
  * Models are the minimal unit of data.
  */
 export interface IModel {
-  [key: string]: any;
   /**
    * Model's id field.
    */

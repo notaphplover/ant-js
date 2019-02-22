@@ -1,5 +1,4 @@
 export abstract class Model {
-  [key: string]: any;
   /**
    * Model's id.
    */
