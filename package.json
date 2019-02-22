@@ -5,8 +5,11 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "./node_modules/typescript/bin/tsc --build src.tsconfig.commonjs.json",
-    "test": "node_modules/nyc/bin/nyc.js --reporter=lcov node ./node_modules/jasmine/bin/jasmine.js ./dist/test/main.test.js",
-    "test-debug": "node --inspect-brk ./dist/test/main.test.debug.js"
+    "test": "npm run build && npm run test-only",
+    "test-debug": "npm run build && npm run test-debug-only",
+    "test-docker": "docker-compose -f docker-compose.yml up --abort-on-container-exit --exit-code-from ant_lib",
+    "test-debug-only": "node --inspect-brk ./dist/test/main.test.debug.js",
+    "test-only": "node_modules/nyc/bin/nyc.js --reporter=lcov node ./node_modules/jasmine/bin/jasmine.js ./dist/test/main.test.js"
   },
   "author": "Roberto Pintos López",
   "license": "ISC",
