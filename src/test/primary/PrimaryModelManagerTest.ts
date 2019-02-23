@@ -35,28 +35,26 @@ export class PrimaryModelManagerTest implements ITest {
   }
 
   private itMustPersistAnEntity(): void {
-    it('mustPersistAnEntity', (done) => {
-      this._redis.redis.flushall().then(() => {
-        const model = new MinimunModel('id', ['id', 'field']);
-        const entity: IEntity & {
+    it('mustPersistAnEntity', async (done) => {
+      const model = new MinimunModel('id', ['id', 'field']);
+      const entity: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 0, field: 'sample'};
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<MinimunModel, IEntity & {
           id: number,
           field: string,
-        } = {id: 0, field: 'sample'};
-        const secondaryModelManager =
-          new SecondaryModelManagerMock<MinimunModel, IEntity & {
-            id: number,
-            field: string,
-          }>(model, [entity]);
-        const primaryModelManager =
-          new MinimunPrimaryModelManager(this._redis.redis, secondaryModelManager, 'sample-prefix');
-        primaryModelManager.cacheEntity(entity).then(() => {
-          secondaryModelManager.store.length = 0;
-          primaryModelManager.getById(entity[model.id]).then((entityFound) => {
-            expect(entityFound).toEqual(entity);
-            done();
-          });
-        });
-      });
+        }>(model, [entity]);
+      const primaryModelManager =
+        new MinimunPrimaryModelManager(this._redis.redis, secondaryModelManager, 'sample-prefix');
+
+      await this._redis.redis.flushall();
+      await primaryModelManager.cacheEntity(entity);
+      secondaryModelManager.store.length = 0;
+      const entityFound = await primaryModelManager.getById(entity[model.id]);
+      expect(entityFound).toEqual(entity);
+      done();
     });
   }
 }
