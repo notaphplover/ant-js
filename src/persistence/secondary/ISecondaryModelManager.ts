@@ -10,6 +10,7 @@ export interface ISecondaryModelManager<TModel extends IModel, TEntity extends I
   /**
    * Finds an entity by its id.
    * @param id entity's id.
+   * @returns Promise of entity found.
    */
   getById(id: number|string): Promise<TEntity>;
 

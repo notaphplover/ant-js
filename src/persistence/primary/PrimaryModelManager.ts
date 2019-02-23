@@ -45,7 +45,7 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
    */
   public cacheEntities(
     entities: TEntity[],
-    searchOptions: IEntitySearchOptions,
+    searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
   ): Promise<any> {
     if (CacheOptions.NoCache === searchOptions.cacheOptions) {
       return new Promise<void>((resolve) => resolve());
@@ -83,7 +83,10 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
    * @param searchOptions Search options.
    * @returns Promise of redis operation ended
    */
-  public cacheEntity(entity: TEntity, searchOptions: IEntitySearchOptions): Promise<any> {
+  public cacheEntity(
+    entity: TEntity,
+    searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
+  ): Promise<any> {
     if (CacheOptions.NoCache === searchOptions.cacheOptions) {
       return new Promise((resolve) => resolve());
     }
