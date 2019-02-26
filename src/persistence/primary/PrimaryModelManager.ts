@@ -64,6 +64,10 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
       throw new Error('This version does not support to cache multiple entities with the same ttl :(.');
     }
 
+    if (CacheOptions.CacheAndOverwrite !== searchOptions.cacheOptions) {
+      throw new Error('Unexpected cache options.');
+    }
+
     const cacheMap = new Map<string, string>();
     const idField = this.model.id;
 

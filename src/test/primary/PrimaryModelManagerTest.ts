@@ -19,8 +19,13 @@ export class PrimaryModelManagerTest implements ITest {
 
   public performTests(): void {
     describe('PrimaryModelManagerTest', () => {
+      this.itDoesNotCacheIfCacheExistsAndCacheIfNotExistsIsProvided();
+      this.itDoesNotCacheEntitiesIfNoCacheOptionIsProvided();
+      this.itDoesNotCacheEntityIfNoCacheOptionIsProvided();
       this.itDoesNotSupportCacheIfNotExiststCacheEntities();
       this.itDoesNotSupportTTLAtCacheEntities();
+      this.itDoesNotSupportUndefinedCacheOptionAtCacheEntities();
+      this.itDoesNotSupportUndefinedCacheOptionAtCacheEntity();
       this.itMustBeInitializable();
       this.itMustDeleteAnEntity();
       this.itMustFindAnEntityOutsideCache();
@@ -33,7 +38,91 @@ export class PrimaryModelManagerTest implements ITest {
     });
   }
 
-  private itDoesNotSupportCacheIfNotExiststCacheEntities() {
+  private itDoesNotCacheIfCacheExistsAndCacheIfNotExistsIsProvided(): void {
+    it('doesNotCacheIfCacheExistsAndCacheIfNotExistsIsProvided', async (done) => {
+      const model = new MinimunModel('id', ['id', 'field']);
+      const primaryModelManager = new MinimunPrimaryModelManager(
+        model,
+        this._redis.redis,
+        null,
+        'sample-prefix',
+      );
+      const entity1: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 1, field: 'sample-1'};
+      const entity1Modified: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 1, field: 'sample-modified'};
+
+      await this._redis.redis.flushall();
+
+      await primaryModelManager.cacheEntity(entity1);
+      await primaryModelManager.cacheEntity(
+        entity1Modified,
+        new EntitySearchOptions(CacheOptions.CacheIfNotExist),
+      );
+      expect(await primaryModelManager.getById(entity1Modified[model.id])).toEqual(entity1);
+      done();
+    });
+  }
+
+  private itDoesNotCacheEntitiesIfNoCacheOptionIsProvided(): void {
+    it('doesNoCacheIfNoCacheOptionIsProvided', async (done) => {
+      const model = new MinimunModel('id', ['id', 'field']);
+      const primaryModelManager = new MinimunPrimaryModelManager(
+        model,
+        this._redis.redis,
+        null,
+        'sample-prefix',
+      );
+      const entity1: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 1, field: 'sample-1'};
+
+      await this._redis.redis.flushall();
+
+      await primaryModelManager.cacheEntities(
+        [entity1],
+        new EntitySearchOptions(CacheOptions.NoCache),
+      );
+
+      expect(await primaryModelManager.getById(entity1[model.id]))
+        .toBe(undefined);
+      done();
+    });
+  }
+
+  private itDoesNotCacheEntityIfNoCacheOptionIsProvided(): void {
+    it('doesNoCacheIfNoCacheOptionIsProvided', async (done) => {
+      const model = new MinimunModel('id', ['id', 'field']);
+      const primaryModelManager = new MinimunPrimaryModelManager(
+        model,
+        this._redis.redis,
+        null,
+        'sample-prefix',
+      );
+      const entity1: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 1, field: 'sample-1'};
+
+      await this._redis.redis.flushall();
+
+      await primaryModelManager.cacheEntity(
+        entity1,
+        new EntitySearchOptions(CacheOptions.NoCache),
+      );
+
+      expect(await primaryModelManager.getById(entity1[model.id]))
+        .toBe(undefined);
+      done();
+    });
+  }
+
+  private itDoesNotSupportCacheIfNotExiststCacheEntities(): void {
     it('doesNotSupportCacheIfNotExiststCacheEntities', async (done) => {
       const model = new MinimunModel('id', ['id', 'field']);
       const primaryModelManager = new MinimunPrimaryModelManager(
@@ -63,7 +152,7 @@ export class PrimaryModelManagerTest implements ITest {
     });
   }
 
-  private itDoesNotSupportTTLAtCacheEntities() {
+  private itDoesNotSupportTTLAtCacheEntities(): void {
     it('doesNotSupportTTLAtCacheEntities', async (done) => {
       const model = new MinimunModel('id', ['id', 'field']);
       const primaryModelManager = new MinimunPrimaryModelManager(
@@ -85,6 +174,66 @@ export class PrimaryModelManagerTest implements ITest {
         await primaryModelManager.cacheEntities(
           [entity1],
           new EntitySearchOptions(CacheOptions.CacheAndOverwrite, 2),
+        );
+        fail();
+      } catch {
+        done();
+      }
+    });
+  }
+
+  private itDoesNotSupportUndefinedCacheOptionAtCacheEntities() {
+    it('doesNotSupportUndefinedCacheOptionAtCacheEntities', async (done) => {
+      const model = new MinimunModel('id', ['id', 'field']);
+      const primaryModelManager = new MinimunPrimaryModelManager(
+        model,
+        this._redis.redis,
+        null,
+        'sample-prefix',
+      );
+      const entity1: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 1, field: 'sample-1'};
+
+      /*
+       * Expect async to throw error just sucks:
+       * https://github.com/jasmine/jasmine/issues/1410
+       */
+      try {
+        await primaryModelManager.cacheEntities(
+          [entity1],
+          new EntitySearchOptions('Ohhh yeaaaahh!' as unknown as CacheOptions),
+        );
+        fail();
+      } catch {
+        done();
+      }
+    });
+  }
+
+  private itDoesNotSupportUndefinedCacheOptionAtCacheEntity() {
+    it('doesNotSupportUndefinedCacheOptionAtCacheEntity', async (done) => {
+      const model = new MinimunModel('id', ['id', 'field']);
+      const primaryModelManager = new MinimunPrimaryModelManager(
+        model,
+        this._redis.redis,
+        null,
+        'sample-prefix',
+      );
+      const entity1: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 1, field: 'sample-1'};
+
+      /*
+       * Expect async to throw error just sucks:
+       * https://github.com/jasmine/jasmine/issues/1410
+       */
+      try {
+        await primaryModelManager.cacheEntity(
+          entity1,
+          new EntitySearchOptions('Ohhh yeaaaahh!' as unknown as CacheOptions),
         );
         fail();
       } catch {
@@ -203,7 +352,7 @@ export class PrimaryModelManagerTest implements ITest {
     });
   }
 
-  private itMustFindUndefinedIfNoSuccessorIsProvidedAndCacheFails() {
+  private itMustFindUndefinedIfNoSuccessorIsProvidedAndCacheFails(): void {
     it('mustFindUndefinedIfNoSuccessorIsProvidedAndCacheFails', async (done) => {
       const model = new MinimunModel('id', ['id', 'field']);
       const primaryModelManager = new MinimunPrimaryModelManager(
@@ -273,7 +422,7 @@ export class PrimaryModelManagerTest implements ITest {
     });
   }
 
-  private itMustPersistMultipleEntities() {
+  private itMustPersistMultipleEntities(): void {
     it('mustPersistMultipleEntities', async (done) => {
       const model = new MinimunModel('id', ['id', 'field']);
       const entity1: IEntity & {
