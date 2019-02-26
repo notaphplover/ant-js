@@ -35,6 +35,6 @@ export class EntitySearchOptions implements IEntitySearchOptions {
    * TTL of the entity. A null value represents no TTL.
    */
   public get ttl(): number {
-    return this.ttl;
+    return this._ttl;
   }
 }

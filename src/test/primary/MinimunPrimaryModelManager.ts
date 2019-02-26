@@ -19,11 +19,12 @@ export class MinimunPrimaryModelManager<TModel extends IModel, TEntity extends I
    * @param keyPrefix Redis keys prefix for the managed entities.
    */
   public constructor(
+    model: TModel,
     redis: IORedis.Redis,
     successor: ISecondaryModelManager<TModel, TEntity>,
     keyPrefix: string,
   ) {
-    super(redis, successor);
+    super(model, redis, successor);
     this._keyPrefix = keyPrefix;
   }
 

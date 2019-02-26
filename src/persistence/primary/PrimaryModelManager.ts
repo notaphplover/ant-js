@@ -9,6 +9,11 @@ import { IPrimaryModelManager } from './IPrimaryModelManager';
 
 export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends IEntity>
   implements IPrimaryModelManager<TModel, TEntity> {
+
+  /**
+   * Model managed.
+   */
+  protected _model: TModel;
   /**
    * Redis connection.
    */
@@ -23,9 +28,11 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
    * @param redis Redis connection
    */
   public constructor(
+    model: TModel,
     redis: Redis.Redis,
     successor: ISecondaryModelManager<TModel, TEntity>,
   ) {
+    this._model = model;
     this._redis = redis;
     this._successor = successor;
   }
@@ -34,7 +41,7 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
    * Model managed.
    */
   public get model(): TModel {
-    return this._successor.model;
+    return this._model;
   }
 
   /**
@@ -87,6 +94,9 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
     entity: TEntity,
     searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
   ): Promise<any> {
+    if (null == entity) {
+      return new Promise((resolve) => resolve());
+    }
     if (CacheOptions.NoCache === searchOptions.cacheOptions) {
       return new Promise((resolve) => resolve());
     }
@@ -130,7 +140,7 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
    */
   public getByIds(
     ids: Array<number|string>,
-    searchOptions: IEntitySearchOptions,
+    searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
   ): Promise<TEntity[]> {
     return this._innerGetByIds(ids, false, searchOptions);
   }
