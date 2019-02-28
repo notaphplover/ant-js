@@ -82,10 +82,7 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
     if (0 === cacheMap.size) {
       return new Promise<void>((resolve) => resolve());
     } else {
-      return new Promise(
-        (resolve) => resolve(
-          (this._redis.mset as unknown as (map: Map<string, string>) => any)(cacheMap),
-        ));
+      return (this._redis.mset as unknown as (map: Map<string, string>) => Promise<any>)(cacheMap);
     }
   }
 
