@@ -36,4 +36,9 @@ export interface IPrimaryModelManager<TModel extends IModel, TEntity extends IEn
    * @returns Promise of entities deleted.
    */
   deleteEntityFromCache(entity: TEntity): Promise<number>;
+  /**
+   * Gets the key generation lua script generator.
+   * @returns function able to generate a lua expression that generates a key from a giving id.
+   */
+  getKeyGenerationLuaScriptGenerator(): (alias: string) => string;
 }

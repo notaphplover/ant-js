@@ -1,5 +1,6 @@
-import Redis from 'ioredis';
+import IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
+import { IEntityKeyGenerationData } from '../../model/IEntityKeyGenerationData';
 import { IModel } from '../../model/IModel';
 import { ISecondaryModelManager } from '../secondary/ISecondaryModelManager';
 import { CacheOptions } from './CacheOptions';
@@ -17,7 +18,7 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
   /**
    * Redis connection.
    */
-  protected _redis: Redis.Redis;
+  protected _redis: IORedis.Redis;
   /**
    * Secondary model manager of the model.
    */
@@ -29,7 +30,7 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
    */
   public constructor(
     model: TModel,
-    redis: Redis.Redis,
+    redis: IORedis.Redis,
     successor: ISecondaryModelManager<TModel, TEntity>,
   ) {
     this._model = model;
@@ -150,10 +151,22 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
   }
 
   /**
+   * Gets the key generation lua script generator.
+   * @returns function able to generate a lua expression that generates a key from a giving id.
+   */
+  public getKeyGenerationLuaScriptGenerator() {
+    return this._innerGetKeyGenerationLuaScriptGenerator(this._model.entityKeyGenerationData);
+  }
+
+  /**
    * Gets the key of an entity.
    * @param id entity's id.
    */
-  protected abstract _getKey(id: number|string): string;
+  protected _getKey(id: number|string): string {
+    return (this._model.entityKeyGenerationData.prefix || '')
+      + id
+      + (this._model.entityKeyGenerationData.suffix || '');
+  }
 
   /**
    * Gets an entity by its id.
@@ -231,5 +244,27 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
     }
 
     return results;
+  }
+
+  /**
+   * Creates a function that creates a lua script to create an entity key from an id.
+   * @param luaKeyGeneration Lua key gemeration params.
+   */
+  protected _innerGetKeyGenerationLuaScriptGenerator(luaKeyGeneration: IEntityKeyGenerationData) {
+    const instructions = new Array<(alias: string) => string>();
+    if (null != luaKeyGeneration.prefix && '' !== luaKeyGeneration.prefix) {
+      instructions.push(() => '"' + luaKeyGeneration.prefix + '" .. ');
+    }
+    instructions.push((alias) => alias);
+    if (null != luaKeyGeneration.suffix && '' !== luaKeyGeneration.suffix) {
+      instructions.push(() => ' .. "' + luaKeyGeneration.suffix + '"');
+    }
+    return (alias: string) => {
+      return instructions.reduce(
+        (previousValue, currentValue) =>
+          previousValue + currentValue(alias),
+        '',
+      );
+    };
   }
 }

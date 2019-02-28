@@ -1,4 +1,11 @@
-export abstract class Model {
+import { IEntityKeyGenerationData } from './IEntityKeyGenerationData';
+import { IModel } from './IModel';
+
+export abstract class Model implements IModel {
+  /**
+   * Entity key generation data.
+   */
+  protected _entityKeyGenerationData: IEntityKeyGenerationData;
   /**
    * Model's id.
    */
@@ -14,9 +21,18 @@ export abstract class Model {
    * @param id Model's id.
    * @param properties Model's properties.
    */
-  public constructor(id: string, properties: string[]) {
+  public constructor(
+    id: string,
+    properties: string[],
+    entityKeyGenerationData: IEntityKeyGenerationData,
+  ) {
+    this._entityKeyGenerationData = entityKeyGenerationData;
     this._id = id;
     this._properties = properties;
+  }
+
+  public get entityKeyGenerationData(): IEntityKeyGenerationData {
+    return this._entityKeyGenerationData;
   }
 
   public get id(): string {

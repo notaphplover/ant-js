@@ -40,12 +40,11 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itDoesNotCacheIfCacheExistsAndCacheIfNotExistsIsProvided(): void {
     it('doesNotCacheIfCacheExistsAndCacheIfNotExistsIsProvided', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
         null,
-        'sample-prefix',
       );
       const entity1: IEntity & {
         id: number,
@@ -70,12 +69,11 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itDoesNotCacheEntitiesIfNoCacheOptionIsProvided(): void {
     it('doesNoCacheIfNoCacheOptionIsProvided', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
         null,
-        'sample-prefix',
       );
       const entity1: IEntity & {
         id: number,
@@ -97,12 +95,11 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itDoesNotCacheEntityIfNoCacheOptionIsProvided(): void {
     it('doesNoCacheIfNoCacheOptionIsProvided', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
         null,
-        'sample-prefix',
       );
       const entity1: IEntity & {
         id: number,
@@ -124,12 +121,11 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itDoesNotSupportCacheIfNotExiststCacheEntities(): void {
     it('doesNotSupportCacheIfNotExiststCacheEntities', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
         null,
-        'sample-prefix',
       );
       const entity1: IEntity & {
         id: number,
@@ -154,12 +150,11 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itDoesNotSupportTTLAtCacheEntities(): void {
     it('doesNotSupportTTLAtCacheEntities', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
         null,
-        'sample-prefix',
       );
       const entity1: IEntity & {
         id: number,
@@ -184,12 +179,11 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itDoesNotSupportUndefinedCacheOptionAtCacheEntities() {
     it('doesNotSupportUndefinedCacheOptionAtCacheEntities', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
         null,
-        'sample-prefix',
       );
       const entity1: IEntity & {
         id: number,
@@ -214,12 +208,11 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itDoesNotSupportUndefinedCacheOptionAtCacheEntity() {
     it('doesNotSupportUndefinedCacheOptionAtCacheEntity', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
         null,
-        'sample-prefix',
       );
       const entity1: IEntity & {
         id: number,
@@ -245,7 +238,7 @@ export class PrimaryModelManagerTest implements ITest {
   private itMustBeInitializable(): void {
     it('mustBeInitializable', () => {
       expect(() => {
-        const model = new MinimunModel('id', ['id']);
+        const model = new MinimunModel('id', ['id'], {prefix: 'p/'});
         const secondaryModelManager =
           new SecondaryModelManagerMock<MinimunModel, {id: string}>(model);
         // tslint:disable-next-line:no-unused-expression
@@ -253,7 +246,6 @@ export class PrimaryModelManagerTest implements ITest {
           model,
           this._redis.redis,
           secondaryModelManager,
-          'sample-prefix',
         );
       }).not.toThrowError();
     });
@@ -261,7 +253,7 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itMustDeleteAnEntity(): void {
     it('mustDeleteAnEntity', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const entity: IEntity & {
         id: number,
         field: string,
@@ -275,7 +267,6 @@ export class PrimaryModelManagerTest implements ITest {
         model,
         this._redis.redis,
         secondaryModelManager,
-        'sample-prefix',
       );
 
       await this._redis.redis.flushall();
@@ -291,7 +282,7 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itMustFindAnEntityOutsideCache(): void {
     it('mustFindAnEntityOutsideCache', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const entity: IEntity & {
         id: number,
         field: string,
@@ -305,7 +296,6 @@ export class PrimaryModelManagerTest implements ITest {
         model,
         this._redis.redis,
         secondaryModelManager,
-        'sample-prefix',
       );
 
       await this._redis.redis.flushall();
@@ -318,7 +308,7 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itMustFindMultipleEntitiesOutsideCache(): void {
     it('mustFindMultipleEntitiesOutsideCache', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -337,7 +327,6 @@ export class PrimaryModelManagerTest implements ITest {
         model,
         this._redis.redis,
         secondaryModelManager,
-        'sample-prefix',
       );
 
       await this._redis.redis.flushall();
@@ -354,12 +343,11 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itMustFindUndefinedIfNoSuccessorIsProvidedAndCacheFails(): void {
     it('mustFindUndefinedIfNoSuccessorIsProvidedAndCacheFails', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
         null,
-        'sample-prefix',
       );
       const idToSearch = 3;
 
@@ -372,7 +360,7 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itMustFindZeroEntities(): void {
     it('itMustFindZeroEntities', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const secondaryModelManager =
         new SecondaryModelManagerMock<MinimunModel, IEntity & {
           id: number,
@@ -383,7 +371,6 @@ export class PrimaryModelManagerTest implements ITest {
         model,
         this._redis.redis,
         secondaryModelManager,
-        'sample-prefix',
       );
 
       expect(async () => {
@@ -395,7 +382,7 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itMustPersistAnEntity(): void {
     it('mustPersistAnEntity', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const entity: IEntity & {
         id: number,
         field: string,
@@ -409,7 +396,6 @@ export class PrimaryModelManagerTest implements ITest {
         model,
         this._redis.redis,
         secondaryModelManager,
-        'sample-prefix',
       );
 
       await this._redis.redis.flushall();
@@ -424,7 +410,7 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itMustPersistMultipleEntities(): void {
     it('mustPersistMultipleEntities', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -443,7 +429,6 @@ export class PrimaryModelManagerTest implements ITest {
         model,
         this._redis.redis,
         secondaryModelManager,
-        'sample-prefix',
       );
 
       await this._redis.redis.flushall();
@@ -462,7 +447,7 @@ export class PrimaryModelManagerTest implements ITest {
 
   private itMustPersistZeroEntities(): void {
     it('mustPersistZeroEntities', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field']);
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
       const secondaryModelManager =
         new SecondaryModelManagerMock<MinimunModel, IEntity & {
           id: number,
@@ -473,7 +458,6 @@ export class PrimaryModelManagerTest implements ITest {
         model,
         this._redis.redis,
         secondaryModelManager,
-        'sample-prefix',
       );
 
       expect(async () => {
