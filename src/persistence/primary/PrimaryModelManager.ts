@@ -147,7 +147,7 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
     ids: Array<number|string>,
     searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
   ): Promise<TEntity[]> {
-    return this._innerGetByIds(ids, false, searchOptions);
+    return this._innerGetByIds(ids, searchOptions);
   }
 
   /**
@@ -175,7 +175,7 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
    */
   protected async _innerGetById(
     id: number|string,
-    searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
+    searchOptions: IEntitySearchOptions,
   ): Promise<TEntity> {
     const cachedEntity = await this._redis.get(this._getKey(id));
     if (cachedEntity) {
@@ -199,16 +199,16 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
    */
   protected async _innerGetByIds(
     ids: Array<number|string>,
-    idsAreDifferent: boolean = false,
     searchOptions: IEntitySearchOptions,
   ): Promise<TEntity[]> {
     if (0 === ids.length) {
       return new Promise((resolve) => { resolve(new Array()); });
     }
-    if (!idsAreDifferent) {
-      ids = Array.from(new Set(ids));
-    }
-    return this._innerGetByDistinctIdsNotMapped(ids, searchOptions);
+    return this._innerGetByDistinctIdsNotMapped(
+      // Get the different ones.
+      Array.from(new Set(ids)),
+      searchOptions,
+    );
   }
 
   /**

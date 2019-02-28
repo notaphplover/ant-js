@@ -26,6 +26,8 @@ export class PrimaryModelManagerTest implements ITest {
       this.itDoesNotSupportTTLAtCacheEntities();
       this.itDoesNotSupportUndefinedCacheOptionAtCacheEntities();
       this.itDoesNotSupportUndefinedCacheOptionAtCacheEntity();
+      this.itGeneratesALuaKeyGeneratorUsingAPrefix();
+      this.itGeneratesALuaKeyGeneratorUsingASuffix();
       this.itMustBeInitializable();
       this.itMustDeleteAnEntity();
       this.itMustFindAnEntityOutsideCache();
@@ -232,6 +234,68 @@ export class PrimaryModelManagerTest implements ITest {
       } catch {
         done();
       }
+    });
+  }
+
+  private itGeneratesALuaKeyGeneratorUsingAPrefix(): void {
+    it('generatesALuaKeyGeneratorUsingAPrefix', async (done) => {
+      const model = new MinimunModel('id', ['id'], {prefix: 'p/'});
+      const entity: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 0, field: 'sample'};
+      const primaryModelManager = new MinimunPrimaryModelManager(
+        model,
+        this._redis.redis,
+        null,
+      );
+      await this._redis.redis.flushall();
+      await primaryModelManager.cacheEntity(entity);
+      const luaKey = 'key';
+      const luaExpression = primaryModelManager.getKeyGenerationLuaScriptGenerator()(luaKey);
+      const valueFound = await this._redis.redis.eval(
+`local ${luaKey} = ${entity.id}
+return redis.call('get', ${luaExpression})`,
+        0,
+      );
+      if (null == valueFound) {
+        fail();
+        return;
+      }
+      const entityFound = JSON.parse(valueFound);
+      expect(entityFound).toEqual(entity);
+      done();
+    });
+  }
+
+  private itGeneratesALuaKeyGeneratorUsingASuffix(): void {
+    it('generatesALuaKeyGeneratorUsingASuffix', async (done) => {
+      const model = new MinimunModel('id', ['id'], {suffix: '/s'});
+      const entity: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 0, field: 'sample'};
+      const primaryModelManager = new MinimunPrimaryModelManager(
+        model,
+        this._redis.redis,
+        null,
+      );
+      await this._redis.redis.flushall();
+      await primaryModelManager.cacheEntity(entity);
+      const luaKey = 'key';
+      const luaExpression = primaryModelManager.getKeyGenerationLuaScriptGenerator()(luaKey);
+      const valueFound = await this._redis.redis.eval(
+`local ${luaKey} = ${entity.id}
+return redis.call('get', ${luaExpression})`,
+        0,
+      );
+      if (null == valueFound) {
+        fail();
+        return;
+      }
+      const entityFound = JSON.parse(valueFound);
+      expect(entityFound).toEqual(entity);
+      done();
     });
   }
 
