@@ -10,3 +10,6 @@
 
 # npm dependencies
 /node_modules
+
+# coveralls config
+.coveralls.yml
