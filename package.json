@@ -11,7 +11,7 @@
     "test-debug": "npm run test-docker-debug",
     "test-docker": "docker-compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from ant_lib",
     "test-docker-debug": "docker-compose -f docker-compose.test.debug.yml up --abort-on-container-exit --exit-code-from ant_lib",
-    "test-debug-only": "node --inspect-brk=0.0.0.0:${NODE_DEBUG_PORT_INNER} ./dist/test/main.test.debug.js",
+    "test-debug-only": "node --inspect-brk=0.0.0.0:${NODE_DEBUG_PORT_INNER} ./node_modules/jasmine/bin/jasmine.js ./dist/test/main.test.js",
     "test-only": "node_modules/nyc/bin/nyc.js --reporter=lcov node ./node_modules/jasmine/bin/jasmine.js ./dist/test/main.test.js"
   },
   "author": "Roberto Pintos López",

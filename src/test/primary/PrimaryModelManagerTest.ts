@@ -7,18 +7,30 @@ import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMoc
 import { MinimunPrimaryModelManager } from './MinimunPrimaryModelManager';
 import { RedisWrapper } from './RedisWrapper';
 
+const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
+
 export class PrimaryModelManagerTest implements ITest {
+  /**
+   * Before all task performed promise.
+   */
+  protected _beforeAllPromise: Promise<any>;
+  /**
+   * Declare name for the test
+   */
+  protected _declareName: string;
   /**
    * Redis Wrapper
    */
   protected _redis: RedisWrapper;
 
-  public constructor() {
+  public constructor(beforeAllPromise: Promise<any>) {
+    this._beforeAllPromise = beforeAllPromise;
+    this._declareName = 'PrimaryModelManagerTest';
     this._redis = new RedisWrapper();
   }
 
   public performTests(): void {
-    describe('PrimaryModelManagerTest', () => {
+    describe(this._declareName, () => {
       this.itDoesNotCacheIfCacheExistsAndCacheIfNotExistsIsProvided();
       this.itDoesNotCacheEntitiesIfNoCacheOptionIsProvided();
       this.itDoesNotCacheEntityIfNoCacheOptionIsProvided();
@@ -41,8 +53,11 @@ export class PrimaryModelManagerTest implements ITest {
   }
 
   private itDoesNotCacheIfCacheExistsAndCacheIfNotExistsIsProvided(): void {
-    it('doesNotCacheIfCacheExistsAndCacheIfNotExistsIsProvided', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'doesNoCacheIfNoCacheOptionIsProvided';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
@@ -57,8 +72,6 @@ export class PrimaryModelManagerTest implements ITest {
         field: string,
       } = {id: 1, field: 'sample-modified'};
 
-      await this._redis.redis.flushall();
-
       await primaryModelManager.cacheEntity(entity1);
       await primaryModelManager.cacheEntity(
         entity1Modified,
@@ -66,12 +79,15 @@ export class PrimaryModelManagerTest implements ITest {
       );
       expect(await primaryModelManager.getById(entity1Modified[model.id])).toEqual(entity1);
       done();
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itDoesNotCacheEntitiesIfNoCacheOptionIsProvided(): void {
-    it('doesNoCacheIfNoCacheOptionIsProvided', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'doesNotCacheEntitiesIfNoCacheOptionIsProvided';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
@@ -81,8 +97,6 @@ export class PrimaryModelManagerTest implements ITest {
         id: number,
         field: string,
       } = {id: 1, field: 'sample-1'};
-
-      await this._redis.redis.flushall();
 
       await primaryModelManager.cacheEntities(
         [entity1],
@@ -92,12 +106,15 @@ export class PrimaryModelManagerTest implements ITest {
       expect(await primaryModelManager.getById(entity1[model.id]))
         .toBe(undefined);
       done();
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itDoesNotCacheEntityIfNoCacheOptionIsProvided(): void {
-    it('doesNoCacheIfNoCacheOptionIsProvided', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'doesNotCacheEntityIfNoCacheOptionIsProvided';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
@@ -108,8 +125,6 @@ export class PrimaryModelManagerTest implements ITest {
         field: string,
       } = {id: 1, field: 'sample-1'};
 
-      await this._redis.redis.flushall();
-
       await primaryModelManager.cacheEntity(
         entity1,
         new EntitySearchOptions(CacheOptions.NoCache),
@@ -118,12 +133,15 @@ export class PrimaryModelManagerTest implements ITest {
       expect(await primaryModelManager.getById(entity1[model.id]))
         .toBe(undefined);
       done();
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itDoesNotSupportCacheIfNotExiststCacheEntities(): void {
-    it('doesNotSupportCacheIfNotExiststCacheEntities', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'doesNotSupportCacheIfNotExiststCacheEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
@@ -147,12 +165,15 @@ export class PrimaryModelManagerTest implements ITest {
       } catch {
         done();
       }
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itDoesNotSupportTTLAtCacheEntities(): void {
-    it('doesNotSupportTTLAtCacheEntities', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'doesNotSupportTTLAtCacheEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
@@ -176,12 +197,15 @@ export class PrimaryModelManagerTest implements ITest {
       } catch {
         done();
       }
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itDoesNotSupportUndefinedCacheOptionAtCacheEntities() {
-    it('doesNotSupportUndefinedCacheOptionAtCacheEntities', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'doesNotSupportUndefinedCacheOptionAtCacheEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
@@ -205,12 +229,15 @@ export class PrimaryModelManagerTest implements ITest {
       } catch {
         done();
       }
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itDoesNotSupportUndefinedCacheOptionAtCacheEntity() {
-    it('doesNotSupportUndefinedCacheOptionAtCacheEntity', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'doesNotSupportUndefinedCacheOptionAtCacheEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
@@ -234,12 +261,15 @@ export class PrimaryModelManagerTest implements ITest {
       } catch {
         done();
       }
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itGeneratesALuaKeyGeneratorUsingAPrefix(): void {
-    it('generatesALuaKeyGeneratorUsingAPrefix', async (done) => {
-      const model = new MinimunModel('id', ['id'], {prefix: 'p/'});
+    const itsName = 'generatesALuaKeyGeneratorUsingAPrefix';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const entity: IEntity & {
         id: number,
         field: string,
@@ -249,7 +279,6 @@ export class PrimaryModelManagerTest implements ITest {
         this._redis.redis,
         null,
       );
-      await this._redis.redis.flushall();
       await primaryModelManager.cacheEntity(entity);
       const luaKey = 'key';
       const luaExpression = primaryModelManager.getKeyGenerationLuaScriptGenerator()(luaKey);
@@ -265,12 +294,15 @@ return redis.call('get', ${luaExpression})`,
       const entityFound = JSON.parse(valueFound);
       expect(entityFound).toEqual(entity);
       done();
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itGeneratesALuaKeyGeneratorUsingASuffix(): void {
-    it('generatesALuaKeyGeneratorUsingASuffix', async (done) => {
-      const model = new MinimunModel('id', ['id'], {suffix: '/s'});
+    const itsName = 'generatesALuaKeyGeneratorUsingASuffix';
+    const suffix = '/' + this._declareName + '/' + itsName;
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id'], {suffix: suffix});
       const entity: IEntity & {
         id: number,
         field: string,
@@ -280,7 +312,6 @@ return redis.call('get', ${luaExpression})`,
         this._redis.redis,
         null,
       );
-      await this._redis.redis.flushall();
       await primaryModelManager.cacheEntity(entity);
       const luaKey = 'key';
       const luaExpression = primaryModelManager.getKeyGenerationLuaScriptGenerator()(luaKey);
@@ -296,15 +327,18 @@ return redis.call('get', ${luaExpression})`,
       const entityFound = JSON.parse(valueFound);
       expect(entityFound).toEqual(entity);
       done();
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itMustBeInitializable(): void {
-    it('mustBeInitializable', () => {
+    const itsName = 'mustBeInitializable';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id'], {prefix: prefix});
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<MinimunModel, {id: string}>(model);
       expect(() => {
-        const model = new MinimunModel('id', ['id'], {prefix: 'p/'});
-        const secondaryModelManager =
-          new SecondaryModelManagerMock<MinimunModel, {id: string}>(model);
         // tslint:disable-next-line:no-unused-expression
         new MinimunPrimaryModelManager(
           model,
@@ -312,12 +346,16 @@ return redis.call('get', ${luaExpression})`,
           secondaryModelManager,
         );
       }).not.toThrowError();
-    });
+      done();
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itMustDeleteAnEntity(): void {
-    it('mustDeleteAnEntity', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'mustDeleteAnEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const entity: IEntity & {
         id: number,
         field: string,
@@ -333,7 +371,6 @@ return redis.call('get', ${luaExpression})`,
         secondaryModelManager,
       );
 
-      await this._redis.redis.flushall();
       await primaryModelManager.cacheEntity(entity);
       secondaryModelManager.store.length = 0;
       await primaryModelManager.deleteEntityFromCache(entity);
@@ -341,12 +378,15 @@ return redis.call('get', ${luaExpression})`,
 
       expect(entityFound).not.toBeDefined();
       done();
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itMustFindAnEntityOutsideCache(): void {
-    it('mustFindAnEntityOutsideCache', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'mustFindAnEntityOutsideCache';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const entity: IEntity & {
         id: number,
         field: string,
@@ -361,18 +401,19 @@ return redis.call('get', ${luaExpression})`,
         this._redis.redis,
         secondaryModelManager,
       );
-
-      await this._redis.redis.flushall();
       const entityFound = await primaryModelManager.getById(entity[model.id]);
 
       expect(entityFound).toEqual(entity);
       done();
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itMustFindMultipleEntitiesOutsideCache(): void {
-    it('mustFindMultipleEntitiesOutsideCache', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'mustFindMultipleEntitiesOutsideCache';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -393,7 +434,6 @@ return redis.call('get', ${luaExpression})`,
         secondaryModelManager,
       );
 
-      await this._redis.redis.flushall();
       const entitiesFound = await primaryModelManager.getByIds([
         entity1[model.id],
         entity2[model.id],
@@ -402,12 +442,15 @@ return redis.call('get', ${luaExpression})`,
       expect(entitiesFound).toContain(entity1);
       expect(entitiesFound).toContain(entity2);
       done();
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itMustFindUndefinedIfNoSuccessorIsProvidedAndCacheFails(): void {
-    it('mustFindUndefinedIfNoSuccessorIsProvidedAndCacheFails', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'mustFindUndefinedIfNoSuccessorIsProvidedAndCacheFails';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const primaryModelManager = new MinimunPrimaryModelManager(
         model,
         this._redis.redis,
@@ -415,16 +458,17 @@ return redis.call('get', ${luaExpression})`,
       );
       const idToSearch = 3;
 
-      await this._redis.redis.flushall();
-
       expect(await primaryModelManager.getById(idToSearch)).toBeUndefined();
       done();
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itMustFindZeroEntities(): void {
-    it('itMustFindZeroEntities', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'mustFindZeroEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const secondaryModelManager =
         new SecondaryModelManagerMock<MinimunModel, IEntity & {
           id: number,
@@ -441,12 +485,15 @@ return redis.call('get', ${luaExpression})`,
         await primaryModelManager.getByIds(new Array());
       }).not.toThrowError();
       done();
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itMustPersistAnEntity(): void {
-    it('mustPersistAnEntity', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'mustPersistAnEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const entity: IEntity & {
         id: number,
         field: string,
@@ -462,19 +509,21 @@ return redis.call('get', ${luaExpression})`,
         secondaryModelManager,
       );
 
-      await this._redis.redis.flushall();
       await primaryModelManager.cacheEntity(entity);
       secondaryModelManager.store.length = 0;
       const entityFound = await primaryModelManager.getById(entity[model.id]);
 
       expect(entityFound).toEqual(entity);
       done();
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itMustPersistMultipleEntities(): void {
-    it('mustPersistMultipleEntities', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'mustPersistMultipleEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -495,7 +544,6 @@ return redis.call('get', ${luaExpression})`,
         secondaryModelManager,
       );
 
-      await this._redis.redis.flushall();
       await primaryModelManager.cacheEntities([entity1, entity2]);
       secondaryModelManager.store.length = 0;
       const entitiesFound = await primaryModelManager.getByIds([
@@ -506,12 +554,15 @@ return redis.call('get', ${luaExpression})`,
       expect(entitiesFound).toContain(entity1);
       expect(entitiesFound).toContain(entity2);
       done();
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private itMustPersistZeroEntities(): void {
-    it('mustPersistZeroEntities', async (done) => {
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: 'p/'});
+    const itsName = 'mustPersistZeroEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
       const secondaryModelManager =
         new SecondaryModelManagerMock<MinimunModel, IEntity & {
           id: number,
@@ -528,6 +579,6 @@ return redis.call('get', ${luaExpression})`,
         await primaryModelManager.cacheEntities(new Array());
       }).not.toThrowError();
       done();
-    });
+    }, MAX_SAFE_TIMEOUT);
   }
 }
