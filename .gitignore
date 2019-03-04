@@ -10,6 +10,3 @@
 
 # npm dependencies
 /node_modules
-
-# ENV File
-.env
