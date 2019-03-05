@@ -6,12 +6,15 @@
   "scripts": {
     "build": "./node_modules/typescript/bin/tsc --build src.tsconfig.commonjs.json",
     "build-and-test": "npm run build && npm run test-only",
+    "build-and-test-and-coverage": "npm run build-and-test && npm run report-coverage",
     "build-and-test-debug": "npm run build && npm run test-debug-only",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "test": "npm run test-docker",
+    "test-coverage": "npm run test-docker-coverage",
     "test-debug": "npm run test-docker-debug",
     "test-docker": "docker-compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from ant_lib",
     "test-docker-debug": "docker-compose -f docker-compose.test.debug.yml up --abort-on-container-exit --exit-code-from ant_lib",
+    "test-docker-coverage": "docker-compose -f docker-compose.test.coverage.yml up --abort-on-container-exit --exit-code-from ant_lib",
     "test-debug-only": "node --inspect-brk=0.0.0.0:${NODE_DEBUG_PORT_INNER} ./node_modules/jasmine/bin/jasmine.js ./dist/test/main.test.js",
     "test-only": "node_modules/nyc/bin/nyc.js --reporter=lcov node ./node_modules/jasmine/bin/jasmine.js ./dist/test/main.test.js"
   },
