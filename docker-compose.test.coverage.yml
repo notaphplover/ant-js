@@ -6,6 +6,7 @@ services:
     environment:
       NODE_DEBUG_PORT_INNER: ${NODE_DEBUG_PORT_INNER}
       NODE_DEBUG_PORT_OUTER: ${NODE_DEBUG_PORT_OUTER}
+      COVERALLS_REPO_TOKEN: ${COVERALLS_REPO_TOKEN}
     volumes:
       - .:/app
     depends_on:
