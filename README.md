@@ -1,5 +1,5 @@
 [![Build status](https://travis-ci.org/notaphplover/ant-js.svg?branch=develop)](https://travis-ci.org/notaphplover/ant-js.svg?branch=develop)
-
+[![Coverage Status](https://coveralls.io/repos/github/notaphplover/ant-js/badge.svg?branch=develop)](https://coveralls.io/github/notaphplover/ant-js?branch=develop)
 
 ## Description
 
