@@ -48,8 +48,8 @@ export class SecondaryModelManagerMock<TModel extends IModel, TEntity extends IE
     const idField = this.model.id;
     return new Promise((resolve) =>
       resolve(this.store.find((entity) =>
-        undefined !== entity[idField] && id === entity[idField]),
-      ),
+        undefined !== entity[idField] && id === entity[idField],
+      ) || null),
     );
   }
 
