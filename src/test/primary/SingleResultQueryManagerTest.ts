@@ -90,8 +90,8 @@ export class SingleResultQueryManagerTest implements ITest {
       );
       const query = async (params: any) => {
         const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
-        if (undefined === entityFound) {
-          return undefined;
+        if (null == entityFound) {
+          return null;
         } else {
           return entityFound.id;
         }
@@ -112,7 +112,7 @@ export class SingleResultQueryManagerTest implements ITest {
       const entityFoundAfter = await queryManager.get({ field: entity1.field });
 
       expect(entityFoundBefore).toEqual(entity1);
-      expect(entityFoundAfter).not.toBeDefined();
+      expect(entityFoundAfter).toBeNull();
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -139,8 +139,8 @@ export class SingleResultQueryManagerTest implements ITest {
       );
       const query = async (params: any) => {
         const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
-        if (undefined === entityFound) {
-          return undefined;
+        if (null == entityFound) {
+          return null;
         } else {
           return entityFound.id;
         }
@@ -182,8 +182,8 @@ export class SingleResultQueryManagerTest implements ITest {
       );
       const query = async (params: any) => {
         const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
-        if (undefined === entityFound) {
-          return undefined;
+        if (null == entityFound) {
+          return null;
         } else {
           return entityFound.id;
         }
@@ -226,8 +226,8 @@ export class SingleResultQueryManagerTest implements ITest {
       );
       const query = async (params: any) => {
         const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
-        if (undefined === entityFound) {
-          return undefined;
+        if (null == entityFound) {
+          return null;
         } else {
           return entityFound.id;
         }
@@ -270,8 +270,8 @@ export class SingleResultQueryManagerTest implements ITest {
       );
       const query = async (params: any) => {
         const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
-        if (undefined === entityFound) {
-          return undefined;
+        if (null == entityFound) {
+          return null;
         } else {
           return entityFound.id;
         }
@@ -312,8 +312,8 @@ export class SingleResultQueryManagerTest implements ITest {
       );
       const query = async (params: any) => {
         const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
-        if (undefined === entityFound) {
-          return undefined;
+        if (null == entityFound) {
+          return null;
         } else {
           return entityFound.id;
         }
@@ -355,8 +355,8 @@ export class SingleResultQueryManagerTest implements ITest {
       );
       const query = async (params: any) => {
         const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
-        if (undefined === entityFound) {
-          return undefined;
+        if (null == entityFound) {
+          return null;
         } else {
           return entityFound.id;
         }
@@ -370,7 +370,7 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       const entityFound = await queryManager.get({ field: entity1.field });
-      expect(entityFound).not.toBeDefined();
+      expect(entityFound).toBeNull();
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -401,8 +401,8 @@ export class SingleResultQueryManagerTest implements ITest {
       );
       const query = async (params: any) => {
         const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
-        if (undefined === entityFound) {
-          return undefined;
+        if (null == entityFound) {
+          return null;
         } else {
           return entityFound.id;
         }
@@ -422,7 +422,7 @@ export class SingleResultQueryManagerTest implements ITest {
       const entityByOldValue = await queryManager.get({ field: entity1.field });
       const entityByNewValue = await queryManager.get({ field: entity1After.field });
 
-      expect(entityByOldValue).toBeUndefined();
+      expect(entityByOldValue).toBeNull();
       expect(entityByNewValue).toEqual(entity1After);
       done();
     }, MAX_SAFE_TIMEOUT);

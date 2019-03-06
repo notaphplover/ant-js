@@ -174,12 +174,15 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
     id: number|string,
     searchOptions: IEntitySearchOptions,
   ): Promise<TEntity> {
+    if (null == id) {
+      return null;
+    }
     const cachedEntity = await this._redis.get(this._getKey(id));
     if (cachedEntity) {
       return JSON.parse(cachedEntity);
     }
     if (!this._successor) {
-      return undefined;
+      return null;
     }
     return this._successor.getById(id).then((entity) => {
       this.cacheEntity(entity, searchOptions);

@@ -44,7 +44,7 @@ export class PrimaryModelManagerTest implements ITest {
       this.itMustDeleteAnEntity();
       this.itMustFindAnEntityOutsideCache();
       this.itMustFindMultipleEntitiesOutsideCache();
-      this.itMustFindUndefinedIfNoSuccessorIsProvidedAndCacheFails();
+      this.itMustFindNullIfNoSuccessorIsProvidedAndCacheFails();
       this.itMustFindZeroEntities();
       this.itMustPersistAnEntity();
       this.itMustPersistMultipleEntities();
@@ -104,7 +104,7 @@ export class PrimaryModelManagerTest implements ITest {
       );
 
       expect(await primaryModelManager.getById(entity1[model.id]))
-        .toBe(undefined);
+        .toBe(null);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -131,7 +131,7 @@ export class PrimaryModelManagerTest implements ITest {
       );
 
       expect(await primaryModelManager.getById(entity1[model.id]))
-        .toBe(undefined);
+        .toBe(null);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -376,7 +376,7 @@ return redis.call('get', ${luaExpression})`,
       await primaryModelManager.deleteEntityFromCache(entity);
       const entityFound = await primaryModelManager.getById(entity[model.id]);
 
-      expect(entityFound).not.toBeDefined();
+      expect(entityFound).toBeNull();
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -445,8 +445,8 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustFindUndefinedIfNoSuccessorIsProvidedAndCacheFails(): void {
-    const itsName = 'mustFindUndefinedIfNoSuccessorIsProvidedAndCacheFails';
+  private itMustFindNullIfNoSuccessorIsProvidedAndCacheFails(): void {
+    const itsName = 'mustFindNullIfNoSuccessorIsProvidedAndCacheFails';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
@@ -458,7 +458,7 @@ return redis.call('get', ${luaExpression})`,
       );
       const idToSearch = 3;
 
-      expect(await primaryModelManager.getById(idToSearch)).toBeUndefined();
+      expect(await primaryModelManager.getById(idToSearch)).toBeNull();
       done();
     }, MAX_SAFE_TIMEOUT);
   }

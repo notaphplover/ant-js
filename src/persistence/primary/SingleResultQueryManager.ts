@@ -25,6 +25,7 @@ export abstract class SingleResultQueryManager<
       1,
       this._reverseHashKey,
       entity[this._primaryModelManager.model.id],
+      JSON.stringify(VOID_RESULT_STRING),
     );
   }
   /**
@@ -88,7 +89,9 @@ export abstract class SingleResultQueryManager<
    */
   private _luaDeleteGenerator(): string {
     return `local key = redis.call('hget', KEYS[1], ARGV[1])
-redis.call('del', key)`;
+if key then
+  redis.call('set', key, ARGV[2])
+end`;
   }
 
   /**
@@ -120,7 +123,9 @@ end`;
    */
   private _luaUpdateGenerator(): string {
     return `local key = redis.call('hget', KEYS[1], ARGV[1])
-redis.call('del', key)
-redis.call('set', KEYS[2], ARGV[1])`;
+if key then
+  redis.call('del', key)
+  redis.call('set', KEYS[2], ARGV[1])
+end`;
   }
 }
