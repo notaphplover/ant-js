@@ -24,7 +24,7 @@ export abstract class SingleResultQueryManager<
       this._luaDeleteGenerator(),
       1,
       this._reverseHashKey,
-      entity[this._primaryModelManager.model.id],
+      JSON.stringify(entity[this._primaryModelManager.model.id]),
       JSON.stringify(VOID_RESULT_STRING),
     );
   }
@@ -46,7 +46,7 @@ export abstract class SingleResultQueryManager<
         this._redis.set(key, JSON.stringify(VOID_RESULT_STRING));
       } else {
         this._redis.set(key, JSON.stringify(id));
-        this._redis.hset(this._reverseHashKey, id.toString(), key);
+        this._redis.hset(this._reverseHashKey, JSON.stringify(id), key);
       }
       return await this._primaryModelManager.getById(id, searchOptions);
     } else {
@@ -79,7 +79,7 @@ export abstract class SingleResultQueryManager<
       2,
       this._reverseHashKey,
       this._key(entity),
-      entity[this._primaryModelManager.model.id],
+      JSON.stringify(entity[this._primaryModelManager.model.id]),
     );
   }
 
