@@ -45,7 +45,6 @@ export class MultipleResultQueryManagerTest implements ITest {
       this._itMustPerformAnUncachedSearch();
       this._itMustPerformAnUnexistingCachedSearch();
       this._itMustPerformAnUnexistingUncachedSearch();
-      this._itMustUpdateAnEntityInAQuery();
     });
   }
 
