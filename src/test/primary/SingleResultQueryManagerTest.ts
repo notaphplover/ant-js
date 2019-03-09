@@ -29,7 +29,7 @@ export class SingleResultQueryManagerTest implements ITest {
   }
 
   public performTests(): void {
-    describe('SingleResultQueryManagerTest', () => {
+    describe(this._declareName, () => {
       this.itMustBeInitializable();
       this.itMustDeleteAnEntityInAQuery();
       this.itMustPerformACachedSearchWithCachedEntities();

@@ -24,8 +24,8 @@ export abstract class MultipleResultQueryManager<
       this._luaDeleteGenerator(),
       2,
       this._reverseHashKey,
-      entity[this._primaryModelManager.model.id],
-      JSON.stringify(VOID_RESULT_STRING),
+      JSON.stringify(entity[this._primaryModelManager.model.id]),
+      VOID_RESULT_STRING,
     );
   }
 
@@ -41,10 +41,11 @@ export abstract class MultipleResultQueryManager<
   ): Promise<TEntity[]> {
     const key = this._key(params);
     const luaScript = this._luaGetGenerator();
-    const resultJSON = await this._redis.eval(luaScript, 1, key);
+    const resultsJSON = await this._redis.eval(luaScript, 1, key);
 
-    if (null == resultJSON) {
+    if (null == resultsJSON) {
       const ids = await this._query(params);
+      const idsJSON = ids.map((id) => JSON.stringify(id));
       if (null != ids && ids.length > 0) {
         this._redis.eval([
           this._luaSetQueryGenerator(),
@@ -52,7 +53,7 @@ export abstract class MultipleResultQueryManager<
           key,
           this._reverseHashKey,
           VOID_RESULT_STRING,
-          ...ids,
+          ...idsJSON,
         ]);
         return this._primaryModelManager.getByIds(ids, searchOptions);
       } else {
@@ -65,9 +66,31 @@ export abstract class MultipleResultQueryManager<
         return new Array();
       }
     } else {
-      const result = JSON.parse(resultJSON);
+      if (VOID_RESULT_STRING === resultsJSON) {
+        return new Array();
+      }
+      const missingIds = new Array<number|string>();
+      const finalResults = new Array();
+
+      for (const resultJson of resultsJSON) {
+        const result = JSON.parse(resultJson);
+        const resultType = typeof result;
+        if ('object' === resultType) {
+          finalResults.push(result);
+          continue;
+        }
+        if ('number' === resultType || 'string' === resultType) {
+          missingIds.push(result);
+          continue;
+        }
+        throw new Error(`Query "${key}" corrupted!`);
+      }
+      const missingEntities = await this._primaryModelManager.getByIds(missingIds, searchOptions);
+      for (const missingEntity of missingEntities) {
+        finalResults.push(missingEntity);
+      }
+      return finalResults;
     }
-    return null;
   }
 
   /**
@@ -80,9 +103,10 @@ export abstract class MultipleResultQueryManager<
       this._luaUpdateGenerator(),
       3,
       this._reverseHashKey,
-      entity[this._primaryModelManager.model.id],
+      JSON.stringify(entity[this._primaryModelManager.model.id]),
       this._key(entity),
-      JSON.stringify(VOID_RESULT_STRING),
+      VOID_RESULT_STRING,
+      JSON.stringify(entity),
     );
   }
 
@@ -113,8 +137,8 @@ end`;
 if #${idsAlias} == 0 then
   return nil
 else
-  if ${idsAlias}[0] == '${VOID_RESULT_STRING}' then
-    return ${idsAlias}[0]
+  if ${idsAlias}[1] == '${VOID_RESULT_STRING}' then
+    return '${VOID_RESULT_STRING}'
   else
     local ${keysAlias} = {}
     for i = 1, #${idsAlias} do
@@ -164,7 +188,7 @@ if key then
   if redis.call('sismember', KEYS[3], ARGV[1]) then
     redis.call('srem', KEYS[3], ARGV[1])
   end
-  redis.call('sadd', KEYS[3], ARGV[3])
+  redis.call('sadd', KEYS[3], ARGV[2])
 end`;
   }
 }
