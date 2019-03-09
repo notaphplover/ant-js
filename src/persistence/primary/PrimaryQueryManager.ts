@@ -1,4 +1,4 @@
-import IORedis from 'ioredis';
+import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
