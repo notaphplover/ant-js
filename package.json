@@ -18,17 +18,21 @@
     "test-debug-only": "node --inspect-brk=0.0.0.0:${NODE_DEBUG_PORT_INNER} ./node_modules/jasmine/bin/jasmine.js ./dist/test/main.test.js",
     "test-only": "node_modules/nyc/bin/nyc.js --reporter=lcov node ./node_modules/jasmine/bin/jasmine.js ./dist/test/main.test.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/notaphplover/ant-js.git"
+  },
   "author": "Roberto Pintos López",
   "license": "ISC",
   "devDependencies": {
-    "@types/ioredis": "^4.0.7",
+    "@types/ioredis": "^4.0.9",
     "@types/jasmine": "^3.3.9",
-    "@types/node": "^11.9.4",
+    "@types/node": "^11.11.0",
     "coveralls": "^3.0.3",
     "jasmine": "^3.3.1",
     "nyc": "^13.3.0",
-    "tslint": "^5.12.1",
-    "typescript": "^3.3.3"
+    "tslint": "^5.13.1",
+    "typescript": "^3.3.3333"
   },
   "dependencies": {
     "ioredis": "^4.6.2"
