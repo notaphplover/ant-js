@@ -1,5 +1,6 @@
 import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
+import { IModel } from '../../model/IModel';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
 import { IPrimaryModelManager } from './IPrimaryModelManager';
 import { IPrimaryQueryManager } from './IPrimaryQueryManager';
@@ -48,6 +49,13 @@ export abstract class PrimaryQueryManager<
     this._redis = redis;
     this._reverseHashKey = reverseHashKey;
     this._luaKeyGeneratorFromId = this._primaryModelManager.getKeyGenerationLuaScriptGenerator();
+  }
+
+  /**
+   * Query's model.
+   */
+  public get model(): IModel {
+    return this._primaryModelManager.model;
   }
 
   /**

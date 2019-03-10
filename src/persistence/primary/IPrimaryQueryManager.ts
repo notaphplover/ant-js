@@ -1,10 +1,15 @@
 import { IEntity } from '../../model/IEntity';
+import { IModel } from '../../model/IModel';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
 
 export interface IPrimaryQueryManager<
   TEntity extends IEntity,
   TQueryResult extends Promise<TEntity | TEntity[]>,
 > {
+  /**
+   * Query's model.
+   */
+  model: IModel;
   /**
    * Syncs the remove of an entity in cache.
    * @param entity deleted entity.

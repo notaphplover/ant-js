@@ -21,7 +21,7 @@ export abstract class SingleResultQueryManager<
       this._luaDeleteGenerator(),
       1,
       this._reverseHashKey,
-      JSON.stringify(entity[this._primaryModelManager.model.id]),
+      JSON.stringify(entity[this.model.id]),
       VOID_RESULT_STRING,
     );
   }
@@ -72,7 +72,7 @@ export abstract class SingleResultQueryManager<
       2,
       this._reverseHashKey,
       this._key(entity),
-      JSON.stringify(entity[this._primaryModelManager.model.id]),
+      JSON.stringify(entity[this.model.id]),
     );
   }
 
