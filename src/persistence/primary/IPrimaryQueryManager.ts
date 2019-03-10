@@ -1,4 +1,4 @@
-import {IEntity} from '../../model/IEntity';
+import { IEntity } from '../../model/IEntity';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
 
 export interface IPrimaryQueryManager<

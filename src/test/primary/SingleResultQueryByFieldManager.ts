@@ -4,10 +4,8 @@ import { IModel } from '../../model/IModel';
 import { IPrimaryModelManager } from '../../persistence/primary/IPrimaryModelManager';
 import { SingleResultQueryManager } from '../../persistence/primary/SingleResultQueryManager';
 
-export class SingleResultQueryByFieldManager<
-  TModel extends IModel,
-  TEntity extends IEntity,
-> extends SingleResultQueryManager<TModel, TEntity> {
+export class SingleResultQueryByFieldManager<TEntity extends IEntity>
+  extends SingleResultQueryManager<TEntity> {
   protected _field: string;
   protected _queryPrefix: string;
 
@@ -22,7 +20,7 @@ export class SingleResultQueryByFieldManager<
    */
   public constructor(
     query: (params: any) => Promise<number | string>,
-    primaryModelManager: IPrimaryModelManager<TModel, TEntity>,
+    primaryModelManager: IPrimaryModelManager<TEntity>,
     redis: IORedis.Redis,
     reverseHashKey: string,
     field: string,

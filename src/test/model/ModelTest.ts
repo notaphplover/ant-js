@@ -1,6 +1,6 @@
 import { IEntityKeyGenerationData } from '../../model/IEntityKeyGenerationData';
+import { Model } from '../../model/Model';
 import { ITest } from '../ITest';
-import { MinimunModel } from './MinimunModel';
 
 export class ModelTest implements ITest {
   public performTests(): void {
@@ -14,7 +14,7 @@ export class ModelTest implements ITest {
     it('mustBeInitializable', () => {
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
-        new MinimunModel('id', ['id', 'field'], {});
+        new Model('id', ['id', 'field'], {});
       }).not.toThrowError();
     });
   }
@@ -27,7 +27,7 @@ export class ModelTest implements ITest {
         prefix: 'p',
         suffix: 's',
       };
-      const customModel = new MinimunModel(id, properties, entityKeyGenerationData);
+      const customModel = new Model(id, properties, entityKeyGenerationData);
       expect(customModel.id).toBe(id);
       expect(customModel.properties).toEqual(properties);
     });

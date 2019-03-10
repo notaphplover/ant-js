@@ -1,10 +1,10 @@
 import { IEntity } from '../../model/IEntity';
+import { Model } from '../../model/Model';
 import { CacheOptions } from '../../persistence/primary/CacheOptions';
 import { EntitySearchOptions } from '../../persistence/primary/EntitySearchOptions';
+import { PrimaryModelManager } from '../../persistence/primary/PrimaryModelManager';
 import { ITest } from '../ITest';
-import { MinimunModel } from '../model/MinimunModel';
 import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
-import { MinimunPrimaryModelManager } from './MinimunPrimaryModelManager';
 import { RedisWrapper } from './RedisWrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
@@ -57,8 +57,8 @@ export class PrimaryModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         null,
@@ -87,8 +87,8 @@ export class PrimaryModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         null,
@@ -114,8 +114,8 @@ export class PrimaryModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         null,
@@ -141,8 +141,8 @@ export class PrimaryModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         null,
@@ -173,8 +173,8 @@ export class PrimaryModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         null,
@@ -205,8 +205,8 @@ export class PrimaryModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         null,
@@ -237,8 +237,8 @@ export class PrimaryModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         null,
@@ -269,12 +269,12 @@ export class PrimaryModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity: IEntity & {
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         null,
@@ -302,12 +302,12 @@ return redis.call('get', ${luaExpression})`,
     const suffix = '/' + this._declareName + '/' + itsName;
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id'], {suffix: suffix});
+      const model = new Model('id', ['id'], {suffix: suffix});
       const entity: IEntity & {
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         null,
@@ -335,12 +335,12 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id'], {prefix: prefix});
+      const model = new Model('id', ['id'], {prefix: prefix});
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, {id: string}>(model);
+        new SecondaryModelManagerMock<{id: string}>(model);
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
-        new MinimunPrimaryModelManager(
+        new PrimaryModelManager(
           model,
           this._redis.redis,
           secondaryModelManager,
@@ -355,17 +355,17 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity: IEntity & {
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, IEntity & {
+        new SecondaryModelManagerMock<IEntity & {
           id: number,
           field: string,
         }>(model, [entity]);
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -386,17 +386,17 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity: IEntity & {
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, IEntity & {
+        new SecondaryModelManagerMock<IEntity & {
           id: number,
           field: string,
         }>(model, [entity]);
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -413,7 +413,7 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -423,12 +423,12 @@ return redis.call('get', ${luaExpression})`,
         field: string,
       } = {id: 2, field: 'sample-2'};
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, IEntity & {
+        new SecondaryModelManagerMock<IEntity & {
           id: number,
           field: string,
         }>(model, [entity1, entity2]);
 
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -450,8 +450,8 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         null,
@@ -468,14 +468,14 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, IEntity & {
+        new SecondaryModelManagerMock<IEntity & {
           id: number,
           field: string,
         }>(model);
 
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -493,17 +493,17 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity: IEntity & {
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, IEntity & {
+        new SecondaryModelManagerMock<IEntity & {
           id: number,
           field: string,
         }>(model, [entity]);
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -523,7 +523,7 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -533,12 +533,12 @@ return redis.call('get', ${luaExpression})`,
         field: string,
       } = {id: 2, field: 'sample-2'};
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, IEntity & {
+        new SecondaryModelManagerMock<IEntity & {
           id: number,
           field: string,
         }>(model, [entity1, entity2]);
 
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -562,14 +562,14 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'field'], {prefix: prefix});
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, IEntity & {
+        new SecondaryModelManagerMock<IEntity & {
           id: number,
           field: string,
         }>(model);
 
-      const primaryModelManager = new MinimunPrimaryModelManager(
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         secondaryModelManager,

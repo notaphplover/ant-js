@@ -2,7 +2,11 @@ import { IEntity } from '../model/IEntity';
 import { IModel } from '../model/IModel';
 import { IEntitySearchOptions } from './primary/IEntitySearchOptions';
 
-export interface IModelManager<TModel extends IModel, TEntity extends IEntity> {
+export interface IModelManager<TEntity extends IEntity> {
+  /**
+   * Model of the manager.
+   */
+  model: IModel;
   /**
    * Gets a model by its id.
    * @param id: Model's id.
