@@ -22,7 +22,7 @@ export abstract class SingleResultQueryManager<
       1,
       this._reverseHashKey,
       JSON.stringify(entity[this.model.id]),
-      JSON.stringify(VOID_RESULT_STRING),
+      VOID_RESULT_STRING,
     );
   }
   /**
@@ -40,27 +40,23 @@ export abstract class SingleResultQueryManager<
     if (null == resultJSON) {
       const id = await this._query(params);
       if (null == id) {
-        this._redis.set(key, JSON.stringify(VOID_RESULT_STRING));
+        this._redis.set(key, VOID_RESULT_STRING);
       } else {
         this._redis.set(key, JSON.stringify(id));
         this._redis.hset(this._reverseHashKey, JSON.stringify(id), key);
       }
       return await this._primaryModelManager.getById(id, searchOptions);
     } else {
+      if (VOID_RESULT_STRING === resultJSON) {
+        return null;
+      }
       const result = JSON.parse(resultJSON);
       const resultType = typeof result;
       if ('object' === resultType) {
         return result;
       }
-      if ('number' === resultType) {
+      if ('number' === resultType || 'string' === resultType) {
         return this._primaryModelManager.getById(result, searchOptions);
-      }
-      if ('string' === resultType) {
-        if (VOID_RESULT_STRING === result) {
-          return null;
-        } else {
-          return this._primaryModelManager.getById(result, searchOptions);
-        }
       }
       throw new Error(`Query "${key}" corrupted!`);
     }
