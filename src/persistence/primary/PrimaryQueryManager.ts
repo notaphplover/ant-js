@@ -1,12 +1,10 @@
 import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
-import { IModel } from '../../model/IModel';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
 import { IPrimaryModelManager } from './IPrimaryModelManager';
 import { IPrimaryQueryManager } from './IPrimaryQueryManager';
 
 export abstract class PrimaryQueryManager<
-  TModel extends IModel,
   TEntity extends IEntity,
   TQuery extends (params: any) => Promise<number | string | Array<number | string>>,
   TQueryResult extends Promise<TEntity | TEntity[]>
@@ -14,7 +12,7 @@ export abstract class PrimaryQueryManager<
   /**
    * Primary model manager.
    */
-  protected _primaryModelManager: IPrimaryModelManager<TModel, TEntity>;
+  protected _primaryModelManager: IPrimaryModelManager<TEntity>;
   /**
    * Query to obtain ids.
    */
@@ -41,7 +39,7 @@ export abstract class PrimaryQueryManager<
    */
   public constructor(
     query: TQuery,
-    primaryModelManager: IPrimaryModelManager<TModel, TEntity>,
+    primaryModelManager: IPrimaryModelManager<TEntity>,
     redis: IORedis.Redis,
     reverseHashKey: string,
   ) {

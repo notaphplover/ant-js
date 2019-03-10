@@ -1,7 +1,7 @@
 import { IEntityKeyGenerationData } from './IEntityKeyGenerationData';
 import { IModel } from './IModel';
 
-export abstract class Model implements IModel {
+export class Model implements IModel {
   /**
    * Entity key generation data.
    */

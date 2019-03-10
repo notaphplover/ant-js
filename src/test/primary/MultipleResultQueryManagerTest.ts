@@ -1,8 +1,7 @@
-import { IEntity } from '../../model/IEntity';
+import { Model } from '../../model/Model';
+import { PrimaryModelManager } from '../../persistence/primary/PrimaryModelManager';
 import { ITest } from '../ITest';
-import { MinimunModel } from '../model/MinimunModel';
 import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
-import { MinimunPrimaryModelManager } from './MinimunPrimaryModelManager';
 import {
   NamedEntity,
   NamesStartingByLetter,
@@ -54,10 +53,10 @@ export class MultipleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'name'], {prefix: prefix});
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, NamedEntity>(model);
-      const primaryModelManager = new MinimunPrimaryModelManager<MinimunModel, NamedEntity>(
+        new SecondaryModelManagerMock<NamedEntity>(model);
+      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -81,11 +80,11 @@ export class MultipleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'name'], {prefix: prefix});
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, NamedEntity>(model, [entity]);
-      const primaryModelManager = new MinimunPrimaryModelManager<MinimunModel, NamedEntity>(
+        new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
+      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -109,11 +108,11 @@ export class MultipleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'name'], {prefix: prefix});
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, NamedEntity>(model, [entity]);
-      const primaryModelManager = new MinimunPrimaryModelManager<MinimunModel, NamedEntity>(
+        new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
+      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -136,11 +135,11 @@ export class MultipleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'name'], {prefix: prefix});
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
       const entity1: NamedEntity = {id: 1, name: 'Pepe'};
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, NamedEntity>(model, [entity1]);
-      const primaryModelManager = new MinimunPrimaryModelManager(
+        new SecondaryModelManagerMock<NamedEntity>(model, [entity1]);
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -165,11 +164,11 @@ export class MultipleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'name'], {prefix: prefix});
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
       const entity1: NamedEntityAlternative = {id: '1', name: 'Pepe'};
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, NamedEntityAlternative>(model, [entity1]);
-      const primaryModelManager = new MinimunPrimaryModelManager(
+        new SecondaryModelManagerMock<NamedEntityAlternative>(model, [entity1]);
+      const primaryModelManager = new PrimaryModelManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -194,11 +193,11 @@ export class MultipleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'name'], {prefix: prefix});
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, NamedEntity>(model, [entity]);
-      const primaryModelManager = new MinimunPrimaryModelManager<MinimunModel, NamedEntity>(
+        new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
+      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -220,11 +219,11 @@ export class MultipleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'name'], {prefix: prefix});
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, NamedEntity>(model, new Array());
-      const primaryModelManager = new MinimunPrimaryModelManager<MinimunModel, NamedEntity>(
+        new SecondaryModelManagerMock<NamedEntity>(model, new Array());
+      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -247,11 +246,11 @@ export class MultipleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'name'], {prefix: prefix});
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, NamedEntity>(model, new Array());
-      const primaryModelManager = new MinimunPrimaryModelManager<MinimunModel, NamedEntity>(
+        new SecondaryModelManagerMock<NamedEntity>(model, new Array());
+      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -273,12 +272,12 @@ export class MultipleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new MinimunModel('id', ['id', 'name'], {prefix: prefix});
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const entityAfter: NamedEntity = { id: 0, name: 'Paco' };
       const secondaryModelManager =
-        new SecondaryModelManagerMock<MinimunModel, NamedEntity>(model, [entity]);
-      const primaryModelManager = new MinimunPrimaryModelManager<MinimunModel, NamedEntity>(
+        new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
+      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,

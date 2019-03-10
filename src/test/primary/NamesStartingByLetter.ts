@@ -2,15 +2,11 @@ import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
 import { IPrimaryModelManager } from '../../persistence/primary/IPrimaryModelManager';
 import { MultipleResultQueryManager } from '../../persistence/primary/MultipleResultQueryManager';
-import { MinimunModel } from '../model/MinimunModel';
 import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
 
 export type NamedEntity = {id: number, name: string } & IEntity;
 
-export class NamesStartingByLetter extends MultipleResultQueryManager<
-  MinimunModel,
-  NamedEntity
-> {
+export class NamesStartingByLetter extends MultipleResultQueryManager<NamedEntity> {
   /**
    * Query prefix.
    */
@@ -24,14 +20,8 @@ export class NamesStartingByLetter extends MultipleResultQueryManager<
    * @param prefix Query prefix.
    */
   public constructor(
-    primaryModelManager: IPrimaryModelManager<
-      MinimunModel,
-      NamedEntity
-    >,
-    secondaryModelManagerMock: SecondaryModelManagerMock<
-      MinimunModel,
-      NamedEntity
-    >,
+    primaryModelManager: IPrimaryModelManager<NamedEntity>,
+    secondaryModelManagerMock: SecondaryModelManagerMock<NamedEntity>,
     redis: IORedis.Redis,
     reverseHashKey: string,
     prefix: string,

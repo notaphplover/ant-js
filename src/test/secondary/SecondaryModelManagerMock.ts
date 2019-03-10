@@ -2,13 +2,13 @@ import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { ISecondaryModelManager } from '../../persistence/secondary/ISecondaryModelManager';
 
-export class SecondaryModelManagerMock<TModel extends IModel, TEntity extends IEntity>
-  implements ISecondaryModelManager<TModel, TEntity> {
+export class SecondaryModelManagerMock<TEntity extends IEntity>
+  implements ISecondaryModelManager<TEntity> {
 
   /**
    * Model managed.
    */
-  protected _model: TModel;
+  protected _model: IModel;
 
   /**
    * Entities set.
@@ -20,7 +20,7 @@ export class SecondaryModelManagerMock<TModel extends IModel, TEntity extends IE
    * @param model Model of the manager.
    * @param store Inital entities.
    */
-  public constructor(model: TModel, store: TEntity[] = new Array()) {
+  public constructor(model: IModel, store: TEntity[] = new Array()) {
     this._model = model;
     this._store = store;
   }
@@ -28,7 +28,7 @@ export class SecondaryModelManagerMock<TModel extends IModel, TEntity extends IE
   /**
    * Model managed.
    */
-  public get model(): TModel {
+  public get model(): IModel {
     return this._model;
   }
 

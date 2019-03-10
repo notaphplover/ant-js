@@ -1,15 +1,12 @@
 import { IEntity } from '../../model/IEntity';
-import { IModel } from '../../model/IModel';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
 
 const VOID_RESULT_STRING = 'v\x06\x15';
 
 export abstract class SingleResultQueryManager<
-  TModel extends IModel,
   TEntity extends IEntity
 > extends PrimaryQueryManager<
-  TModel,
   TEntity,
   (params: any) => Promise<number | string>,
   Promise<TEntity>

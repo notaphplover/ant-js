@@ -8,13 +8,13 @@ import { EntitySearchOptions } from './EntitySearchOptions';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
 import { IPrimaryModelManager } from './IPrimaryModelManager';
 
-export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends IEntity>
-  implements IPrimaryModelManager<TModel, TEntity> {
+export class PrimaryModelManager<TEntity extends IEntity>
+  implements IPrimaryModelManager<TEntity> {
 
   /**
    * Model managed.
    */
-  protected _model: TModel;
+  protected _model: IModel;
   /**
    * Redis connection.
    */
@@ -22,16 +22,16 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
   /**
    * Secondary model manager of the model.
    */
-  protected _successor: ISecondaryModelManager<TModel, TEntity>;
+  protected _successor: ISecondaryModelManager<TEntity>;
 
   /**
    * Creates a new primary model manager.
    * @param redis Redis connection
    */
   public constructor(
-    model: TModel,
+    model: IModel,
     redis: IORedis.Redis,
-    successor: ISecondaryModelManager<TModel, TEntity>,
+    successor: ISecondaryModelManager<TEntity>,
   ) {
     this._model = model;
     this._redis = redis;
@@ -41,7 +41,7 @@ export abstract class PrimaryModelManager<TModel extends IModel, TEntity extends
   /**
    * Model managed.
    */
-  public get model(): TModel {
+  public get model(): IModel {
     return this._model;
   }
 
