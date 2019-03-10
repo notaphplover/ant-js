@@ -1,6 +1,5 @@
 import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
-import { IModel } from '../../model/IModel';
 import { IPrimaryModelManager } from '../../persistence/primary/IPrimaryModelManager';
 import { SingleResultQueryManager } from '../../persistence/primary/SingleResultQueryManager';
 
@@ -19,7 +18,7 @@ export class SingleResultQueryByFieldManager<TEntity extends IEntity>
    * @param queryPrefix Query prefix.
    */
   public constructor(
-    query: (params: any) => Promise<number | string>,
+    query: (params: any) => Promise<number|string>,
     primaryModelManager: IPrimaryModelManager<TEntity>,
     redis: IORedis.Redis,
     reverseHashKey: string,
