@@ -21,7 +21,7 @@ export abstract class MultipleResultQueryManager<
       this._luaDeleteGenerator(),
       2,
       this._reverseHashKey,
-      JSON.stringify(entity[this._primaryModelManager.model.id]),
+      JSON.stringify(entity[this.model.id]),
       VOID_RESULT_STRING,
     );
   }
@@ -100,7 +100,7 @@ export abstract class MultipleResultQueryManager<
       this._luaUpdateGenerator(),
       3,
       this._reverseHashKey,
-      JSON.stringify(entity[this._primaryModelManager.model.id]),
+      JSON.stringify(entity[this.model.id]),
       this._key(entity),
       VOID_RESULT_STRING,
       JSON.stringify(entity),
