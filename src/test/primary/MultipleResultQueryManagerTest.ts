@@ -39,9 +39,12 @@ export class MultipleResultQueryManagerTest implements ITest {
       this._itMustBeInitializable();
       this._itMustDeleteAnEntityInAQuery();
       this._itMustPerformACachedSearchWithCachedEntities();
+      this._itMustPerformACachedSearchWithLotsOfCachedEntities();
+      this._itMustPerformACachedSearchWithLotsOfCachedAndUncachedEntities();
       this._itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsNumber();
       this._itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsString();
       this._itMustPerformAnUncachedSearch();
+      this._itMustPerformAnUncachedSearchWithLotsOfResults();
       this._itMustPerformAnUnexistingCachedSearch();
       this._itMustPerformAnUnexistingUncachedSearch();
       this._itMustUpdateAnEntityInAQuery();
@@ -130,6 +133,87 @@ export class MultipleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
+  private _itMustPerformACachedSearchWithLotsOfCachedEntities(): void {
+    const itsName = 'mustPerformACachedSearchWithLotsOfCachedEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
+      const entitiesSize = 10000;
+      const entities = new Array<NamedEntity>();
+      const entitiesMap = new Map<number, NamedEntity>();
+      for (let i = 0; i < entitiesSize; ++i) {
+        const entity = {id: i, name: 'Pepe' + i}
+        entities.push(entity);
+        entitiesMap.set(entity.id, entity);
+      }
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<NamedEntity>(model, entities);
+      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const queryManager = new NamesStartingByLetter(
+        primaryModelManager,
+        secondaryModelManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        prefix + 'names-starting-with/',
+      );
+      const searchParams = {name: 'P'};
+      await queryManager.get(searchParams);
+      const results = await queryManager.get(searchParams);
+      expect(results.length).toBe(entities.length);
+      for (const result of results) {
+        expect(entitiesMap.get(result.id)).toEqual(result);
+      }
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustPerformACachedSearchWithLotsOfCachedAndUncachedEntities(): void {
+    const itsName = 'mustPerformACachedSearchWithLotsOfCachedAndUncachedEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
+      const entitiesSize = 10000;
+      const entities = new Array<NamedEntity>();
+      const entitiesMap = new Map<number, NamedEntity>();
+      for (let i = 0; i < entitiesSize; ++i) {
+        const entity = {id: i, name: 'Pepe' + i}
+        entities.push(entity);
+        entitiesMap.set(entity.id, entity);
+      }
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<NamedEntity>(model, entities);
+      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const queryManager = new NamesStartingByLetter(
+        primaryModelManager,
+        secondaryModelManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        prefix + 'names-starting-with/',
+      );
+      const searchParams = {name: 'P'};
+      await queryManager.get(searchParams);
+      const results = await queryManager.get(searchParams);
+      for (let i = 0; i < entitiesSize / 2; ++i) {
+        primaryModelManager.deleteEntityFromCache(entitiesMap.get(i));
+      }
+      expect(results.length).toBe(entities.length);
+      for (const result of results) {
+        expect(entitiesMap.get(result.id)).toEqual(result);
+      }
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
   private _itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsNumber(): void {
     const itsName = 'mustPerformACachedSearchWithoutCachedEntitiesWithIdAsNumber';
     const prefix = this._declareName + '/' + itsName + '/';
@@ -210,6 +294,36 @@ export class MultipleResultQueryManagerTest implements ITest {
         prefix + 'names-starting-with/',
       );
       expect(await queryManager.get(entity)).toEqual([entity]);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustPerformAnUncachedSearchWithLotsOfResults(): void {
+    const itsName = 'mustPerformAnUncachedSearchWithLotsOfResults';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
+      const entitiesSize = 10000;
+      const entities = new Array<NamedEntity>();
+      for (let i = 0; i < entitiesSize; ++i) {
+        entities.push({id: i, name: 'Pepe' + i});
+      }
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<NamedEntity>(model, entities);
+      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const queryManager = new NamesStartingByLetter(
+        primaryModelManager,
+        secondaryModelManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        prefix + 'names-starting-with/',
+      );
+      expect(await queryManager.get({name: 'P'})).toEqual(entities);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
