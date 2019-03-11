@@ -59,7 +59,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const model = new Model('id', ['id', 'name'], {prefix: prefix});
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model);
-      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -67,7 +67,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
         new NamesStartingByLetter(
-          primaryModelManager,
+          primaryEntityManager,
           secondaryModelManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -87,13 +87,13 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
-      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
       );
       const queryManager = new NamesStartingByLetter(
-        primaryModelManager,
+        primaryEntityManager,
         secondaryModelManager,
         this._redis.redis,
         prefix + 'reverse/',
@@ -115,13 +115,13 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
-      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
       );
       const queryManager = new NamesStartingByLetter(
-        primaryModelManager,
+        primaryEntityManager,
         secondaryModelManager,
         this._redis.redis,
         prefix + 'reverse/',
@@ -149,13 +149,13 @@ export class MultipleResultQueryManagerTest implements ITest {
       }
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, entities);
-      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
       );
       const queryManager = new NamesStartingByLetter(
-        primaryModelManager,
+        primaryEntityManager,
         secondaryModelManager,
         this._redis.redis,
         prefix + 'reverse/',
@@ -188,13 +188,13 @@ export class MultipleResultQueryManagerTest implements ITest {
       }
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, entities);
-      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
       );
       const queryManager = new NamesStartingByLetter(
-        primaryModelManager,
+        primaryEntityManager,
         secondaryModelManager,
         this._redis.redis,
         prefix + 'reverse/',
@@ -204,7 +204,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       await queryManager.get(searchParams);
       const results = await queryManager.get(searchParams);
       for (let i = 0; i < entitiesSize / 2; ++i) {
-        primaryModelManager.deleteEntityFromCache(entitiesMap.get(i));
+        primaryEntityManager.deleteEntityFromCache(entitiesMap.get(i));
       }
       expect(results.length).toBe(entities.length);
       for (const result of results) {
@@ -223,20 +223,20 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity1: NamedEntity = {id: 1, name: 'Pepe'};
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, [entity1]);
-      const primaryModelManager = new PrimaryEntityManager(
+      const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
       );
       const queryManager = new NamesStartingByLetter(
-        primaryModelManager,
+        primaryEntityManager,
         secondaryModelManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
       );
       await queryManager.get(entity1);
-      await primaryModelManager.deleteEntityFromCache(entity1);
+      await primaryEntityManager.deleteEntityFromCache(entity1);
       const entityFound = await queryManager.get(entity1);
       expect(entityFound).toEqual([entity1]);
       done();
@@ -252,20 +252,20 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity1: NamedEntityAlternative = {id: '1', name: 'Pepe'};
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntityAlternative>(model, [entity1]);
-      const primaryModelManager = new PrimaryEntityManager(
+      const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
       );
       const queryManager = new NamesStartingByLetterAlternative(
-        primaryModelManager,
+        primaryEntityManager,
         secondaryModelManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
       );
       await queryManager.get(entity1);
-      await primaryModelManager.deleteEntityFromCache(entity1);
+      await primaryEntityManager.deleteEntityFromCache(entity1);
       const entityFound = await queryManager.get(entity1);
       expect(entityFound).toEqual([entity1]);
       done();
@@ -281,13 +281,13 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
-      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
       );
       const queryManager = new NamesStartingByLetter(
-        primaryModelManager,
+        primaryEntityManager,
         secondaryModelManager,
         this._redis.redis,
         prefix + 'reverse/',
@@ -311,13 +311,13 @@ export class MultipleResultQueryManagerTest implements ITest {
       }
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, entities);
-      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
       );
       const queryManager = new NamesStartingByLetter(
-        primaryModelManager,
+        primaryEntityManager,
         secondaryModelManager,
         this._redis.redis,
         prefix + 'reverse/',
@@ -337,13 +337,13 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, new Array());
-      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
       );
       const queryManager = new NamesStartingByLetter(
-        primaryModelManager,
+        primaryEntityManager,
         secondaryModelManager,
         this._redis.redis,
         prefix + 'reverse/',
@@ -364,13 +364,13 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, new Array());
-      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
       );
       const queryManager = new NamesStartingByLetter(
-        primaryModelManager,
+        primaryEntityManager,
         secondaryModelManager,
         this._redis.redis,
         prefix + 'reverse/',
@@ -391,13 +391,13 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entityAfter: NamedEntity = { id: 0, name: 'Paco' };
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
-      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
       );
       const queryManager = new NamesStartingByLetter(
-        primaryModelManager,
+        primaryEntityManager,
         secondaryModelManager,
         this._redis.redis,
         prefix + 'reverse/',
