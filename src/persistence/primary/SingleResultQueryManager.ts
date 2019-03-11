@@ -45,7 +45,7 @@ export abstract class SingleResultQueryManager<
         this._redis.set(key, JSON.stringify(id));
         this._redis.hset(this._reverseHashKey, JSON.stringify(id), key);
       }
-      return await this._primaryModelManager.getById(id, searchOptions);
+      return await this._primaryEntityManager.getById(id, searchOptions);
     } else {
       if (VOID_RESULT_STRING === resultJSON) {
         return null;
@@ -56,7 +56,7 @@ export abstract class SingleResultQueryManager<
         return result;
       }
       if ('number' === resultType || 'string' === resultType) {
-        return this._primaryModelManager.getById(result, searchOptions);
+        return this._primaryEntityManager.getById(result, searchOptions);
       }
       throw new Error(`Query "${key}" corrupted!`);
     }

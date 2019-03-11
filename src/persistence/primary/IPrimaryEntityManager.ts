@@ -1,12 +1,12 @@
 import { IEntity } from '../../model/IEntity';
-import { IModelManager } from '../IModelManager';
+import { IEntityManager } from '../IEntityManager';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
 
 /**
- * Represents a manager able to obtain models by ids.
+ * Represents a manager able to obtain entities by ids.
  */
-export interface IPrimaryModelManager<TEntity extends IEntity>
-  extends IModelManager<TEntity> {
+export interface IPrimaryEntityManager<TEntity extends IEntity>
+  extends IEntityManager<TEntity> {
   /**
    * Cache multiple entities.
    * @param entities Entities to cache.

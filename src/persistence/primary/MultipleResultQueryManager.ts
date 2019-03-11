@@ -53,7 +53,7 @@ export abstract class MultipleResultQueryManager<
           VOID_RESULT_STRING,
           ...idsJSON,
         ]);
-        return this._primaryModelManager.getByIds(ids, searchOptions);
+        return this._primaryEntityManager.getByIds(ids, searchOptions);
       } else {
         this._redis.eval(
           this._luaSetVoidQueryGenerator(),
@@ -83,7 +83,7 @@ export abstract class MultipleResultQueryManager<
         }
         throw new Error(`Query "${key}" corrupted!`);
       }
-      const missingEntities = await this._primaryModelManager.getByIds(missingIds, searchOptions);
+      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, searchOptions);
       for (const missingEntity of missingEntities) {
         finalResults.push(missingEntity);
       }

@@ -2,7 +2,7 @@ import { IEntity } from '../model/IEntity';
 import { IModel } from '../model/IModel';
 import { IEntitySearchOptions } from './primary/IEntitySearchOptions';
 
-export interface IModelManager<TEntity extends IEntity> {
+export interface IEntityManager<TEntity extends IEntity> {
   /**
    * Model of the manager.
    */

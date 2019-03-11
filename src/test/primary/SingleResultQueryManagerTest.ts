@@ -1,6 +1,6 @@
 import { IEntity } from '../../model/IEntity';
 import { Model } from '../../model/Model';
-import { PrimaryModelManager } from '../../persistence/primary/PrimaryModelManager';
+import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { ITest } from '../ITest';
 import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
 import { RedisWrapper } from './RedisWrapper';
@@ -48,7 +48,7 @@ export class SingleResultQueryManagerTest implements ITest {
     it(itsName, async (done) => {
       await this._beforeAllPromise;
       const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         null,
@@ -57,7 +57,7 @@ export class SingleResultQueryManagerTest implements ITest {
         // tslint:disable-next-line:no-unused-expression
         new SingleResultQueryByFieldManager(
           async (params: any) =>  null,
-          primaryModelManager,
+          primaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -83,7 +83,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: number,
           field: string,
         }>(model, [entity1]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -98,7 +98,7 @@ export class SingleResultQueryManagerTest implements ITest {
       };
       const queryManager = new SingleResultQueryByFieldManager(
         query,
-        primaryModelManager,
+        primaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         'field',
@@ -107,7 +107,7 @@ export class SingleResultQueryManagerTest implements ITest {
       await queryManager.get({ field: entity1.field });
       secondaryModelManager.store.length = 0;
       const entityFoundBefore = await queryManager.get({ field: entity1.field });
-      await primaryModelManager.deleteEntityFromCache(entity1);
+      await primaryEntityManager.deleteEntityFromCache(entity1);
       await queryManager.deleteEntityInQueries(entity1);
       const entityFoundAfter = await queryManager.get({ field: entity1.field });
 
@@ -132,7 +132,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: number,
           field: string,
         }>(model, [entity1]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -147,7 +147,7 @@ export class SingleResultQueryManagerTest implements ITest {
       };
       const queryManager = new SingleResultQueryByFieldManager(
         query,
-        primaryModelManager,
+        primaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         'field',
@@ -175,7 +175,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: number,
           field: string,
         }>(model, [entity1]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -190,14 +190,14 @@ export class SingleResultQueryManagerTest implements ITest {
       };
       const queryManager = new SingleResultQueryByFieldManager(
         query,
-        primaryModelManager,
+        primaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         'field',
         prefix + 'query-by-field/',
       );
       await queryManager.get({ field: entity1.field });
-      await primaryModelManager.deleteEntityFromCache(entity1);
+      await primaryEntityManager.deleteEntityFromCache(entity1);
       const entityFound = await queryManager.get({ field: entity1.field });
       expect(entityFound).toEqual(entity1);
       done();
@@ -219,7 +219,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: string,
           field: string,
         }>(model, [entity1]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -234,14 +234,14 @@ export class SingleResultQueryManagerTest implements ITest {
       };
       const queryManager = new SingleResultQueryByFieldManager(
         query,
-        primaryModelManager,
+        primaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         'field',
         prefix + 'query-by-field/',
       );
       await queryManager.get({ field: entity1.field });
-      await primaryModelManager.deleteEntityFromCache(entity1);
+      await primaryEntityManager.deleteEntityFromCache(entity1);
       const entityFound = await queryManager.get({ field: entity1.field });
       expect(entityFound).toEqual(entity1);
       done();
@@ -263,7 +263,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: number,
           field: string,
         }>(model, [entity1]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -278,7 +278,7 @@ export class SingleResultQueryManagerTest implements ITest {
       };
       const queryManager = new SingleResultQueryByFieldManager(
         query,
-        primaryModelManager,
+        primaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         'field',
@@ -305,7 +305,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: number,
           field: string,
         }>(model, []);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -320,7 +320,7 @@ export class SingleResultQueryManagerTest implements ITest {
       };
       const queryManager = new SingleResultQueryByFieldManager(
         query,
-        primaryModelManager,
+        primaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         'field',
@@ -348,7 +348,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: number,
           field: string,
         }>(model, []);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -363,7 +363,7 @@ export class SingleResultQueryManagerTest implements ITest {
       };
       const queryManager = new SingleResultQueryByFieldManager(
         query,
-        primaryModelManager,
+        primaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         'field',
@@ -394,7 +394,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: number,
           field: string,
         }>(model, [entity1]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -409,7 +409,7 @@ export class SingleResultQueryManagerTest implements ITest {
       };
       const queryManager = new SingleResultQueryByFieldManager(
         query,
-        primaryModelManager,
+        primaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         'field',
@@ -417,7 +417,7 @@ export class SingleResultQueryManagerTest implements ITest {
       );
       await queryManager.get({ field: entity1.field });
       secondaryModelManager.store.length = 0;
-      await primaryModelManager.cacheEntity(entity1After);
+      await primaryEntityManager.cacheEntity(entity1After);
       await queryManager.updateEntityInQueries(entity1After);
       const entityByOldValue = await queryManager.get({ field: entity1.field });
       const entityByNewValue = await queryManager.get({ field: entity1After.field });

@@ -2,14 +2,14 @@ import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
 import { IEntityKeyGenerationData } from '../../model/IEntityKeyGenerationData';
 import { IModel } from '../../model/IModel';
-import { ISecondaryModelManager } from '../secondary/ISecondaryModelManager';
+import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { CacheOptions } from './CacheOptions';
 import { EntitySearchOptions } from './EntitySearchOptions';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
-import { IPrimaryModelManager } from './IPrimaryModelManager';
+import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 
-export class PrimaryModelManager<TEntity extends IEntity>
-  implements IPrimaryModelManager<TEntity> {
+export class PrimaryEntityManager<TEntity extends IEntity>
+  implements IPrimaryEntityManager<TEntity> {
 
   /**
    * Model managed.
@@ -22,7 +22,7 @@ export class PrimaryModelManager<TEntity extends IEntity>
   /**
    * Secondary model manager of the model.
    */
-  protected _successor: ISecondaryModelManager<TEntity>;
+  protected _successor: ISecondaryEntityManager<TEntity>;
 
   /**
    * Creates a new primary model manager.
@@ -31,7 +31,7 @@ export class PrimaryModelManager<TEntity extends IEntity>
   public constructor(
     model: IModel,
     redis: IORedis.Redis,
-    successor: ISecondaryModelManager<TEntity>,
+    successor: ISecondaryEntityManager<TEntity>,
   ) {
     this._model = model;
     this._redis = redis;
