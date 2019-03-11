@@ -6,10 +6,10 @@ import { ISecondaryModelManager } from '../secondary/ISecondaryModelManager';
 import { CacheOptions } from './CacheOptions';
 import { EntitySearchOptions } from './EntitySearchOptions';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
-import { IPrimaryModelManager } from './IPrimaryModelManager';
+import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 
-export class PrimaryModelManager<TEntity extends IEntity>
-  implements IPrimaryModelManager<TEntity> {
+export class PrimaryEntityManager<TEntity extends IEntity>
+  implements IPrimaryEntityManager<TEntity> {
 
   /**
    * Model managed.

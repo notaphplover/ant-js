@@ -1,6 +1,6 @@
 import { IEntity } from '../../model/IEntity';
-import { IModelManager } from '../IModelManager';
+import { IEntityManager } from '../IEntityManager';
 
 export interface ISecondaryModelManager<TEntity extends IEntity>
-  extends IModelManager<TEntity> {
+  extends IEntityManager<TEntity> {
 }

@@ -1,6 +1,6 @@
 import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
-import { IPrimaryModelManager } from '../../persistence/primary/IPrimaryModelManager';
+import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
 import { MultipleResultQueryManager } from '../../persistence/primary/MultipleResultQueryManager';
 import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
 
@@ -14,13 +14,13 @@ export class NamesStartingByLetter extends MultipleResultQueryManager<NamedEntit
 
   /**
    * Creates a new NamesStartingByLetter.
-   * @param primaryModelManager Primary model manager.
+   * @param primaryEntityManager Primary entity manager.
    * @param redis Redis connection.
    * @param reverseHashKey Reverse hash key.
    * @param prefix Query prefix.
    */
   public constructor(
-    primaryModelManager: IPrimaryModelManager<NamedEntity>,
+    primaryEntityManager: IPrimaryEntityManager<NamedEntity>,
     secondaryModelManagerMock: SecondaryModelManagerMock<NamedEntity>,
     redis: IORedis.Redis,
     reverseHashKey: string,
@@ -35,7 +35,7 @@ export class NamesStartingByLetter extends MultipleResultQueryManager<NamedEntit
             ).map((entity) => entity.id),
           ),
         ),
-      primaryModelManager,
+      primaryEntityManager,
       redis,
       reverseHashKey,
     );

@@ -2,7 +2,7 @@ import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
-import { IPrimaryModelManager } from './IPrimaryModelManager';
+import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 import { IPrimaryQueryManager } from './IPrimaryQueryManager';
 
 export abstract class PrimaryQueryManager<
@@ -11,9 +11,9 @@ export abstract class PrimaryQueryManager<
   TQueryResult extends Promise<TEntity | TEntity[]>
 > implements IPrimaryQueryManager<TEntity, TQueryResult> {
   /**
-   * Primary model manager.
+   * Primary entity manager.
    */
-  protected _primaryModelManager: IPrimaryModelManager<TEntity>;
+  protected _primaryEntityManager: IPrimaryEntityManager<TEntity>;
   /**
    * Query to obtain ids.
    */
@@ -34,28 +34,28 @@ export abstract class PrimaryQueryManager<
   /**
    * Creates primary query manager.
    * @param query Query to obtain ids.
-   * @param primaryModelManager Primary model manager.
+   * @param primaryEntityManager Primary entity manager.
    * @param redis Redis connection to manage queries.
    * @param reverseHashKey Key of the reverse structure to obtain a map of entities to queries.
    */
   public constructor(
     query: TQuery,
-    primaryModelManager: IPrimaryModelManager<TEntity>,
+    primaryEntityManager: IPrimaryEntityManager<TEntity>,
     redis: IORedis.Redis,
     reverseHashKey: string,
   ) {
-    this._primaryModelManager = primaryModelManager;
+    this._primaryEntityManager = primaryEntityManager;
     this._query = query;
     this._redis = redis;
     this._reverseHashKey = reverseHashKey;
-    this._luaKeyGeneratorFromId = this._primaryModelManager.getKeyGenerationLuaScriptGenerator();
+    this._luaKeyGeneratorFromId = this._primaryEntityManager.getKeyGenerationLuaScriptGenerator();
   }
 
   /**
    * Query's model.
    */
   public get model(): IModel {
-    return this._primaryModelManager.model;
+    return this._primaryEntityManager.model;
   }
 
   /**

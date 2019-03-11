@@ -1,6 +1,6 @@
 import { IEntity } from '../../model/IEntity';
 import { Model } from '../../model/Model';
-import { PrimaryModelManager } from '../../persistence/primary/PrimaryModelManager';
+import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { ITest } from '../ITest';
 import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
 import { RedisWrapper } from './RedisWrapper';
@@ -48,7 +48,7 @@ export class SingleResultQueryManagerTest implements ITest {
     it(itsName, async (done) => {
       await this._beforeAllPromise;
       const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         null,
@@ -83,7 +83,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: number,
           field: string,
         }>(model, [entity1]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -132,7 +132,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: number,
           field: string,
         }>(model, [entity1]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -175,7 +175,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: number,
           field: string,
         }>(model, [entity1]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -219,7 +219,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: string,
           field: string,
         }>(model, [entity1]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -263,7 +263,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: number,
           field: string,
         }>(model, [entity1]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -305,7 +305,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: number,
           field: string,
         }>(model, []);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -348,7 +348,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: number,
           field: string,
         }>(model, []);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -394,7 +394,7 @@ export class SingleResultQueryManagerTest implements ITest {
           id: number,
           field: string,
         }>(model, [entity1]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,

@@ -1,6 +1,6 @@
 import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
-import { IPrimaryModelManager } from '../../persistence/primary/IPrimaryModelManager';
+import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
 import { SingleResultQueryManager } from '../../persistence/primary/SingleResultQueryManager';
 
 export class SingleResultQueryByFieldManager<TEntity extends IEntity>
@@ -11,7 +11,7 @@ export class SingleResultQueryByFieldManager<TEntity extends IEntity>
   /**
    * Creates a query by field manager.
    * @param query Query.
-   * @param primaryModelManager Primary model manager.
+   * @param primaryEntityManager Primary entity manager.
    * @param redis Redis connection.
    * @param reverseHashKey Reverse hash key.
    * @param field Query field.
@@ -19,19 +19,19 @@ export class SingleResultQueryByFieldManager<TEntity extends IEntity>
    */
   public constructor(
     query: (params: any) => Promise<number|string>,
-    primaryModelManager: IPrimaryModelManager<TEntity>,
+    primaryEntityManager: IPrimaryEntityManager<TEntity>,
     redis: IORedis.Redis,
     reverseHashKey: string,
     field: string,
     queryPrefix: string,
   ) {
     if (
-      undefined === primaryModelManager.model.properties.find(
+      undefined === primaryEntityManager.model.properties.find(
         (property) => field === property)
     ) {
       throw new Error('Field not in the model managed.');
     }
-    super(query, primaryModelManager, redis, reverseHashKey);
+    super(query, primaryEntityManager, redis, reverseHashKey);
     this._field = field;
     this._queryPrefix = queryPrefix;
   }

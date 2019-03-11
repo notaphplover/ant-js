@@ -1,5 +1,5 @@
 import { Model } from '../../model/Model';
-import { PrimaryModelManager } from '../../persistence/primary/PrimaryModelManager';
+import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { ITest } from '../ITest';
 import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
 import {
@@ -59,7 +59,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const model = new Model('id', ['id', 'name'], {prefix: prefix});
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model);
-      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
+      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -87,7 +87,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
-      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
+      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -115,7 +115,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
-      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
+      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -143,13 +143,13 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entities = new Array<NamedEntity>();
       const entitiesMap = new Map<number, NamedEntity>();
       for (let i = 0; i < entitiesSize; ++i) {
-        const entity = {id: i, name: 'Pepe' + i}
+        const entity = {id: i, name: 'Pepe' + i};
         entities.push(entity);
         entitiesMap.set(entity.id, entity);
       }
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, entities);
-      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
+      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -182,13 +182,13 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entities = new Array<NamedEntity>();
       const entitiesMap = new Map<number, NamedEntity>();
       for (let i = 0; i < entitiesSize; ++i) {
-        const entity = {id: i, name: 'Pepe' + i}
+        const entity = {id: i, name: 'Pepe' + i};
         entities.push(entity);
         entitiesMap.set(entity.id, entity);
       }
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, entities);
-      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
+      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -223,7 +223,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity1: NamedEntity = {id: 1, name: 'Pepe'};
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, [entity1]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -252,7 +252,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity1: NamedEntityAlternative = {id: '1', name: 'Pepe'};
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntityAlternative>(model, [entity1]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -281,7 +281,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
-      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
+      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -311,7 +311,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       }
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, entities);
-      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
+      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -337,7 +337,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, new Array());
-      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
+      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -364,7 +364,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity: NamedEntity = { id: 0, name: 'Pepe' };
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, new Array());
-      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
+      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -391,7 +391,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entityAfter: NamedEntity = { id: 0, name: 'Paco' };
       const secondaryModelManager =
         new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
-      const primaryModelManager = new PrimaryModelManager<NamedEntity>(
+      const primaryModelManager = new PrimaryEntityManager<NamedEntity>(
         model,
         this._redis.redis,
         secondaryModelManager,

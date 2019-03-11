@@ -2,7 +2,7 @@ import { IEntity } from '../../model/IEntity';
 import { Model } from '../../model/Model';
 import { CacheOptions } from '../../persistence/primary/CacheOptions';
 import { EntitySearchOptions } from '../../persistence/primary/EntitySearchOptions';
-import { PrimaryModelManager } from '../../persistence/primary/PrimaryModelManager';
+import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { ITest } from '../ITest';
 import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
 import { RedisWrapper } from './RedisWrapper';
@@ -58,7 +58,7 @@ export class PrimaryModelManagerTest implements ITest {
     it(itsName, async (done) => {
       await this._beforeAllPromise;
       const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         null,
@@ -88,7 +88,7 @@ export class PrimaryModelManagerTest implements ITest {
     it(itsName, async (done) => {
       await this._beforeAllPromise;
       const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         null,
@@ -115,7 +115,7 @@ export class PrimaryModelManagerTest implements ITest {
     it(itsName, async (done) => {
       await this._beforeAllPromise;
       const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         null,
@@ -142,7 +142,7 @@ export class PrimaryModelManagerTest implements ITest {
     it(itsName, async (done) => {
       await this._beforeAllPromise;
       const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         null,
@@ -174,7 +174,7 @@ export class PrimaryModelManagerTest implements ITest {
     it(itsName, async (done) => {
       await this._beforeAllPromise;
       const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         null,
@@ -206,7 +206,7 @@ export class PrimaryModelManagerTest implements ITest {
     it(itsName, async (done) => {
       await this._beforeAllPromise;
       const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         null,
@@ -238,7 +238,7 @@ export class PrimaryModelManagerTest implements ITest {
     it(itsName, async (done) => {
       await this._beforeAllPromise;
       const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         null,
@@ -274,7 +274,7 @@ export class PrimaryModelManagerTest implements ITest {
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         null,
@@ -307,7 +307,7 @@ return redis.call('get', ${luaExpression})`,
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         null,
@@ -340,7 +340,7 @@ return redis.call('get', ${luaExpression})`,
         new SecondaryModelManagerMock<{id: string}>(model);
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
-        new PrimaryModelManager(
+        new PrimaryEntityManager(
           model,
           this._redis.redis,
           secondaryModelManager,
@@ -365,7 +365,7 @@ return redis.call('get', ${luaExpression})`,
           id: number,
           field: string,
         }>(model, [entity]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -396,7 +396,7 @@ return redis.call('get', ${luaExpression})`,
           id: number,
           field: string,
         }>(model, [entity]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -428,7 +428,7 @@ return redis.call('get', ${luaExpression})`,
           field: string,
         }>(model, [entity1, entity2]);
 
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -451,7 +451,7 @@ return redis.call('get', ${luaExpression})`,
     it(itsName, async (done) => {
       await this._beforeAllPromise;
       const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         null,
@@ -475,7 +475,7 @@ return redis.call('get', ${luaExpression})`,
           field: string,
         }>(model);
 
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -503,7 +503,7 @@ return redis.call('get', ${luaExpression})`,
           id: number,
           field: string,
         }>(model, [entity]);
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -538,7 +538,7 @@ return redis.call('get', ${luaExpression})`,
           field: string,
         }>(model, [entity1, entity2]);
 
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
@@ -569,7 +569,7 @@ return redis.call('get', ${luaExpression})`,
           field: string,
         }>(model);
 
-      const primaryModelManager = new PrimaryModelManager(
+      const primaryModelManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
         secondaryModelManager,
