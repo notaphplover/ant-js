@@ -2,6 +2,7 @@ import { IEntity } from '../../model/IEntity';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
 
+const LUA_PACK_SIZE = 4000;
 const VOID_RESULT_STRING = 'v\x06\x15';
 
 export abstract class MultipleResultQueryManager<
@@ -128,7 +129,6 @@ end`;
   private _luaGetGenerator(): string {
     const entitiesAlias = 'entities';
     const idsAlias = 'ids';
-    const keysAlias = 'keys';
     const resultAlias = 'result';
     return `local ${idsAlias} = redis.call('smembers', KEYS[1])
 if #${idsAlias} == 0 then
@@ -137,11 +137,10 @@ else
   if ${idsAlias}[1] == '${VOID_RESULT_STRING}' then
     return '${VOID_RESULT_STRING}'
   else
-    local ${keysAlias} = {}
+    local ${entitiesAlias} = {}
     for i = 1, #${idsAlias} do
-      ${keysAlias}[i] = ${this._luaKeyGeneratorFromId(idsAlias + '[i]')}
+      ${entitiesAlias}[i] = redis.call('get', ${this._luaKeyGeneratorFromId(idsAlias + '[i]')})
     end
-    local ${entitiesAlias} = redis.call('mget', unpack(${keysAlias}))
     local ${resultAlias} = {}
     for i = 1, #${idsAlias} do
       if ${entitiesAlias}[i] then
@@ -158,13 +157,13 @@ end`;
     return `if redis.call('sismember', KEYS[1], KEYS[3]) then
   redis.call('srem', KEYS[1], KEYS[3])
 end
-redis.call('sadd', KEYS[1], unpack(ARGV))
+for i=1, #ARGV do
+  redis.call('sadd', KEYS[1], ARGV[i])
+end
 local msetArgs = {}
 for i=1, #ARGV do
-  msetArgs[2 * i - 1] = ARGV[i]
-  msetArgs[2 * i] = KEYS[1]
-end
-redis.call('hmset', KEYS[2], unpack(msetArgs))`;
+  redis.call('hset', KEYS[2], ARGV[i], KEYS[1])
+end`;
   }
   /**
    * Gets the lua script to set a query with no results.
