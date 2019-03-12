@@ -4,6 +4,12 @@
         "tslint:recommended"
     ],
     "jsRules": {},
+    "linterOptions": {
+        "exclude": [
+            "node_modules/**/*",
+            "**/*.d.ts"
+        ]
+    },
     "rules": {
         "curly": true,
         "eofline": true,
