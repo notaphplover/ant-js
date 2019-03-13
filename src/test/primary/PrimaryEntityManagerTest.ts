@@ -9,7 +9,7 @@ import { RedisWrapper } from './RedisWrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-export class PrimaryModelManagerTest implements ITest {
+export class PrimaryEntityManagerTest implements ITest {
   /**
    * Before all task performed promise.
    */
@@ -25,7 +25,7 @@ export class PrimaryModelManagerTest implements ITest {
 
   public constructor(beforeAllPromise: Promise<any>) {
     this._beforeAllPromise = beforeAllPromise;
-    this._declareName = 'PrimaryModelManagerTest';
+    this._declareName = 'PrimaryEntityManagerTest';
     this._redis = new RedisWrapper();
   }
 
