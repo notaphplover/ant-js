@@ -8,6 +8,7 @@
     "build-and-test": "npm run build && npm run test-only",
     "build-and-test-and-coverage": "npm run build-and-test && npm run report-coverage",
     "build-and-test-debug": "npm run build && npm run test-debug-only",
+    "linter": "./node_modules/tslint/bin/tslint -c ./tslint.json -p ./src.tsconfig.commonjs.json",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "test": "npm run test-docker",
     "test-coverage": "npm run test-docker-coverage",
