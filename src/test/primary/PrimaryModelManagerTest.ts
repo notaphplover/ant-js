@@ -35,7 +35,6 @@ export class PrimaryModelManagerTest implements ITest {
       this.itDoesNotCacheEntitiesIfNoCacheOptionIsProvided();
       this.itDoesNotCacheEntityIfNoCacheOptionIsProvided();
       this.itDoesNotSupportCacheIfNotExiststCacheEntities();
-      this.itDoesNotSupportTTLAtCacheEntities();
       this.itDoesNotSupportUndefinedCacheOptionAtCacheEntities();
       this.itDoesNotSupportUndefinedCacheOptionAtCacheEntity();
       this.itGeneratesALuaKeyGeneratorUsingAPrefix();
@@ -48,6 +47,7 @@ export class PrimaryModelManagerTest implements ITest {
       this.itMustFindZeroEntities();
       this.itMustPersistAnEntity();
       this.itMustPersistMultipleEntities();
+      this.itMustPersistMultipleEntitiesWithTTL();
       this.itMustPersistZeroEntities();
     });
   }
@@ -162,38 +162,7 @@ export class PrimaryModelManagerTest implements ITest {
           new EntitySearchOptions(CacheOptions.CacheIfNotExist),
         );
         fail();
-      } catch {
         done();
-      }
-    }, MAX_SAFE_TIMEOUT);
-  }
-
-  private itDoesNotSupportTTLAtCacheEntities(): void {
-    const itsName = 'doesNotSupportTTLAtCacheEntities';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(itsName, async (done) => {
-      await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryEntityManager = new PrimaryEntityManager(
-        model,
-        this._redis.redis,
-        null,
-      );
-      const entity1: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 1, field: 'sample-1'};
-
-      /*
-       * Expect async to throw error just sucks:
-       * https://github.com/jasmine/jasmine/issues/1410
-       */
-      try {
-        await primaryEntityManager.cacheEntities(
-          [entity1],
-          new EntitySearchOptions(CacheOptions.CacheAndOverwrite, 2),
-        );
-        fail();
       } catch {
         done();
       }
@@ -226,6 +195,7 @@ export class PrimaryModelManagerTest implements ITest {
           new EntitySearchOptions('Ohhh yeaaaahh!' as unknown as CacheOptions),
         );
         fail();
+        done();
       } catch {
         done();
       }
@@ -258,6 +228,7 @@ export class PrimaryModelManagerTest implements ITest {
           new EntitySearchOptions('Ohhh yeaaaahh!' as unknown as CacheOptions),
         );
         fail();
+        done();
       } catch {
         done();
       }
@@ -289,6 +260,7 @@ return redis.call('get', ${luaExpression})`,
       );
       if (null == valueFound) {
         fail();
+        done();
         return;
       }
       const entityFound = JSON.parse(valueFound);
@@ -322,6 +294,7 @@ return redis.call('get', ${luaExpression})`,
       );
       if (null == valueFound) {
         fail();
+        done();
         return;
       }
       const entityFound = JSON.parse(valueFound);
@@ -550,6 +523,48 @@ return redis.call('get', ${luaExpression})`,
         entity1[model.id],
         entity2[model.id],
       ]);
+
+      expect(entitiesFound).toContain(entity1);
+      expect(entitiesFound).toContain(entity2);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private itMustPersistMultipleEntitiesWithTTL(): void {
+    const itsName = 'mustPersistMultipleEntitiesWithTTL';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const entity1: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 1, field: 'sample-1'};
+      const entity2: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 2, field: 'sample-2'};
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<IEntity & {
+          id: number,
+          field: string,
+        }>(model, [entity1, entity2]);
+
+      const primaryEntityManager = new PrimaryEntityManager(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const options = new EntitySearchOptions(CacheOptions.CacheAndOverwrite, 3600);
+      await primaryEntityManager.getByIds([
+        entity1[model.id],
+        entity2[model.id],
+      ], options);
+      secondaryModelManager.store.length = 0;
+      const entitiesFound = await primaryEntityManager.getByIds([
+        entity1[model.id],
+        entity2[model.id],
+      ], options);
 
       expect(entitiesFound).toContain(entity1);
       expect(entitiesFound).toContain(entity2);

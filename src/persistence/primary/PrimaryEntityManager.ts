@@ -55,33 +55,37 @@ export class PrimaryEntityManager<TEntity extends IEntity>
     entities: TEntity[],
     searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
   ): Promise<any> {
+    if (null == entities || 0 === entities.length) {
+      return new Promise<void>((resolve) => resolve());
+    }
     if (CacheOptions.NoCache === searchOptions.cacheOptions) {
       return new Promise<void>((resolve) => resolve());
     }
     if (CacheOptions.CacheIfNotExist === searchOptions.cacheOptions) {
       throw new Error('This version does not support to cache multiple entities only if they are not cached :(.');
     }
-    if (null != searchOptions.ttl) {
-      throw new Error('This version does not support to cache multiple entities with the same ttl :(.');
-    }
-
     if (CacheOptions.CacheAndOverwrite !== searchOptions.cacheOptions) {
       throw new Error('Unexpected cache options.');
     }
 
-    const cacheMap = new Map<string, string>();
     const idField = this.model.id;
 
-    for (const entity of entities) {
-      cacheMap.set(
-        this._getKey(entity[idField]),
-        JSON.stringify(entity),
-      );
-    }
-
-    if (0 === cacheMap.size) {
-      return new Promise<void>((resolve) => resolve());
+    if (searchOptions.ttl) {
+      return this._redis.eval([
+        this._luaGetMultipleSetEx(),
+        entities.length,
+        ...entities.map((entity) => this._getKey(entity[idField])),
+        ...entities.map((entity) => JSON.stringify(entity)),
+        searchOptions.ttl,
+      ]);
     } else {
+      const cacheMap = new Map<string, string>();
+      for (const entity of entities) {
+        cacheMap.set(
+          this._getKey(entity[idField]),
+          JSON.stringify(entity),
+        );
+      }
       return (this._redis.mset as unknown as (map: Map<string, string>) => Promise<any>)(cacheMap);
     }
   }
@@ -163,6 +167,18 @@ export class PrimaryEntityManager<TEntity extends IEntity>
     return (this._model.entityKeyGenerationData.prefix || '')
       + id
       + (this._model.entityKeyGenerationData.suffix || '');
+  }
+
+  /**
+   * Gets the script for setting multiple keys with a TTL value.
+   * @param ttl TTL to apply.
+   * @returns generated script.
+   */
+  protected _luaGetMultipleSetEx(): string {
+    return `local ttl = ARGV[#ARGV]
+for i=1, #KEYS do
+  redis.call('setex', KEYS[i], ttl, ARGV[i])
+end`;
   }
 
   /**
