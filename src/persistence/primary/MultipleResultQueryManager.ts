@@ -13,21 +13,6 @@ export abstract class MultipleResultQueryManager<
   Promise<TEntity[]>
 > {
   /**
-   * Syncs the remove of an entity in cache.
-   * @param entity deleted entity.
-   * @returns Promise of query sync
-   */
-  public deleteEntityInQueries(entity: TEntity): Promise<void> {
-    return this._redis.eval(
-      this._luaDeleteGenerator(),
-      2,
-      this._reverseHashKey,
-      JSON.stringify(entity[this.model.id]),
-      VOID_RESULT_STRING,
-    );
-  }
-
-  /**
    * Gets the result of a query.
    * @param params Query parameters.
    * @param searchOptions Search options.
@@ -92,11 +77,26 @@ export abstract class MultipleResultQueryManager<
   }
 
   /**
+   * Syncs the remove of an entity in cache.
+   * @param entity deleted entity.
+   * @returns Promise of query sync
+   */
+  public syncDelete(entity: TEntity): Promise<void> {
+    return this._redis.eval(
+      this._luaDeleteGenerator(),
+      2,
+      this._reverseHashKey,
+      JSON.stringify(entity[this.model.id]),
+      VOID_RESULT_STRING,
+    );
+  }
+
+  /**
    * Updates an entity in queries related to the entity.
    * @param entity entity to be updated.
    * @returns Promise of query sync.
    */
-  public updateEntityInQueries(entity: TEntity): Promise<void> {
+  public syncuUpdate(entity: TEntity): Promise<void> {
     return this._redis.eval(
       this._luaUpdateGenerator(),
       3,

@@ -12,20 +12,6 @@ export abstract class SingleResultQueryManager<
   Promise<TEntity>
 > {
   /**
-   * Syncs the remove of an entity in cache.
-   * @param entity deleted entity.
-   * @returns Promise of query sinc
-   */
-  public deleteEntityInQueries(entity: TEntity): Promise<void> {
-    return this._redis.eval(
-      this._luaDeleteGenerator(),
-      1,
-      this._reverseHashKey,
-      JSON.stringify(entity[this.model.id]),
-      VOID_RESULT_STRING,
-    );
-  }
-  /**
    * Gets the result of a query.
    * @param params Query parameters.
    * @param searchOptions Search options.
@@ -63,10 +49,25 @@ export abstract class SingleResultQueryManager<
   }
 
   /**
+   * Syncs the remove of an entity in cache.
+   * @param entity deleted entity.
+   * @returns Promise of query sinc
+   */
+  public syncDelete(entity: TEntity): Promise<void> {
+    return this._redis.eval(
+      this._luaDeleteGenerator(),
+      1,
+      this._reverseHashKey,
+      JSON.stringify(entity[this.model.id]),
+      VOID_RESULT_STRING,
+    );
+  }
+
+  /**
    * Syncs the update of an entity in cache.
    * @param entity updated entity.
    */
-  public updateEntityInQueries(entity: TEntity): Promise<void> {
+  public syncuUpdate(entity: TEntity): Promise<void> {
     return this._redis.eval(
       this._luaUpdateGenerator(),
       2,

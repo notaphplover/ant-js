@@ -11,12 +11,6 @@ export interface IPrimaryQueryManager<
    */
   model: IModel;
   /**
-   * Syncs the remove of an entity in cache.
-   * @param entity deleted entity.
-   * @returns Promise of query sinc
-   */
-  deleteEntityInQueries(entity: TEntity): Promise<void>;
-  /**
    * Gets a query result.
    * @param params query params.
    * @returns query results.
@@ -26,8 +20,15 @@ export interface IPrimaryQueryManager<
     searchOptions?: IEntitySearchOptions,
   ): TQueryResult;
   /**
+   * Syncs the remove of an entity in cache.
+   * @param entity deleted entity.
+   * @returns Promise of query sync
+   */
+  syncDelete(entity: TEntity): Promise<void>;
+  /**
    * Syncs the update of an entity in cache.
    * @param entity updated entity.
+   * @returns Promise of query sync
    */
-  updateEntityInQueries(entity: TEntity): Promise<void>;
+  syncuUpdate(entity: TEntity): Promise<void>;
 }

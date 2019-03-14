@@ -59,12 +59,6 @@ export abstract class PrimaryQueryManager<
   }
 
   /**
-   * Syncs the remove of an entity in cache.
-   * @param entity deleted entity.
-   */
-  public abstract deleteEntityInQueries(entity: TEntity): Promise<void>;
-
-  /**
    * Gets a query result.
    * @param params query params.
    * @returns query results.
@@ -75,10 +69,16 @@ export abstract class PrimaryQueryManager<
   ): TQueryResult;
 
   /**
+   * Syncs the remove of an entity in cache.
+   * @param entity deleted entity.
+   */
+  public abstract syncDelete(entity: TEntity): Promise<void>;
+
+  /**
    * Syncs the update of an entity in cache.
    * @param entity updated entity.
    */
-  public abstract updateEntityInQueries(entity: TEntity): Promise<void>;
+  public abstract syncuUpdate(entity: TEntity): Promise<void>;
 
   /**
    * Gets a key for a certain query.

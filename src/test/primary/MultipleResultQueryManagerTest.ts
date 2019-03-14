@@ -100,7 +100,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         prefix + 'names-starting-with/',
       );
       await queryManager.get(entity);
-      await queryManager.deleteEntityInQueries(entity);
+      await queryManager.syncDelete(entity);
       expect(await queryManager.get(entity)).toEqual(new Array());
       done();
     }, MAX_SAFE_TIMEOUT);
@@ -404,7 +404,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         prefix + 'names-starting-with/',
       );
       await queryManager.get(entity);
-      await queryManager.updateEntityInQueries(entityAfter);
+      await queryManager.syncuUpdate(entityAfter);
       expect(await queryManager.get(entityAfter)).toEqual([entityAfter]);
       done();
     }, MAX_SAFE_TIMEOUT);

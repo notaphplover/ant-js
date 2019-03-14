@@ -108,7 +108,7 @@ export class SingleResultQueryManagerTest implements ITest {
       secondaryModelManager.store.length = 0;
       const entityFoundBefore = await queryManager.get({ field: entity1.field });
       await primaryEntityManager.deleteEntityFromCache(entity1);
-      await queryManager.deleteEntityInQueries(entity1);
+      await queryManager.syncDelete(entity1);
       const entityFoundAfter = await queryManager.get({ field: entity1.field });
 
       expect(entityFoundBefore).toEqual(entity1);
@@ -418,7 +418,7 @@ export class SingleResultQueryManagerTest implements ITest {
       await queryManager.get({ field: entity1.field });
       secondaryModelManager.store.length = 0;
       await primaryEntityManager.cacheEntity(entity1After);
-      await queryManager.updateEntityInQueries(entity1After);
+      await queryManager.syncuUpdate(entity1After);
       const entityByOldValue = await queryManager.get({ field: entity1.field });
       const entityByNewValue = await queryManager.get({ field: entity1After.field });
 
