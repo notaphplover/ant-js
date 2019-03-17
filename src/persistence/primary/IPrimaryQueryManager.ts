@@ -30,5 +30,5 @@ export interface IPrimaryQueryManager<
    * @param entity updated entity.
    * @returns Promise of query sync
    */
-  syncuUpdate(entity: TEntity): Promise<void>;
+  syncUpdate(entity: TEntity): Promise<void>;
 }

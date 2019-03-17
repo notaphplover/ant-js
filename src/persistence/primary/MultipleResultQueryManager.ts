@@ -2,7 +2,6 @@ import { IEntity } from '../../model/IEntity';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
 
-const LUA_PACK_SIZE = 4000;
 const VOID_RESULT_STRING = 'v\x06\x15';
 
 export abstract class MultipleResultQueryManager<
@@ -68,9 +67,11 @@ export abstract class MultipleResultQueryManager<
         }
         throw new Error(`Query "${key}" corrupted!`);
       }
-      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, searchOptions);
-      for (const missingEntity of missingEntities) {
-        finalResults.push(missingEntity);
+      if (0 < missingIds.length) {
+        const missingEntities = await this._primaryEntityManager.getByIds(missingIds, searchOptions);
+        for (const missingEntity of missingEntities) {
+          finalResults.push(missingEntity);
+        }
       }
       return finalResults;
     }
@@ -96,7 +97,7 @@ export abstract class MultipleResultQueryManager<
    * @param entity entity to be updated.
    * @returns Promise of query sync.
    */
-  public syncuUpdate(entity: TEntity): Promise<void> {
+  public syncUpdate(entity: TEntity): Promise<void> {
     return this._redis.eval(
       this._luaUpdateGenerator(),
       3,
@@ -167,13 +168,17 @@ end`;
   }
   /**
    * Gets the lua script to set a query with no results.
+   * @returns Lua script
    */
   private _luaSetVoidQueryGenerator(): string {
     return `if (0 == redis.call('scard', KEYS[1])) then
   redis.call('sadd', KEYS[1], ARGV[1])
 end`;
   }
-
+  /**
+   * Gets the lua script for an update request.
+   * @returns lua script.
+   */
   private _luaUpdateGenerator(): string {
     return `local key = redis.call('hget', KEYS[1], KEYS[2])
 if key then
@@ -181,10 +186,11 @@ if key then
   if 0 == redis.call('scard', key) then
     redis.call('sadd', key, ARGV[1])
   end
-  if redis.call('sismember', KEYS[3], ARGV[1]) then
-    redis.call('srem', KEYS[3], ARGV[1])
-  end
-  redis.call('sadd', KEYS[3], ARGV[2])
-end`;
+end
+redis.call('hset', KEYS[1], KEYS[2], KEYS[3])
+if redis.call('sismember', KEYS[3], ARGV[1]) then
+  redis.call('srem', KEYS[3], ARGV[1])
+end
+redis.call('sadd', KEYS[3], ARGV[2])`;
   }
 }

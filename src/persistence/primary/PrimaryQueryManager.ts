@@ -78,7 +78,7 @@ export abstract class PrimaryQueryManager<
    * Syncs the update of an entity in cache.
    * @param entity updated entity.
    */
-  public abstract syncuUpdate(entity: TEntity): Promise<void>;
+  public abstract syncUpdate(entity: TEntity): Promise<void>;
 
   /**
    * Gets a key for a certain query.

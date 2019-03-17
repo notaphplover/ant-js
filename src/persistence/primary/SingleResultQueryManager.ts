@@ -28,8 +28,13 @@ export abstract class SingleResultQueryManager<
       if (null == id) {
         this._redis.set(key, VOID_RESULT_STRING);
       } else {
-        this._redis.set(key, JSON.stringify(id));
-        this._redis.hset(this._reverseHashKey, JSON.stringify(id), key);
+        this._redis.eval(
+          this._luaSetGenerator(),
+          2,
+          key,
+          this._reverseHashKey,
+          JSON.stringify(id),
+        );
       }
       return await this._primaryEntityManager.getById(id, searchOptions);
     } else {
@@ -49,9 +54,69 @@ export abstract class SingleResultQueryManager<
   }
 
   /**
+   * Gets the result of multiple queries.
+   * @param paramsArray Queries parameters.
+   * @param searchOptions Search options.
+   */
+  public async mGet(
+    paramsArray: any[],
+    searchOptions?: IEntitySearchOptions,
+  ): Promise<TEntity[]> {
+    if (null == paramsArray || 0 === paramsArray.length) {
+      return new Array();
+    }
+    const keys = paramsArray.map((params) => this._key(params));
+    const luaScript = this._luaMGetGenerator();
+    const resultsJson = await this._redis.eval(luaScript, keys.length, keys);
+    const missingIds = new Array<number|string>();
+    const finalResults = new Array();
+
+    for (let i = 0; i < resultsJson.length; ++i) {
+      const resultJson = resultsJson[i];
+      if (null == resultJson) {
+        const id = await this._query(paramsArray[i]);
+        if (null == id) {
+          this._redis.set(keys[i], VOID_RESULT_STRING);
+        } else {
+          missingIds.push(id);
+          this._redis.eval(
+            this._luaSetGenerator(),
+            2,
+            keys[i],
+            this._reverseHashKey,
+            JSON.stringify(id),
+          );
+        }
+        continue;
+      }
+      if (VOID_RESULT_STRING === resultJson) {
+        continue;
+      }
+      const result = JSON.parse(resultJson);
+      const resultType = typeof result;
+      if ('object' === resultType) {
+        finalResults.push(result);
+        continue;
+      }
+      if ('number' === resultType || 'string' === resultType) {
+        missingIds.push(result);
+        continue;
+      }
+      throw new Error(`Query "${keys[i]}" corrupted!`);
+    }
+    if (0 < missingIds.length) {
+      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, searchOptions);
+      for (const missingEntity of missingEntities) {
+        finalResults.push(missingEntity);
+      }
+    }
+    return finalResults;
+  }
+
+  /**
    * Syncs the remove of an entity in cache.
    * @param entity deleted entity.
-   * @returns Promise of query sinc
+   * @returns Promise of query sync
    */
   public syncDelete(entity: TEntity): Promise<void> {
     return this._redis.eval(
@@ -64,10 +129,47 @@ export abstract class SingleResultQueryManager<
   }
 
   /**
+   * Syncs the remove of entities in cache.
+   * @param entities deleted entities.
+   * @returns Promise of query sync
+   */
+  public syncMDelete(entities: TEntity[]): Promise<void> {
+    if (null == entities || 0 === entities.length) {
+      return new Promise((resolve) => { resolve(); });
+    }
+    return this._redis.eval([
+      this._luaMDeleteGenerator(),
+      1,
+      this._reverseHashKey,
+      ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
+      VOID_RESULT_STRING,
+    ]);
+  }
+
+  /**
+   * Syncs the update of multiple entities in cache.
+   * @param entities updated entities.
+   * @returns Promise of query sync.
+   */
+  public syncMUpdate(entities: TEntity[]): Promise<void> {
+    if (null == entities || 0 === entities.length) {
+      return new Promise((resolve) => { resolve(); });
+    }
+    return this._redis.eval([
+      this._luaMUpdateGenerator(),
+      entities.length + 1,
+      ...(entities.map((entity) => this._key(entity))),
+      this._reverseHashKey,
+      ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
+    ]);
+  }
+
+  /**
    * Syncs the update of an entity in cache.
    * @param entity updated entity.
+   * @returns Promise of query sync
    */
-  public syncuUpdate(entity: TEntity): Promise<void> {
+  public syncUpdate(entity: TEntity): Promise<void> {
     return this._redis.eval(
       this._luaUpdateGenerator(),
       2,
@@ -112,6 +214,73 @@ end`;
   }
 
   /**
+   * Gets the lua script for a multiple delete request.
+   * @returns lua script.
+   */
+  private _luaMDeleteGenerator(): string {
+    return `local reverseKey = KEYS[1]
+local voidValue = ARGV[#ARGV]
+for i=1, #ARGV-1 do
+  local key = redis.call('hget', reverseKey, ARGV[i])
+  if key then
+    redis.call('set', key, voidValue)
+  end
+end`;
+  }
+
+  /**
+   * Gets the lua script for a multiple get request.
+   * @returns lua script.
+   */
+  private _luaMGetGenerator(): string {
+    const keyAlias = 'key';
+    return `local results = {}
+for i=1, #KEYS do
+  local ${keyAlias} = redis.call('get', KEYS[i])
+  if ${keyAlias} then
+    if ${keyAlias} == '${VOID_RESULT_STRING}' then
+      results[i] = '${VOID_RESULT_STRING}'
+    else
+      local entity = redis.call('get', ${this._luaKeyGeneratorFromId(keyAlias)})
+      if entity then
+        results[i] = entity
+      else
+        results[i] = key
+      end
+    end
+  else
+    results[i] = ${keyAlias}
+  end
+end
+return results`;
+  }
+
+  /**
+   * Gets the lua script for a multiple update request.
+   * @returns lua script.
+   */
+  private _luaMUpdateGenerator(): string {
+    return `local reverseKey = KEYS[#KEYS]
+for i=1, #KEYS-1 do
+  local key = redis.call('hget', reverseKey, ARGV[i])
+  if key then
+    redis.call('del', key)
+  end
+  redis.call('hset', reverseKey, ARGV[i], KEYS[i]);
+  redis.call('set', KEYS[i], ARGV[i])
+end`;
+  }
+
+  /**
+   * Gets the lua script for a query set request.
+   * @returns lua script.
+   */
+  private _luaSetGenerator(): string {
+    return `redis.call('set', KEYS[1], ARGV[1])
+redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
+  }
+
+  /**
    * Gets the lua script for an update request.
    * @returns lua script.
    */
@@ -119,7 +288,8 @@ end`;
     return `local key = redis.call('hget', KEYS[1], ARGV[1])
 if key then
   redis.call('del', key)
-  redis.call('set', KEYS[2], ARGV[1])
-end`;
+end
+redis.call('hset', KEYS[1], ARGV[1], KEYS[2]);
+redis.call('set', KEYS[2], ARGV[1])`;
   }
 }
