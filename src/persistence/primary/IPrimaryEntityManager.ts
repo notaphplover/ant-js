@@ -18,13 +18,6 @@ export interface IPrimaryEntityManager<TEntity extends IEntity>
     searchOptions: ICacheOptions,
   ): Promise<any>;
   /**
-   * Caches an entity.
-   * @param entity entity to cache.
-   * @param searchOptions Search options.
-   * @returns Promise of redis operation ended
-   */
-  cacheEntity(entity: TEntity, searchOptions: ICacheOptions): Promise<any>;
-  /**
    * Deletes an entity from the cache.
    * This operation is not propagated to a successor
    * @param entity Entity to delete
@@ -36,4 +29,11 @@ export interface IPrimaryEntityManager<TEntity extends IEntity>
    * @returns function able to generate a lua expression that generates a key from a giving id.
    */
   getKeyGenerationLuaScriptGenerator(): (alias: string) => string;
+  /**
+   * Caches an entity.
+   * @param entity entity to cache.
+   * @param searchOptions Search options.
+   * @returns Promise of redis operation ended
+   */
+  update(entity: TEntity, searchOptions: ICacheOptions): Promise<any>;
 }

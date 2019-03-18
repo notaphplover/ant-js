@@ -91,33 +91,6 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   }
 
   /**
-   * Caches an entity.
-   * @param entity entity to cache.
-   * @param searchOptions Search options.
-   * @returns Promise of redis operation ended
-   */
-  public cacheEntity(
-    entity: TEntity,
-    searchOptions: ICacheOptions = new CacheOptions(),
-  ): Promise<any> {
-    if (null == entity) {
-      return new Promise((resolve) => resolve());
-    }
-    if (CacheMode.NoCache === searchOptions.cacheOptions) {
-      return new Promise((resolve) => resolve());
-    }
-    const key = this._getKey(entity[this.model.id]);
-    switch (searchOptions.cacheOptions) {
-      case CacheMode.CacheIfNotExist:
-        return this._redis.setnx(key, JSON.stringify(entity));
-      case CacheMode.CacheAndOverwrite:
-        return this._redis.set(key, JSON.stringify(entity));
-      default:
-        throw new Error('Unexpected cache options.');
-    }
-  }
-
-  /**
    * Deletes an entity from the cache.
    * This operation is not propagated to a successor
    * @param entity Entity to delete
@@ -157,6 +130,33 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    */
   public getKeyGenerationLuaScriptGenerator() {
     return this._innerGetKeyGenerationLuaScriptGenerator(this._model.entityKeyGenerationData);
+  }
+
+  /**
+   * Caches an entity.
+   * @param entity entity to cache.
+   * @param searchOptions Search options.
+   * @returns Promise of redis operation ended
+   */
+  public update(
+    entity: TEntity,
+    searchOptions: ICacheOptions = new CacheOptions(),
+  ): Promise<any> {
+    if (null == entity) {
+      return new Promise((resolve) => resolve());
+    }
+    if (CacheMode.NoCache === searchOptions.cacheOptions) {
+      return new Promise((resolve) => resolve());
+    }
+    const key = this._getKey(entity[this.model.id]);
+    switch (searchOptions.cacheOptions) {
+      case CacheMode.CacheIfNotExist:
+        return this._redis.setnx(key, JSON.stringify(entity));
+      case CacheMode.CacheAndOverwrite:
+        return this._redis.set(key, JSON.stringify(entity));
+      default:
+        throw new Error('Unexpected cache options.');
+    }
   }
 
   /**
@@ -201,7 +201,7 @@ end`;
       return null;
     }
     return this._successor.getById(id).then((entity) => {
-      this.cacheEntity(entity, searchOptions);
+      this.update(entity, searchOptions);
       return entity;
     });
   }

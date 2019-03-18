@@ -72,8 +72,8 @@ export class PrimaryEntityManagerTest implements ITest {
         field: string,
       } = {id: 1, field: 'sample-modified'};
 
-      await primaryEntityManager.cacheEntity(entity1);
-      await primaryEntityManager.cacheEntity(
+      await primaryEntityManager.update(entity1);
+      await primaryEntityManager.update(
         entity1Modified,
         new CacheOptions(CacheMode.CacheIfNotExist),
       );
@@ -125,7 +125,7 @@ export class PrimaryEntityManagerTest implements ITest {
         field: string,
       } = {id: 1, field: 'sample-1'};
 
-      await primaryEntityManager.cacheEntity(
+      await primaryEntityManager.update(
         entity1,
         new CacheOptions(CacheMode.NoCache),
       );
@@ -223,7 +223,7 @@ export class PrimaryEntityManagerTest implements ITest {
        * https://github.com/jasmine/jasmine/issues/1410
        */
       try {
-        await primaryEntityManager.cacheEntity(
+        await primaryEntityManager.update(
           entity1,
           new CacheOptions('Ohhh yeaaaahh!' as unknown as CacheMode),
         );
@@ -250,7 +250,7 @@ export class PrimaryEntityManagerTest implements ITest {
         this._redis.redis,
         null,
       );
-      await primaryEntityManager.cacheEntity(entity);
+      await primaryEntityManager.update(entity);
       const luaKey = 'key';
       const luaExpression = primaryEntityManager.getKeyGenerationLuaScriptGenerator()(luaKey);
       const valueFound = await this._redis.redis.eval(
@@ -284,7 +284,7 @@ return redis.call('get', ${luaExpression})`,
         this._redis.redis,
         null,
       );
-      await primaryEntityManager.cacheEntity(entity);
+      await primaryEntityManager.update(entity);
       const luaKey = 'key';
       const luaExpression = primaryEntityManager.getKeyGenerationLuaScriptGenerator()(luaKey);
       const valueFound = await this._redis.redis.eval(
@@ -344,7 +344,7 @@ return redis.call('get', ${luaExpression})`,
         secondaryModelManager,
       );
 
-      await primaryEntityManager.cacheEntity(entity);
+      await primaryEntityManager.update(entity);
       secondaryModelManager.store.length = 0;
       await primaryEntityManager.delete(entity);
       const entityFound = await primaryEntityManager.getById(entity[model.id]);
@@ -482,7 +482,7 @@ return redis.call('get', ${luaExpression})`,
         secondaryModelManager,
       );
 
-      await primaryEntityManager.cacheEntity(entity);
+      await primaryEntityManager.update(entity);
       secondaryModelManager.store.length = 0;
       const entityFound = await primaryEntityManager.getById(entity[model.id]);
 
