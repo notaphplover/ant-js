@@ -4,7 +4,7 @@ import { IEntityKeyGenerationData } from '../../model/IEntityKeyGenerationData';
 import { IModel } from '../../model/IModel';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { CacheMode } from './CacheMode';
-import { EntitySearchOptions } from './EntitySearchOptions';
+import { CacheOptions } from './CacheOptions';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 
@@ -53,7 +53,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    */
   public cacheEntities(
     entities: TEntity[],
-    searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
+    searchOptions: IEntitySearchOptions = new CacheOptions(),
   ): Promise<any> {
     if (null == entities || 0 === entities.length) {
       return new Promise<void>((resolve) => resolve());
@@ -98,7 +98,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    */
   public cacheEntity(
     entity: TEntity,
-    searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
+    searchOptions: IEntitySearchOptions = new CacheOptions(),
   ): Promise<any> {
     if (null == entity) {
       return new Promise((resolve) => resolve());
@@ -134,7 +134,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    */
   public getById(
     id: number|string,
-    searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
+    searchOptions: IEntitySearchOptions = new CacheOptions(),
   ): Promise<TEntity> {
     return this._innerGetById(id, searchOptions);
   }
@@ -146,7 +146,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    */
   public getByIds(
     ids: Array<number|string>,
-    searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
+    searchOptions: IEntitySearchOptions = new CacheOptions(),
   ): Promise<TEntity[]> {
     return this._innerGetByIds(ids, searchOptions);
   }
