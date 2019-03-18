@@ -98,7 +98,7 @@ export class PrimaryEntityManagerTest implements ITest {
         field: string,
       } = {id: 1, field: 'sample-1'};
 
-      await primaryEntityManager.cacheEntities(
+      await primaryEntityManager.mUpdate(
         [entity1],
         new CacheOptions(CacheMode.NoCache),
       );
@@ -157,7 +157,7 @@ export class PrimaryEntityManagerTest implements ITest {
        * https://github.com/jasmine/jasmine/issues/1410
        */
       try {
-        await primaryEntityManager.cacheEntities(
+        await primaryEntityManager.mUpdate(
           [entity1],
           new CacheOptions(CacheMode.CacheIfNotExist),
         );
@@ -190,7 +190,7 @@ export class PrimaryEntityManagerTest implements ITest {
        * https://github.com/jasmine/jasmine/issues/1410
        */
       try {
-        await primaryEntityManager.cacheEntities(
+        await primaryEntityManager.mUpdate(
           [entity1],
           new CacheOptions('Ohhh yeaaaahh!' as unknown as CacheMode),
         );
@@ -517,7 +517,7 @@ return redis.call('get', ${luaExpression})`,
         secondaryModelManager,
       );
 
-      await primaryEntityManager.cacheEntities([entity1, entity2]);
+      await primaryEntityManager.mUpdate([entity1, entity2]);
       secondaryModelManager.store.length = 0;
       const entitiesFound = await primaryEntityManager.getByIds([
         entity1[model.id],
@@ -591,7 +591,7 @@ return redis.call('get', ${luaExpression})`,
       );
 
       expect(async () => {
-        await primaryEntityManager.cacheEntities(new Array());
+        await primaryEntityManager.mUpdate(new Array());
       }).not.toThrowError();
       done();
     }, MAX_SAFE_TIMEOUT);

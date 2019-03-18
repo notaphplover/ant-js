@@ -46,51 +46,6 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   }
 
   /**
-   * Cache multiple entities.
-   * @param entities Entities to cache.
-   * @param searchOptions Search options.
-   * @returns Promise of entities cached.
-   */
-  public cacheEntities(
-    entities: TEntity[],
-    searchOptions: ICacheOptions = new CacheOptions(),
-  ): Promise<any> {
-    if (null == entities || 0 === entities.length) {
-      return new Promise<void>((resolve) => resolve());
-    }
-    if (CacheMode.NoCache === searchOptions.cacheOptions) {
-      return new Promise<void>((resolve) => resolve());
-    }
-    if (CacheMode.CacheIfNotExist === searchOptions.cacheOptions) {
-      throw new Error('This version does not support to cache multiple entities only if they are not cached :(.');
-    }
-    if (CacheMode.CacheAndOverwrite !== searchOptions.cacheOptions) {
-      throw new Error('Unexpected cache options.');
-    }
-
-    const idField = this.model.id;
-
-    if (searchOptions.ttl) {
-      return this._redis.eval([
-        this._luaGetMultipleSetEx(),
-        entities.length,
-        ...entities.map((entity) => this._getKey(entity[idField])),
-        ...entities.map((entity) => JSON.stringify(entity)),
-        searchOptions.ttl,
-      ]);
-    } else {
-      const cacheMap = new Map<string, string>();
-      for (const entity of entities) {
-        cacheMap.set(
-          this._getKey(entity[idField]),
-          JSON.stringify(entity),
-        );
-      }
-      return (this._redis.mset as unknown as (map: Map<string, string>) => Promise<any>)(cacheMap);
-    }
-  }
-
-  /**
    * Deletes an entity from the cache.
    * This operation is not propagated to a successor
    * @param entity Entity to delete
@@ -130,6 +85,51 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    */
   public getKeyGenerationLuaScriptGenerator() {
     return this._innerGetKeyGenerationLuaScriptGenerator(this._model.entityKeyGenerationData);
+  }
+
+  /**
+   * Cache multiple entities.
+   * @param entities Entities to cache.
+   * @param searchOptions Search options.
+   * @returns Promise of entities cached.
+   */
+  public mUpdate(
+    entities: TEntity[],
+    searchOptions: ICacheOptions = new CacheOptions(),
+  ): Promise<any> {
+    if (null == entities || 0 === entities.length) {
+      return new Promise<void>((resolve) => resolve());
+    }
+    if (CacheMode.NoCache === searchOptions.cacheOptions) {
+      return new Promise<void>((resolve) => resolve());
+    }
+    if (CacheMode.CacheIfNotExist === searchOptions.cacheOptions) {
+      throw new Error('This version does not support to cache multiple entities only if they are not cached :(.');
+    }
+    if (CacheMode.CacheAndOverwrite !== searchOptions.cacheOptions) {
+      throw new Error('Unexpected cache options.');
+    }
+
+    const idField = this.model.id;
+
+    if (searchOptions.ttl) {
+      return this._redis.eval([
+        this._luaGetMultipleSetEx(),
+        entities.length,
+        ...entities.map((entity) => this._getKey(entity[idField])),
+        ...entities.map((entity) => JSON.stringify(entity)),
+        searchOptions.ttl,
+      ]);
+    } else {
+      const cacheMap = new Map<string, string>();
+      for (const entity of entities) {
+        cacheMap.set(
+          this._getKey(entity[idField]),
+          JSON.stringify(entity),
+        );
+      }
+      return (this._redis.mset as unknown as (map: Map<string, string>) => Promise<any>)(cacheMap);
+    }
   }
 
   /**
@@ -253,7 +253,7 @@ end`;
 
     if (this._successor && missingIds.length > 0) {
       const missingData = await this._successor.getByIds(missingIds);
-      this.cacheEntities(missingData, searchOptions);
+      this.mUpdate(missingData, searchOptions);
       for (const missingEntity of missingData) {
         results.push(missingEntity);
       }

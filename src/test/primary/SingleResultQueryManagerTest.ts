@@ -893,7 +893,7 @@ export class SingleResultQueryManagerTest implements ITest {
       );
       await queryManager.mGet([{ field: entity1.field }, { field: entity2.field }]);
       secondaryModelManager.store.length = 0;
-      await primaryEntityManager.cacheEntities([entity1After, entity2After]);
+      await primaryEntityManager.mUpdate([entity1After, entity2After]);
       await queryManager.syncMUpdate([entity1After, entity2After]);
       const entity1ByOldValue = await queryManager.get({ field: entity1.field });
       const entity1ByNewValue = await queryManager.get({ field: entity1After.field });
