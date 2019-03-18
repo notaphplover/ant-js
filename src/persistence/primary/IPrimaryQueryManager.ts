@@ -1,6 +1,6 @@
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
-import { IEntitySearchOptions } from './IEntitySearchOptions';
+import { ICacheOptions } from './ICacheOptions';
 
 export interface IPrimaryQueryManager<
   TEntity extends IEntity,
@@ -17,7 +17,7 @@ export interface IPrimaryQueryManager<
    */
   get(
     params: any,
-    searchOptions?: IEntitySearchOptions,
+    searchOptions?: ICacheOptions,
   ): TQueryResult;
   /**
    * Syncs the remove of an entity in cache.

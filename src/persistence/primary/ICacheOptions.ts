@@ -1,6 +1,6 @@
 import { CacheMode } from './CacheMode';
 
-export interface IEntitySearchOptions {
+export interface ICacheOptions {
   /**
    * Determines if the entity must be cached if not found in cache.
    */

@@ -1,5 +1,5 @@
 import { IEntity } from '../../model/IEntity';
-import { IEntitySearchOptions } from './IEntitySearchOptions';
+import { ICacheOptions } from './ICacheOptions';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
 
 const VOID_RESULT_STRING = 'v\x06\x15';
@@ -19,7 +19,7 @@ export abstract class MultipleResultQueryManager<
    */
   public async get(
     params: any,
-    searchOptions?: IEntitySearchOptions,
+    searchOptions?: ICacheOptions,
   ): Promise<TEntity[]> {
     const key = this._key(params);
     const luaScript = this._luaGetGenerator();

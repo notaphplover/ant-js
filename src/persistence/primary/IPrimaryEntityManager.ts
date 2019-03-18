@@ -1,6 +1,6 @@
 import { IEntity } from '../../model/IEntity';
 import { IEntityManager } from '../IEntityManager';
-import { IEntitySearchOptions } from './IEntitySearchOptions';
+import { ICacheOptions } from './ICacheOptions';
 
 /**
  * Represents a manager able to obtain entities by ids.
@@ -15,7 +15,7 @@ export interface IPrimaryEntityManager<TEntity extends IEntity>
    */
   cacheEntities(
     entities: TEntity[],
-    searchOptions: IEntitySearchOptions,
+    searchOptions: ICacheOptions,
   ): Promise<any>;
   /**
    * Caches an entity.
@@ -23,7 +23,7 @@ export interface IPrimaryEntityManager<TEntity extends IEntity>
    * @param searchOptions Search options.
    * @returns Promise of redis operation ended
    */
-  cacheEntity(entity: TEntity, searchOptions: IEntitySearchOptions): Promise<any>;
+  cacheEntity(entity: TEntity, searchOptions: ICacheOptions): Promise<any>;
   /**
    * Deletes an entity from the cache.
    * This operation is not propagated to a successor

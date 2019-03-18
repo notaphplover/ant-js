@@ -1,7 +1,7 @@
 import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
-import { IEntitySearchOptions } from './IEntitySearchOptions';
+import { ICacheOptions } from './ICacheOptions';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 import { IPrimaryQueryManager } from './IPrimaryQueryManager';
 
@@ -65,7 +65,7 @@ export abstract class PrimaryQueryManager<
    */
   public abstract get(
     params: any,
-    searchOptions?: IEntitySearchOptions,
+    searchOptions?: ICacheOptions,
   ): TQueryResult;
 
   /**

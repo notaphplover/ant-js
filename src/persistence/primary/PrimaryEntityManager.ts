@@ -5,7 +5,7 @@ import { IModel } from '../../model/IModel';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { CacheMode } from './CacheMode';
 import { CacheOptions } from './CacheOptions';
-import { IEntitySearchOptions } from './IEntitySearchOptions';
+import { ICacheOptions } from './ICacheOptions';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 
 export class PrimaryEntityManager<TEntity extends IEntity>
@@ -53,7 +53,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    */
   public cacheEntities(
     entities: TEntity[],
-    searchOptions: IEntitySearchOptions = new CacheOptions(),
+    searchOptions: ICacheOptions = new CacheOptions(),
   ): Promise<any> {
     if (null == entities || 0 === entities.length) {
       return new Promise<void>((resolve) => resolve());
@@ -98,7 +98,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    */
   public cacheEntity(
     entity: TEntity,
-    searchOptions: IEntitySearchOptions = new CacheOptions(),
+    searchOptions: ICacheOptions = new CacheOptions(),
   ): Promise<any> {
     if (null == entity) {
       return new Promise((resolve) => resolve());
@@ -134,7 +134,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    */
   public getById(
     id: number|string,
-    searchOptions: IEntitySearchOptions = new CacheOptions(),
+    searchOptions: ICacheOptions = new CacheOptions(),
   ): Promise<TEntity> {
     return this._innerGetById(id, searchOptions);
   }
@@ -146,7 +146,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    */
   public getByIds(
     ids: Array<number|string>,
-    searchOptions: IEntitySearchOptions = new CacheOptions(),
+    searchOptions: ICacheOptions = new CacheOptions(),
   ): Promise<TEntity[]> {
     return this._innerGetByIds(ids, searchOptions);
   }
@@ -188,7 +188,7 @@ end`;
    */
   protected async _innerGetById(
     id: number|string,
-    searchOptions: IEntitySearchOptions,
+    searchOptions: ICacheOptions,
   ): Promise<TEntity> {
     if (null == id) {
       return null;
@@ -215,7 +215,7 @@ end`;
    */
   protected async _innerGetByIds(
     ids: Array<number|string>,
-    searchOptions: IEntitySearchOptions,
+    searchOptions: ICacheOptions,
   ): Promise<TEntity[]> {
     if (0 === ids.length) {
       return new Promise((resolve) => { resolve(new Array()); });
@@ -235,7 +235,7 @@ end`;
    */
   protected async _innerGetByDistinctIdsNotMapped(
     ids: Array<number|string>,
-    searchOptions: IEntitySearchOptions,
+    searchOptions: ICacheOptions,
   ): Promise<TEntity[]> {
     const keysArray = ids.map((id) => this._getKey(id));
     const entities: string[] = await this._redis.mget(...keysArray);

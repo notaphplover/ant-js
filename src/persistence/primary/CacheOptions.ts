@@ -1,7 +1,7 @@
 import { CacheMode } from './CacheMode';
-import { IEntitySearchOptions } from './IEntitySearchOptions';
+import { ICacheOptions } from './ICacheOptions';
 
-export class CacheOptions implements IEntitySearchOptions {
+export class CacheOptions implements ICacheOptions {
   /**
    * Cache options.
    */
