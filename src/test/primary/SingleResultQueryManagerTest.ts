@@ -32,9 +32,12 @@ export class SingleResultQueryManagerTest implements ITest {
     describe(this._declareName, () => {
       this.itMustBeInitializable();
       this.itMustDeleteAnEntityInAQuery();
+      this.itMustDeleteMultipleEntitiesInQueries();
+      this.itMustDeleteZeroEntitiesInQueries();
       this.itMustPerformACachedSearchWithCachedEntities();
       this.itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsNumber();
       this.itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsString();
+      this.itMustPerformAMultipleCachedSearchWithCachedEntities();
       this.itMustPerformAMultipleUncachedSearch();
       this.itMustPerformAMultipleUnexistingCachedSearch();
       this.itMustPerformAMultipleUnexistingUncachedSearch();
@@ -44,6 +47,7 @@ export class SingleResultQueryManagerTest implements ITest {
       this.itMustPerformAnUnexistingUncachedSearch();
       this.itMustUpdateAnEntityInAQuery();
       this.itMustUpdateMultipleEntitiesInAQuery();
+      this.itMustUpdateZeroEntitiesInAQuery();
     });
   }
 
@@ -118,6 +122,109 @@ export class SingleResultQueryManagerTest implements ITest {
 
       expect(entityFoundBefore).toEqual(entity1);
       expect(entityFoundAfter).toBeNull();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private itMustDeleteMultipleEntitiesInQueries(): void {
+    const itsName = 'mustDeleteMultipleEntitiesInQueries';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const entity1: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 1, field: 'sample-1'};
+      const entity2: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 2, field: 'sample-2'};
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<IEntity & {
+          id: number,
+          field: string,
+        }>(model, [entity1, entity2]);
+      const primaryEntityManager = new PrimaryEntityManager(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const query = async (params: any) => {
+        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        if (null == entityFound) {
+          return null;
+        } else {
+          return entityFound.id;
+        }
+      };
+      const queryManager = new SingleResultQueryByFieldManager(
+        query,
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        'field',
+        prefix + 'query-by-field/',
+      );
+      await queryManager.mGet([{ field: entity1.field }, { field: entity2.field }]);
+      secondaryModelManager.store.length = 0;
+      await primaryEntityManager.deleteEntityFromCache(entity1);
+      await primaryEntityManager.deleteEntityFromCache(entity2);
+      await queryManager.syncMDelete([entity1, entity2]);
+      const entitiesFoundAfter = await queryManager.mGet([
+        { field: entity1.field },
+        { field: entity2.field },
+      ]);
+      expect(entitiesFoundAfter).toEqual(new Array());
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private itMustDeleteZeroEntitiesInQueries(): void {
+    const itsName = 'mustDeleteZeroEntitiesInQueries';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const entity1: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 1, field: 'sample-1'};
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<IEntity & {
+          id: number,
+          field: string,
+        }>(model, [entity1]);
+      const primaryEntityManager = new PrimaryEntityManager(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const query = async (params: any) => {
+        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        if (null == entityFound) {
+          return null;
+        } else {
+          return entityFound.id;
+        }
+      };
+      const queryManager = new SingleResultQueryByFieldManager(
+        query,
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        'field',
+        prefix + 'query-by-field/',
+      );
+      await queryManager.mGet([
+        { field: entity1.field },
+      ]);
+      secondaryModelManager.store.length = 0;
+      await queryManager.syncMDelete(new Array());
+      const entitiesFoundAfter = await queryManager.mGet([
+        { field: entity1.field },
+      ]);
+      expect(entitiesFoundAfter).toContain(entity1);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -249,6 +356,49 @@ export class SingleResultQueryManagerTest implements ITest {
       await primaryEntityManager.deleteEntityFromCache(entity1);
       const entityFound = await queryManager.get({ field: entity1.field });
       expect(entityFound).toEqual(entity1);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private itMustPerformAMultipleCachedSearchWithCachedEntities(): void {
+    const itsName = 'mustPerformAMultipleCachedSearchWithCachedEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const entity1: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 1, field: 'sample-1'};
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<IEntity & {
+          id: number,
+          field: string,
+        }>(model, [entity1]);
+      const primaryEntityManager = new PrimaryEntityManager(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const query = async (params: any) => {
+        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        if (null == entityFound) {
+          return null;
+        } else {
+          return entityFound.id;
+        }
+      };
+      const queryManager = new SingleResultQueryByFieldManager(
+        query,
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        'field',
+        prefix + 'query-by-field/',
+      );
+      await queryManager.mGet([{ field: entity1.field }]);
+      const entityFound = await queryManager.mGet([{ field: entity1.field }]);
+      expect(entityFound).toEqual([entity1]);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -664,6 +814,52 @@ export class SingleResultQueryManagerTest implements ITest {
       expect(entity1ByNewValue).toEqual(entity1After);
       expect(entity2ByOldValue).toBeNull();
       expect(entity2ByNewValue).toEqual(entity2After);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private itMustUpdateZeroEntitiesInAQuery(): void {
+    const itsName = 'mustUpdateZeroEntitiesInAQuery';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const entity: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 1, field: 'sample-1'};
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<IEntity & {
+          id: number,
+          field: string,
+        }>(model, [entity]);
+      const primaryEntityManager = new PrimaryEntityManager(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const query = async (params: any) => {
+        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        if (null == entityFound) {
+          return null;
+        } else {
+          return entityFound.id;
+        }
+      };
+      const queryManager = new SingleResultQueryByFieldManager(
+        query,
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        'field',
+        prefix + 'query-by-field/',
+      );
+      await queryManager.mGet([{ field: entity.field }]);
+      secondaryModelManager.store.length = 0;
+      await queryManager.syncMUpdate(new Array());
+      const entityByValue = await queryManager.get({ field: entity.field });
+
+      expect(entityByValue).toEqual(entity);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
