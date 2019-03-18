@@ -1,6 +1,6 @@
 import { IEntity } from '../../model/IEntity';
 import { Model } from '../../model/Model';
-import { CacheOptions } from '../../persistence/primary/CacheOptions';
+import { CacheMode } from '../../persistence/primary/CacheMode';
 import { EntitySearchOptions } from '../../persistence/primary/EntitySearchOptions';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { ITest } from '../ITest';
@@ -75,7 +75,7 @@ export class PrimaryEntityManagerTest implements ITest {
       await primaryEntityManager.cacheEntity(entity1);
       await primaryEntityManager.cacheEntity(
         entity1Modified,
-        new EntitySearchOptions(CacheOptions.CacheIfNotExist),
+        new EntitySearchOptions(CacheMode.CacheIfNotExist),
       );
       expect(await primaryEntityManager.getById(entity1Modified[model.id])).toEqual(entity1);
       done();
@@ -100,7 +100,7 @@ export class PrimaryEntityManagerTest implements ITest {
 
       await primaryEntityManager.cacheEntities(
         [entity1],
-        new EntitySearchOptions(CacheOptions.NoCache),
+        new EntitySearchOptions(CacheMode.NoCache),
       );
 
       expect(await primaryEntityManager.getById(entity1[model.id]))
@@ -127,7 +127,7 @@ export class PrimaryEntityManagerTest implements ITest {
 
       await primaryEntityManager.cacheEntity(
         entity1,
-        new EntitySearchOptions(CacheOptions.NoCache),
+        new EntitySearchOptions(CacheMode.NoCache),
       );
 
       expect(await primaryEntityManager.getById(entity1[model.id]))
@@ -159,7 +159,7 @@ export class PrimaryEntityManagerTest implements ITest {
       try {
         await primaryEntityManager.cacheEntities(
           [entity1],
-          new EntitySearchOptions(CacheOptions.CacheIfNotExist),
+          new EntitySearchOptions(CacheMode.CacheIfNotExist),
         );
         fail();
         done();
@@ -192,7 +192,7 @@ export class PrimaryEntityManagerTest implements ITest {
       try {
         await primaryEntityManager.cacheEntities(
           [entity1],
-          new EntitySearchOptions('Ohhh yeaaaahh!' as unknown as CacheOptions),
+          new EntitySearchOptions('Ohhh yeaaaahh!' as unknown as CacheMode),
         );
         fail();
         done();
@@ -225,7 +225,7 @@ export class PrimaryEntityManagerTest implements ITest {
       try {
         await primaryEntityManager.cacheEntity(
           entity1,
-          new EntitySearchOptions('Ohhh yeaaaahh!' as unknown as CacheOptions),
+          new EntitySearchOptions('Ohhh yeaaaahh!' as unknown as CacheMode),
         );
         fail();
         done();
@@ -555,7 +555,7 @@ return redis.call('get', ${luaExpression})`,
         this._redis.redis,
         secondaryModelManager,
       );
-      const options = new EntitySearchOptions(CacheOptions.CacheAndOverwrite, 3600);
+      const options = new EntitySearchOptions(CacheMode.CacheAndOverwrite, 3600);
       await primaryEntityManager.getByIds([
         entity1[model.id],
         entity2[model.id],

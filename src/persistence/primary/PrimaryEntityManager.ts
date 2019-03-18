@@ -3,7 +3,7 @@ import { IEntity } from '../../model/IEntity';
 import { IEntityKeyGenerationData } from '../../model/IEntityKeyGenerationData';
 import { IModel } from '../../model/IModel';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
-import { CacheOptions } from './CacheOptions';
+import { CacheMode } from './CacheMode';
 import { EntitySearchOptions } from './EntitySearchOptions';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
@@ -58,13 +58,13 @@ export class PrimaryEntityManager<TEntity extends IEntity>
     if (null == entities || 0 === entities.length) {
       return new Promise<void>((resolve) => resolve());
     }
-    if (CacheOptions.NoCache === searchOptions.cacheOptions) {
+    if (CacheMode.NoCache === searchOptions.cacheOptions) {
       return new Promise<void>((resolve) => resolve());
     }
-    if (CacheOptions.CacheIfNotExist === searchOptions.cacheOptions) {
+    if (CacheMode.CacheIfNotExist === searchOptions.cacheOptions) {
       throw new Error('This version does not support to cache multiple entities only if they are not cached :(.');
     }
-    if (CacheOptions.CacheAndOverwrite !== searchOptions.cacheOptions) {
+    if (CacheMode.CacheAndOverwrite !== searchOptions.cacheOptions) {
       throw new Error('Unexpected cache options.');
     }
 
@@ -103,14 +103,14 @@ export class PrimaryEntityManager<TEntity extends IEntity>
     if (null == entity) {
       return new Promise((resolve) => resolve());
     }
-    if (CacheOptions.NoCache === searchOptions.cacheOptions) {
+    if (CacheMode.NoCache === searchOptions.cacheOptions) {
       return new Promise((resolve) => resolve());
     }
     const key = this._getKey(entity[this.model.id]);
     switch (searchOptions.cacheOptions) {
-      case CacheOptions.CacheIfNotExist:
+      case CacheMode.CacheIfNotExist:
         return this._redis.setnx(key, JSON.stringify(entity));
-      case CacheOptions.CacheAndOverwrite:
+      case CacheMode.CacheAndOverwrite:
         return this._redis.set(key, JSON.stringify(entity));
       default:
         throw new Error('Unexpected cache options.');

@@ -1,11 +1,11 @@
-import { CacheOptions } from './CacheOptions';
+import { CacheMode } from './CacheMode';
 import { IEntitySearchOptions } from './IEntitySearchOptions';
 
 export class EntitySearchOptions implements IEntitySearchOptions {
   /**
    * Cache options.
    */
-  protected _cacheOptions: CacheOptions;
+  protected _cacheOptions: CacheMode;
   /**
    * TTL of the entity. A null value represents no TTL.
    */
@@ -17,7 +17,7 @@ export class EntitySearchOptions implements IEntitySearchOptions {
    * @param ttl TTL of the entity. A null value represents no TTL.
    */
   public constructor(
-    cacheOptions: CacheOptions = CacheOptions.CacheAndOverwrite,
+    cacheOptions: CacheMode = CacheMode.CacheAndOverwrite,
     ttl: number = null,
   ) {
     this._cacheOptions = cacheOptions;
@@ -27,7 +27,7 @@ export class EntitySearchOptions implements IEntitySearchOptions {
   /**
    * Cache options.
    */
-  public get cacheOptions(): CacheOptions {
+  public get cacheOptions(): CacheMode {
     return this._cacheOptions;
   }
 

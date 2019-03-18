@@ -1,4 +1,4 @@
-export enum CacheOptions {
+export enum CacheMode {
   /**
    * The entity is not cached.
    */
