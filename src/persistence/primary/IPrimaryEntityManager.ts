@@ -30,7 +30,7 @@ export interface IPrimaryEntityManager<TEntity extends IEntity>
    * @param entity Entity to delete
    * @returns Promise of entities deleted.
    */
-  deleteEntityFromCache(entity: TEntity): Promise<number>;
+  delete(entity: TEntity): Promise<number>;
   /**
    * Gets the key generation lua script generator.
    * @returns function able to generate a lua expression that generates a key from a giving id.

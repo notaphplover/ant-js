@@ -346,7 +346,7 @@ return redis.call('get', ${luaExpression})`,
 
       await primaryEntityManager.cacheEntity(entity);
       secondaryModelManager.store.length = 0;
-      await primaryEntityManager.deleteEntityFromCache(entity);
+      await primaryEntityManager.delete(entity);
       const entityFound = await primaryEntityManager.getById(entity[model.id]);
 
       expect(entityFound).toBeNull();

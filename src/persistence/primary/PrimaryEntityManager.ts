@@ -123,7 +123,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    * @param entity Entity to delete
    * @returns Promise of entities deleted.
    */
-  public deleteEntityFromCache(entity: TEntity): Promise<number> {
+  public delete(entity: TEntity): Promise<number> {
     return this._redis.del(this._getKey(entity[this.model.id]));
   }
 

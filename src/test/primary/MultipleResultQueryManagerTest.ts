@@ -204,7 +204,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       await queryManager.get(searchParams);
       const results = await queryManager.get(searchParams);
       for (let i = 0; i < entitiesSize / 2; ++i) {
-        primaryEntityManager.deleteEntityFromCache(entitiesMap.get(i));
+        primaryEntityManager.delete(entitiesMap.get(i));
       }
       expect(results.length).toBe(entities.length);
       for (const result of results) {
@@ -236,7 +236,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         prefix + 'names-starting-with/',
       );
       await queryManager.get(entity1);
-      await primaryEntityManager.deleteEntityFromCache(entity1);
+      await primaryEntityManager.delete(entity1);
       const entityFound = await queryManager.get(entity1);
       expect(entityFound).toEqual([entity1]);
       done();
@@ -265,7 +265,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         prefix + 'names-starting-with/',
       );
       await queryManager.get(entity1);
-      await primaryEntityManager.deleteEntityFromCache(entity1);
+      await primaryEntityManager.delete(entity1);
       const entityFound = await queryManager.get(entity1);
       expect(entityFound).toEqual([entity1]);
       done();
