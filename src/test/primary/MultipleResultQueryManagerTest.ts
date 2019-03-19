@@ -404,6 +404,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         prefix + 'names-starting-with/',
       );
       await queryManager.get(entity);
+      primaryEntityManager.update(entityAfter);
       await queryManager.syncUpdate(entityAfter);
       expect(await queryManager.get(entityAfter)).toEqual([entityAfter]);
       done();

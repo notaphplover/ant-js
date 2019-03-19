@@ -100,12 +100,11 @@ export abstract class MultipleResultQueryManager<
   public syncUpdate(entity: TEntity): Promise<void> {
     return this._redis.eval(
       this._luaUpdateGenerator(),
-      3,
+      2,
       this._reverseHashKey,
-      JSON.stringify(entity[this.model.id]),
       this._key(entity),
       VOID_RESULT_STRING,
-      JSON.stringify(entity),
+      JSON.stringify(entity[this.model.id]),
     );
   }
 
@@ -154,6 +153,10 @@ else
   end
 end`;
   }
+  /**
+   * Gets the lua script for a query set request.
+   * @returns Lua script
+   */
   private _luaSetQueryGenerator(): string {
     return `if redis.call('sismember', KEYS[1], KEYS[3]) then
   redis.call('srem', KEYS[1], KEYS[3])
@@ -180,17 +183,17 @@ end`;
    * @returns lua script.
    */
   private _luaUpdateGenerator(): string {
-    return `local key = redis.call('hget', KEYS[1], KEYS[2])
+    return `local key = redis.call('hget', KEYS[1], ARGV[2])
 if key then
-  redis.call('srem', key, KEYS[2])
+  redis.call('srem', key, ARGV[2])
   if 0 == redis.call('scard', key) then
     redis.call('sadd', key, ARGV[1])
   end
 end
-redis.call('hset', KEYS[1], KEYS[2], KEYS[3])
-if redis.call('sismember', KEYS[3], ARGV[1]) then
-  redis.call('srem', KEYS[3], ARGV[1])
+redis.call('hset', KEYS[1], ARGV[2], KEYS[2])
+if redis.call('sismember', KEYS[2], ARGV[1]) then
+  redis.call('srem', KEYS[2], ARGV[1])
 end
-redis.call('sadd', KEYS[3], ARGV[2])`;
+redis.call('sadd', KEYS[2], ARGV[2])`;
   }
 }
