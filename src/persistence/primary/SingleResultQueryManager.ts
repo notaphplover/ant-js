@@ -24,19 +24,12 @@ export abstract class SingleResultQueryManager<
     const luaScript = this._luaGetGenerator();
     const resultJson = await this._redis.eval(luaScript, 1, key);
     if (null == resultJson) {
-      const id = await this._query(params);
+      const id = await this._getIdAndSetToQuery(key, params);
       if (null == id) {
-        this._redis.set(key, VOID_RESULT_STRING);
+        return null;
       } else {
-        this._redis.eval(
-          this._luaSetGenerator(),
-          2,
-          key,
-          this._reverseHashKey,
-          JSON.stringify(id),
-        );
+        return await this._primaryEntityManager.getById(id, searchOptions);
       }
-      return await this._primaryEntityManager.getById(id, searchOptions);
     } else {
       let result: TEntity | Promise<TEntity>;
       this._parseGetResult(
@@ -71,18 +64,9 @@ export abstract class SingleResultQueryManager<
     for (let i = 0; i < resultsJson.length; ++i) {
       const resultJson = resultsJson[i];
       if (null == resultJson) {
-        const id = await this._query(paramsArray[i]);
-        if (null == id) {
-          this._redis.set(keys[i], VOID_RESULT_STRING);
-        } else {
+        const id = await this._getIdAndSetToQuery(keys[i], paramsArray[i]);
+        if (null != id) {
           missingIds.push(id);
-          this._redis.eval(
-            this._luaSetGenerator(),
-            2,
-            keys[i],
-            this._reverseHashKey,
-            JSON.stringify(id),
-          );
         }
         continue;
       }
@@ -163,6 +147,28 @@ export abstract class SingleResultQueryManager<
       this._key(entity),
       JSON.stringify(entity[this.model.id]),
     );
+  }
+
+  /**
+   * Gets an id for the query and sets it as the result of the query in the cache server.
+   * @param key Key of the query.
+   * @param params Query params.
+   * @returns Id found or null
+   */
+  private async _getIdAndSetToQuery(key: string, params: any): Promise<number|string> {
+    const id = await this._query(params);
+    if (null == id) {
+      this._redis.set(key, VOID_RESULT_STRING);
+    } else {
+      this._redis.eval(
+        this._luaSetGenerator(),
+        2,
+        key,
+        this._reverseHashKey,
+        JSON.stringify(id),
+      );
+    }
+    return id;
   }
 
   /**
