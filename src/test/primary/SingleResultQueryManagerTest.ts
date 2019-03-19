@@ -116,13 +116,9 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.get({ field: entity1.field });
-      secondaryModelManager.store.length = 0;
-      const entityFoundBefore = await queryManager.get({ field: entity1.field });
-      await primaryEntityManager.delete(entity1);
       await queryManager.syncDelete(entity1);
       const entityFoundAfter = await queryManager.get({ field: entity1.field });
 
-      expect(entityFoundBefore).toEqual(entity1);
       expect(entityFoundAfter).toBeNull();
       done();
     }, MAX_SAFE_TIMEOUT);
@@ -169,9 +165,6 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.mGet([{ field: entity1.field }, { field: entity2.field }]);
-      secondaryModelManager.store.length = 0;
-      await primaryEntityManager.delete(entity1);
-      await primaryEntityManager.delete(entity2);
       await queryManager.syncMDelete([entity1, entity2]);
       const entitiesFoundAfter = await queryManager.mGet([
         { field: entity1.field },

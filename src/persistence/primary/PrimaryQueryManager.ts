@@ -75,6 +75,20 @@ export abstract class PrimaryQueryManager<
   public abstract syncDelete(entity: TEntity): Promise<void>;
 
   /**
+   * Syncs the remove of entities in cache.
+   * @param entities deleted entities.
+   * @returns Promise of query sync
+   */
+  public abstract syncMDelete(entities: TEntity[]): Promise<void>;
+
+  /**
+   * Syncs the update of multiple entities.
+   * @param entities updated entities.
+   * @returns Promise of query sync
+   */
+  public abstract syncMUpdate(entities: TEntity[]): Promise<void>;
+
+  /**
    * Syncs the update of an entity in cache.
    * @param entity updated entity.
    */

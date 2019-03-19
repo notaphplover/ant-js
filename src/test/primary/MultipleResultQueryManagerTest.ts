@@ -38,6 +38,8 @@ export class MultipleResultQueryManagerTest implements ITest {
     describe(this._declareName, () => {
       this._itMustBeInitializable();
       this._itMustDeleteAnEntityInAQuery();
+      this._itMustDeleteMultipleEntitiesInQueries();
+      this._itMustDeleteZeroEntitiesInQueries();
       this._itMustPerformACachedSearchWithCachedEntities();
       this._itMustPerformACachedSearchWithLotsOfCachedEntities();
       this._itMustPerformACachedSearchWithLotsOfCachedAndUncachedEntities();
@@ -48,6 +50,8 @@ export class MultipleResultQueryManagerTest implements ITest {
       this._itMustPerformAnUnexistingCachedSearch();
       this._itMustPerformAnUnexistingUncachedSearch();
       this._itMustUpdateAnEntityInAQuery();
+      this._itMustUpdateMultipleEntitiesInQueries();
+      this._itMustUpdateZeroEntitiesInQueries();
     });
   }
 
@@ -102,6 +106,62 @@ export class MultipleResultQueryManagerTest implements ITest {
       await queryManager.get(entity);
       await queryManager.syncDelete(entity);
       expect(await queryManager.get(entity)).toEqual(new Array());
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustDeleteMultipleEntitiesInQueries(): void {
+    const itsName = 'mustDeleteMultipleEntitiesInQueries';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
+      const entity: NamedEntity = { id: 0, name: 'Pepe' };
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const queryManager = new NamesStartingByLetter(
+        primaryEntityManager,
+        secondaryModelManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        prefix + 'names-starting-with/',
+      );
+      await queryManager.get(entity);
+      await queryManager.syncMDelete([entity]);
+      expect(await queryManager.get(entity)).toEqual(new Array());
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustDeleteZeroEntitiesInQueries(): void {
+    const itsName = 'mustDeleteZeroEntitiesInQueries';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
+      const entity: NamedEntity = { id: 0, name: 'Pepe' };
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const queryManager = new NamesStartingByLetter(
+        primaryEntityManager,
+        secondaryModelManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        prefix + 'names-starting-with/',
+      );
+      await queryManager.get(entity);
+      await queryManager.syncMDelete(new Array());
+      expect(await queryManager.get(entity)).toEqual([entity]);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -407,6 +467,64 @@ export class MultipleResultQueryManagerTest implements ITest {
       primaryEntityManager.update(entityAfter);
       await queryManager.syncUpdate(entityAfter);
       expect(await queryManager.get(entityAfter)).toEqual([entityAfter]);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustUpdateMultipleEntitiesInQueries(): void {
+    const itsName = 'mustUpdateMultipleEntitiesInQueries';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
+      const entity: NamedEntity = { id: 0, name: 'Pepe' };
+      const entityAfter: NamedEntity = { id: 0, name: 'Paco' };
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const queryManager = new NamesStartingByLetter(
+        primaryEntityManager,
+        secondaryModelManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        prefix + 'names-starting-with/',
+      );
+      await queryManager.get(entity);
+      primaryEntityManager.mUpdate([entityAfter]);
+      await queryManager.syncMUpdate([entityAfter]);
+      expect(await queryManager.get(entityAfter)).toEqual([entityAfter]);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustUpdateZeroEntitiesInQueries(): void {
+    const itsName = 'mustUpdateZeroEntitiesInQueries';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
+      const entity: NamedEntity = { id: 0, name: 'Pepe' };
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<NamedEntity>(model, [entity]);
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const queryManager = new NamesStartingByLetter(
+        primaryEntityManager,
+        secondaryModelManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        prefix + 'names-starting-with/',
+      );
+      await queryManager.get(entity);
+      await queryManager.syncMUpdate([]);
+      expect(await queryManager.get(entity)).toEqual([entity]);
       done();
     }, MAX_SAFE_TIMEOUT);
   }

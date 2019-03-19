@@ -93,6 +93,43 @@ export abstract class MultipleResultQueryManager<
   }
 
   /**
+   * Syncs the remove of entities in cache.
+   * @param entities deleted entities.
+   * @returns Promise of query sync
+   */
+  public syncMDelete(entities: TEntity[]): Promise<void> {
+    if (null == entities || 0 === entities.length) {
+      return new Promise((resolve) => { resolve(); });
+    }
+    return this._redis.eval([
+      this._luaMDeleteGenerator(),
+      1,
+      this._reverseHashKey,
+      ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
+      VOID_RESULT_STRING,
+    ]);
+  }
+
+  /**
+   * Syncs the update of multiple entities.
+   * @param entities updated entities.
+   * @returns Promise of query sync
+   */
+  public syncMUpdate(entities: TEntity[]): Promise<void> {
+    if (null == entities || 0 === entities.length) {
+      return new Promise((resolve) => { resolve(); });
+    }
+    return this._redis.eval([
+      this._luaMUpdateGenerator(),
+      entities.length + 1,
+      ...(entities.map((entity) => this._key(entity))),
+      this._reverseHashKey,
+      ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
+      VOID_RESULT_STRING,
+    ]);
+  }
+
+  /**
    * Updates an entity in queries related to the entity.
    * @param entity entity to be updated.
    * @returns Promise of query sync.
@@ -154,6 +191,49 @@ else
   end
 end`;
   }
+
+  /**
+   * Gets the lua script for a multiple delete request.
+   * @returns Lua script.
+   */
+  private _luaMDeleteGenerator(): string {
+    return `local reverseKey = KEYS[1]
+local voidValue = ARGV[#ARGV]
+for i=1, #ARGV-1 do
+  local key = redis.call('hget', reverseKey, ARGV[i])
+  if key then
+    redis.call('srem', key, ARGV[i])
+    if 0 == redis.call('scard', key) then
+      redis.call('sadd', key, voidValue)
+    end
+    redis.call('hdel', reverseKey, ARGV[i])
+  end
+end`;
+  }
+
+  /**
+   * Gets the lua script for an mUpdate request.
+   * @returns Lua script.
+   */
+  private _luaMUpdateGenerator(): string {
+    return `local reverseKey = KEYS[#KEYS]
+local voidValue = ARGV[#ARGV]
+for i=1, #KEYS-1 do
+  local key = redis.call('hget', reverseKey, ARGV[i])
+  if key then
+    redis.call('srem', key, ARGV[i])
+    if 0 == redis.call('scard', key) then
+      redis.call('sadd', key, voidValue)
+    end
+  end
+  redis.call('hset', reverseKey, ARGV[i], KEYS[i])
+  if redis.call('sismember', KEYS[i], voidValue) then
+    redis.call('srem', KEYS[i], voidValue)
+  end
+  redis.call('sadd', KEYS[i], ARGV[i])
+end`;
+  }
+
   /**
    * Gets the lua script for a query set request.
    * @returns Lua script
