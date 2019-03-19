@@ -41,6 +41,8 @@ export class PrimaryEntityManagerTest implements ITest {
       this.itGeneratesALuaKeyGeneratorUsingASuffix();
       this.itMustBeInitializable();
       this.itMustDeleteAnEntity();
+      this.itMustDeleteMultipleEntitities();
+      this.itMustDeleteZeroEntitities();
       this.itMustFindAnEntityOutsideCache();
       this.itMustFindMultipleEntitiesOutsideCache();
       this.itMustFindNullIfNoSuccessorIsProvidedAndCacheFails();
@@ -350,6 +352,68 @@ return redis.call('get', ${luaExpression})`,
       const entityFound = await primaryEntityManager.getById(entity[model.id]);
 
       expect(entityFound).toBeNull();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private itMustDeleteMultipleEntitities(): void {
+    const itsName = 'mustDeleteMultipleEntitities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const entity: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 0, field: 'sample'};
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<IEntity & {
+          id: number,
+          field: string,
+        }>(model, [entity]);
+      const primaryEntityManager = new PrimaryEntityManager(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+
+      await primaryEntityManager.update(entity);
+      secondaryModelManager.store.length = 0;
+      await primaryEntityManager.mDelete([entity]);
+      const entityFound = await primaryEntityManager.getById(entity[model.id]);
+
+      expect(entityFound).toBeNull();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private itMustDeleteZeroEntitities(): void {
+    const itsName = 'mustDeleteZeroEntitities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const entity: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 0, field: 'sample'};
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<IEntity & {
+          id: number,
+          field: string,
+        }>(model, [entity]);
+      const primaryEntityManager = new PrimaryEntityManager(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+
+      await primaryEntityManager.update(entity);
+      secondaryModelManager.store.length = 0;
+      await primaryEntityManager.mDelete(new Array());
+      const entityFound = await primaryEntityManager.getById(entity[model.id]);
+
+      expect(entityFound).toEqual(entity);
       done();
     }, MAX_SAFE_TIMEOUT);
   }

@@ -88,6 +88,26 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   }
 
   /**
+   * Deletes multiple entities.
+   * @param entities Entities to delete.
+   * @returns Promise of entities deleted.
+   */
+  public mDelete(entities: TEntity[]): Promise<void> {
+    if (null == entities || 0 === entities.length) {
+      return new Promise<void>((resolve) => resolve());
+    }
+    const keys = entities.map(
+      (entity) =>
+        this._getKey(entity[this._model.id]),
+    );
+    return this._redis.eval([
+      this._luaGetMultipleDel(),
+      entities.length,
+      ...keys,
+    ]);
+  }
+
+  /**
    * Cache multiple entities.
    * @param entities Entities to cache.
    * @param searchOptions Search options.
@@ -167,6 +187,16 @@ export class PrimaryEntityManager<TEntity extends IEntity>
     return (this._model.entityKeyGenerationData.prefix || '')
       + id
       + (this._model.entityKeyGenerationData.suffix || '');
+  }
+
+  /**
+   * Gets the script for deleting multiple keys.
+   * @returns Lua script.
+   */
+  protected _luaGetMultipleDel(): string {
+    return `for i=1, #KEYS do
+  redis.call('del', KEYS[i])
+end`;
   }
 
   /**

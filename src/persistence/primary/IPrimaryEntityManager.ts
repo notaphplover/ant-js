@@ -15,6 +15,12 @@ export interface IPrimaryEntityManager<TEntity extends IEntity>
    */
   delete(entity: TEntity): Promise<number>;
   /**
+   * Deletes multiple entities.
+   * @param entities Entities to delete.
+   * @returns Promise of entities deleted.
+   */
+  mDelete(entities: TEntity[]): Promise<void>;
+  /**
    * Gets the key generation lua script generator.
    * @returns function able to generate a lua expression that generates a key from a giving id.
    */
