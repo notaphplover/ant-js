@@ -85,7 +85,7 @@ export abstract class MultipleResultQueryManager<
   public syncDelete(entity: TEntity): Promise<void> {
     return this._redis.eval(
       this._luaDeleteGenerator(),
-      2,
+      1,
       this._reverseHashKey,
       JSON.stringify(entity[this.model.id]),
       VOID_RESULT_STRING,
@@ -113,12 +113,13 @@ export abstract class MultipleResultQueryManager<
    * @returns lua script.
    */
   private _luaDeleteGenerator(): string {
-    return `local key = redis.call('hget', KEYS[1], KEYS[2])
+    return `local key = redis.call('hget', KEYS[1], ARGV[1])
 if key then
-  redis.call('srem', key, KEYS[2])
+  redis.call('srem', key, ARGV[1])
   if 0 == redis.call('scard', key) then
-    redis.call('sadd', key, ARGV[1])
+    redis.call('sadd', key, ARGV[2])
   end
+  redis.call('hdel', KEYS[1], ARGV[1])
 end`;
   }
 

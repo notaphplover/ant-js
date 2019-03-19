@@ -179,6 +179,7 @@ export abstract class SingleResultQueryManager<
     return `local key = redis.call('hget', KEYS[1], ARGV[1])
 if key then
   redis.call('set', key, ARGV[2])
+  redis.call('hdel', KEYS[1], ARGV[1])
 end`;
   }
 
