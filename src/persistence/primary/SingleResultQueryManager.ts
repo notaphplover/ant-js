@@ -22,8 +22,8 @@ export abstract class SingleResultQueryManager<
   ): Promise<TEntity> {
     const key = this._key(params);
     const luaScript = this._luaGetGenerator();
-    const resultJSON = await this._redis.eval(luaScript, 1, key);
-    if (null == resultJSON) {
+    const resultJson = await this._redis.eval(luaScript, 1, key);
+    if (null == resultJson) {
       const id = await this._query(params);
       if (null == id) {
         this._redis.set(key, VOID_RESULT_STRING);
@@ -38,18 +38,15 @@ export abstract class SingleResultQueryManager<
       }
       return await this._primaryEntityManager.getById(id, searchOptions);
     } else {
-      if (VOID_RESULT_STRING === resultJSON) {
-        return null;
-      }
-      const result = JSON.parse(resultJSON);
-      const resultType = typeof result;
-      if ('object' === resultType) {
-        return result;
-      }
-      if ('number' === resultType || 'string' === resultType) {
-        return this._primaryEntityManager.getById(result, searchOptions);
-      }
-      throw new Error(`Query "${key}" corrupted!`);
+      let result: TEntity | Promise<TEntity>;
+      this._parseGetResult(
+        key,
+        resultJson,
+        (entity) => { result = entity; },
+        (id: number| string) => { result = this._primaryEntityManager.getById(id, searchOptions); },
+        () => { result = null; },
+      );
+      return result;
     }
   }
 
@@ -89,27 +86,16 @@ export abstract class SingleResultQueryManager<
         }
         continue;
       }
-      if (VOID_RESULT_STRING === resultJson) {
-        continue;
-      }
-      const result = JSON.parse(resultJson);
-      const resultType = typeof result;
-      if ('object' === resultType) {
-        finalResults.push(result);
-        continue;
-      }
-      if ('number' === resultType || 'string' === resultType) {
-        missingIds.push(result);
-        continue;
-      }
-      throw new Error(`Query "${keys[i]}" corrupted!`);
+      this._parseGetResult(
+        keys[i],
+        resultJson,
+        (entity) => { finalResults.push(entity); },
+        (id: number| string) => { missingIds.push(id); },
+        // tslint:disable-next-line:no-empty
+        () => { },
+      );
     }
-    if (0 < missingIds.length) {
-      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, searchOptions);
-      for (const missingEntity of missingEntities) {
-        finalResults.push(missingEntity);
-      }
-    }
+    await this._mGetSearchMissingIds(finalResults, missingIds, searchOptions);
     return finalResults;
   }
 
@@ -291,5 +277,57 @@ if key then
 end
 redis.call('hset', KEYS[1], ARGV[1], KEYS[2]);
 redis.call('set', KEYS[2], ARGV[1])`;
+  }
+
+  /**
+   * Search for missing ids and adds the results to the final results collection.
+   * @param finalResults Final results.
+   * @param missingIds Missing ids.
+   * @param searchOptions Cache options.
+   * @returns Promise of results added.
+   */
+  private async _mGetSearchMissingIds(
+    finalResults: TEntity[],
+    missingIds: Array<number|string>,
+    searchOptions?: ICacheOptions,
+  ): Promise<void> {
+    if (0 < missingIds.length) {
+      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, searchOptions);
+      for (const missingEntity of missingEntities) {
+        finalResults.push(missingEntity);
+      }
+    }
+  }
+
+  /**
+   * Parses the result of an entity get request to the cache server.
+   * @param key key obtained.
+   * @param resultJson Result obtained from the key.
+   * @param entityAction Action to perform if the result is an entity.
+   * @param idAction Action to perform if the result is an id.
+   * @param voidAction Action to perform if there is a void result.
+   */
+  private _parseGetResult(
+    key: string,
+    resultJson: string,
+    entityAction: (entity: TEntity) => void,
+    idAction: (id: number|string) => void,
+    voidAction: () => void,
+  ) {
+    if (VOID_RESULT_STRING === resultJson) {
+      voidAction();
+      return;
+    }
+    const result = JSON.parse(resultJson);
+    const resultType = typeof result;
+    if ('object' === resultType) {
+      entityAction(result);
+      return;
+    }
+    if ('number' === resultType || 'string' === resultType) {
+      idAction(result);
+      return;
+    }
+    throw new Error(`Query "${key}" corrupted!`);
   }
 }
