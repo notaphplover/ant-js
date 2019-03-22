@@ -1,6 +1,6 @@
 import { IEntity } from '../../model/IEntity';
 import { IEntityManager } from '../IEntityManager';
-import { IEntitySearchOptions } from './IEntitySearchOptions';
+import { ICacheOptions } from './ICacheOptions';
 
 /**
  * Represents a manager able to obtain entities by ids.
@@ -8,14 +8,32 @@ import { IEntitySearchOptions } from './IEntitySearchOptions';
 export interface IPrimaryEntityManager<TEntity extends IEntity>
   extends IEntityManager<TEntity> {
   /**
+   * Deletes an entity from the cache.
+   * This operation is not propagated to a successor
+   * @param entity Entity to delete
+   * @returns Promise of entities deleted.
+   */
+  delete(entity: TEntity): Promise<number>;
+  /**
+   * Deletes multiple entities.
+   * @param entities Entities to delete.
+   * @returns Promise of entities deleted.
+   */
+  mDelete(entities: TEntity[]): Promise<void>;
+  /**
+   * Gets the key generation lua script generator.
+   * @returns function able to generate a lua expression that generates a key from a giving id.
+   */
+  getKeyGenerationLuaScriptGenerator(): (alias: string) => string;
+  /**
    * Cache multiple entities.
    * @param entities Entities to cache.
    * @param searchOptions Search options.
    * @returns Promise of entities cached.
    */
-  cacheEntities(
+  mUpdate(
     entities: TEntity[],
-    searchOptions: IEntitySearchOptions,
+    searchOptions: ICacheOptions,
   ): Promise<any>;
   /**
    * Caches an entity.
@@ -23,17 +41,5 @@ export interface IPrimaryEntityManager<TEntity extends IEntity>
    * @param searchOptions Search options.
    * @returns Promise of redis operation ended
    */
-  cacheEntity(entity: TEntity, searchOptions: IEntitySearchOptions): Promise<any>;
-  /**
-   * Deletes an entity from the cache.
-   * This operation is not propagated to a successor
-   * @param entity Entity to delete
-   * @returns Promise of entities deleted.
-   */
-  deleteEntityFromCache(entity: TEntity): Promise<number>;
-  /**
-   * Gets the key generation lua script generator.
-   * @returns function able to generate a lua expression that generates a key from a giving id.
-   */
-  getKeyGenerationLuaScriptGenerator(): (alias: string) => string;
+  update(entity: TEntity, searchOptions: ICacheOptions): Promise<any>;
 }

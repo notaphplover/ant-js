@@ -3,9 +3,9 @@ import { IEntity } from '../../model/IEntity';
 import { IEntityKeyGenerationData } from '../../model/IEntityKeyGenerationData';
 import { IModel } from '../../model/IModel';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
+import { CacheMode } from './CacheMode';
 import { CacheOptions } from './CacheOptions';
-import { EntitySearchOptions } from './EntitySearchOptions';
-import { IEntitySearchOptions } from './IEntitySearchOptions';
+import { ICacheOptions } from './ICacheOptions';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 
 export class PrimaryEntityManager<TEntity extends IEntity>
@@ -46,25 +46,87 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   }
 
   /**
+   * Deletes an entity from the cache.
+   * This operation is not propagated to a successor
+   * @param entity Entity to delete
+   * @returns Promise of entities deleted.
+   */
+  public delete(entity: TEntity): Promise<number> {
+    return this._redis.del(this._getKey(entity[this.model.id]));
+  }
+
+  /**
+   * Gets an entity by its id.
+   * @param id: Entity's id.
+   * @returns Model found.
+   */
+  public getById(
+    id: number|string,
+    searchOptions: ICacheOptions = new CacheOptions(),
+  ): Promise<TEntity> {
+    return this._innerGetById(id, searchOptions);
+  }
+
+  /**
+   * Gets a collection of entities by its ids.
+   * @param ids Entities ids.
+   * @returns Entities found.
+   */
+  public getByIds(
+    ids: Array<number|string>,
+    searchOptions: ICacheOptions = new CacheOptions(),
+  ): Promise<TEntity[]> {
+    return this._innerGetByIds(ids, searchOptions);
+  }
+
+  /**
+   * Gets the key generation lua script generator.
+   * @returns function able to generate a lua expression that generates a key from a giving id.
+   */
+  public getKeyGenerationLuaScriptGenerator() {
+    return this._innerGetKeyGenerationLuaScriptGenerator(this._model.entityKeyGenerationData);
+  }
+
+  /**
+   * Deletes multiple entities.
+   * @param entities Entities to delete.
+   * @returns Promise of entities deleted.
+   */
+  public mDelete(entities: TEntity[]): Promise<void> {
+    if (null == entities || 0 === entities.length) {
+      return new Promise<void>((resolve) => resolve());
+    }
+    const keys = entities.map(
+      (entity) =>
+        this._getKey(entity[this._model.id]),
+    );
+    return this._redis.eval([
+      this._luaGetMultipleDel(),
+      entities.length,
+      ...keys,
+    ]);
+  }
+
+  /**
    * Cache multiple entities.
    * @param entities Entities to cache.
    * @param searchOptions Search options.
    * @returns Promise of entities cached.
    */
-  public cacheEntities(
+  public mUpdate(
     entities: TEntity[],
-    searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
+    searchOptions: ICacheOptions = new CacheOptions(),
   ): Promise<any> {
     if (null == entities || 0 === entities.length) {
       return new Promise<void>((resolve) => resolve());
     }
-    if (CacheOptions.NoCache === searchOptions.cacheOptions) {
+    if (CacheMode.NoCache === searchOptions.cacheOptions) {
       return new Promise<void>((resolve) => resolve());
     }
-    if (CacheOptions.CacheIfNotExist === searchOptions.cacheOptions) {
+    if (CacheMode.CacheIfNotExist === searchOptions.cacheOptions) {
       throw new Error('This version does not support to cache multiple entities only if they are not cached :(.');
     }
-    if (CacheOptions.CacheAndOverwrite !== searchOptions.cacheOptions) {
+    if (CacheMode.CacheAndOverwrite !== searchOptions.cacheOptions) {
       throw new Error('Unexpected cache options.');
     }
 
@@ -96,67 +158,25 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    * @param searchOptions Search options.
    * @returns Promise of redis operation ended
    */
-  public cacheEntity(
+  public update(
     entity: TEntity,
-    searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
+    searchOptions: ICacheOptions = new CacheOptions(),
   ): Promise<any> {
     if (null == entity) {
       return new Promise((resolve) => resolve());
     }
-    if (CacheOptions.NoCache === searchOptions.cacheOptions) {
+    if (CacheMode.NoCache === searchOptions.cacheOptions) {
       return new Promise((resolve) => resolve());
     }
     const key = this._getKey(entity[this.model.id]);
     switch (searchOptions.cacheOptions) {
-      case CacheOptions.CacheIfNotExist:
+      case CacheMode.CacheIfNotExist:
         return this._redis.setnx(key, JSON.stringify(entity));
-      case CacheOptions.CacheAndOverwrite:
+      case CacheMode.CacheAndOverwrite:
         return this._redis.set(key, JSON.stringify(entity));
       default:
         throw new Error('Unexpected cache options.');
     }
-  }
-
-  /**
-   * Deletes an entity from the cache.
-   * This operation is not propagated to a successor
-   * @param entity Entity to delete
-   * @returns Promise of entities deleted.
-   */
-  public deleteEntityFromCache(entity: TEntity): Promise<number> {
-    return this._redis.del(this._getKey(entity[this.model.id]));
-  }
-
-  /**
-   * Gets an entity by its id.
-   * @param id: Entity's id.
-   * @returns Model found.
-   */
-  public getById(
-    id: number|string,
-    searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
-  ): Promise<TEntity> {
-    return this._innerGetById(id, searchOptions);
-  }
-
-  /**
-   * Gets a collection of entities by its ids.
-   * @param ids Entities ids.
-   * @returns Entities found.
-   */
-  public getByIds(
-    ids: Array<number|string>,
-    searchOptions: IEntitySearchOptions = new EntitySearchOptions(),
-  ): Promise<TEntity[]> {
-    return this._innerGetByIds(ids, searchOptions);
-  }
-
-  /**
-   * Gets the key generation lua script generator.
-   * @returns function able to generate a lua expression that generates a key from a giving id.
-   */
-  public getKeyGenerationLuaScriptGenerator() {
-    return this._innerGetKeyGenerationLuaScriptGenerator(this._model.entityKeyGenerationData);
   }
 
   /**
@@ -167,6 +187,16 @@ export class PrimaryEntityManager<TEntity extends IEntity>
     return (this._model.entityKeyGenerationData.prefix || '')
       + id
       + (this._model.entityKeyGenerationData.suffix || '');
+  }
+
+  /**
+   * Gets the script for deleting multiple keys.
+   * @returns Lua script.
+   */
+  protected _luaGetMultipleDel(): string {
+    return `for i=1, #KEYS do
+  redis.call('del', KEYS[i])
+end`;
   }
 
   /**
@@ -188,7 +218,7 @@ end`;
    */
   protected async _innerGetById(
     id: number|string,
-    searchOptions: IEntitySearchOptions,
+    searchOptions: ICacheOptions,
   ): Promise<TEntity> {
     if (null == id) {
       return null;
@@ -201,7 +231,7 @@ end`;
       return null;
     }
     return this._successor.getById(id).then((entity) => {
-      this.cacheEntity(entity, searchOptions);
+      this.update(entity, searchOptions);
       return entity;
     });
   }
@@ -215,7 +245,7 @@ end`;
    */
   protected async _innerGetByIds(
     ids: Array<number|string>,
-    searchOptions: IEntitySearchOptions,
+    searchOptions: ICacheOptions,
   ): Promise<TEntity[]> {
     if (0 === ids.length) {
       return new Promise((resolve) => { resolve(new Array()); });
@@ -235,7 +265,7 @@ end`;
    */
   protected async _innerGetByDistinctIdsNotMapped(
     ids: Array<number|string>,
-    searchOptions: IEntitySearchOptions,
+    searchOptions: ICacheOptions,
   ): Promise<TEntity[]> {
     const keysArray = ids.map((id) => this._getKey(id));
     const entities: string[] = await this._redis.mget(...keysArray);
@@ -253,7 +283,7 @@ end`;
 
     if (this._successor && missingIds.length > 0) {
       const missingData = await this._successor.getByIds(missingIds);
-      this.cacheEntities(missingData, searchOptions);
+      this.mUpdate(missingData, searchOptions);
       for (const missingEntity of missingData) {
         results.push(missingEntity);
       }

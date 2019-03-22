@@ -1,8 +1,8 @@
 import { IEntity } from '../../model/IEntity';
-import { IEntitySearchOptions } from './IEntitySearchOptions';
+import { ICacheOptions } from './ICacheOptions';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
 
-const LUA_PACK_SIZE = 4000;
+const SEPARATOR_STRING = 's\x06\x15';
 const VOID_RESULT_STRING = 'v\x06\x15';
 
 export abstract class MultipleResultQueryManager<
@@ -13,21 +13,6 @@ export abstract class MultipleResultQueryManager<
   Promise<TEntity[]>
 > {
   /**
-   * Syncs the remove of an entity in cache.
-   * @param entity deleted entity.
-   * @returns Promise of query sync
-   */
-  public deleteEntityInQueries(entity: TEntity): Promise<void> {
-    return this._redis.eval(
-      this._luaDeleteGenerator(),
-      2,
-      this._reverseHashKey,
-      JSON.stringify(entity[this.model.id]),
-      VOID_RESULT_STRING,
-    );
-  }
-
-  /**
    * Gets the result of a query.
    * @param params Query parameters.
    * @param searchOptions Search options.
@@ -35,60 +20,140 @@ export abstract class MultipleResultQueryManager<
    */
   public async get(
     params: any,
-    searchOptions?: IEntitySearchOptions,
+    searchOptions?: ICacheOptions,
   ): Promise<TEntity[]> {
     const key = this._key(params);
     const luaScript = this._luaGetGenerator();
     const resultsJSON = await this._redis.eval(luaScript, 1, key);
 
     if (null == resultsJSON) {
-      const ids = await this._query(params);
-      const idsJSON = ids.map((id) => JSON.stringify(id));
-      if (null != ids && ids.length > 0) {
-        this._redis.eval([
-          this._luaSetQueryGenerator(),
-          3,
-          key,
-          this._reverseHashKey,
-          VOID_RESULT_STRING,
-          ...idsJSON,
-        ]);
-        return this._primaryEntityManager.getByIds(ids, searchOptions);
-      } else {
-        this._redis.eval(
-          this._luaSetVoidQueryGenerator(),
-          1,
-          key,
-          VOID_RESULT_STRING,
-        );
-        return new Array();
-      }
+      return this._getProcessQueryNotFound(key, params, searchOptions);
     } else {
       if (VOID_RESULT_STRING === resultsJSON) {
         return new Array();
       }
       const missingIds = new Array<number|string>();
       const finalResults = new Array();
-
       for (const resultJson of resultsJSON) {
-        const result = JSON.parse(resultJson);
-        const resultType = typeof result;
-        if ('object' === resultType) {
-          finalResults.push(result);
-          continue;
-        }
-        if ('number' === resultType || 'string' === resultType) {
-          missingIds.push(result);
-          continue;
-        }
-        throw new Error(`Query "${key}" corrupted!`);
+        this._getProcessParseableResult(
+          key,
+          finalResults,
+          missingIds,
+          resultJson,
+        );
       }
-      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, searchOptions);
-      for (const missingEntity of missingEntities) {
-        finalResults.push(missingEntity);
-      }
+      await this._getProcessMissingOptions(missingIds, finalResults, searchOptions);
       return finalResults;
     }
+  }
+
+  /**
+   * Gets the result of multiple queries.
+   * @param paramsArray Queries params.
+   * @param searchOptions Search options.
+   */
+  public async mGet(
+    paramsArray: any[],
+    searchOptions?: ICacheOptions,
+  ): Promise<TEntity[]> {
+    if (null == paramsArray || 0 === paramsArray.length) {
+      return new Array();
+    }
+    const keys = paramsArray.map((params: any) => this._key(params));
+    const luaScript = this._luaMGetGenerator();
+    const resultsJson = await this._redis.eval(luaScript, keys.length, ...keys);
+
+    const finalResults = new Array<TEntity>();
+    const missingQueries = new Array<[any, string]>();
+    let currentIndex = 0;
+    let resultsFound = false;
+    let voidFound = false;
+    let missingIds = new Array();
+    for (const resultJson of resultsJson) {
+      if (VOID_RESULT_STRING === resultJson) {
+        voidFound = true;
+        continue;
+      }
+      if (SEPARATOR_STRING === resultJson) {
+        if (!resultsFound && !voidFound) {
+          missingQueries.push([paramsArray[currentIndex], keys[currentIndex]]);
+        }
+        await this._getProcessMissingOptions(missingIds, finalResults, searchOptions);
+        ++currentIndex;
+        resultsFound = false;
+        voidFound = false;
+        missingIds = new Array();
+        continue;
+      }
+      resultsFound = true;
+      this._getProcessParseableResult(
+        keys[currentIndex],
+        finalResults,
+        missingIds,
+        resultJson,
+      );
+    }
+
+    if (0 < missingQueries.length) {
+      for (const [params, key] of missingQueries) {
+        const result = await this._getProcessQueryNotFound(key, params, searchOptions);
+        finalResults.push(...result);
+      }
+    }
+
+    return finalResults;
+  }
+
+  /**
+   * Syncs the remove of an entity in cache.
+   * @param entity deleted entity.
+   * @returns Promise of query sync
+   */
+  public syncDelete(entity: TEntity): Promise<void> {
+    return this._redis.eval(
+      this._luaDeleteGenerator(),
+      1,
+      this._reverseHashKey,
+      JSON.stringify(entity[this.model.id]),
+      VOID_RESULT_STRING,
+    );
+  }
+
+  /**
+   * Syncs the remove of entities in cache.
+   * @param entities deleted entities.
+   * @returns Promise of query sync
+   */
+  public syncMDelete(entities: TEntity[]): Promise<void> {
+    if (null == entities || 0 === entities.length) {
+      return new Promise((resolve) => { resolve(); });
+    }
+    return this._redis.eval([
+      this._luaMDeleteGenerator(),
+      1,
+      this._reverseHashKey,
+      ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
+      VOID_RESULT_STRING,
+    ]);
+  }
+
+  /**
+   * Syncs the update of multiple entities.
+   * @param entities updated entities.
+   * @returns Promise of query sync
+   */
+  public syncMUpdate(entities: TEntity[]): Promise<void> {
+    if (null == entities || 0 === entities.length) {
+      return new Promise((resolve) => { resolve(); });
+    }
+    return this._redis.eval([
+      this._luaMUpdateGenerator(),
+      entities.length + 1,
+      ...(entities.map((entity) => this._key(entity))),
+      this._reverseHashKey,
+      ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
+      VOID_RESULT_STRING,
+    ]);
   }
 
   /**
@@ -96,16 +161,97 @@ export abstract class MultipleResultQueryManager<
    * @param entity entity to be updated.
    * @returns Promise of query sync.
    */
-  public updateEntityInQueries(entity: TEntity): Promise<void> {
+  public syncUpdate(entity: TEntity): Promise<void> {
     return this._redis.eval(
       this._luaUpdateGenerator(),
-      3,
+      2,
       this._reverseHashKey,
-      JSON.stringify(entity[this.model.id]),
       this._key(entity),
       VOID_RESULT_STRING,
-      JSON.stringify(entity),
+      JSON.stringify(entity[this.model.id]),
     );
+  }
+
+  /**
+   * Process the missing ids and adds missing entities to the final results collection.
+   * @param missingIds Missing ids collection.
+   * @param finalResults Final results collection.
+   * @param searchOptions Search options.
+   * @param Promise of missing options processed.
+   */
+  private async _getProcessMissingOptions(
+    missingIds: Array<number|string>,
+    finalResults: TEntity[],
+    searchOptions: ICacheOptions,
+  ): Promise<void> {
+    if (0 < missingIds.length) {
+      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, searchOptions);
+      for (const missingEntity of missingEntities) {
+        finalResults.push(missingEntity);
+      }
+    }
+  }
+
+  /**
+   * Process a parseable result.
+   * @param key Key used to obtain the result.
+   * @param finalResults Final results collection.
+   * @param missingIds Missing ids array.
+   * @param resultJson Parseable result.
+   * @returns Promise results parsed.
+   */
+  private _getProcessParseableResult(
+    key: string,
+    finalResults: TEntity[],
+    missingIds: Array<number|string>,
+    resultJson: string,
+  ): void {
+    const result = JSON.parse(resultJson);
+    const resultType = typeof result;
+    if ('object' === resultType) {
+      finalResults.push(result);
+      return;
+    }
+    if ('number' === resultType || 'string' === resultType) {
+      missingIds.push(result);
+      return;
+    }
+    throw new Error(`Query "${key}" corrupted!`);
+  }
+
+  /**
+   * Process a query not found obtaining the results and caching them.
+   * @param key key of the query.
+   * @param params Query params.
+   * @param searchOptions Search options.
+   * @returns Promise of query results.
+   */
+  private async _getProcessQueryNotFound(
+    key: string,
+    params: any,
+    searchOptions: ICacheOptions,
+  ): Promise<TEntity[]> {
+    const ids = await this._query(params);
+    const idsJSON = ids.map((id) => JSON.stringify(id));
+    if (null != ids && ids.length > 0) {
+      this._redis.eval([
+        this._luaSetQueryGenerator(),
+        3,
+        key,
+        this._reverseHashKey,
+        VOID_RESULT_STRING,
+        ...idsJSON,
+      ]);
+      return this._primaryEntityManager.getByIds(ids, searchOptions);
+    } else {
+      this._redis.eval(
+        this._luaSetVoidQueryGenerator(),
+        1,
+        key,
+        VOID_RESULT_STRING,
+      );
+      return new Array();
+    }
   }
 
   /**
@@ -113,12 +259,13 @@ export abstract class MultipleResultQueryManager<
    * @returns lua script.
    */
   private _luaDeleteGenerator(): string {
-    return `local key = redis.call('hget', KEYS[1], KEYS[2])
+    return `local key = redis.call('hget', KEYS[1], ARGV[1])
 if key then
-  redis.call('srem', key, KEYS[2])
+  redis.call('srem', key, ARGV[1])
   if 0 == redis.call('scard', key) then
-    redis.call('sadd', key, ARGV[1])
+    redis.call('sadd', key, ARGV[2])
   end
+  redis.call('hdel', KEYS[1], ARGV[1])
 end`;
   }
 
@@ -153,6 +300,85 @@ else
   end
 end`;
   }
+
+  /**
+   * Gets the lua script for a multiple delete request.
+   * @returns Lua script.
+   */
+  private _luaMDeleteGenerator(): string {
+    return `local reverseKey = KEYS[1]
+local voidValue = ARGV[#ARGV]
+for i=1, #ARGV-1 do
+  local key = redis.call('hget', reverseKey, ARGV[i])
+  if key then
+    redis.call('srem', key, ARGV[i])
+    if 0 == redis.call('scard', key) then
+      redis.call('sadd', key, voidValue)
+    end
+    redis.call('hdel', reverseKey, ARGV[i])
+  end
+end`;
+  }
+
+  /**
+   * Gets the lua script for a multiple get request.
+   * @returns Lua script.
+   */
+  private _luaMGetGenerator(): string {
+    const entitiesAlias = 'entities';
+    const idsAlias = 'ids';
+    return `local results = {}
+for i=1, #KEYS do
+  local ${idsAlias} = redis.call('smembers', KEYS[i])
+  if #${idsAlias} > 0 then
+    if ${idsAlias}[1] == '${VOID_RESULT_STRING}' then
+      results[#results + 1] = '${VOID_RESULT_STRING}'
+    else
+      local ${entitiesAlias} = {}
+      for i = 1, #${idsAlias} do
+        ${entitiesAlias}[i] = redis.call('get', ${this._luaKeyGeneratorFromId(idsAlias + '[i]')})
+      end
+      for i = 1, #${idsAlias} do
+        if ${entitiesAlias}[i] then
+          results[#results + 1] = ${entitiesAlias}[i]
+        else
+          results[#results + 1] = ${idsAlias}[i]
+        end
+      end
+    end
+  end
+  results[#results + 1] = '${SEPARATOR_STRING}'
+end
+return results`;
+  }
+
+  /**
+   * Gets the lua script for an mUpdate request.
+   * @returns Lua script.
+   */
+  private _luaMUpdateGenerator(): string {
+    return `local reverseKey = KEYS[#KEYS]
+local voidValue = ARGV[#ARGV]
+for i=1, #KEYS-1 do
+  local key = redis.call('hget', reverseKey, ARGV[i])
+  if key then
+    redis.call('srem', key, ARGV[i])
+    if 0 == redis.call('scard', key) then
+      redis.call('sadd', key, voidValue)
+    end
+  end
+  redis.call('hset', reverseKey, ARGV[i], KEYS[i])
+  if redis.call('sismember', KEYS[i], voidValue) then
+    redis.call('srem', KEYS[i], voidValue)
+  end
+  redis.call('sadd', KEYS[i], ARGV[i])
+end`;
+  }
+
+  /**
+   * Gets the lua script for a query set request.
+   * @returns Lua script
+   */
   private _luaSetQueryGenerator(): string {
     return `if redis.call('sismember', KEYS[1], KEYS[3]) then
   redis.call('srem', KEYS[1], KEYS[3])
@@ -167,24 +393,29 @@ end`;
   }
   /**
    * Gets the lua script to set a query with no results.
+   * @returns Lua script
    */
   private _luaSetVoidQueryGenerator(): string {
     return `if (0 == redis.call('scard', KEYS[1])) then
   redis.call('sadd', KEYS[1], ARGV[1])
 end`;
   }
-
+  /**
+   * Gets the lua script for an update request.
+   * @returns lua script.
+   */
   private _luaUpdateGenerator(): string {
-    return `local key = redis.call('hget', KEYS[1], KEYS[2])
+    return `local key = redis.call('hget', KEYS[1], ARGV[2])
 if key then
-  redis.call('srem', key, KEYS[2])
+  redis.call('srem', key, ARGV[2])
   if 0 == redis.call('scard', key) then
     redis.call('sadd', key, ARGV[1])
   end
-  if redis.call('sismember', KEYS[3], ARGV[1]) then
-    redis.call('srem', KEYS[3], ARGV[1])
-  end
-  redis.call('sadd', KEYS[3], ARGV[2])
-end`;
+end
+redis.call('hset', KEYS[1], ARGV[2], KEYS[2])
+if redis.call('sismember', KEYS[2], ARGV[1]) then
+  redis.call('srem', KEYS[2], ARGV[1])
+end
+redis.call('sadd', KEYS[2], ARGV[2])`;
   }
 }

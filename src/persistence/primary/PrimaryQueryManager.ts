@@ -1,7 +1,7 @@
 import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
-import { IEntitySearchOptions } from './IEntitySearchOptions';
+import { ICacheOptions } from './ICacheOptions';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 import { IPrimaryQueryManager } from './IPrimaryQueryManager';
 
@@ -59,26 +59,40 @@ export abstract class PrimaryQueryManager<
   }
 
   /**
-   * Syncs the remove of an entity in cache.
-   * @param entity deleted entity.
-   */
-  public abstract deleteEntityInQueries(entity: TEntity): Promise<void>;
-
-  /**
    * Gets a query result.
    * @param params query params.
    * @returns query results.
    */
   public abstract get(
     params: any,
-    searchOptions?: IEntitySearchOptions,
+    searchOptions?: ICacheOptions,
   ): TQueryResult;
+
+  /**
+   * Syncs the remove of an entity in cache.
+   * @param entity deleted entity.
+   */
+  public abstract syncDelete(entity: TEntity): Promise<void>;
+
+  /**
+   * Syncs the remove of entities in cache.
+   * @param entities deleted entities.
+   * @returns Promise of query sync
+   */
+  public abstract syncMDelete(entities: TEntity[]): Promise<void>;
+
+  /**
+   * Syncs the update of multiple entities.
+   * @param entities updated entities.
+   * @returns Promise of query sync
+   */
+  public abstract syncMUpdate(entities: TEntity[]): Promise<void>;
 
   /**
    * Syncs the update of an entity in cache.
    * @param entity updated entity.
    */
-  public abstract updateEntityInQueries(entity: TEntity): Promise<void>;
+  public abstract syncUpdate(entity: TEntity): Promise<void>;
 
   /**
    * Gets a key for a certain query.

@@ -1,6 +1,6 @@
 import { IEntity } from '../model/IEntity';
 import { IModel } from '../model/IModel';
-import { IEntitySearchOptions } from './primary/IEntitySearchOptions';
+import { ICacheOptions } from './primary/ICacheOptions';
 
 export interface IEntityManager<TEntity extends IEntity> {
   /**
@@ -14,7 +14,7 @@ export interface IEntityManager<TEntity extends IEntity> {
    */
   getById(
     id: number|string,
-    searchOptions?: IEntitySearchOptions,
+    searchOptions?: ICacheOptions,
   ): Promise<TEntity>;
 
   /**
@@ -24,6 +24,6 @@ export interface IEntityManager<TEntity extends IEntity> {
    */
   getByIds(
     ids: Iterable<number|string>,
-    searchOptions?: IEntitySearchOptions,
+    searchOptions?: ICacheOptions,
   ): Promise<TEntity[]>;
 }

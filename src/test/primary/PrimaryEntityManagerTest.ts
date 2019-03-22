@@ -1,7 +1,7 @@
 import { IEntity } from '../../model/IEntity';
 import { Model } from '../../model/Model';
+import { CacheMode } from '../../persistence/primary/CacheMode';
 import { CacheOptions } from '../../persistence/primary/CacheOptions';
-import { EntitySearchOptions } from '../../persistence/primary/EntitySearchOptions';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { ITest } from '../ITest';
 import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
@@ -9,7 +9,7 @@ import { RedisWrapper } from './RedisWrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-export class PrimaryModelManagerTest implements ITest {
+export class PrimaryEntityManagerTest implements ITest {
   /**
    * Before all task performed promise.
    */
@@ -25,7 +25,7 @@ export class PrimaryModelManagerTest implements ITest {
 
   public constructor(beforeAllPromise: Promise<any>) {
     this._beforeAllPromise = beforeAllPromise;
-    this._declareName = 'PrimaryModelManagerTest';
+    this._declareName = 'PrimaryEntityManagerTest';
     this._redis = new RedisWrapper();
   }
 
@@ -41,7 +41,10 @@ export class PrimaryModelManagerTest implements ITest {
       this.itGeneratesALuaKeyGeneratorUsingASuffix();
       this.itMustBeInitializable();
       this.itMustDeleteAnEntity();
+      this.itMustDeleteMultipleEntitities();
+      this.itMustDeleteZeroEntitities();
       this.itMustFindAnEntityOutsideCache();
+      this.itMustFindNullIfNullIdIsProvided();
       this.itMustFindMultipleEntitiesOutsideCache();
       this.itMustFindNullIfNoSuccessorIsProvidedAndCacheFails();
       this.itMustFindZeroEntities();
@@ -72,10 +75,10 @@ export class PrimaryModelManagerTest implements ITest {
         field: string,
       } = {id: 1, field: 'sample-modified'};
 
-      await primaryEntityManager.cacheEntity(entity1);
-      await primaryEntityManager.cacheEntity(
+      await primaryEntityManager.update(entity1);
+      await primaryEntityManager.update(
         entity1Modified,
-        new EntitySearchOptions(CacheOptions.CacheIfNotExist),
+        new CacheOptions(CacheMode.CacheIfNotExist),
       );
       expect(await primaryEntityManager.getById(entity1Modified[model.id])).toEqual(entity1);
       done();
@@ -98,9 +101,9 @@ export class PrimaryModelManagerTest implements ITest {
         field: string,
       } = {id: 1, field: 'sample-1'};
 
-      await primaryEntityManager.cacheEntities(
+      await primaryEntityManager.mUpdate(
         [entity1],
-        new EntitySearchOptions(CacheOptions.NoCache),
+        new CacheOptions(CacheMode.NoCache),
       );
 
       expect(await primaryEntityManager.getById(entity1[model.id]))
@@ -125,9 +128,9 @@ export class PrimaryModelManagerTest implements ITest {
         field: string,
       } = {id: 1, field: 'sample-1'};
 
-      await primaryEntityManager.cacheEntity(
+      await primaryEntityManager.update(
         entity1,
-        new EntitySearchOptions(CacheOptions.NoCache),
+        new CacheOptions(CacheMode.NoCache),
       );
 
       expect(await primaryEntityManager.getById(entity1[model.id]))
@@ -157,9 +160,9 @@ export class PrimaryModelManagerTest implements ITest {
        * https://github.com/jasmine/jasmine/issues/1410
        */
       try {
-        await primaryEntityManager.cacheEntities(
+        await primaryEntityManager.mUpdate(
           [entity1],
-          new EntitySearchOptions(CacheOptions.CacheIfNotExist),
+          new CacheOptions(CacheMode.CacheIfNotExist),
         );
         fail();
         done();
@@ -190,9 +193,9 @@ export class PrimaryModelManagerTest implements ITest {
        * https://github.com/jasmine/jasmine/issues/1410
        */
       try {
-        await primaryEntityManager.cacheEntities(
+        await primaryEntityManager.mUpdate(
           [entity1],
-          new EntitySearchOptions('Ohhh yeaaaahh!' as unknown as CacheOptions),
+          new CacheOptions('Ohhh yeaaaahh!' as unknown as CacheMode),
         );
         fail();
         done();
@@ -223,9 +226,9 @@ export class PrimaryModelManagerTest implements ITest {
        * https://github.com/jasmine/jasmine/issues/1410
        */
       try {
-        await primaryEntityManager.cacheEntity(
+        await primaryEntityManager.update(
           entity1,
-          new EntitySearchOptions('Ohhh yeaaaahh!' as unknown as CacheOptions),
+          new CacheOptions('Ohhh yeaaaahh!' as unknown as CacheMode),
         );
         fail();
         done();
@@ -250,7 +253,7 @@ export class PrimaryModelManagerTest implements ITest {
         this._redis.redis,
         null,
       );
-      await primaryEntityManager.cacheEntity(entity);
+      await primaryEntityManager.update(entity);
       const luaKey = 'key';
       const luaExpression = primaryEntityManager.getKeyGenerationLuaScriptGenerator()(luaKey);
       const valueFound = await this._redis.redis.eval(
@@ -284,7 +287,7 @@ return redis.call('get', ${luaExpression})`,
         this._redis.redis,
         null,
       );
-      await primaryEntityManager.cacheEntity(entity);
+      await primaryEntityManager.update(entity);
       const luaKey = 'key';
       const luaExpression = primaryEntityManager.getKeyGenerationLuaScriptGenerator()(luaKey);
       const valueFound = await this._redis.redis.eval(
@@ -344,12 +347,74 @@ return redis.call('get', ${luaExpression})`,
         secondaryModelManager,
       );
 
-      await primaryEntityManager.cacheEntity(entity);
+      await primaryEntityManager.update(entity);
       secondaryModelManager.store.length = 0;
-      await primaryEntityManager.deleteEntityFromCache(entity);
+      await primaryEntityManager.delete(entity);
       const entityFound = await primaryEntityManager.getById(entity[model.id]);
 
       expect(entityFound).toBeNull();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private itMustDeleteMultipleEntitities(): void {
+    const itsName = 'mustDeleteMultipleEntitities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const entity: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 0, field: 'sample'};
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<IEntity & {
+          id: number,
+          field: string,
+        }>(model, [entity]);
+      const primaryEntityManager = new PrimaryEntityManager(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+
+      await primaryEntityManager.update(entity);
+      secondaryModelManager.store.length = 0;
+      await primaryEntityManager.mDelete([entity]);
+      const entityFound = await primaryEntityManager.getById(entity[model.id]);
+
+      expect(entityFound).toBeNull();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private itMustDeleteZeroEntitities(): void {
+    const itsName = 'mustDeleteZeroEntitities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const entity: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 0, field: 'sample'};
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<IEntity & {
+          id: number,
+          field: string,
+        }>(model, [entity]);
+      const primaryEntityManager = new PrimaryEntityManager(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+
+      await primaryEntityManager.update(entity);
+      secondaryModelManager.store.length = 0;
+      await primaryEntityManager.mDelete(new Array());
+      const entityFound = await primaryEntityManager.getById(entity[model.id]);
+
+      expect(entityFound).toEqual(entity);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -436,6 +501,28 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
+  private itMustFindNullIfNullIdIsProvided(): void {
+    const itsName = 'mustFindNullIfNullIdIsProvided';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<IEntity & {
+          id: number,
+          field: string,
+        }>(model, new Array());
+      const primaryEntityManager = new PrimaryEntityManager(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+
+      expect(await primaryEntityManager.getById(null)).toBeNull();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
   private itMustFindZeroEntities(): void {
     const itsName = 'mustFindZeroEntities';
     const prefix = this._declareName + '/' + itsName + '/';
@@ -482,7 +569,7 @@ return redis.call('get', ${luaExpression})`,
         secondaryModelManager,
       );
 
-      await primaryEntityManager.cacheEntity(entity);
+      await primaryEntityManager.update(entity);
       secondaryModelManager.store.length = 0;
       const entityFound = await primaryEntityManager.getById(entity[model.id]);
 
@@ -517,7 +604,7 @@ return redis.call('get', ${luaExpression})`,
         secondaryModelManager,
       );
 
-      await primaryEntityManager.cacheEntities([entity1, entity2]);
+      await primaryEntityManager.mUpdate([entity1, entity2]);
       secondaryModelManager.store.length = 0;
       const entitiesFound = await primaryEntityManager.getByIds([
         entity1[model.id],
@@ -555,7 +642,7 @@ return redis.call('get', ${luaExpression})`,
         this._redis.redis,
         secondaryModelManager,
       );
-      const options = new EntitySearchOptions(CacheOptions.CacheAndOverwrite, 3600);
+      const options = new CacheOptions(CacheMode.CacheAndOverwrite, 3600);
       await primaryEntityManager.getByIds([
         entity1[model.id],
         entity2[model.id],
@@ -591,7 +678,7 @@ return redis.call('get', ${luaExpression})`,
       );
 
       expect(async () => {
-        await primaryEntityManager.cacheEntities(new Array());
+        await primaryEntityManager.mUpdate(new Array());
       }).not.toThrowError();
       done();
     }, MAX_SAFE_TIMEOUT);

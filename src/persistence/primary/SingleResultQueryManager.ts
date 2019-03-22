@@ -1,5 +1,5 @@
 import { IEntity } from '../../model/IEntity';
-import { IEntitySearchOptions } from './IEntitySearchOptions';
+import { ICacheOptions } from './ICacheOptions';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
 
 const VOID_RESULT_STRING = 'v\x06\x15';
@@ -12,11 +12,83 @@ export abstract class SingleResultQueryManager<
   Promise<TEntity>
 > {
   /**
+   * Gets the result of a query.
+   * @param params Query parameters.
+   * @param searchOptions Search options.
+   */
+  public async get(
+    params: any,
+    searchOptions?: ICacheOptions,
+  ): Promise<TEntity> {
+    const key = this._key(params);
+    const luaScript = this._luaGetGenerator();
+    const resultJson = await this._redis.eval(luaScript, 1, key);
+    if (null == resultJson) {
+      const id = await this._getIdAndSetToQuery(key, params);
+      if (null == id) {
+        return null;
+      } else {
+        return await this._primaryEntityManager.getById(id, searchOptions);
+      }
+    } else {
+      let result: TEntity | Promise<TEntity>;
+      this._parseGetResult(
+        key,
+        resultJson,
+        (entity) => { result = entity; },
+        (id: number| string) => { result = this._primaryEntityManager.getById(id, searchOptions); },
+        () => { result = null; },
+      );
+      return result;
+    }
+  }
+
+  /**
+   * Gets the result of multiple queries.
+   * @param paramsArray Queries parameters.
+   * @param searchOptions Search options.
+   */
+  public async mGet(
+    paramsArray: any[],
+    searchOptions?: ICacheOptions,
+  ): Promise<TEntity[]> {
+    if (null == paramsArray || 0 === paramsArray.length) {
+      return new Array();
+    }
+    const keys = paramsArray.map((params) => this._key(params));
+    const luaScript = this._luaMGetGenerator();
+    const resultsJson = await this._redis.eval(luaScript, keys.length, keys);
+    const missingIds = new Array<number|string>();
+    const finalResults = new Array();
+
+    for (let i = 0; i < resultsJson.length; ++i) {
+      const resultJson = resultsJson[i];
+      if (null == resultJson) {
+        const id = await this._getIdAndSetToQuery(keys[i], paramsArray[i]);
+        if (null != id) {
+          missingIds.push(id);
+        }
+        continue;
+      }
+      this._parseGetResult(
+        keys[i],
+        resultJson,
+        (entity) => { finalResults.push(entity); },
+        (id: number| string) => { missingIds.push(id); },
+        // tslint:disable-next-line:no-empty
+        () => { },
+      );
+    }
+    await this._mGetSearchMissingIds(finalResults, missingIds, searchOptions);
+    return finalResults;
+  }
+
+  /**
    * Syncs the remove of an entity in cache.
    * @param entity deleted entity.
-   * @returns Promise of query sinc
+   * @returns Promise of query sync
    */
-  public deleteEntityInQueries(entity: TEntity): Promise<void> {
+  public syncDelete(entity: TEntity): Promise<void> {
     return this._redis.eval(
       this._luaDeleteGenerator(),
       1,
@@ -25,48 +97,49 @@ export abstract class SingleResultQueryManager<
       VOID_RESULT_STRING,
     );
   }
+
   /**
-   * Gets the result of a query.
-   * @param params Query parameters.
-   * @param searchOptions Search options.
+   * Syncs the remove of entities in cache.
+   * @param entities deleted entities.
+   * @returns Promise of query sync
    */
-  public async get(
-    params: any,
-    searchOptions?: IEntitySearchOptions,
-  ): Promise<TEntity> {
-    const key = this._key(params);
-    const luaScript = this._luaGetGenerator();
-    const resultJSON = await this._redis.eval(luaScript, 1, key);
-    if (null == resultJSON) {
-      const id = await this._query(params);
-      if (null == id) {
-        this._redis.set(key, VOID_RESULT_STRING);
-      } else {
-        this._redis.set(key, JSON.stringify(id));
-        this._redis.hset(this._reverseHashKey, JSON.stringify(id), key);
-      }
-      return await this._primaryEntityManager.getById(id, searchOptions);
-    } else {
-      if (VOID_RESULT_STRING === resultJSON) {
-        return null;
-      }
-      const result = JSON.parse(resultJSON);
-      const resultType = typeof result;
-      if ('object' === resultType) {
-        return result;
-      }
-      if ('number' === resultType || 'string' === resultType) {
-        return this._primaryEntityManager.getById(result, searchOptions);
-      }
-      throw new Error(`Query "${key}" corrupted!`);
+  public syncMDelete(entities: TEntity[]): Promise<void> {
+    if (null == entities || 0 === entities.length) {
+      return new Promise((resolve) => { resolve(); });
     }
+    return this._redis.eval([
+      this._luaMDeleteGenerator(),
+      1,
+      this._reverseHashKey,
+      ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
+      VOID_RESULT_STRING,
+    ]);
+  }
+
+  /**
+   * Syncs the update of multiple entities in cache.
+   * @param entities updated entities.
+   * @returns Promise of query sync.
+   */
+  public syncMUpdate(entities: TEntity[]): Promise<void> {
+    if (null == entities || 0 === entities.length) {
+      return new Promise((resolve) => { resolve(); });
+    }
+    return this._redis.eval([
+      this._luaMUpdateGenerator(),
+      entities.length + 1,
+      ...(entities.map((entity) => this._key(entity))),
+      this._reverseHashKey,
+      ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
+    ]);
   }
 
   /**
    * Syncs the update of an entity in cache.
    * @param entity updated entity.
+   * @returns Promise of query sync
    */
-  public updateEntityInQueries(entity: TEntity): Promise<void> {
+  public syncUpdate(entity: TEntity): Promise<void> {
     return this._redis.eval(
       this._luaUpdateGenerator(),
       2,
@@ -77,6 +150,28 @@ export abstract class SingleResultQueryManager<
   }
 
   /**
+   * Gets an id for the query and sets it as the result of the query in the cache server.
+   * @param key Key of the query.
+   * @param params Query params.
+   * @returns Id found or null
+   */
+  private async _getIdAndSetToQuery(key: string, params: any): Promise<number|string> {
+    const id = await this._query(params);
+    if (null == id) {
+      this._redis.set(key, VOID_RESULT_STRING);
+    } else {
+      this._redis.eval(
+        this._luaSetGenerator(),
+        2,
+        key,
+        this._reverseHashKey,
+        JSON.stringify(id),
+      );
+    }
+    return id;
+  }
+
+  /**
    * Gets the lua script for a delete request.
    * @returns lua script.
    */
@@ -84,6 +179,7 @@ export abstract class SingleResultQueryManager<
     return `local key = redis.call('hget', KEYS[1], ARGV[1])
 if key then
   redis.call('set', key, ARGV[2])
+  redis.call('hdel', KEYS[1], ARGV[1])
 end`;
   }
 
@@ -111,6 +207,73 @@ end`;
   }
 
   /**
+   * Gets the lua script for a multiple delete request.
+   * @returns lua script.
+   */
+  private _luaMDeleteGenerator(): string {
+    return `local reverseKey = KEYS[1]
+local voidValue = ARGV[#ARGV]
+for i=1, #ARGV-1 do
+  local key = redis.call('hget', reverseKey, ARGV[i])
+  if key then
+    redis.call('set', key, voidValue)
+  end
+end`;
+  }
+
+  /**
+   * Gets the lua script for a multiple get request.
+   * @returns lua script.
+   */
+  private _luaMGetGenerator(): string {
+    const keyAlias = 'key';
+    return `local results = {}
+for i=1, #KEYS do
+  local ${keyAlias} = redis.call('get', KEYS[i])
+  if ${keyAlias} then
+    if ${keyAlias} == '${VOID_RESULT_STRING}' then
+      results[i] = '${VOID_RESULT_STRING}'
+    else
+      local entity = redis.call('get', ${this._luaKeyGeneratorFromId(keyAlias)})
+      if entity then
+        results[i] = entity
+      else
+        results[i] = key
+      end
+    end
+  else
+    results[i] = ${keyAlias}
+  end
+end
+return results`;
+  }
+
+  /**
+   * Gets the lua script for a multiple update request.
+   * @returns lua script.
+   */
+  private _luaMUpdateGenerator(): string {
+    return `local reverseKey = KEYS[#KEYS]
+for i=1, #KEYS-1 do
+  local key = redis.call('hget', reverseKey, ARGV[i])
+  if key then
+    redis.call('del', key)
+  end
+  redis.call('hset', reverseKey, ARGV[i], KEYS[i]);
+  redis.call('set', KEYS[i], ARGV[i])
+end`;
+  }
+
+  /**
+   * Gets the lua script for a query set request.
+   * @returns lua script.
+   */
+  private _luaSetGenerator(): string {
+    return `redis.call('set', KEYS[1], ARGV[1])
+redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
+  }
+
+  /**
    * Gets the lua script for an update request.
    * @returns lua script.
    */
@@ -118,7 +281,60 @@ end`;
     return `local key = redis.call('hget', KEYS[1], ARGV[1])
 if key then
   redis.call('del', key)
-  redis.call('set', KEYS[2], ARGV[1])
-end`;
+end
+redis.call('hset', KEYS[1], ARGV[1], KEYS[2]);
+redis.call('set', KEYS[2], ARGV[1])`;
+  }
+
+  /**
+   * Search for missing ids and adds the results to the final results collection.
+   * @param finalResults Final results.
+   * @param missingIds Missing ids.
+   * @param searchOptions Cache options.
+   * @returns Promise of results added.
+   */
+  private async _mGetSearchMissingIds(
+    finalResults: TEntity[],
+    missingIds: Array<number|string>,
+    searchOptions?: ICacheOptions,
+  ): Promise<void> {
+    if (0 < missingIds.length) {
+      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, searchOptions);
+      for (const missingEntity of missingEntities) {
+        finalResults.push(missingEntity);
+      }
+    }
+  }
+
+  /**
+   * Parses the result of an entity get request to the cache server.
+   * @param key key obtained.
+   * @param resultJson Result obtained from the key.
+   * @param entityAction Action to perform if the result is an entity.
+   * @param idAction Action to perform if the result is an id.
+   * @param voidAction Action to perform if there is a void result.
+   */
+  private _parseGetResult(
+    key: string,
+    resultJson: string,
+    entityAction: (entity: TEntity) => void,
+    idAction: (id: number|string) => void,
+    voidAction: () => void,
+  ) {
+    if (VOID_RESULT_STRING === resultJson) {
+      voidAction();
+      return;
+    }
+    const result = JSON.parse(resultJson);
+    const resultType = typeof result;
+    if ('object' === resultType) {
+      entityAction(result);
+      return;
+    }
+    if ('number' === resultType || 'string' === resultType) {
+      idAction(result);
+      return;
+    }
+    throw new Error(`Query "${key}" corrupted!`);
   }
 }
