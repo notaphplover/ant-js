@@ -44,6 +44,7 @@ export class PrimaryEntityManagerTest implements ITest {
       this.itMustDeleteMultipleEntitities();
       this.itMustDeleteZeroEntitities();
       this.itMustFindAnEntityOutsideCache();
+      this.itMustFindNullIfNullIdIsProvided();
       this.itMustFindMultipleEntitiesOutsideCache();
       this.itMustFindNullIfNoSuccessorIsProvidedAndCacheFails();
       this.itMustFindZeroEntities();
@@ -496,6 +497,28 @@ return redis.call('get', ${luaExpression})`,
       const idToSearch = 3;
 
       expect(await primaryEntityManager.getById(idToSearch)).toBeNull();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private itMustFindNullIfNullIdIsProvided(): void {
+    const itsName = 'mustFindNullIfNullIdIsProvided';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<IEntity & {
+          id: number,
+          field: string,
+        }>(model, new Array());
+      const primaryEntityManager = new PrimaryEntityManager(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+
+      expect(await primaryEntityManager.getById(null)).toBeNull();
       done();
     }, MAX_SAFE_TIMEOUT);
   }
