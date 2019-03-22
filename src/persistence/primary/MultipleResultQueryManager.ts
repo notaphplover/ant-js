@@ -2,6 +2,7 @@ import { IEntity } from '../../model/IEntity';
 import { ICacheOptions } from './ICacheOptions';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
 
+const SEPARATOR_STRING = 's\x06\x15';
 const VOID_RESULT_STRING = 'v\x06\x15';
 
 export abstract class MultipleResultQueryManager<
@@ -26,55 +27,81 @@ export abstract class MultipleResultQueryManager<
     const resultsJSON = await this._redis.eval(luaScript, 1, key);
 
     if (null == resultsJSON) {
-      const ids = await this._query(params);
-      const idsJSON = ids.map((id) => JSON.stringify(id));
-      if (null != ids && ids.length > 0) {
-        this._redis.eval([
-          this._luaSetQueryGenerator(),
-          3,
-          key,
-          this._reverseHashKey,
-          VOID_RESULT_STRING,
-          ...idsJSON,
-        ]);
-        return this._primaryEntityManager.getByIds(ids, searchOptions);
-      } else {
-        this._redis.eval(
-          this._luaSetVoidQueryGenerator(),
-          1,
-          key,
-          VOID_RESULT_STRING,
-        );
-        return new Array();
-      }
+      return this._getProcessQueryNotFound(key, params, searchOptions);
     } else {
       if (VOID_RESULT_STRING === resultsJSON) {
         return new Array();
       }
       const missingIds = new Array<number|string>();
       const finalResults = new Array();
-
       for (const resultJson of resultsJSON) {
-        const result = JSON.parse(resultJson);
-        const resultType = typeof result;
-        if ('object' === resultType) {
-          finalResults.push(result);
-          continue;
-        }
-        if ('number' === resultType || 'string' === resultType) {
-          missingIds.push(result);
-          continue;
-        }
-        throw new Error(`Query "${key}" corrupted!`);
+        this._getProcessParseableResult(
+          key,
+          finalResults,
+          missingIds,
+          resultJson,
+        );
       }
-      if (0 < missingIds.length) {
-        const missingEntities = await this._primaryEntityManager.getByIds(missingIds, searchOptions);
-        for (const missingEntity of missingEntities) {
-          finalResults.push(missingEntity);
-        }
-      }
+      await this._getProcessMissingOptions(missingIds, finalResults, searchOptions);
       return finalResults;
     }
+  }
+
+  /**
+   * Gets the result of multiple queries.
+   * @param paramsArray Queries params.
+   * @param searchOptions Search options.
+   */
+  public async mGet(
+    paramsArray: any[],
+    searchOptions?: ICacheOptions,
+  ): Promise<TEntity[]> {
+    if (null == paramsArray || 0 === paramsArray.length) {
+      return new Array();
+    }
+    const keys = paramsArray.map((params: any) => this._key(params));
+    const luaScript = this._luaMGetGenerator();
+    const resultsJson = await this._redis.eval(luaScript, keys.length, ...keys);
+
+    const finalResults = new Array<TEntity>();
+    const missingQueries = new Array<[any, string]>();
+    let currentIndex = 0;
+    let resultsFound = false;
+    let voidFound = false;
+    let missingIds = new Array();
+    for (const resultJson of resultsJson) {
+      if (VOID_RESULT_STRING === resultJson) {
+        voidFound = true;
+        continue;
+      }
+      if (SEPARATOR_STRING === resultJson) {
+        if (!resultsFound && !voidFound) {
+          missingQueries.push([paramsArray[currentIndex], keys[currentIndex]]);
+        }
+        await this._getProcessMissingOptions(missingIds, finalResults, searchOptions);
+        ++currentIndex;
+        resultsFound = false;
+        voidFound = false;
+        missingIds = new Array();
+        continue;
+      }
+      resultsFound = true;
+      this._getProcessParseableResult(
+        keys[currentIndex],
+        finalResults,
+        missingIds,
+        resultJson,
+      );
+    }
+
+    if (0 < missingQueries.length) {
+      for (const [params, key] of missingQueries) {
+        const result = await this._getProcessQueryNotFound(key, params, searchOptions);
+        finalResults.push(...result);
+      }
+    }
+
+    return finalResults;
   }
 
   /**
@@ -146,6 +173,88 @@ export abstract class MultipleResultQueryManager<
   }
 
   /**
+   * Process the missing ids and adds missing entities to the final results collection.
+   * @param missingIds Missing ids collection.
+   * @param finalResults Final results collection.
+   * @param searchOptions Search options.
+   * @param Promise of missing options processed.
+   */
+  private async _getProcessMissingOptions(
+    missingIds: Array<number|string>,
+    finalResults: TEntity[],
+    searchOptions: ICacheOptions,
+  ): Promise<void> {
+    if (0 < missingIds.length) {
+      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, searchOptions);
+      for (const missingEntity of missingEntities) {
+        finalResults.push(missingEntity);
+      }
+    }
+  }
+
+  /**
+   * Process a parseable result.
+   * @param key Key used to obtain the result.
+   * @param finalResults Final results collection.
+   * @param missingIds Missing ids array.
+   * @param resultJson Parseable result.
+   * @returns Promise results parsed.
+   */
+  private _getProcessParseableResult(
+    key: string,
+    finalResults: TEntity[],
+    missingIds: Array<number|string>,
+    resultJson: string,
+  ): void {
+    const result = JSON.parse(resultJson);
+    const resultType = typeof result;
+    if ('object' === resultType) {
+      finalResults.push(result);
+      return;
+    }
+    if ('number' === resultType || 'string' === resultType) {
+      missingIds.push(result);
+      return;
+    }
+    throw new Error(`Query "${key}" corrupted!`);
+  }
+
+  /**
+   * Process a query not found obtaining the results and caching them.
+   * @param key key of the query.
+   * @param params Query params.
+   * @param searchOptions Search options.
+   * @returns Promise of query results.
+   */
+  private async _getProcessQueryNotFound(
+    key: string,
+    params: any,
+    searchOptions: ICacheOptions,
+  ): Promise<TEntity[]> {
+    const ids = await this._query(params);
+    const idsJSON = ids.map((id) => JSON.stringify(id));
+    if (null != ids && ids.length > 0) {
+      this._redis.eval([
+        this._luaSetQueryGenerator(),
+        3,
+        key,
+        this._reverseHashKey,
+        VOID_RESULT_STRING,
+        ...idsJSON,
+      ]);
+      return this._primaryEntityManager.getByIds(ids, searchOptions);
+    } else {
+      this._redis.eval(
+        this._luaSetVoidQueryGenerator(),
+        1,
+        key,
+        VOID_RESULT_STRING,
+      );
+      return new Array();
+    }
+  }
+
+  /**
    * Gets the lua script for a delete request.
    * @returns lua script.
    */
@@ -209,6 +318,38 @@ for i=1, #ARGV-1 do
     redis.call('hdel', reverseKey, ARGV[i])
   end
 end`;
+  }
+
+  /**
+   * Gets the lua script for a multiple get request.
+   * @returns Lua script.
+   */
+  private _luaMGetGenerator(): string {
+    const entitiesAlias = 'entities';
+    const idsAlias = 'ids';
+    return `local results = {}
+for i=1, #KEYS do
+  local ${idsAlias} = redis.call('smembers', KEYS[i])
+  if #${idsAlias} > 0 then
+    if ${idsAlias}[1] == '${VOID_RESULT_STRING}' then
+      results[#results + 1] = '${VOID_RESULT_STRING}'
+    else
+      local ${entitiesAlias} = {}
+      for i = 1, #${idsAlias} do
+        ${entitiesAlias}[i] = redis.call('get', ${this._luaKeyGeneratorFromId(idsAlias + '[i]')})
+      end
+      for i = 1, #${idsAlias} do
+        if ${entitiesAlias}[i] then
+          results[#results + 1] = ${entitiesAlias}[i]
+        else
+          results[#results + 1] = ${idsAlias}[i]
+        end
+      end
+    end
+  end
+  results[#results + 1] = '${SEPARATOR_STRING}'
+end
+return results`;
   }
 
   /**

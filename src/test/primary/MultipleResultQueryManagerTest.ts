@@ -45,6 +45,8 @@ export class MultipleResultQueryManagerTest implements ITest {
       this._itMustPerformACachedSearchWithLotsOfCachedAndUncachedEntities();
       this._itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsNumber();
       this._itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsString();
+      this._itMustPerformAnUncachedMultipleEntitiesSearch();
+      this._itMustPerformAnUncachedZeroEntitiesSearch();
       this._itMustPerformAnUncachedSearch();
       this._itMustPerformAnUncachedSearchWithLotsOfResults();
       this._itMustPerformAnUnexistingCachedSearch();
@@ -328,6 +330,62 @@ export class MultipleResultQueryManagerTest implements ITest {
       await primaryEntityManager.delete(entity1);
       const entityFound = await queryManager.get(entity1);
       expect(entityFound).toEqual([entity1]);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustPerformAnUncachedMultipleEntitiesSearch(): void {
+    const itsName = 'mustPerformAnUncachedMultipleEntitiesSearch';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
+      const entity1: NamedEntity = { id: 0, name: 'Pepe' };
+      const entity2: NamedEntity = { id: 0, name: 'Juan' };
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<NamedEntity>(model, [entity1, entity2]);
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const queryManager = new NamesStartingByLetter(
+        primaryEntityManager,
+        secondaryModelManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        prefix + 'names-starting-with/',
+      );
+      const results = await queryManager.mGet([entity1, entity2]);
+      expect(results).toContain(entity1);
+      expect(results).toContain(entity2);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustPerformAnUncachedZeroEntitiesSearch(): void {
+    const itsName = 'mustPerformAnUncachedZeroEntitiesSearch';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'name'], {prefix: prefix});
+      const entity1: NamedEntity = { id: 0, name: 'Pepe' };
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<NamedEntity>(model, [entity1]);
+      const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const queryManager = new NamesStartingByLetter(
+        primaryEntityManager,
+        secondaryModelManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        prefix + 'names-starting-with/',
+      );
+      const results = await queryManager.mGet(new Array());
+      expect(results).toEqual(new Array());
       done();
     }, MAX_SAFE_TIMEOUT);
   }
