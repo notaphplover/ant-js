@@ -51,6 +51,7 @@ export abstract class MultipleResultQueryManager<
    * Gets the result of multiple queries.
    * @param paramsArray Queries params.
    * @param searchOptions Search options.
+   * @returns Queries results.
    */
   public async mGet(
     paramsArray: any[],
