@@ -69,6 +69,17 @@ export abstract class PrimaryQueryManager<
   ): TQueryResult;
 
   /**
+   * Gets the result of multiple queries.
+   * @param paramsArray Queries parameters.
+   * @param searchOptions Search options.
+   * @returns Queries results.
+   */
+  public abstract mGet(
+    paramsArray: any[],
+    searchOptions?: ICacheOptions,
+  ): Promise<TEntity[]>;
+
+  /**
    * Syncs the remove of an entity in cache.
    * @param entity deleted entity.
    */
