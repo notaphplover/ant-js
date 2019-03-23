@@ -8,7 +8,7 @@ export abstract class SingleResultQueryManager<
   TEntity extends IEntity
 > extends PrimaryQueryManager<
   TEntity,
-  (params: any) => Promise<number | string>,
+  number | string,
   Promise<TEntity>
 > {
   /**

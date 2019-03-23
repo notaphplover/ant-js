@@ -9,7 +9,7 @@ export abstract class MultipleResultQueryManager<
   TEntity extends IEntity
 > extends PrimaryQueryManager<
   TEntity,
-  (params: any) => Promise<Array<number | string>>,
+  number[] | string[],
   Promise<TEntity[]>
 > {
   /**
@@ -233,7 +233,7 @@ export abstract class MultipleResultQueryManager<
     searchOptions: ICacheOptions,
   ): Promise<TEntity[]> {
     const ids = await this._query(params);
-    const idsJSON = ids.map((id) => JSON.stringify(id));
+    const idsJSON = (ids as any[]).map((id) => JSON.stringify(id));
     if (null != ids && ids.length > 0) {
       this._redis.eval([
         this._luaSetQueryGenerator(),
