@@ -61,14 +61,13 @@ export abstract class SingleResultQueryManager<
     const resultsJson = await this._redis.eval(luaScript, keys.length, keys);
     const missingIds = new Array<number|string>();
     const finalResults = new Array();
-
+    const missingQueriesKeys = new Array<string>();
+    const missingParamsArray = new Array();
     for (let i = 0; i < resultsJson.length; ++i) {
       const resultJson = resultsJson[i];
       if (null == resultJson) {
-        const id = await this._getIdAndSetToQuery(keys[i], paramsArray[i]);
-        if (null != id) {
-          missingIds.push(id);
-        }
+        missingQueriesKeys.push(keys[i]);
+        missingParamsArray.push(paramsArray[i]);
         continue;
       }
       this._parseGetResult(
@@ -80,6 +79,8 @@ export abstract class SingleResultQueryManager<
         () => { },
       );
     }
+    const idsFromMissingQueries = await this._mGetIdsAndSetToQueries(missingQueriesKeys, missingParamsArray);
+    missingIds.push(...idsFromMissingQueries);
     await this._mGetSearchMissingIds(finalResults, missingIds, searchOptions);
     return finalResults;
   }
@@ -250,6 +251,20 @@ return results`;
   }
 
   /**
+   * Gets the lua script for a multiple query set request.
+   * @returns lua script.
+   */
+  private _luaMSetGenerator(): string {
+    return `local reverseKey = KEYS[#KEYS]
+for i=1, #KEYS-1 do
+  redis.call('set', KEYS[i], ARGV[i])
+  if ARGV[i] ~= '${VOID_RESULT_STRING}' then
+    redis.call('hset', reverseKey, ARGV[i], KEYS[i])
+  end
+end`;
+  }
+
+  /**
    * Gets the lua script for a multiple update request.
    * @returns lua script.
    */
@@ -285,6 +300,33 @@ if key then
 end
 redis.call('hset', KEYS[1], ARGV[1], KEYS[2]);
 redis.call('set', KEYS[2], ARGV[1])`;
+  }
+
+  /**
+   * Gets ids from an mQuery and sets it to the cache server.
+   * @param keys queries cache keys to set.
+   * @param paramsArray Queries params.
+   */
+  private async _mGetIdsAndSetToQueries(
+    keys: string[],
+    paramsArray: any[],
+  ): Promise<Array<number|string>> {
+    if (0 === keys.length) {
+      return new Array();
+    }
+    const originalIds = await this._mquery(paramsArray);
+    const ids = originalIds.map(
+      (id) =>
+        null == id ? VOID_RESULT_STRING : JSON.stringify(id),
+    );
+    this._redis.eval([
+      this._luaMSetGenerator(),
+      keys.length + 1,
+      ...keys,
+      this._reverseHashKey,
+      ...ids,
+    ]);
+    return originalIds.filter((id) => null != id);
   }
 
   /**
