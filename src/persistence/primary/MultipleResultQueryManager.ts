@@ -473,26 +473,26 @@ redis.call('sadd', KEYS[2], ARGV[2])`;
     ];
     const finalIds: number[] | string[] = new Array();
     for (let i = 0; i < ids.length - 1; ++i) {
-      const currentIds = ids[i] as Array<number&string>;
-      if (0 === currentIds.length) {
-        evalParams.push(VOID_RESULT_STRING);
-      } else {
-        finalIds.push(...currentIds);
-        const mappedIds = (currentIds as any[]).map((id) => JSON.stringify(id));
-        evalParams.push(...mappedIds);
-      }
+      this._mGetProcessQueriesNotFoundProcessIds(evalParams, ids[i] as Array<number&string>, finalIds);
       evalParams.push(SEPARATOR_STRING);
     }
-    const finalCurrentIds = ids[ids.length - 1] as Array<number&string>;
-    if (0 === finalCurrentIds.length) {
-      evalParams.push(VOID_RESULT_STRING);
-    } else {
-      finalIds.push(...finalCurrentIds);
-      const mappedIds = (finalCurrentIds as any[]).map((id) => JSON.stringify(id));
-      evalParams.push(...mappedIds);
-    }
+    this._mGetProcessQueriesNotFoundProcessIds(evalParams, ids[ids.length - 1] as Array<number&string>, finalIds);
 
     this._redis.eval(evalParams);
     return finalIds;
+  }
+
+  private _mGetProcessQueriesNotFoundProcessIds(
+    evalParams: Array<string|number>,
+    currentIds: Array<string&number>,
+    finalIds: number[] | string[],
+  ) {
+    if (0 === currentIds.length) {
+      evalParams.push(VOID_RESULT_STRING);
+    } else {
+      finalIds.push(...currentIds);
+      const mappedIds = (currentIds as any[]).map((id) => JSON.stringify(id));
+      evalParams.push(...mappedIds);
+    }
   }
 }
