@@ -65,11 +65,12 @@ export abstract class MultipleResultQueryManager<
     const resultsJson = await this._redis.eval(luaScript, keys.length, ...keys);
 
     const finalResults = new Array<TEntity>();
-    const missingQueries = new Array<[any, string]>();
+    const missingQueriesParams = new Array();
+    const missingQueriesKeys = new Array<string>();
     let currentIndex = 0;
     let resultsFound = false;
     let voidFound = false;
-    let missingIds = new Array();
+    const missingIds = new Array();
     for (const resultJson of resultsJson) {
       if (VOID_RESULT_STRING === resultJson) {
         voidFound = true;
@@ -77,13 +78,12 @@ export abstract class MultipleResultQueryManager<
       }
       if (SEPARATOR_STRING === resultJson) {
         if (!resultsFound && !voidFound) {
-          missingQueries.push([paramsArray[currentIndex], keys[currentIndex]]);
+          missingQueriesParams.push(paramsArray[currentIndex]);
+          missingQueriesKeys.push(keys[currentIndex]);
         }
-        await this._getProcessMissingOptions(missingIds, finalResults, searchOptions);
         ++currentIndex;
         resultsFound = false;
         voidFound = false;
-        missingIds = new Array();
         continue;
       }
       resultsFound = true;
@@ -95,12 +95,15 @@ export abstract class MultipleResultQueryManager<
       );
     }
 
-    if (0 < missingQueries.length) {
-      for (const [params, key] of missingQueries) {
-        const result = await this._getProcessQueryNotFound(key, params, searchOptions);
-        finalResults.push(...result);
-      }
+    if (0 < missingQueriesKeys.length) {
+      const queriesMissingIds = await this._mGetProcessQueriesNotFound(
+        missingQueriesParams,
+        missingQueriesKeys,
+      );
+      missingIds.push(...queriesMissingIds);
     }
+
+    await this._getProcessMissingOptions(missingIds, finalResults, searchOptions);
 
     return finalResults;
   }
@@ -134,7 +137,6 @@ export abstract class MultipleResultQueryManager<
       1,
       this._reverseHashKey,
       ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
-      VOID_RESULT_STRING,
     ]);
   }
 
@@ -153,7 +155,6 @@ export abstract class MultipleResultQueryManager<
       ...(entities.map((entity) => this._key(entity))),
       this._reverseHashKey,
       ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
-      VOID_RESULT_STRING,
     ]);
   }
 
@@ -308,13 +309,12 @@ end`;
    */
   private _luaMDeleteGenerator(): string {
     return `local reverseKey = KEYS[1]
-local voidValue = ARGV[#ARGV]
-for i=1, #ARGV-1 do
+for i=1, #ARGV do
   local key = redis.call('hget', reverseKey, ARGV[i])
   if key then
     redis.call('srem', key, ARGV[i])
     if 0 == redis.call('scard', key) then
-      redis.call('sadd', key, voidValue)
+      redis.call('sadd', key, '${VOID_RESULT_STRING}')
     end
     redis.call('hdel', reverseKey, ARGV[i])
   end
@@ -354,23 +354,57 @@ return results`;
   }
 
   /**
+   * Gets the script for a multiple lua set request.
+   * @returns Lua script.
+   */
+  private _luaMSetQueryGenerator(): string {
+    /*
+     * Lua 5.1 has no "continue" statement...
+     * Its important to notice that the last ARGV must not be a SEPARATOR_STRING
+     */
+    return `local reverseKey = KEYS[#KEYS]
+local currentKeyCounter = 1
+local currentKey = KEYS[currentKeyCounter]
+if redis.call('sismember', currentKey, '${VOID_RESULT_STRING}') then
+  redis.call('srem', currentKey, '${VOID_RESULT_STRING}')
+end
+for i=1, #ARGV do
+  if ARGV[i] == '${SEPARATOR_STRING}' then
+    currentKeyCounter = currentKeyCounter + 1;
+    local currentKey = KEYS[currentKeyCounter]
+    if redis.call('sismember', currentKey, '${VOID_RESULT_STRING}') then
+      redis.call('srem', currentKey, '${VOID_RESULT_STRING}')
+    end
+  else
+    if ARGV[i] == '${VOID_RESULT_STRING}' then
+      if 0 == redis.call('scard', currentKey) then
+        redis.call('sadd', currentKey, '${VOID_RESULT_STRING}')
+      end
+    else
+      redis.call('hset', reverseKey, ARGV[i], currentKey)
+      redis.call('sadd', currentKey, ARGV[i])
+    end
+  end
+end`;
+  }
+
+  /**
    * Gets the lua script for an mUpdate request.
    * @returns Lua script.
    */
   private _luaMUpdateGenerator(): string {
     return `local reverseKey = KEYS[#KEYS]
-local voidValue = ARGV[#ARGV]
 for i=1, #KEYS-1 do
   local key = redis.call('hget', reverseKey, ARGV[i])
   if key then
     redis.call('srem', key, ARGV[i])
     if 0 == redis.call('scard', key) then
-      redis.call('sadd', key, voidValue)
+      redis.call('sadd', key, '${VOID_RESULT_STRING}')
     end
   end
   redis.call('hset', reverseKey, ARGV[i], KEYS[i])
-  if redis.call('sismember', KEYS[i], voidValue) then
-    redis.call('srem', KEYS[i], voidValue)
+  if redis.call('sismember', KEYS[i], '${VOID_RESULT_STRING}') then
+    redis.call('srem', KEYS[i], '${VOID_RESULT_STRING}')
   end
   redis.call('sadd', KEYS[i], ARGV[i])
 end`;
@@ -418,5 +452,47 @@ if redis.call('sismember', KEYS[2], ARGV[1]) then
   redis.call('srem', KEYS[2], ARGV[1])
 end
 redis.call('sadd', KEYS[2], ARGV[2])`;
+  }
+
+  /**
+   * Process multiple not found queries.
+   * @param paramsArray queries params.
+   * @param keys Queries cache keys.
+   * @returns Promise of queries processed.
+   */
+  private async _mGetProcessQueriesNotFound(
+    paramsArray: any[],
+    keys: string[],
+  ): Promise<number[] | string[]> {
+    const ids = await this._mquery(paramsArray);
+    const evalParams = [
+      this._luaMSetQueryGenerator(),
+      keys.length + 1,
+      ...keys,
+      this._reverseHashKey,
+    ];
+    const finalIds: number[] | string[] = new Array();
+    for (let i = 0; i < ids.length - 1; ++i) {
+      const currentIds = ids[i] as Array<number&string>;
+      if (0 === currentIds.length) {
+        evalParams.push(VOID_RESULT_STRING);
+      } else {
+        finalIds.push(...currentIds);
+        const mappedIds = (currentIds as any[]).map((id) => JSON.stringify(id));
+        evalParams.push(...mappedIds);
+      }
+      evalParams.push(SEPARATOR_STRING);
+    }
+    const finalCurrentIds = ids[ids.length - 1] as Array<number&string>;
+    if (0 === finalCurrentIds.length) {
+      evalParams.push(VOID_RESULT_STRING);
+    } else {
+      finalIds.push(...finalCurrentIds);
+      const mappedIds = (finalCurrentIds as any[]).map((id) => JSON.stringify(id));
+      evalParams.push(...mappedIds);
+    }
+
+    this._redis.eval(evalParams);
+    return finalIds;
   }
 }

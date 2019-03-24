@@ -74,7 +74,7 @@ export abstract class SingleResultQueryManager<
         keys[i],
         resultJson,
         (entity) => { finalResults.push(entity); },
-        (id: number| string) => { missingIds.push(id); },
+        (id: number|string) => { missingIds.push(id); },
         // tslint:disable-next-line:no-empty
         () => { },
       );
