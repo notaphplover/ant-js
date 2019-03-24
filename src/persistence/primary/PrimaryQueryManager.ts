@@ -5,11 +5,18 @@ import { ICacheOptions } from './ICacheOptions';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 import { IPrimaryQueryManager } from './IPrimaryQueryManager';
 
+type TMQuery<TQueryResult> = (paramsArray: any[]) => Promise<TQueryResult[]>;
+type TQuery<TQueryResult> = (params: any) => Promise<TQueryResult>;
+
 export abstract class PrimaryQueryManager<
   TEntity extends IEntity,
-  TQuery extends (params: any) => Promise<number | string | Array<number | string>>,
-  TQueryResult extends Promise<TEntity | TEntity[]>
-> implements IPrimaryQueryManager<TEntity, TQueryResult> {
+  TQueryResult extends number | string | number[] | string[],
+  TResult extends Promise<TEntity | TEntity[]>
+> implements IPrimaryQueryManager<TEntity, TResult> {
+  /**
+   * Multiple query
+   */
+  protected _mquery: TMQuery<TQueryResult>;
   /**
    * Primary entity manager.
    */
@@ -17,7 +24,7 @@ export abstract class PrimaryQueryManager<
   /**
    * Query to obtain ids.
    */
-  protected _query: TQuery;
+  protected _query: TQuery<TQueryResult>;
   /**
    * Redis connection to manage queries.
    */
@@ -39,16 +46,19 @@ export abstract class PrimaryQueryManager<
    * @param reverseHashKey Key of the reverse structure to obtain a map of entities to queries.
    */
   public constructor(
-    query: TQuery,
+    query: TQuery<TQueryResult>,
     primaryEntityManager: IPrimaryEntityManager<TEntity>,
     redis: IORedis.Redis,
     reverseHashKey: string,
+    mQuery: TMQuery<TQueryResult> = null,
   ) {
     this._primaryEntityManager = primaryEntityManager;
     this._query = query;
     this._redis = redis;
     this._reverseHashKey = reverseHashKey;
     this._luaKeyGeneratorFromId = this._primaryEntityManager.getKeyGenerationLuaScriptGenerator();
+
+    this._setMQuery(query, mQuery);
   }
 
   /**
@@ -66,7 +76,7 @@ export abstract class PrimaryQueryManager<
   public abstract get(
     params: any,
     searchOptions?: ICacheOptions,
-  ): TQueryResult;
+  ): TResult;
 
   /**
    * Gets the result of multiple queries.
@@ -111,4 +121,31 @@ export abstract class PrimaryQueryManager<
    * @returns Key generated for the query.
    */
   protected abstract _key(param: any): string;
+
+  /**
+   * Creates an standard mquery.
+   * @param query query to manage.
+   */
+  private _getDefaultMQuery(query: TQuery<TQueryResult>): TMQuery<TQueryResult> {
+    return (paramsArray: any) => {
+      const promisesArray = new Array<Promise<TQueryResult>>();
+      for (const params of paramsArray) {
+        promisesArray.push(query(params));
+      }
+      return Promise.all(promisesArray);
+    };
+  }
+
+  /**
+   * Sets the mquery (if provided) or creates a default one.
+   * @param query query to manage.
+   * @param mQuery mquery to manage.
+   */
+  private _setMQuery(query: TQuery<TQueryResult>, mQuery: TMQuery<TQueryResult>): void {
+    if (null == mQuery) {
+      this._mquery = this._getDefaultMQuery(query);
+    } else {
+      this._mquery = mQuery;
+    }
+  }
 }

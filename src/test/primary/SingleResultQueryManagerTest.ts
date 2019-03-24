@@ -37,6 +37,7 @@ export class SingleResultQueryManagerTest implements ITest {
       this.itMustPerformACachedSearchWithCachedEntities();
       this.itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsNumber();
       this.itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsString();
+      this.itMustPerformACustomMultipleResultSearch();
       this.itMustPerformAMultipleCachedSearchWithCachedEntities();
       this.itMustPerformAMultipleCachedSearchWithoutCachedEntitiesWithIdAsNumber();
       this.itMustPerformAMultipleCachedSearchWithoutCachedEntitiesWithIdAsString();
@@ -351,6 +352,69 @@ export class SingleResultQueryManagerTest implements ITest {
       await primaryEntityManager.delete(entity1);
       const entityFound = await queryManager.get({ field: entity1.field });
       expect(entityFound).toEqual(entity1);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private itMustPerformACustomMultipleResultSearch(): void {
+    const itsName = 'mustPerformACustomMultipleResultSearch';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const entity1: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 1, field: 'sample-1'};
+      const entity2: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 2, field: 'sample-2'};
+      const secondaryModelManager =
+        new SecondaryModelManagerMock<IEntity & {
+          id: number,
+          field: string,
+        }>(model, [entity1, entity2]);
+      const primaryEntityManager = new PrimaryEntityManager(
+        model,
+        this._redis.redis,
+        secondaryModelManager,
+      );
+      const query = async (params: any) => {
+        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        if (null == entityFound) {
+          return null;
+        } else {
+          return entityFound.id;
+        }
+      };
+      const mQuery = async (paramsArray: any[]) => {
+        const results = new Array(paramsArray.length);
+        const resultsMap = new Map<string, number>();
+        for (let i = 0; i < paramsArray.length; ++i) {
+          results[i] = null;
+          resultsMap.set(paramsArray[i].field, i);
+        }
+        for (const entity of secondaryModelManager.store) {
+          const index = resultsMap.get(entity.field);
+          if (null != index) {
+            results[index] = entity.id;
+          }
+        }
+        return results;
+      };
+      const queryManager = new SingleResultQueryByFieldManager(
+        query,
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        'field',
+        prefix + 'query-by-field/',
+        mQuery,
+      );
+      const entitiesFound = await queryManager.mGet([{ field: entity1.field }, { field: entity2.field }]);
+      expect(entitiesFound).toContain(entity1);
+      expect(entitiesFound).toContain(entity2);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
