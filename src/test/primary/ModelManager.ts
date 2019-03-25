@@ -1,0 +1,94 @@
+import { IEntity } from '../../model/IEntity';
+import { CacheOptions } from '../../persistence/primary/CacheOptions';
+import { ICacheOptions } from '../../persistence/primary/ICacheOptions';
+import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
+import { IPrimaryQueryManager } from '../../persistence/primary/IPrimaryQueryManager';
+import { IModelManager } from './IModelManager';
+
+export class ModelManager<TEntity extends IEntity> implements IModelManager<TEntity> {
+  /**
+   * Primary entity manager.
+   */
+  protected _primaryEntityManager: IPrimaryEntityManager<TEntity>;
+  /**
+   * Query managers.
+   */
+  protected _queryManagers: Array<IPrimaryQueryManager<TEntity, Promise<TEntity | TEntity[]>>>;
+
+  /**
+   * Creates a new model manager.
+   * @param primaryEntityManager Primary entity manager.
+   * @param queryManagers Query managers.
+   */
+  public constructor(
+    primaryEntityManager: IPrimaryEntityManager<TEntity>,
+    queryManagers: Array<IPrimaryQueryManager<TEntity, Promise<TEntity | TEntity[]>>>,
+  ) {
+    this._primaryEntityManager = primaryEntityManager;
+    this._queryManagers = queryManagers;
+  }
+
+  /**
+   * Deletes an entity from the cache layer.
+   * @param entity Entity to delete.
+   * @returns Promise of entity deleted.
+   */
+  public delete(entity: TEntity): Promise<any> {
+    const promises = new Array<Promise<any>>();
+    for (const queryManager of this._queryManagers) {
+      promises.push(queryManager.syncDelete(entity));
+    }
+    promises.push(this._primaryEntityManager.delete(entity));
+    return Promise.all(promises);
+  }
+
+  /**
+   * Deletes multiple entities from the cache layer.
+   * @param entities Entities to delete.
+   * @returns Promise of entities deleted.
+   */
+  public mDelete(entities: TEntity[]): Promise<any> {
+    const promises = new Array<Promise<any>>();
+    for (const queryManager of this._queryManagers) {
+      promises.push(queryManager.syncMDelete(entities));
+    }
+    promises.push(this._primaryEntityManager.mDelete(entities));
+    return Promise.all(promises);
+  }
+
+  /**
+   * Updates multiple entities at the cache layer.
+   * @param entities Entities to be updated.
+   * @param cacheOptions Cache options.
+   * @returns Priomise of entities updated.
+   */
+  public mUpdate(
+    entities: TEntity[],
+    cacheOptions: ICacheOptions = new CacheOptions(),
+  ): Promise<any> {
+    const promises = new Array<Promise<any>>();
+    for (const queryManager of this._queryManagers) {
+      promises.push(queryManager.syncMUpdate(entities));
+    }
+    promises.push(this._primaryEntityManager.mUpdate(entities, cacheOptions));
+    return Promise.all(promises);
+  }
+
+  /**
+   * Updates an entity at the cache layer.
+   * @param entity Entitty to update.
+   * @param cacheOptions Cache options.
+   * @returns Promise of entity updated.
+   */
+  public update(
+    entity: TEntity,
+    cacheOptions: ICacheOptions = new CacheOptions(),
+  ): Promise<any> {
+    const promises = new Array<Promise<any>>();
+    for (const queryManager of this._queryManagers) {
+      promises.push(queryManager.syncUpdate(entity));
+    }
+    promises.push(this._primaryEntityManager.update(entity, cacheOptions));
+    return Promise.all(promises);
+  }
+}

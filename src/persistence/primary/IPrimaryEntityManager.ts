@@ -33,7 +33,7 @@ export interface IPrimaryEntityManager<TEntity extends IEntity>
    */
   mUpdate(
     entities: TEntity[],
-    searchOptions: ICacheOptions,
+    searchOptions?: ICacheOptions,
   ): Promise<any>;
   /**
    * Caches an entity.
@@ -41,5 +41,5 @@ export interface IPrimaryEntityManager<TEntity extends IEntity>
    * @param searchOptions Search options.
    * @returns Promise of redis operation ended
    */
-  update(entity: TEntity, searchOptions: ICacheOptions): Promise<any>;
+  update(entity: TEntity, searchOptions?: ICacheOptions): Promise<any>;
 }
