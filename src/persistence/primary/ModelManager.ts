@@ -1,9 +1,9 @@
 import { IEntity } from '../../model/IEntity';
-import { CacheOptions } from '../../persistence/primary/CacheOptions';
-import { ICacheOptions } from '../../persistence/primary/ICacheOptions';
-import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
-import { IPrimaryQueryManager } from '../../persistence/primary/IPrimaryQueryManager';
+import { CacheOptions } from './CacheOptions';
+import { ICacheOptions } from './ICacheOptions';
 import { IModelManager } from './IModelManager';
+import { IPrimaryEntityManager } from './IPrimaryEntityManager';
+import { IPrimaryQueryManager } from './IPrimaryQueryManager';
 
 export class ModelManager<TEntity extends IEntity> implements IModelManager<TEntity> {
   /**
