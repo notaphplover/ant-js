@@ -30,7 +30,7 @@ export class MultipleResultQueryManagerTest implements ITest {
 
   public constructor(beforeAllPromise: Promise<any>) {
     this._beforeAllPromise = beforeAllPromise;
-    this._declareName = 'MultipleResultQueyManagerTest';
+    this._declareName = 'MultipleResultQueryManagerTest';
     this._redis = new RedisWrapper();
   }
 
