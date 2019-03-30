@@ -1,6 +1,7 @@
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { IModelManager } from '../../persistence/primary/IModelManager';
+import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
 import { IPrimaryQueryManager } from '../../persistence/primary/IPrimaryQueryManager';
 import { ModelManager } from '../../persistence/primary/ModelManager';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
@@ -26,28 +27,38 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     queryPrefix: string,
     reverseHashKey: string,
     secondaryManager: SecondaryModelManagerMock<TEntity>,
-  ): IModelManager<TEntity> {
+  ): [
+    IModelManager<TEntity>,
+    IPrimaryEntityManager<TEntity>,
+    Map<string, IPrimaryQueryManager<TEntity, Promise<TEntity|TEntity[]>>>
+  ] {
     const primaryEntityManager = new PrimaryEntityManager(model, this._redis.redis, secondaryManager);
     const queryManagers = new Array<IPrimaryQueryManager<TEntity, Promise<TEntity | TEntity[]>>>();
-    // generate query managers:
+    const queriesMap = new Map<string, IPrimaryQueryManager<TEntity, Promise<TEntity | TEntity[]>>>();
     for (const property of model.properties) {
       if (property === model.id) { continue; }
 
       const singleResultQueryManager = new SingleResultQueryByFieldManager<TEntity>(
         (params: any) =>
-          new Promise((resolve) => { resolve(
-            secondaryManager.store.find(
+          new Promise((resolve) => {
+            const entity = secondaryManager.store.find(
               (value: TEntity) => value[property] === params[property],
-            )[model.id],
-          ); }),
+            );
+            resolve(entity ? entity[model.id] : null);
+          }),
         primaryEntityManager,
         this._redis.redis,
         reverseHashKey + property + '/',
         property,
         queryPrefix + property + '/',
       );
+      queriesMap.set(property, singleResultQueryManager);
       queryManagers.push(singleResultQueryManager);
     }
-    return new ModelManager(primaryEntityManager, queryManagers);
+    return [
+      new ModelManager(primaryEntityManager, queryManagers),
+      primaryEntityManager,
+      queriesMap,
+    ];
   }
 }
