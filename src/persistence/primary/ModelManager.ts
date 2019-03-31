@@ -3,7 +3,7 @@ import { CacheOptions } from './CacheOptions';
 import { ICacheOptions } from './ICacheOptions';
 import { IModelManager } from './IModelManager';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
-import { IPrimaryQueryManager } from './IPrimaryQueryManager';
+import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 
 export class ModelManager<TEntity extends IEntity> implements IModelManager<TEntity> {
   /**

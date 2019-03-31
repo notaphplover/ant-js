@@ -1,8 +1,8 @@
 import * as IORedis from 'ioredis';
-import { IEntity } from '../../model/IEntity';
-import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
-import { MultipleResultQueryManager } from '../../persistence/primary/MultipleResultQueryManager';
-import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
+import { IEntity } from '../../../model/IEntity';
+import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
+import { MultipleResultQueryManager } from '../../../persistence/primary/query/MultipleResultQueryManager';
+import { SecondaryModelManagerMock } from '../../secondary/SecondaryModelManagerMock';
 
 export type NamedEntity = {id: number, name: string } & IEntity;
 

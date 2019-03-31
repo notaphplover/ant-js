@@ -3,7 +3,7 @@ import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { ICacheOptions } from './ICacheOptions';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
-import { IPrimaryQueryManager } from './IPrimaryQueryManager';
+import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 
 type TMQuery<TQueryResult> = (paramsArray: any[]) => Promise<TQueryResult[]>;
 type TQuery<TQueryResult> = (params: any) => Promise<TQueryResult>;
