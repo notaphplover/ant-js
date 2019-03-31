@@ -1,7 +1,7 @@
 import * as IORedis from 'ioredis';
-import { IEntity } from '../../model/IEntity';
-import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
-import { SingleResultQueryManager } from '../../persistence/primary/SingleResultQueryManager';
+import { IEntity } from '../../../model/IEntity';
+import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
+import { SingleResultQueryManager } from '../../../persistence/primary/query/SingleResultQueryManager';
 
 export class SingleResultQueryByFieldManager<TEntity extends IEntity>
   extends SingleResultQueryManager<TEntity> {

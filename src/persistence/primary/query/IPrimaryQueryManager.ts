@@ -1,6 +1,6 @@
-import { IEntity } from '../../model/IEntity';
-import { IModel } from '../../model/IModel';
-import { ICacheOptions } from './ICacheOptions';
+import { IEntity } from '../../../model/IEntity';
+import { IModel } from '../../../model/IModel';
+import { ICacheOptions } from '../ICacheOptions';
 
 export interface IPrimaryQueryManager<
   TEntity extends IEntity,

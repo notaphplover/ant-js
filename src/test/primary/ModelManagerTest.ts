@@ -2,7 +2,7 @@ import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { Model } from '../../model/Model';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
-import { IPrimaryQueryManager } from '../../persistence/primary/IPrimaryQueryManager';
+import { IPrimaryQueryManager } from '../../persistence/primary/query/IPrimaryQueryManager';
 import { ITest } from '../ITest';
 import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
 import { ModelManagerGenerator } from './ModelManagerGenerator';

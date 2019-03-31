@@ -1,6 +1,6 @@
-import { IEntity } from '../../model/IEntity';
-import { ICacheOptions } from './ICacheOptions';
-import { PrimaryQueryManager } from './PrimaryQueryManager';
+import { IEntity } from '../../../model/IEntity';
+import { ICacheOptions } from '../ICacheOptions';
+import { PrimaryQueryManager } from '../PrimaryQueryManager';
 
 const SEPARATOR_STRING = 's\x06\x15';
 const VOID_RESULT_STRING = 'v\x06\x15';

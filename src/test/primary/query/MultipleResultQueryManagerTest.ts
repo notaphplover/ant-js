@@ -1,7 +1,8 @@
-import { Model } from '../../model/Model';
-import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
-import { ITest } from '../ITest';
-import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
+import { Model } from '../../../model/Model';
+import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
+import { ITest } from '../../ITest';
+import { SecondaryModelManagerMock } from '../../secondary/SecondaryModelManagerMock';
+import { RedisWrapper } from '../RedisWrapper';
 import {
   NamedEntity,
   NamesStartingByLetter,
@@ -10,7 +11,6 @@ import {
   NamedEntityAlternative,
   NamesStartingByLetterAlternative,
 } from './NamesStartingByLetterAlternative';
-import { RedisWrapper } from './RedisWrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 

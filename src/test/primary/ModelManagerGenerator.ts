@@ -2,12 +2,12 @@ import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { IModelManager } from '../../persistence/primary/IModelManager';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
-import { IPrimaryQueryManager } from '../../persistence/primary/IPrimaryQueryManager';
 import { ModelManager } from '../../persistence/primary/ModelManager';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
+import { IPrimaryQueryManager } from '../../persistence/primary/query/IPrimaryQueryManager';
 import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
+import { SingleResultQueryByFieldManager } from './query/SingleResultQueryByFieldManager';
 import { RedisWrapper } from './RedisWrapper';
-import { SingleResultQueryByFieldManager } from './SingleResultQueryByFieldManager';
 
 export class ModelManagerGenerator<TEntity extends IEntity> {
   /**

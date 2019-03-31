@@ -1,9 +1,9 @@
-import { IEntity } from '../../model/IEntity';
-import { Model } from '../../model/Model';
-import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
-import { ITest } from '../ITest';
-import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
-import { RedisWrapper } from './RedisWrapper';
+import { IEntity } from '../../../model/IEntity';
+import { Model } from '../../../model/Model';
+import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
+import { ITest } from '../../ITest';
+import { SecondaryModelManagerMock } from '../../secondary/SecondaryModelManagerMock';
+import { RedisWrapper } from '../RedisWrapper';
 import { SingleResultQueryByFieldManager } from './SingleResultQueryByFieldManager';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
