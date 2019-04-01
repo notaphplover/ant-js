@@ -6,7 +6,7 @@ import { CacheOptions } from '../../persistence/primary/CacheOptions';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { ITest } from '../ITest';
-import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
+import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from './RedisWrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
@@ -74,14 +74,14 @@ export class PrimaryEntityManagerTest implements ITest {
       id: number,
       field: string,
     }>,
-    SecondaryModelManagerMock<IEntity & {
+    SecondaryEntityManagerMock<IEntity & {
       id: number,
       field: string,
     }>,
   ] {
     const model = new Model('id', ['id', 'field']);
-    const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
+    const secondaryEntityManager =
+        new SecondaryEntityManagerMock<IEntity & {
           id: number,
           field: string,
         }>(model, entities);
@@ -92,12 +92,12 @@ export class PrimaryEntityManagerTest implements ITest {
       { prefix: prefix },
       model,
       this._redis.redis,
-      secondaryModelManager,
+      secondaryEntityManager,
     );
     return [
       model,
       primaryEntityManager,
-      secondaryModelManager,
+      secondaryEntityManager,
     ];
   }
 
@@ -345,15 +345,15 @@ return redis.call('get', ${luaExpression})`,
     it(itsName, async (done) => {
       await this._beforeAllPromise;
       const model = new Model('id', ['id']);
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<{id: string}>(model);
+      const secondaryEntityManager =
+        new SecondaryEntityManagerMock<{id: string}>(model);
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
         new PrimaryEntityManager(
           {prefix: prefix},
           model,
           this._redis.redis,
-          secondaryModelManager,
+          secondaryEntityManager,
         );
       }).not.toThrowError();
       done();
@@ -372,11 +372,11 @@ return redis.call('get', ${luaExpression})`,
       const [
         model,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
 
       await primaryEntityManager.update(entity);
-      secondaryModelManager.store.length = 0;
+      secondaryEntityManager.store.length = 0;
       await primaryEntityManager.delete(entity);
       const entityFound = await primaryEntityManager.getById(entity[model.id]);
 
@@ -397,11 +397,11 @@ return redis.call('get', ${luaExpression})`,
       const [
         model,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
 
       await primaryEntityManager.update(entity);
-      secondaryModelManager.store.length = 0;
+      secondaryEntityManager.store.length = 0;
       await primaryEntityManager.mDelete([entity]);
       const entityFound = await primaryEntityManager.getById(entity[model.id]);
 
@@ -422,11 +422,11 @@ return redis.call('get', ${luaExpression})`,
       const [
         model,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
 
       await primaryEntityManager.update(entity);
-      secondaryModelManager.store.length = 0;
+      secondaryEntityManager.store.length = 0;
       await primaryEntityManager.mDelete(new Array());
       const entityFound = await primaryEntityManager.getById(entity[model.id]);
 
@@ -547,11 +547,11 @@ return redis.call('get', ${luaExpression})`,
       const [
         model,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
 
       await primaryEntityManager.update(entity);
-      secondaryModelManager.store.length = 0;
+      secondaryEntityManager.store.length = 0;
       const entityFound = await primaryEntityManager.getById(entity[model.id]);
 
       expect(entityFound).toEqual(entity);
@@ -575,11 +575,11 @@ return redis.call('get', ${luaExpression})`,
       const [
         model,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
 
       await primaryEntityManager.mUpdate([entity1, entity2]);
-      secondaryModelManager.store.length = 0;
+      secondaryEntityManager.store.length = 0;
       const entitiesFound = await primaryEntityManager.getByIds([
         entity1[model.id],
         entity2[model.id],
@@ -607,14 +607,14 @@ return redis.call('get', ${luaExpression})`,
       const [
         model,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
       const options = new CacheOptions(CacheMode.CacheAndOverwrite, 3600);
       await primaryEntityManager.getByIds([
         entity1[model.id],
         entity2[model.id],
       ], options);
-      secondaryModelManager.store.length = 0;
+      secondaryEntityManager.store.length = 0;
       const entitiesFound = await primaryEntityManager.getByIds([
         entity1[model.id],
         entity2[model.id],

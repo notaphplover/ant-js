@@ -4,7 +4,7 @@ import { Model } from '../../model/Model';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
 import { IPrimaryQueryManager } from '../../persistence/primary/query/IPrimaryQueryManager';
 import { ITest } from '../ITest';
-import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
+import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
 import { ModelManagerGenerator } from './ModelManagerGenerator';
 import { RedisWrapper } from './RedisWrapper';
 
@@ -127,7 +127,7 @@ export class ModelManagerTest implements ITest {
         entity2,
       ];
       const model = modelTestGenerator();
-      const secondaryModelManager = new SecondaryModelManagerMock<IEntityTest>(
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
         model,
         entities,
       );
@@ -140,9 +140,9 @@ export class ModelManagerTest implements ITest {
         prefix,
         prefix + 'query/',
         prefix + 'reverse/',
-        secondaryModelManager,
+        secondaryEntityManager,
       );
-      secondaryModelManager.store.shift();
+      secondaryEntityManager.store.shift();
       await modelManager.delete(entity1);
 
       const [
@@ -192,7 +192,7 @@ export class ModelManagerTest implements ITest {
         entity3,
       ];
       const model = modelTestGenerator();
-      const secondaryModelManager = new SecondaryModelManagerMock<IEntityTest>(
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
         model,
         entities,
       );
@@ -205,10 +205,10 @@ export class ModelManagerTest implements ITest {
         prefix,
         prefix + 'query/',
         prefix + 'reverse/',
-        secondaryModelManager,
+        secondaryEntityManager,
       );
-      secondaryModelManager.store.shift();
-      secondaryModelManager.store.shift();
+      secondaryEntityManager.store.shift();
+      secondaryEntityManager.store.shift();
       await modelManager.mDelete([entity1, entity2]);
 
       const [
@@ -265,7 +265,7 @@ export class ModelManagerTest implements ITest {
         entity2,
       ];
       const model = modelTestGenerator();
-      const secondaryModelManager = new SecondaryModelManagerMock<IEntityTest>(
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
         model,
         entities,
       );
@@ -278,7 +278,7 @@ export class ModelManagerTest implements ITest {
         prefix,
         prefix + 'query/',
         prefix + 'reverse/',
-        secondaryModelManager,
+        secondaryEntityManager,
       );
       await modelManager.update(entity1After);
 
@@ -328,7 +328,7 @@ export class ModelManagerTest implements ITest {
         entity2,
       ];
       const model = modelTestGenerator();
-      const secondaryModelManager = new SecondaryModelManagerMock<IEntityTest>(
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
         model,
         entities,
       );
@@ -341,7 +341,7 @@ export class ModelManagerTest implements ITest {
         prefix,
         prefix + 'query/',
         prefix + 'reverse/',
-        secondaryModelManager,
+        secondaryEntityManager,
       );
       await modelManager.mUpdate([entity1After]);
 

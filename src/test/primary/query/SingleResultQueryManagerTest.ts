@@ -4,7 +4,7 @@ import { Model } from '../../../model/Model';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
 import { ITest } from '../../ITest';
-import { SecondaryModelManagerMock } from '../../secondary/SecondaryModelManagerMock';
+import { SecondaryEntityManagerMock } from '../../secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from '../RedisWrapper';
 import { SingleResultQueryByFieldManager } from './SingleResultQueryByFieldManager';
 
@@ -73,14 +73,14 @@ export class SingleResultQueryManagerTest implements ITest {
       id: number,
       field: string,
     }>,
-    SecondaryModelManagerMock<IEntity & {
+    SecondaryEntityManagerMock<IEntity & {
       id: number,
       field: string,
     }>,
   ] {
     const model = new Model('id', ['id', 'field']);
-    const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
+    const secondaryEntityManager =
+        new SecondaryEntityManagerMock<IEntity & {
           id: number,
           field: string,
         }>(model, entities);
@@ -91,12 +91,12 @@ export class SingleResultQueryManagerTest implements ITest {
       { prefix: prefix },
       model,
       this._redis.redis,
-      secondaryModelManager,
+      secondaryEntityManager,
     );
     return [
       model,
       primaryEntityManager,
-      secondaryModelManager,
+      secondaryEntityManager,
     ];
   }
 
@@ -136,10 +136,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -179,10 +179,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -220,10 +220,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -241,7 +241,7 @@ export class SingleResultQueryManagerTest implements ITest {
       await queryManager.mGet([
         { field: entity1.field },
       ]);
-      secondaryModelManager.store.length = 0;
+      secondaryEntityManager.store.length = 0;
       await queryManager.syncMDelete(new Array());
       const entitiesFoundAfter = await queryManager.mGet([
         { field: entity1.field },
@@ -263,10 +263,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -300,10 +300,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -336,8 +336,8 @@ export class SingleResultQueryManagerTest implements ITest {
         id: string,
         field: string,
       } = {id: '1', field: 'sample-1'};
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
+      const secondaryEntityManager =
+        new SecondaryEntityManagerMock<IEntity & {
           id: string,
           field: string,
         }>(model, [entity1]);
@@ -345,10 +345,10 @@ export class SingleResultQueryManagerTest implements ITest {
         {prefix: prefix},
         model,
         this._redis.redis,
-        secondaryModelManager,
+        secondaryEntityManager,
       );
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -387,10 +387,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -404,7 +404,7 @@ export class SingleResultQueryManagerTest implements ITest {
           results[i] = null;
           resultsMap.set(paramsArray[i].field, i);
         }
-        for (const entity of secondaryModelManager.store) {
+        for (const entity of secondaryEntityManager.store) {
           const index = resultsMap.get(entity.field);
           if (null != index) {
             results[index] = entity.id;
@@ -440,10 +440,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -477,10 +477,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -513,8 +513,8 @@ export class SingleResultQueryManagerTest implements ITest {
         id: string,
         field: string,
       } = {id: '1', field: 'sample-1'};
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
+      const secondaryEntityManager =
+        new SecondaryEntityManagerMock<IEntity & {
           id: string,
           field: string,
         }>(model, [entity1]);
@@ -522,10 +522,10 @@ export class SingleResultQueryManagerTest implements ITest {
         {prefix: prefix},
         model,
         this._redis.redis,
-        secondaryModelManager,
+        secondaryEntityManager,
       );
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -564,10 +564,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -601,10 +601,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -638,10 +638,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -670,10 +670,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -706,10 +706,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -742,10 +742,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -779,10 +779,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -819,10 +819,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -838,7 +838,7 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.get({ field: entity1.field });
-      secondaryModelManager.store.length = 0;
+      secondaryEntityManager.store.length = 0;
       await primaryEntityManager.update(entity1After);
       await queryManager.syncUpdate(entity1After);
       const entityByOldValue = await queryManager.get({ field: entity1.field });
@@ -874,10 +874,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -893,7 +893,7 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.mGet([{ field: entity1.field }, { field: entity2.field }]);
-      secondaryModelManager.store.length = 0;
+      secondaryEntityManager.store.length = 0;
       await primaryEntityManager.mUpdate([entity1After, entity2After]);
       await queryManager.syncMUpdate([entity1After, entity2After]);
       const entity1ByOldValue = await queryManager.get({ field: entity1.field });
@@ -921,10 +921,10 @@ export class SingleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const query = async (params: any) => {
-        const entityFound = secondaryModelManager.store.find((entity) => params.field === entity.field);
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
           return null;
         } else {
@@ -940,7 +940,7 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.mGet([{ field: entity.field }]);
-      secondaryModelManager.store.length = 0;
+      secondaryEntityManager.store.length = 0;
       await queryManager.syncMUpdate(new Array());
       const entityByValue = await queryManager.get({ field: entity.field });
 

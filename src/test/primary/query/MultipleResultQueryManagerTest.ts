@@ -3,7 +3,7 @@ import { Model } from '../../../model/Model';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
 import { ITest } from '../../ITest';
-import { SecondaryModelManagerMock } from '../../secondary/SecondaryModelManagerMock';
+import { SecondaryEntityManagerMock } from '../../secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from '../RedisWrapper';
 import {
   NamedEntity,
@@ -72,21 +72,21 @@ export class MultipleResultQueryManagerTest implements ITest {
   ): [
     IModel,
     IPrimaryEntityManager<NamedEntity>,
-    SecondaryModelManagerMock<NamedEntity>,
+    SecondaryEntityManagerMock<NamedEntity>,
   ] {
     const model = new Model('id', ['id', 'name']);
-    const secondaryModelManager =
-        new SecondaryModelManagerMock<NamedEntity>(model, entities);
+    const secondaryEntityManager =
+        new SecondaryEntityManagerMock<NamedEntity>(model, entities);
     const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
       { prefix: prefix },
       model,
       this._redis.redis,
-      secondaryModelManager,
+      secondaryEntityManager,
     );
     return [
       model,
       primaryEntityManager,
-      secondaryModelManager,
+      secondaryEntityManager,
     ];
   }
 
@@ -98,13 +98,13 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
         new NamesStartingByLetter(
           primaryEntityManager,
-          secondaryModelManager,
+          secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
@@ -123,11 +123,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -148,11 +148,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -173,11 +173,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -198,11 +198,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -229,11 +229,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, entities);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -265,11 +265,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, entities);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -297,11 +297,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -321,17 +321,17 @@ export class MultipleResultQueryManagerTest implements ITest {
       await this._beforeAllPromise;
       const model = new Model('id', ['id', 'name']);
       const entity1: NamedEntityAlternative = {id: '1', name: 'Pepe'};
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<NamedEntityAlternative>(model, [entity1]);
+      const secondaryEntityManager =
+        new SecondaryEntityManagerMock<NamedEntityAlternative>(model, [entity1]);
       const primaryEntityManager = new PrimaryEntityManager(
         {prefix: prefix},
         model,
         this._redis.redis,
-        secondaryModelManager,
+        secondaryEntityManager,
       );
       const queryManager = new NamesStartingByLetterAlternative(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -353,11 +353,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -378,11 +378,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -403,11 +403,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -427,11 +427,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -454,11 +454,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, entities);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -477,11 +477,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -501,11 +501,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -525,11 +525,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -549,11 +549,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -576,11 +576,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',
@@ -602,11 +602,11 @@ export class MultipleResultQueryManagerTest implements ITest {
       const [
         ,
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
-        secondaryModelManager,
+        secondaryEntityManager,
         this._redis.redis,
         prefix + 'reverse/',
         prefix + 'names-starting-with/',

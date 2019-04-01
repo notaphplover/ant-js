@@ -2,7 +2,7 @@ import * as IORedis from 'ioredis';
 import { IEntity } from '../../../model/IEntity';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { MultipleResultQueryManager } from '../../../persistence/primary/query/MultipleResultQueryManager';
-import { SecondaryModelManagerMock } from '../../secondary/SecondaryModelManagerMock';
+import { SecondaryEntityManagerMock } from '../../secondary/SecondaryEntityManagerMock';
 
 export type NamedEntity = {id: number, name: string } & IEntity;
 
@@ -21,7 +21,7 @@ export class NamesStartingByLetter extends MultipleResultQueryManager<NamedEntit
    */
   public constructor(
     primaryEntityManager: IPrimaryEntityManager<NamedEntity>,
-    secondaryModelManagerMock: SecondaryModelManagerMock<NamedEntity>,
+    secondaryModelManagerMock: SecondaryEntityManagerMock<NamedEntity>,
     redis: IORedis.Redis,
     reverseHashKey: string,
     prefix: string,

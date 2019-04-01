@@ -5,7 +5,7 @@ import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityM
 import { ModelManager } from '../../persistence/primary/ModelManager';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { IPrimaryQueryManager } from '../../persistence/primary/query/IPrimaryQueryManager';
-import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
+import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
 import { SingleResultQueryByFieldManager } from './query/SingleResultQueryByFieldManager';
 import { RedisWrapper } from './RedisWrapper';
 
@@ -27,7 +27,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     modelPrefix: string,
     queryPrefix: string,
     reverseHashKey: string,
-    secondaryManager: SecondaryModelManagerMock<TEntity>,
+    secondaryManager: SecondaryEntityManagerMock<TEntity>,
   ): [
     IModelManager<TEntity>,
     IPrimaryEntityManager<TEntity>,
