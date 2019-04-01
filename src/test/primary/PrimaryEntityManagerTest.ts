@@ -33,27 +33,27 @@ export class PrimaryEntityManagerTest implements ITest {
 
   public performTests(): void {
     describe(this._declareName, () => {
-      this.itDoesNotCacheIfCacheExistsAndCacheIfNotExistsIsProvided();
-      this.itDoesNotCacheEntitiesIfNoCacheOptionIsProvided();
-      this.itDoesNotCacheEntityIfNoCacheOptionIsProvided();
-      this.itDoesNotSupportCacheIfNotExiststCacheEntities();
-      this.itDoesNotSupportUndefinedCacheOptionAtCacheEntities();
-      this.itDoesNotSupportUndefinedCacheOptionAtCacheEntity();
-      this.itGeneratesALuaKeyGeneratorUsingAPrefix();
-      this.itGeneratesALuaKeyGeneratorUsingASuffix();
-      this.itMustBeInitializable();
-      this.itMustDeleteAnEntity();
-      this.itMustDeleteMultipleEntitities();
-      this.itMustDeleteZeroEntitities();
-      this.itMustFindAnEntityOutsideCache();
-      this.itMustFindNullIfNullIdIsProvided();
-      this.itMustFindMultipleEntitiesOutsideCache();
-      this.itMustFindNullIfNoSuccessorIsProvidedAndCacheFails();
-      this.itMustFindZeroEntities();
-      this.itMustPersistAnEntity();
-      this.itMustPersistMultipleEntities();
-      this.itMustPersistMultipleEntitiesWithTTL();
-      this.itMustPersistZeroEntities();
+      this._itDoesNotCacheIfCacheExistsAndCacheIfNotExistsIsProvided();
+      this._itDoesNotCacheEntitiesIfNoCacheOptionIsProvided();
+      this._itDoesNotCacheEntityIfNoCacheOptionIsProvided();
+      this._itDoesNotSupportCacheIfNotExiststCacheEntities();
+      this._itDoesNotSupportUndefinedCacheOptionAtCacheEntities();
+      this._itDoesNotSupportUndefinedCacheOptionAtCacheEntity();
+      this._itGeneratesALuaKeyGeneratorUsingAPrefix();
+      this._itGeneratesALuaKeyGeneratorUsingASuffix();
+      this._itMustBeInitializable();
+      this._itMustDeleteAnEntity();
+      this._itMustDeleteMultipleEntitities();
+      this._itMustDeleteZeroEntitities();
+      this._itMustFindAnEntityOutsideCache();
+      this._itMustFindNullIfNullIdIsProvided();
+      this._itMustFindMultipleEntitiesOutsideCache();
+      this._itMustFindNullIfNoSuccessorIsProvidedAndCacheFails();
+      this._itMustFindZeroEntities();
+      this._itMustPersistAnEntity();
+      this._itMustPersistMultipleEntities();
+      this._itMustPersistMultipleEntitiesWithTTL();
+      this._itMustPersistZeroEntities();
     });
   }
 
@@ -101,7 +101,7 @@ export class PrimaryEntityManagerTest implements ITest {
     ];
   }
 
-  private itDoesNotCacheIfCacheExistsAndCacheIfNotExistsIsProvided(): void {
+  private _itDoesNotCacheIfCacheExistsAndCacheIfNotExistsIsProvided(): void {
     const itsName = 'doesNoCacheIfNoCacheOptionIsProvided';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -129,7 +129,7 @@ export class PrimaryEntityManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itDoesNotCacheEntitiesIfNoCacheOptionIsProvided(): void {
+  private _itDoesNotCacheEntitiesIfNoCacheOptionIsProvided(): void {
     const itsName = 'doesNotCacheEntitiesIfNoCacheOptionIsProvided';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -154,7 +154,7 @@ export class PrimaryEntityManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itDoesNotCacheEntityIfNoCacheOptionIsProvided(): void {
+  private _itDoesNotCacheEntityIfNoCacheOptionIsProvided(): void {
     const itsName = 'doesNotCacheEntityIfNoCacheOptionIsProvided';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -179,7 +179,7 @@ export class PrimaryEntityManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itDoesNotSupportCacheIfNotExiststCacheEntities(): void {
+  private _itDoesNotSupportCacheIfNotExiststCacheEntities(): void {
     const itsName = 'doesNotSupportCacheIfNotExiststCacheEntities';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -210,7 +210,7 @@ export class PrimaryEntityManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itDoesNotSupportUndefinedCacheOptionAtCacheEntities() {
+  private _itDoesNotSupportUndefinedCacheOptionAtCacheEntities() {
     const itsName = 'doesNotSupportUndefinedCacheOptionAtCacheEntities';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -241,7 +241,7 @@ export class PrimaryEntityManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itDoesNotSupportUndefinedCacheOptionAtCacheEntity() {
+  private _itDoesNotSupportUndefinedCacheOptionAtCacheEntity() {
     const itsName = 'doesNotSupportUndefinedCacheOptionAtCacheEntity';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -272,7 +272,7 @@ export class PrimaryEntityManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itGeneratesALuaKeyGeneratorUsingAPrefix(): void {
+  private _itGeneratesALuaKeyGeneratorUsingAPrefix(): void {
     const itsName = 'generatesALuaKeyGeneratorUsingAPrefix';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -304,7 +304,7 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itGeneratesALuaKeyGeneratorUsingASuffix(): void {
+  private _itGeneratesALuaKeyGeneratorUsingASuffix(): void {
     const itsName = 'generatesALuaKeyGeneratorUsingASuffix';
     const suffix = '/' + this._declareName + '/' + itsName;
     it(itsName, async (done) => {
@@ -339,7 +339,7 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustBeInitializable(): void {
+  private _itMustBeInitializable(): void {
     const itsName = 'mustBeInitializable';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -360,7 +360,7 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustDeleteAnEntity(): void {
+  private _itMustDeleteAnEntity(): void {
     const itsName = 'mustDeleteAnEntity';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -385,7 +385,7 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustDeleteMultipleEntitities(): void {
+  private _itMustDeleteMultipleEntitities(): void {
     const itsName = 'mustDeleteMultipleEntitities';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -410,7 +410,7 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustDeleteZeroEntitities(): void {
+  private _itMustDeleteZeroEntitities(): void {
     const itsName = 'mustDeleteZeroEntitities';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -435,7 +435,7 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustFindAnEntityOutsideCache(): void {
+  private _itMustFindAnEntityOutsideCache(): void {
     const itsName = 'mustFindAnEntityOutsideCache';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -455,7 +455,7 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustFindMultipleEntitiesOutsideCache(): void {
+  private _itMustFindMultipleEntitiesOutsideCache(): void {
     const itsName = 'mustFindMultipleEntitiesOutsideCache';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -484,7 +484,7 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustFindNullIfNoSuccessorIsProvidedAndCacheFails(): void {
+  private _itMustFindNullIfNoSuccessorIsProvidedAndCacheFails(): void {
     const itsName = 'mustFindNullIfNoSuccessorIsProvidedAndCacheFails';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -503,7 +503,7 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustFindNullIfNullIdIsProvided(): void {
+  private _itMustFindNullIfNullIdIsProvided(): void {
     const itsName = 'mustFindNullIfNullIdIsProvided';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -518,7 +518,7 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustFindZeroEntities(): void {
+  private _itMustFindZeroEntities(): void {
     const itsName = 'mustFindZeroEntities';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -535,7 +535,7 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPersistAnEntity(): void {
+  private _itMustPersistAnEntity(): void {
     const itsName = 'mustPersistAnEntity';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -559,7 +559,7 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPersistMultipleEntities(): void {
+  private _itMustPersistMultipleEntities(): void {
     const itsName = 'mustPersistMultipleEntities';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -591,7 +591,7 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPersistMultipleEntitiesWithTTL(): void {
+  private _itMustPersistMultipleEntitiesWithTTL(): void {
     const itsName = 'mustPersistMultipleEntitiesWithTTL';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -626,7 +626,7 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPersistZeroEntities(): void {
+  private _itMustPersistZeroEntities(): void {
     const itsName = 'mustPersistZeroEntities';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {

@@ -32,27 +32,27 @@ export class SingleResultQueryManagerTest implements ITest {
 
   public performTests(): void {
     describe(this._declareName, () => {
-      this.itMustBeInitializable();
-      this.itMustDeleteAnEntityInAQuery();
-      this.itMustDeleteMultipleEntitiesInQueries();
-      this.itMustDeleteZeroEntitiesInQueries();
-      this.itMustPerformACachedSearchWithCachedEntities();
-      this.itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsNumber();
-      this.itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsString();
-      this.itMustPerformACustomMultipleResultSearch();
-      this.itMustPerformAMultipleCachedSearchWithCachedEntities();
-      this.itMustPerformAMultipleCachedSearchWithoutCachedEntitiesWithIdAsNumber();
-      this.itMustPerformAMultipleCachedSearchWithoutCachedEntitiesWithIdAsString();
-      this.itMustPerformAMultipleUncachedSearch();
-      this.itMustPerformAMultipleUnexistingCachedSearch();
-      this.itMustPerformAMultipleUnexistingUncachedSearch();
-      this.itMustPerformAMultipleZeroSearch();
-      this.itMustPerformAnUncachedSearch();
-      this.itMustPerformAnUnexistingCachedSearch();
-      this.itMustPerformAnUnexistingUncachedSearch();
-      this.itMustUpdateAnEntityInAQuery();
-      this.itMustUpdateMultipleEntitiesInAQuery();
-      this.itMustUpdateZeroEntitiesInAQuery();
+      this._itMustBeInitializable();
+      this._itMustDeleteAnEntityInAQuery();
+      this._itMustDeleteMultipleEntitiesInQueries();
+      this._itMustDeleteZeroEntitiesInQueries();
+      this._itMustPerformACachedSearchWithCachedEntities();
+      this._itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsNumber();
+      this._itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsString();
+      this._itMustPerformACustomMultipleResultSearch();
+      this._itMustPerformAMultipleCachedSearchWithCachedEntities();
+      this._itMustPerformAMultipleCachedSearchWithoutCachedEntitiesWithIdAsNumber();
+      this._itMustPerformAMultipleCachedSearchWithoutCachedEntitiesWithIdAsString();
+      this._itMustPerformAMultipleUncachedSearch();
+      this._itMustPerformAMultipleUnexistingCachedSearch();
+      this._itMustPerformAMultipleUnexistingUncachedSearch();
+      this._itMustPerformAMultipleZeroSearch();
+      this._itMustPerformAnUncachedSearch();
+      this._itMustPerformAnUnexistingCachedSearch();
+      this._itMustPerformAnUnexistingUncachedSearch();
+      this._itMustUpdateAnEntityInAQuery();
+      this._itMustUpdateMultipleEntitiesInAQuery();
+      this._itMustUpdateZeroEntitiesInAQuery();
     });
   }
 
@@ -100,7 +100,7 @@ export class SingleResultQueryManagerTest implements ITest {
     ];
   }
 
-  private itMustBeInitializable(): void {
+  private _itMustBeInitializable(): void {
     const itsName = 'mustBeInitializable';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -124,7 +124,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustDeleteAnEntityInAQuery(): void {
+  private _itMustDeleteAnEntityInAQuery(): void {
     const itsName = 'mustDeleteAnEntityInAQuery';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -163,7 +163,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustDeleteMultipleEntitiesInQueries(): void {
+  private _itMustDeleteMultipleEntitiesInQueries(): void {
     const itsName = 'mustDeleteMultipleEntitiesInQueries';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -208,7 +208,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustDeleteZeroEntitiesInQueries(): void {
+  private _itMustDeleteZeroEntitiesInQueries(): void {
     const itsName = 'mustDeleteZeroEntitiesInQueries';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -251,7 +251,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPerformACachedSearchWithCachedEntities(): void {
+  private _itMustPerformACachedSearchWithCachedEntities(): void {
     const itsName = 'mustPerformACachedSearchWithCachedEntities';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -288,7 +288,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsNumber(): void {
+  private _itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsNumber(): void {
     const itsName = 'mustPerformACachedSearchWithoutCachedEntitiesWithIdAsNumber';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -326,7 +326,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsString(): void {
+  private _itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsString(): void {
     const itsName = 'mustPerformACachedSearchWithoutCachedEntitiesWithIdAsString';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -371,7 +371,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPerformACustomMultipleResultSearch(): void {
+  private _itMustPerformACustomMultipleResultSearch(): void {
     const itsName = 'mustPerformACustomMultipleResultSearch';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -428,7 +428,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPerformAMultipleCachedSearchWithCachedEntities(): void {
+  private _itMustPerformAMultipleCachedSearchWithCachedEntities(): void {
     const itsName = 'mustPerformAMultipleCachedSearchWithCachedEntities';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -465,7 +465,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPerformAMultipleCachedSearchWithoutCachedEntitiesWithIdAsNumber(): void {
+  private _itMustPerformAMultipleCachedSearchWithoutCachedEntitiesWithIdAsNumber(): void {
     const itsName = 'mustPerformAMultipleCachedSearchWithoutCachedEntitiesWithIdAsNumber';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -503,7 +503,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPerformAMultipleCachedSearchWithoutCachedEntitiesWithIdAsString(): void {
+  private _itMustPerformAMultipleCachedSearchWithoutCachedEntitiesWithIdAsString(): void {
     const itsName = 'mustPerformAMultipleCachedSearchWithoutCachedEntitiesWithIdAsString';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -548,7 +548,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPerformAMultipleUncachedSearch(): void {
+  private _itMustPerformAMultipleUncachedSearch(): void {
     const itsName = 'mustPerformAMultipleUncachedSearch';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -589,7 +589,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPerformAMultipleUnexistingCachedSearch(): void {
+  private _itMustPerformAMultipleUnexistingCachedSearch(): void {
     const itsName = 'mustPerformAMultipleUnexistingCacheSearch';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -626,7 +626,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPerformAMultipleUnexistingUncachedSearch(): void {
+  private _itMustPerformAMultipleUnexistingUncachedSearch(): void {
     const itsName = 'mustPerformAMultipleUnexistingUncachedSearch';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -662,7 +662,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPerformAMultipleZeroSearch(): void {
+  private _itMustPerformAMultipleZeroSearch(): void {
     const itsName = 'mustPerformAMultipleZeroSearch';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -694,7 +694,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPerformAnUncachedSearch(): void {
+  private _itMustPerformAnUncachedSearch(): void {
     const itsName = 'mustPerformAnUncachedSearch';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -730,7 +730,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPerformAnUnexistingCachedSearch(): void {
+  private _itMustPerformAnUnexistingCachedSearch(): void {
     const itsName = 'mustPerformAnUnexistingCachedSearch';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -767,7 +767,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustPerformAnUnexistingUncachedSearch(): void {
+  private _itMustPerformAnUnexistingUncachedSearch(): void {
     const itsName = 'mustPerformAnUnexistingUncachedSearch';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -803,7 +803,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustUpdateAnEntityInAQuery(): void {
+  private _itMustUpdateAnEntityInAQuery(): void {
     const itsName = 'mustUpdateAnEntityInAQuery';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -850,7 +850,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustUpdateMultipleEntitiesInAQuery(): void {
+  private _itMustUpdateMultipleEntitiesInAQuery(): void {
     const itsName = 'mustUpdateMultipleEntitiesInAQuery';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
@@ -909,7 +909,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private itMustUpdateZeroEntitiesInAQuery(): void {
+  private _itMustUpdateZeroEntitiesInAQuery(): void {
     const itsName = 'mustUpdateZeroEntitiesInAQuery';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
