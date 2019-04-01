@@ -1,4 +1,3 @@
-import { IKeyGenParams } from '../../model/IKeyGenParams';
 import { Model } from '../../model/Model';
 import { ITest } from '../ITest';
 
@@ -14,7 +13,7 @@ export class ModelTest implements ITest {
     it('mustBeInitializable', () => {
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
-        new Model('id', ['id', 'field'], {});
+        new Model('id', ['id', 'field']);
       }).not.toThrowError();
     });
   }
@@ -23,11 +22,7 @@ export class ModelTest implements ITest {
     it ('mustStoreInitialValues', () => {
       const id = 'idField';
       const properties = ['idField', 'customField'];
-      const keyGenParams: IKeyGenParams = {
-        prefix: 'p',
-        suffix: 's',
-      };
-      const customModel = new Model(id, properties, keyGenParams);
+      const customModel = new Model(id, properties);
       expect(customModel.id).toBe(id);
       expect(customModel.properties).toEqual(properties);
     });

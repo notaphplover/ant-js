@@ -24,6 +24,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
 
   public generateModelManager(
     model: IModel,
+    modelPrefix: string,
     queryPrefix: string,
     reverseHashKey: string,
     secondaryManager: SecondaryModelManagerMock<TEntity>,
@@ -32,7 +33,12 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     IPrimaryEntityManager<TEntity>,
     Map<string, IPrimaryQueryManager<TEntity, Promise<TEntity|TEntity[]>>>
   ] {
-    const primaryEntityManager = new PrimaryEntityManager(model, this._redis.redis, secondaryManager);
+    const primaryEntityManager = new PrimaryEntityManager(
+      {prefix: modelPrefix},
+      model,
+      this._redis.redis,
+      secondaryManager,
+    );
     const queryManagers = new Array<IPrimaryQueryManager<TEntity, Promise<TEntity | TEntity[]>>>();
     const queriesMap = new Map<string, IPrimaryQueryManager<TEntity, Promise<TEntity | TEntity[]>>>();
     for (const property of model.properties) {

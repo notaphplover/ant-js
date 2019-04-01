@@ -1,7 +1,9 @@
 import { IEntity } from '../../model/IEntity';
+import { IModel } from '../../model/IModel';
 import { Model } from '../../model/Model';
 import { CacheMode } from '../../persistence/primary/CacheMode';
 import { CacheOptions } from '../../persistence/primary/CacheOptions';
+import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { ITest } from '../ITest';
 import { SecondaryModelManagerMock } from '../secondary/SecondaryModelManagerMock';
@@ -55,17 +57,59 @@ export class PrimaryEntityManagerTest implements ITest {
     });
   }
 
+  /**
+   * Generates instances needed in almost every test.
+   * @param prefix prefix to generate redis keys.
+   * @returns model, primary entity manager and secondary entity manager instanes.
+   */
+  private _helperGenerateBaseInstances(
+    prefix: string,
+    entities: Array<IEntity & {
+      id: number,
+      field: string,
+    }>,
+  ): [
+    IModel,
+    IPrimaryEntityManager<IEntity & {
+      id: number,
+      field: string,
+    }>,
+    SecondaryModelManagerMock<IEntity & {
+      id: number,
+      field: string,
+    }>,
+  ] {
+    const model = new Model('id', ['id', 'field']);
+    const secondaryModelManager =
+        new SecondaryModelManagerMock<IEntity & {
+          id: number,
+          field: string,
+        }>(model, entities);
+    const primaryEntityManager = new PrimaryEntityManager<IEntity & {
+      id: number,
+      field: string,
+    }>(
+      { prefix: prefix },
+      model,
+      this._redis.redis,
+      secondaryModelManager,
+    );
+    return [
+      model,
+      primaryEntityManager,
+      secondaryModelManager,
+    ];
+  }
+
   private itDoesNotCacheIfCacheExistsAndCacheIfNotExistsIsProvided(): void {
     const itsName = 'doesNoCacheIfNoCacheOptionIsProvided';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryEntityManager = new PrimaryEntityManager(
+      const [
         model,
-        this._redis.redis,
-        null,
-      );
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, new Array());
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -90,12 +134,10 @@ export class PrimaryEntityManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryEntityManager = new PrimaryEntityManager(
+      const [
         model,
-        this._redis.redis,
-        null,
-      );
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, new Array());
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -117,12 +159,10 @@ export class PrimaryEntityManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryEntityManager = new PrimaryEntityManager(
+      const [
         model,
-        this._redis.redis,
-        null,
-      );
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, new Array());
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -144,12 +184,10 @@ export class PrimaryEntityManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryEntityManager = new PrimaryEntityManager(
-        model,
-        this._redis.redis,
-        null,
-      );
+      const [
+        ,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, new Array());
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -177,12 +215,10 @@ export class PrimaryEntityManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryEntityManager = new PrimaryEntityManager(
-        model,
-        this._redis.redis,
-        null,
-      );
+      const [
+        ,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, new Array());
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -210,12 +246,10 @@ export class PrimaryEntityManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const primaryEntityManager = new PrimaryEntityManager(
-        model,
-        this._redis.redis,
-        null,
-      );
+      const [
+        ,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, new Array());
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -243,16 +277,14 @@ export class PrimaryEntityManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity: IEntity & {
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
-      const primaryEntityManager = new PrimaryEntityManager(
-        model,
-        this._redis.redis,
-        null,
-      );
+      const [
+        ,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, new Array());
       await primaryEntityManager.update(entity);
       const luaKey = 'key';
       const luaExpression = primaryEntityManager.getKeyGenerationLuaScriptGenerator()(luaKey);
@@ -277,12 +309,13 @@ return redis.call('get', ${luaExpression})`,
     const suffix = '/' + this._declareName + '/' + itsName;
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id'], {suffix: suffix});
+      const model = new Model('id', ['id']);
       const entity: IEntity & {
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
       const primaryEntityManager = new PrimaryEntityManager(
+        {suffix: suffix},
         model,
         this._redis.redis,
         null,
@@ -311,12 +344,13 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id'], {prefix: prefix});
+      const model = new Model('id', ['id']);
       const secondaryModelManager =
         new SecondaryModelManagerMock<{id: string}>(model);
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
         new PrimaryEntityManager(
+          {prefix: prefix},
           model,
           this._redis.redis,
           secondaryModelManager,
@@ -331,21 +365,15 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity: IEntity & {
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
-          id: number,
-          field: string,
-        }>(model, [entity]);
-      const primaryEntityManager = new PrimaryEntityManager(
+      const [
         model,
-        this._redis.redis,
+        primaryEntityManager,
         secondaryModelManager,
-      );
+      ] = this._helperGenerateBaseInstances(prefix, [entity]);
 
       await primaryEntityManager.update(entity);
       secondaryModelManager.store.length = 0;
@@ -362,21 +390,15 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity: IEntity & {
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
-          id: number,
-          field: string,
-        }>(model, [entity]);
-      const primaryEntityManager = new PrimaryEntityManager(
+      const [
         model,
-        this._redis.redis,
+        primaryEntityManager,
         secondaryModelManager,
-      );
+      ] = this._helperGenerateBaseInstances(prefix, [entity]);
 
       await primaryEntityManager.update(entity);
       secondaryModelManager.store.length = 0;
@@ -393,21 +415,15 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity: IEntity & {
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
-          id: number,
-          field: string,
-        }>(model, [entity]);
-      const primaryEntityManager = new PrimaryEntityManager(
+      const [
         model,
-        this._redis.redis,
+        primaryEntityManager,
         secondaryModelManager,
-      );
+      ] = this._helperGenerateBaseInstances(prefix, [entity]);
 
       await primaryEntityManager.update(entity);
       secondaryModelManager.store.length = 0;
@@ -424,21 +440,14 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity: IEntity & {
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
-          id: number,
-          field: string,
-        }>(model, [entity]);
-      const primaryEntityManager = new PrimaryEntityManager(
+      const [
         model,
-        this._redis.redis,
-        secondaryModelManager,
-      );
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const entityFound = await primaryEntityManager.getById(entity[model.id]);
 
       expect(entityFound).toEqual(entity);
@@ -451,7 +460,6 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -460,17 +468,10 @@ return redis.call('get', ${luaExpression})`,
         id: number,
         field: string,
       } = {id: 2, field: 'sample-2'};
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
-          id: number,
-          field: string,
-        }>(model, [entity1, entity2]);
-
-      const primaryEntityManager = new PrimaryEntityManager(
+      const [
         model,
-        this._redis.redis,
-        secondaryModelManager,
-      );
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
 
       const entitiesFound = await primaryEntityManager.getByIds([
         entity1[model.id],
@@ -488,8 +489,9 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
+      const model = new Model('id', ['id', 'field']);
       const primaryEntityManager = new PrimaryEntityManager(
+        {prefix: prefix},
         model,
         this._redis.redis,
         null,
@@ -506,17 +508,10 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
-          id: number,
-          field: string,
-        }>(model, new Array());
-      const primaryEntityManager = new PrimaryEntityManager(
-        model,
-        this._redis.redis,
-        secondaryModelManager,
-      );
+      const [
+        ,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, new Array());
 
       expect(await primaryEntityManager.getById(null)).toBeNull();
       done();
@@ -528,18 +523,10 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
-          id: number,
-          field: string,
-        }>(model);
-
-      const primaryEntityManager = new PrimaryEntityManager(
-        model,
-        this._redis.redis,
-        secondaryModelManager,
-      );
+      const [
+        ,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, new Array());
 
       expect(async () => {
         await primaryEntityManager.getByIds(new Array());
@@ -553,21 +540,15 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity: IEntity & {
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
-          id: number,
-          field: string,
-        }>(model, [entity]);
-      const primaryEntityManager = new PrimaryEntityManager(
+      const [
         model,
-        this._redis.redis,
+        primaryEntityManager,
         secondaryModelManager,
-      );
+      ] = this._helperGenerateBaseInstances(prefix, [entity]);
 
       await primaryEntityManager.update(entity);
       secondaryModelManager.store.length = 0;
@@ -583,7 +564,6 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -592,17 +572,11 @@ return redis.call('get', ${luaExpression})`,
         id: number,
         field: string,
       } = {id: 2, field: 'sample-2'};
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
-          id: number,
-          field: string,
-        }>(model, [entity1, entity2]);
-
-      const primaryEntityManager = new PrimaryEntityManager(
+      const [
         model,
-        this._redis.redis,
+        primaryEntityManager,
         secondaryModelManager,
-      );
+      ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
 
       await primaryEntityManager.mUpdate([entity1, entity2]);
       secondaryModelManager.store.length = 0;
@@ -622,7 +596,6 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
       const entity1: IEntity & {
         id: number,
         field: string,
@@ -631,17 +604,11 @@ return redis.call('get', ${luaExpression})`,
         id: number,
         field: string,
       } = {id: 2, field: 'sample-2'};
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
-          id: number,
-          field: string,
-        }>(model, [entity1, entity2]);
-
-      const primaryEntityManager = new PrimaryEntityManager(
+      const [
         model,
-        this._redis.redis,
+        primaryEntityManager,
         secondaryModelManager,
-      );
+      ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
       const options = new CacheOptions(CacheMode.CacheAndOverwrite, 3600);
       await primaryEntityManager.getByIds([
         entity1[model.id],
@@ -664,18 +631,10 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field'], {prefix: prefix});
-      const secondaryModelManager =
-        new SecondaryModelManagerMock<IEntity & {
-          id: number,
-          field: string,
-        }>(model);
-
-      const primaryEntityManager = new PrimaryEntityManager(
-        model,
-        this._redis.redis,
-        secondaryModelManager,
-      );
+      const [
+        ,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, new Array());
 
       expect(async () => {
         await primaryEntityManager.mUpdate(new Array());

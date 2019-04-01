@@ -16,8 +16,8 @@ interface IEntityTest extends IEntity {
   strField: string;
 }
 
-const modelTestGenerator = (prefix: string) =>
-  new Model('id', ['id', 'numberField', 'strField'], {prefix: prefix});
+const modelTestGenerator = () =>
+  new Model('id', ['id', 'numberField', 'strField']);
 
 export class ModelManagerTest implements ITest {
   /**
@@ -93,7 +93,8 @@ export class ModelManagerTest implements ITest {
       await this._beforeAllPromise;
       try {
         this._modelManagerGenerator.generateModelManager(
-          modelTestGenerator(prefix),
+          modelTestGenerator(),
+          prefix,
           prefix + 'query/',
           prefix + 'reverse/',
           null,
@@ -125,7 +126,7 @@ export class ModelManagerTest implements ITest {
         entity1,
         entity2,
       ];
-      const model = modelTestGenerator(prefix);
+      const model = modelTestGenerator();
       const secondaryModelManager = new SecondaryModelManagerMock<IEntityTest>(
         model,
         entities,
@@ -136,6 +137,7 @@ export class ModelManagerTest implements ITest {
         queryManagersByProperty,
       ] = this._modelManagerGenerator.generateModelManager(
         model,
+        prefix,
         prefix + 'query/',
         prefix + 'reverse/',
         secondaryModelManager,
@@ -189,7 +191,7 @@ export class ModelManagerTest implements ITest {
         entity2,
         entity3,
       ];
-      const model = modelTestGenerator(prefix);
+      const model = modelTestGenerator();
       const secondaryModelManager = new SecondaryModelManagerMock<IEntityTest>(
         model,
         entities,
@@ -200,6 +202,7 @@ export class ModelManagerTest implements ITest {
         queryManagersByProperty,
       ] = this._modelManagerGenerator.generateModelManager(
         model,
+        prefix,
         prefix + 'query/',
         prefix + 'reverse/',
         secondaryModelManager,
@@ -261,7 +264,7 @@ export class ModelManagerTest implements ITest {
         entity1,
         entity2,
       ];
-      const model = modelTestGenerator(prefix);
+      const model = modelTestGenerator();
       const secondaryModelManager = new SecondaryModelManagerMock<IEntityTest>(
         model,
         entities,
@@ -272,6 +275,7 @@ export class ModelManagerTest implements ITest {
         queryManagersByProperty,
       ] = this._modelManagerGenerator.generateModelManager(
         model,
+        prefix,
         prefix + 'query/',
         prefix + 'reverse/',
         secondaryModelManager,
@@ -323,7 +327,7 @@ export class ModelManagerTest implements ITest {
         entity1,
         entity2,
       ];
-      const model = modelTestGenerator(prefix);
+      const model = modelTestGenerator();
       const secondaryModelManager = new SecondaryModelManagerMock<IEntityTest>(
         model,
         entities,
@@ -334,6 +338,7 @@ export class ModelManagerTest implements ITest {
         queryManagersByProperty,
       ] = this._modelManagerGenerator.generateModelManager(
         model,
+        prefix,
         prefix + 'query/',
         prefix + 'reverse/',
         secondaryModelManager,
