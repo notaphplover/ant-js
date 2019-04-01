@@ -1,4 +1,4 @@
-import { IEntityKeyGenerationData } from '../../model/IEntityKeyGenerationData';
+import { IKeyGenParams } from '../../model/IKeyGenParams';
 import { Model } from '../../model/Model';
 import { ITest } from '../ITest';
 
@@ -23,11 +23,11 @@ export class ModelTest implements ITest {
     it ('mustStoreInitialValues', () => {
       const id = 'idField';
       const properties = ['idField', 'customField'];
-      const entityKeyGenerationData: IEntityKeyGenerationData = {
+      const keyGenParams: IKeyGenParams = {
         prefix: 'p',
         suffix: 's',
       };
-      const customModel = new Model(id, properties, entityKeyGenerationData);
+      const customModel = new Model(id, properties, keyGenParams);
       expect(customModel.id).toBe(id);
       expect(customModel.properties).toEqual(properties);
     });

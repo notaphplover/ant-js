@@ -1,4 +1,4 @@
-import { IEntityKeyGenerationData } from './IEntityKeyGenerationData';
+import { IKeyGenParams } from './IKeyGenParams';
 
 /**
  * Represents a model.
@@ -8,7 +8,7 @@ export interface IModel {
   /**
    * Entity key generation data.
    */
-  entityKeyGenerationData: IEntityKeyGenerationData;
+  keyGenParams: IKeyGenParams;
   /**
    * Model's id field.
    */

@@ -1,11 +1,11 @@
-import { IEntityKeyGenerationData } from './IEntityKeyGenerationData';
+import { IKeyGenParams } from './IKeyGenParams';
 import { IModel } from './IModel';
 
 export class Model implements IModel {
   /**
    * Entity key generation data.
    */
-  protected _entityKeyGenerationData: IEntityKeyGenerationData;
+  protected _keyGenParams: IKeyGenParams;
   /**
    * Model's id.
    */
@@ -24,15 +24,15 @@ export class Model implements IModel {
   public constructor(
     id: string,
     properties: string[],
-    entityKeyGenerationData: IEntityKeyGenerationData,
+    keyGenParams: IKeyGenParams,
   ) {
-    this._entityKeyGenerationData = entityKeyGenerationData;
+    this._keyGenParams = keyGenParams;
     this._id = id;
     this._properties = properties;
   }
 
-  public get entityKeyGenerationData(): IEntityKeyGenerationData {
-    return this._entityKeyGenerationData;
+  public get keyGenParams(): IKeyGenParams {
+    return this._keyGenParams;
   }
 
   public get id(): string {
