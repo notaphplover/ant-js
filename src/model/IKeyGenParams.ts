@@ -1,4 +1,4 @@
-export interface IEntityKeyGenerationData {
+export interface IKeyGenParams {
   /**
    * Key prefix.
    */

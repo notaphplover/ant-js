@@ -1,6 +1,6 @@
 import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
-import { IEntityKeyGenerationData } from '../../model/IEntityKeyGenerationData';
+import { IKeyGenParams } from '../../model/IKeyGenParams';
 import { IModel } from '../../model/IModel';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { CacheMode } from './CacheMode';
@@ -11,6 +11,10 @@ import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 export class PrimaryEntityManager<TEntity extends IEntity>
   implements IPrimaryEntityManager<TEntity> {
 
+  /**
+   * Key generation params.
+   */
+  protected _keyGenParams: IKeyGenParams;
   /**
    * Model managed.
    */
@@ -26,13 +30,18 @@ export class PrimaryEntityManager<TEntity extends IEntity>
 
   /**
    * Creates a new primary model manager.
-   * @param redis Redis connection
+   * @param keyGenParams Key generation params.
+   * @param model Model of the entities managed.
+   * @param redis Redis connection.
+   * @param successor Secondary entity manager.
    */
   public constructor(
+    keyGenParams: IKeyGenParams,
     model: IModel,
     redis: IORedis.Redis,
     successor: ISecondaryEntityManager<TEntity>,
   ) {
+    this._keyGenParams = keyGenParams;
     this._model = model;
     this._redis = redis;
     this._successor = successor;
@@ -84,7 +93,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    * @returns function able to generate a lua expression that generates a key from a giving id.
    */
   public getKeyGenerationLuaScriptGenerator() {
-    return this._innerGetKeyGenerationLuaScriptGenerator(this._model.entityKeyGenerationData);
+    return this._innerGetKeyGenerationLuaScriptGenerator(this._keyGenParams);
   }
 
   /**
@@ -184,9 +193,9 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    * @param id entity's id.
    */
   protected _getKey(id: number|string): string {
-    return (this._model.entityKeyGenerationData.prefix || '')
+    return (this._keyGenParams.prefix || '')
       + id
-      + (this._model.entityKeyGenerationData.suffix || '');
+      + (this._keyGenParams.suffix || '');
   }
 
   /**
@@ -294,16 +303,16 @@ end`;
 
   /**
    * Creates a function that creates a lua script to create an entity key from an id.
-   * @param luaKeyGeneration Lua key gemeration params.
+   * @param keyGenParams Key generation params.
    */
-  protected _innerGetKeyGenerationLuaScriptGenerator(luaKeyGeneration: IEntityKeyGenerationData) {
+  protected _innerGetKeyGenerationLuaScriptGenerator(keyGenParams: IKeyGenParams) {
     const instructions = new Array<(alias: string) => string>();
-    if (null != luaKeyGeneration.prefix && '' !== luaKeyGeneration.prefix) {
-      instructions.push(() => '"' + luaKeyGeneration.prefix + '" .. ');
+    if (null != keyGenParams.prefix && '' !== keyGenParams.prefix) {
+      instructions.push(() => '"' + keyGenParams.prefix + '" .. ');
     }
     instructions.push((alias) => alias);
-    if (null != luaKeyGeneration.suffix && '' !== luaKeyGeneration.suffix) {
-      instructions.push(() => ' .. "' + luaKeyGeneration.suffix + '"');
+    if (null != keyGenParams.suffix && '' !== keyGenParams.suffix) {
+      instructions.push(() => ' .. "' + keyGenParams.suffix + '"');
     }
     return (alias: string) => {
       return instructions.reduce(
