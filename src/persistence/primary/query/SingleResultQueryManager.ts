@@ -59,7 +59,7 @@ export abstract class SingleResultQueryManager<
     const keys = paramsArray.map((params) => this._key(params));
     const luaScript = this._luaMGetGenerator();
     const resultsJson = await this._redis.eval(luaScript, keys.length, keys);
-    const missingIds = new Array<number|string>();
+    const missingIds: number[]|string[] = new Array();
     const finalResults = new Array();
     const missingQueriesKeys = new Array<string>();
     const missingParamsArray = new Array();
@@ -74,13 +74,13 @@ export abstract class SingleResultQueryManager<
         keys[i],
         resultJson,
         (entity) => { finalResults.push(entity); },
-        (id: number|string) => { missingIds.push(id); },
+        (id: number&string) => { missingIds.push(id); },
         // tslint:disable-next-line:no-empty
         () => { },
       );
     }
     const idsFromMissingQueries = await this._mGetIdsAndSetToQueries(missingQueriesKeys, missingParamsArray);
-    missingIds.push(...idsFromMissingQueries);
+    missingIds.push(...(idsFromMissingQueries as Array<number&string>));
     await this._mGetSearchMissingIds(finalResults, missingIds, searchOptions);
     return finalResults;
   }
@@ -338,7 +338,7 @@ redis.call('set', KEYS[2], ARGV[1])`;
    */
   private async _mGetSearchMissingIds(
     finalResults: TEntity[],
-    missingIds: Array<number|string>,
+    missingIds: number[]|string[],
     searchOptions?: ICacheOptions,
   ): Promise<void> {
     if (0 < missingIds.length) {

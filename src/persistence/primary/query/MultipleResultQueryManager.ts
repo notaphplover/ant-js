@@ -32,7 +32,7 @@ export abstract class MultipleResultQueryManager<
       if (VOID_RESULT_STRING === resultsJSON) {
         return new Array();
       }
-      const missingIds = new Array<number|string>();
+      const missingIds: number[]|string[] = new Array();
       const finalResults = new Array();
       for (const resultJson of resultsJSON) {
         this._getProcessParseableResult(
@@ -70,7 +70,7 @@ export abstract class MultipleResultQueryManager<
     let currentIndex = 0;
     let resultsFound = false;
     let voidFound = false;
-    const missingIds = new Array();
+    const missingIds: number[]|string[] = new Array();
     for (const resultJson of resultsJson) {
       if (VOID_RESULT_STRING === resultJson) {
         voidFound = true;
@@ -100,7 +100,7 @@ export abstract class MultipleResultQueryManager<
         missingQueriesParams,
         missingQueriesKeys,
       );
-      missingIds.push(...queriesMissingIds);
+      missingIds.push(...(queriesMissingIds as Array<number & string>));
     }
 
     await this._getProcessMissingOptions(missingIds, finalResults, searchOptions);
@@ -182,7 +182,7 @@ export abstract class MultipleResultQueryManager<
    * @param Promise of missing options processed.
    */
   private async _getProcessMissingOptions(
-    missingIds: Array<number|string>,
+    missingIds: number[]|string[],
     finalResults: TEntity[],
     searchOptions: ICacheOptions,
   ): Promise<void> {

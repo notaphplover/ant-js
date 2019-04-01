@@ -43,6 +43,16 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
   }
 
   /**
+   * Finds an entity by its id.
+   * @param id Id of the entity.
+   * @param searchOptions Search options.
+   * @returns Entity found
+   */
+  public get(id: number|string, searchOptions?: ICacheOptions): Promise<TEntity> {
+    return this._primaryEntityManager.getById(id, searchOptions);
+  }
+
+  /**
    * Deletes multiple entities from the cache layer.
    * @param entities Entities to delete.
    * @returns Promise of entities deleted.
@@ -54,6 +64,16 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
     }
     promises.push(this._primaryEntityManager.mDelete(entities));
     return Promise.all(promises);
+  }
+
+  /**
+   * Finds a collection if entities by its ids.
+   * @param ids Ids of the entities.
+   * @param searchOptions Search options.
+   * @returns Entities found.
+   */
+  public mGet(ids: number[]|string[], searchOptions?: ICacheOptions): Promise<TEntity[]> {
+    return this._primaryEntityManager.getByIds(ids, searchOptions);
   }
 
   /**

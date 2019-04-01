@@ -10,6 +10,7 @@ export interface IEntityManager<TEntity extends IEntity> {
   /**
    * Gets a model by its id.
    * @param id: Model's id.
+   * @param searchOptions Search options.
    * @returns Model found.
    */
   getById(
@@ -20,10 +21,11 @@ export interface IEntityManager<TEntity extends IEntity> {
   /**
    * Gets a collection of models by its ids.
    * @param ids Model ids.
+   * @param searchOptions Search options.
    * @returns Models found.
    */
   getByIds(
-    ids: Iterable<number|string>,
+    ids: number[]| string[],
     searchOptions?: ICacheOptions,
   ): Promise<TEntity[]>;
 }

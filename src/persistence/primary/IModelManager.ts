@@ -9,11 +9,25 @@ export interface IModelManager<TEntity extends IEntity> {
    */
   delete(entity: TEntity): Promise<any>;
   /**
+   * Finds an entity by its id.
+   * @param id Id of the entity.
+   * @param searchOptions Search options.
+   * @returns Entity found
+   */
+  get(id: number|string, searchOptions?: ICacheOptions): Promise<TEntity>;
+  /**
    * Deletes multiple entities from the cache layer.
    * @param entities Entities to delete.
    * @returns Promise of entities deleted.
    */
   mDelete(entities: TEntity[]): Promise<any>;
+  /**
+   * Finds a collection if entities by its ids.
+   * @param ids Ids of the entities.
+   * @param searchOptions Search options.
+   * @returns Entities found.
+   */
+  mGet(ids: number[]|string[], searchOptions?: ICacheOptions): Promise<TEntity[]>;
   /**
    * Updates multiple entities at the cache layer.
    * @param entities Entities to be updated.
