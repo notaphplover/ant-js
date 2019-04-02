@@ -56,7 +56,9 @@ export class MultipleResultQueryManagerTest implements ITest {
       this._itMustPerformAnUnexistingMultipleCachedSearch();
       this._itMustPerformAnUnexistingUncachedSearch();
       this._itMustUpdateAnEntityInAQuery();
+      this._itMustUpdateAnEntityInAQueryWithoutGeneratingPartialResults();
       this._itMustUpdateMultipleEntitiesInQueries();
+      this._itMustUpdateMultipleEntitiesInAQueryWithoutGeneratingPartialResults();
       this._itMustUpdateZeroEntitiesInQueries();
     });
   }
@@ -566,6 +568,41 @@ export class MultipleResultQueryManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
+  private _itMustUpdateAnEntityInAQueryWithoutGeneratingPartialResults(): void {
+    const itsName = 'mustUpdateAnEntityInAQueryWithoutGeneratingPartialResults';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      const previousName = 'Pepe';
+      const finalName = 'Luis';
+      await this._beforeAllPromise;
+      const entity1: NamedEntity = { id: 0, name: previousName };
+      const entity2: NamedEntity = { id: 1, name: finalName };
+      const entity1After: NamedEntity = { id: 0, name: finalName };
+      const [
+        ,
+        primaryEntityManager,
+        secondaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
+      const queryManager = new NamesStartingByLetter(
+        primaryEntityManager,
+        secondaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        prefix + 'names-starting-with/',
+      );
+      await queryManager.get({ name: previousName });
+      secondaryEntityManager.store[0] = entity1After;
+      await primaryEntityManager.update(entity1After);
+      await queryManager.syncUpdate(entity1After);
+      const entitiesFoundPrevious = await queryManager.get({ name: previousName });
+      const entitiesFoundFinal = await queryManager.get({ name: finalName });
+      expect(entitiesFoundPrevious).toEqual(new Array());
+      expect(entitiesFoundFinal).toContain(entity1After);
+      expect(entitiesFoundFinal).toContain(entity2);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
   private _itMustUpdateMultipleEntitiesInQueries(): void {
     const itsName = 'mustUpdateMultipleEntitiesInQueries';
     const prefix = this._declareName + '/' + itsName + '/';
@@ -589,6 +626,41 @@ export class MultipleResultQueryManagerTest implements ITest {
       primaryEntityManager.mUpdate([entityAfter]);
       await queryManager.syncMUpdate([entityAfter]);
       expect(await queryManager.get(entityAfter)).toEqual([entityAfter]);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustUpdateMultipleEntitiesInAQueryWithoutGeneratingPartialResults(): void {
+    const itsName = 'mustUpdateMultipleEntitiesInAQueryWithoutGeneratingPartialResults';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      const previousName = 'Pepe';
+      const finalName = 'Luis';
+      await this._beforeAllPromise;
+      const entity1: NamedEntity = { id: 0, name: previousName };
+      const entity2: NamedEntity = { id: 1, name: finalName };
+      const entity1After: NamedEntity = { id: 0, name: finalName };
+      const [
+        ,
+        primaryEntityManager,
+        secondaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
+      const queryManager = new NamesStartingByLetter(
+        primaryEntityManager,
+        secondaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        prefix + 'names-starting-with/',
+      );
+      await queryManager.get({ name: previousName });
+      secondaryEntityManager.store[0] = entity1After;
+      await primaryEntityManager.update(entity1After);
+      await queryManager.syncMUpdate([entity1After]);
+      const entitiesFoundPrevious = await queryManager.get({ name: previousName });
+      const entitiesFoundFinal = await queryManager.get({ name: finalName });
+      expect(entitiesFoundPrevious).toEqual(new Array());
+      expect(entitiesFoundFinal).toContain(entity1After);
+      expect(entitiesFoundFinal).toContain(entity2);
       done();
     }, MAX_SAFE_TIMEOUT);
   }

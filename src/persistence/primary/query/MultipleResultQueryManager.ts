@@ -364,16 +364,12 @@ return results`;
     return `local reverseKey = KEYS[#KEYS]
 local currentKeyCounter = 1
 local currentKey = KEYS[currentKeyCounter]
-if redis.call('sismember', currentKey, '${VOID_RESULT_STRING}') then
-  redis.call('srem', currentKey, '${VOID_RESULT_STRING}')
-end
+redis.call('srem', currentKey, '${VOID_RESULT_STRING}')
 for i=1, #ARGV do
   if ARGV[i] == '${SEPARATOR_STRING}' then
     currentKeyCounter = currentKeyCounter + 1;
     local currentKey = KEYS[currentKeyCounter]
-    if redis.call('sismember', currentKey, '${VOID_RESULT_STRING}') then
-      redis.call('srem', currentKey, '${VOID_RESULT_STRING}')
-    end
+    redis.call('srem', currentKey, '${VOID_RESULT_STRING}')
   else
     if ARGV[i] == '${VOID_RESULT_STRING}' then
       if 0 == redis.call('scard', currentKey) then
@@ -401,11 +397,13 @@ for i=1, #KEYS-1 do
       redis.call('sadd', key, '${VOID_RESULT_STRING}')
     end
   end
-  redis.call('hset', reverseKey, ARGV[i], KEYS[i])
-  if redis.call('sismember', KEYS[i], '${VOID_RESULT_STRING}') then
+  if 0 == redis.call('scard', KEYS[i]) then
+    redis.call('hdel', reverseKey, ARGV[i])
+  else
+    redis.call('hset', reverseKey, ARGV[i], KEYS[i])
     redis.call('srem', KEYS[i], '${VOID_RESULT_STRING}')
+    redis.call('sadd', KEYS[i], ARGV[i])
   end
-  redis.call('sadd', KEYS[i], ARGV[i])
 end`;
   }
 
@@ -414,9 +412,7 @@ end`;
    * @returns Lua script
    */
   private _luaSetQueryGenerator(): string {
-    return `if redis.call('sismember', KEYS[1], KEYS[3]) then
-  redis.call('srem', KEYS[1], KEYS[3])
-end
+    return `redis.call('srem', KEYS[1], KEYS[3])
 for i=1, #ARGV do
   redis.call('sadd', KEYS[1], ARGV[i])
 end
@@ -446,11 +442,13 @@ if key then
     redis.call('sadd', key, ARGV[1])
   end
 end
-redis.call('hset', KEYS[1], ARGV[2], KEYS[2])
-if redis.call('sismember', KEYS[2], ARGV[1]) then
+if 0 == redis.call('scard', KEYS[2]) then
+  redis.call('hdel', KEYS[1], ARGV[2])
+else
+  redis.call('hset', KEYS[1], ARGV[2], KEYS[2])
   redis.call('srem', KEYS[2], ARGV[1])
-end
-redis.call('sadd', KEYS[2], ARGV[2])`;
+  redis.call('sadd', KEYS[2], ARGV[2])
+end`;
   }
 
   /**
