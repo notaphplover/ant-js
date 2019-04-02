@@ -28,18 +28,18 @@ export interface IPrimaryEntityManager<TEntity extends IEntity>
   /**
    * Cache multiple entities.
    * @param entities Entities to cache.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Promise of entities cached.
    */
   mUpdate(
     entities: TEntity[],
-    searchOptions?: ICacheOptions,
+    cacheOptions?: ICacheOptions,
   ): Promise<any>;
   /**
    * Caches an entity.
    * @param entity entity to cache.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Promise of redis operation ended
    */
-  update(entity: TEntity, searchOptions?: ICacheOptions): Promise<any>;
+  update(entity: TEntity, cacheOptions?: ICacheOptions): Promise<any>;
 }

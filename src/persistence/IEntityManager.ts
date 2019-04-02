@@ -10,22 +10,22 @@ export interface IEntityManager<TEntity extends IEntity> {
   /**
    * Gets a model by its id.
    * @param id: Model's id.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Model found.
    */
   getById(
     id: number|string,
-    searchOptions?: ICacheOptions,
+    cacheOptions?: ICacheOptions,
   ): Promise<TEntity>;
 
   /**
    * Gets a collection of models by its ids.
    * @param ids Model ids.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Models found.
    */
   getByIds(
     ids: number[]| string[],
-    searchOptions?: ICacheOptions,
+    cacheOptions?: ICacheOptions,
   ): Promise<TEntity[]>;
 }

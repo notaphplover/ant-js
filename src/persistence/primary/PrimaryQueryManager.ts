@@ -82,18 +82,18 @@ export abstract class PrimaryQueryManager<
    */
   public abstract get(
     params: any,
-    searchOptions?: ICacheOptions,
+    cacheOptions?: ICacheOptions,
   ): TResult<TEntity, TQueryResult>;
 
   /**
    * Gets the result of multiple queries.
    * @param paramsArray Queries parameters.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Queries results.
    */
   public abstract mGet(
     paramsArray: any[],
-    searchOptions?: ICacheOptions,
+    cacheOptions?: ICacheOptions,
   ): Promise<TEntity[]>;
 
   /**

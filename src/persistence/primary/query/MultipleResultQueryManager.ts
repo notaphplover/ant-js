@@ -14,19 +14,19 @@ export abstract class MultipleResultQueryManager<
   /**
    * Gets the result of a query.
    * @param params Query parameters.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Entities found.
    */
   public async get(
     params: any,
-    searchOptions?: ICacheOptions,
+    cacheOptions?: ICacheOptions,
   ): Promise<TEntity[]> {
     const key = this._key(params);
     const luaScript = this._luaGetGenerator();
     const resultsJSON = await this._redis.eval(luaScript, 1, key);
 
     if (null == resultsJSON) {
-      return this._getProcessQueryNotFound(key, params, searchOptions);
+      return this._getProcessQueryNotFound(key, params, cacheOptions);
     } else {
       if (VOID_RESULT_STRING === resultsJSON) {
         return new Array();
@@ -41,7 +41,7 @@ export abstract class MultipleResultQueryManager<
           resultJson,
         );
       }
-      await this._getProcessMissingOptions(missingIds, finalResults, searchOptions);
+      await this._getProcessMissingOptions(missingIds, finalResults, cacheOptions);
       return finalResults;
     }
   }
@@ -49,12 +49,12 @@ export abstract class MultipleResultQueryManager<
   /**
    * Gets the result of multiple queries.
    * @param paramsArray Queries params.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Queries results.
    */
   public async mGet(
     paramsArray: any[],
-    searchOptions?: ICacheOptions,
+    cacheOptions?: ICacheOptions,
   ): Promise<TEntity[]> {
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
@@ -102,7 +102,7 @@ export abstract class MultipleResultQueryManager<
       missingIds.push(...(queriesMissingIds as Array<number & string>));
     }
 
-    await this._getProcessMissingOptions(missingIds, finalResults, searchOptions);
+    await this._getProcessMissingOptions(missingIds, finalResults, cacheOptions);
 
     return finalResults;
   }
@@ -177,16 +177,16 @@ export abstract class MultipleResultQueryManager<
    * Process the missing ids and adds missing entities to the final results collection.
    * @param missingIds Missing ids collection.
    * @param finalResults Final results collection.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @param Promise of missing options processed.
    */
   private async _getProcessMissingOptions(
     missingIds: number[]|string[],
     finalResults: TEntity[],
-    searchOptions: ICacheOptions,
+    cacheOptions: ICacheOptions,
   ): Promise<void> {
     if (0 < missingIds.length) {
-      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, searchOptions);
+      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, cacheOptions);
       for (const missingEntity of missingEntities) {
         finalResults.push(missingEntity);
       }
@@ -224,13 +224,13 @@ export abstract class MultipleResultQueryManager<
    * Process a query not found obtaining the results and caching them.
    * @param key key of the query.
    * @param params Query params.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Promise of query results.
    */
   private async _getProcessQueryNotFound(
     key: string,
     params: any,
-    searchOptions: ICacheOptions,
+    cacheOptions: ICacheOptions,
   ): Promise<TEntity[]> {
     const ids = await this._query(params);
     const idsJSON = (ids as any[]).map((id) => JSON.stringify(id));
@@ -243,7 +243,7 @@ export abstract class MultipleResultQueryManager<
         VOID_RESULT_STRING,
         ...idsJSON,
       ]);
-      return this._primaryEntityManager.getByIds(ids, searchOptions);
+      return this._primaryEntityManager.getByIds(ids, cacheOptions);
     } else {
       this._redis.eval(
         this._luaSetVoidQueryGenerator(),
