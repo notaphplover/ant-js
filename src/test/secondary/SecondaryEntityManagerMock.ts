@@ -58,7 +58,7 @@ export class SecondaryEntityManagerMock<TEntity extends IEntity>
    * @param ids Entities ids.
    * @returns Promise of entities found.
    */
-  public getByIds(ids: Array<number|string>): Promise<TEntity[]> {
+  public getByIds(ids: number[]| string[]): Promise<TEntity[]> {
     const idField = this.model.id;
     const idSet = new Set<number|string>(ids);
     return new Promise((resolve) =>

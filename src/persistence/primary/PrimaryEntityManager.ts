@@ -82,7 +82,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    * @returns Entities found.
    */
   public getByIds(
-    ids: Array<number|string>,
+    ids: number[] | string[],
     searchOptions: ICacheOptions = new CacheOptions(),
   ): Promise<TEntity[]> {
     return this._innerGetByIds(ids, searchOptions);
@@ -253,7 +253,7 @@ end`;
    * @returns Entities found.
    */
   protected async _innerGetByIds(
-    ids: Array<number|string>,
+    ids: number[]|string[],
     searchOptions: ICacheOptions,
   ): Promise<TEntity[]> {
     if (0 === ids.length) {
@@ -261,7 +261,7 @@ end`;
     }
     return this._innerGetByDistinctIdsNotMapped(
       // Get the different ones.
-      Array.from(new Set(ids)),
+      (Array.from(new Set<number|string>(ids)) as number[]|string[]),
       searchOptions,
     );
   }
@@ -273,14 +273,14 @@ end`;
    * @returns Entities found.
    */
   protected async _innerGetByDistinctIdsNotMapped(
-    ids: Array<number|string>,
+    ids: number[]|string[],
     searchOptions: ICacheOptions,
   ): Promise<TEntity[]> {
-    const keysArray = ids.map((id) => this._getKey(id));
+    const keysArray = (ids as Array<number|string>).map((id) => this._getKey(id));
     const entities: string[] = await this._redis.mget(...keysArray);
     const cacheResults: TEntity[] = entities.map((entity) => JSON.parse(entity));
     const results = new Array<TEntity>();
-    const missingIds = new Array<number|string>();
+    const missingIds = new Array();
 
     for (let i = 0; i < keysArray.length; ++i) {
       if (null == cacheResults[i]) {

@@ -53,6 +53,8 @@ export class ModelManagerTest implements ITest {
       this._itMustBeInitializable();
       this._itMustDeleteAnEntity();
       this._itMustDeleteMultipleEntities();
+      this._itMustGetAnEntity();
+      this._itMustGetMultipleEntities();
       this._itMustUpdateAnEntity();
       this._itMustUpdateMultipleEntities();
     });
@@ -236,6 +238,88 @@ export class ModelManagerTest implements ITest {
       for (const search of searchEntity3ByQueryManager) {
         expect(search).toEqual(entity3);
       }
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustGetAnEntity(): void {
+    const itsName = 'mustGetAnEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'b',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+      ];
+      const model = modelTestGenerator();
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+      ] = this._modelManagerGenerator.generateModelManager(
+        model,
+        prefix,
+        prefix + 'query/',
+        prefix + 'reverse/',
+        secondaryEntityManager,
+      );
+      const entityFound = await modelManager.get(entity1[model.id]);
+      expect(entityFound).toEqual(entity1);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustGetMultipleEntities(): void {
+    const itsName = 'mustGetMultipleEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'b',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+      ];
+      const model = modelTestGenerator();
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+      ] = this._modelManagerGenerator.generateModelManager(
+        model,
+        prefix,
+        prefix + 'query/',
+        prefix + 'reverse/',
+        secondaryEntityManager,
+      );
+      const entityFound = await modelManager.mGet([
+        entity1[model.id],
+        entity2[model.id],
+      ]);
+      expect(entityFound).toContain(entity1);
+      expect(entityFound).toContain(entity2);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
