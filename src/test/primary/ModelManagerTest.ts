@@ -72,7 +72,7 @@ export class ModelManagerTest implements ITest {
     entity: IEntityTest,
     model: IModel,
     primaryEntityManager: IPrimaryEntityManager<IEntityTest>,
-    queriesMap: Map<string, IPrimaryQueryManager<IEntityTest, Promise<IEntityTest|IEntityTest[]>>>,
+    queriesMap: Map<string, IPrimaryQueryManager<IEntityTest>>,
   ): Promise<[IEntityTest, IEntityTest[]]> {
     const searchEntityByPrimaryEntityManager = await primaryEntityManager.getById(entity[model.id]);
     const searchEntityByQueryManager = new Array();
