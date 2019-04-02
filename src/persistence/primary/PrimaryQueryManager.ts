@@ -3,16 +3,23 @@ import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { ICacheOptions } from './ICacheOptions';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
-import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
+import {
+  IBasePrimaryQueryManager,
+  IPrimaryQueryManager,
+} from './query/IPrimaryQueryManager';
 
+type TResult<TEntity, TQueryResult> = TQueryResult extends any[] ?
+  Promise<TEntity[]> :
+  Promise<TEntity>;
 type TMQuery<TQueryResult> = (paramsArray: any[]) => Promise<TQueryResult[]>;
 type TQuery<TQueryResult> = (params: any) => Promise<TQueryResult>;
 
 export abstract class PrimaryQueryManager<
   TEntity extends IEntity,
   TQueryResult extends number | string | number[] | string[],
-  TResult extends Promise<TEntity | TEntity[]>
-> implements IPrimaryQueryManager<TEntity, TResult> {
+> implements
+    IBasePrimaryQueryManager<TEntity, TResult<TEntity, TQueryResult>>,
+    IPrimaryQueryManager<TEntity> {
   /**
    * Multiple query
    */
@@ -76,7 +83,7 @@ export abstract class PrimaryQueryManager<
   public abstract get(
     params: any,
     searchOptions?: ICacheOptions,
-  ): TResult;
+  ): TResult<TEntity, TQueryResult>;
 
   /**
    * Gets the result of multiple queries.

@@ -9,8 +9,7 @@ export abstract class MultipleResultQueryManager<
   TEntity extends IEntity
 > extends PrimaryQueryManager<
   TEntity,
-  number[] | string[],
-  Promise<TEntity[]>
+  number[] | string[]
 > {
   /**
    * Gets the result of a query.

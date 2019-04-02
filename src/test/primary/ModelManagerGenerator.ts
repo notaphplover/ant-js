@@ -31,7 +31,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
   ): [
     IModelManager<TEntity>,
     IPrimaryEntityManager<TEntity>,
-    Map<string, IPrimaryQueryManager<TEntity, Promise<TEntity|TEntity[]>>>
+    Map<string, IPrimaryQueryManager<TEntity>>,
   ] {
     const primaryEntityManager = new PrimaryEntityManager(
       {prefix: modelPrefix},
@@ -39,8 +39,8 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
       this._redis.redis,
       secondaryManager,
     );
-    const queryManagers = new Array<IPrimaryQueryManager<TEntity, Promise<TEntity | TEntity[]>>>();
-    const queriesMap = new Map<string, IPrimaryQueryManager<TEntity, Promise<TEntity | TEntity[]>>>();
+    const queryManagers = new Array<IPrimaryQueryManager<TEntity>>();
+    const queriesMap = new Map<string, IPrimaryQueryManager<TEntity>>();
     for (const property of model.properties) {
       if (property === model.id) { continue; }
 

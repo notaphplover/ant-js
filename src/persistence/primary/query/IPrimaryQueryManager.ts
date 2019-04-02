@@ -2,9 +2,9 @@ import { IEntity } from '../../../model/IEntity';
 import { IModel } from '../../../model/IModel';
 import { ICacheOptions } from '../ICacheOptions';
 
-export interface IPrimaryQueryManager<
+export interface IBasePrimaryQueryManager<
   TEntity extends IEntity,
-  TQueryResult extends Promise<TEntity | TEntity[]>,
+  TResult extends Promise<TEntity | TEntity[]>,
 > {
   /**
    * Query's model.
@@ -18,7 +18,7 @@ export interface IPrimaryQueryManager<
   get(
     params: any,
     searchOptions?: ICacheOptions,
-  ): TQueryResult;
+  ): TResult;
   /**
    * Gets the result of multiple queries.
    * @param paramsArray Queries parameters.
@@ -54,3 +54,6 @@ export interface IPrimaryQueryManager<
    */
   syncUpdate(entity: TEntity): Promise<void>;
 }
+
+export interface IPrimaryQueryManager<TEntity extends IEntity>
+  extends IBasePrimaryQueryManager<TEntity, Promise<TEntity | TEntity[]>> {}

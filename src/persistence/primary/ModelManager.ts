@@ -13,7 +13,7 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
   /**
    * Query managers.
    */
-  protected _queryManagers: Array<IPrimaryQueryManager<TEntity, Promise<TEntity | TEntity[]>>>;
+  protected _queryManagers: Array<IPrimaryQueryManager<TEntity>>;
 
   /**
    * Creates a new model manager.
@@ -22,7 +22,7 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
    */
   public constructor(
     primaryEntityManager: IPrimaryEntityManager<TEntity>,
-    queryManagers: Array<IPrimaryQueryManager<TEntity, Promise<TEntity | TEntity[]>>>,
+    queryManagers: Array<IPrimaryQueryManager<TEntity>>,
   ) {
     this._primaryEntityManager = primaryEntityManager;
     this._queryManagers = queryManagers;
