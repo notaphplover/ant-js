@@ -45,11 +45,11 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
   /**
    * Finds an entity by its id.
    * @param id Id of the entity.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Entity found
    */
-  public get(id: number|string, searchOptions?: ICacheOptions): Promise<TEntity> {
-    return this._primaryEntityManager.getById(id, searchOptions);
+  public get(id: number|string, cacheOptions?: ICacheOptions): Promise<TEntity> {
+    return this._primaryEntityManager.getById(id, cacheOptions);
   }
 
   /**
@@ -69,11 +69,11 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
   /**
    * Finds a collection if entities by its ids.
    * @param ids Ids of the entities.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Entities found.
    */
-  public mGet(ids: number[]|string[], searchOptions?: ICacheOptions): Promise<TEntity[]> {
-    return this._primaryEntityManager.getByIds(ids, searchOptions);
+  public mGet(ids: number[]|string[], cacheOptions?: ICacheOptions): Promise<TEntity[]> {
+    return this._primaryEntityManager.getByIds(ids, cacheOptions);
   }
 
   /**

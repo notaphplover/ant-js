@@ -13,11 +13,11 @@ export abstract class SingleResultQueryManager<
   /**
    * Gets the result of a query.
    * @param params Query parameters.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    */
   public async get(
     params: any,
-    searchOptions?: ICacheOptions,
+    cacheOptions?: ICacheOptions,
   ): Promise<TEntity> {
     const key = this._key(params);
     const luaScript = this._luaGetGenerator();
@@ -27,7 +27,7 @@ export abstract class SingleResultQueryManager<
       if (null == id) {
         return null;
       } else {
-        return await this._primaryEntityManager.getById(id, searchOptions);
+        return await this._primaryEntityManager.getById(id, cacheOptions);
       }
     } else {
       let result: TEntity | Promise<TEntity>;
@@ -35,7 +35,7 @@ export abstract class SingleResultQueryManager<
         key,
         resultJson,
         (entity) => { result = entity; },
-        (id: number| string) => { result = this._primaryEntityManager.getById(id, searchOptions); },
+        (id: number| string) => { result = this._primaryEntityManager.getById(id, cacheOptions); },
         () => { result = null; },
       );
       return result;
@@ -45,12 +45,12 @@ export abstract class SingleResultQueryManager<
   /**
    * Gets the result of multiple queries.
    * @param paramsArray Queries parameters.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Queries results.
    */
   public async mGet(
     paramsArray: any[],
-    searchOptions?: ICacheOptions,
+    cacheOptions?: ICacheOptions,
   ): Promise<TEntity[]> {
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
@@ -80,7 +80,7 @@ export abstract class SingleResultQueryManager<
     }
     const idsFromMissingQueries = await this._mGetIdsAndSetToQueries(missingQueriesKeys, missingParamsArray);
     missingIds.push(...(idsFromMissingQueries as Array<number&string>));
-    await this._mGetSearchMissingIds(finalResults, missingIds, searchOptions);
+    await this._mGetSearchMissingIds(finalResults, missingIds, cacheOptions);
     return finalResults;
   }
 
@@ -332,16 +332,16 @@ redis.call('set', KEYS[2], ARGV[1])`;
    * Search for missing ids and adds the results to the final results collection.
    * @param finalResults Final results.
    * @param missingIds Missing ids.
-   * @param searchOptions Cache options.
+   * @param cacheOptions Cache options.
    * @returns Promise of results added.
    */
   private async _mGetSearchMissingIds(
     finalResults: TEntity[],
     missingIds: number[]|string[],
-    searchOptions?: ICacheOptions,
+    cacheOptions?: ICacheOptions,
   ): Promise<void> {
     if (0 < missingIds.length) {
-      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, searchOptions);
+      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, cacheOptions);
       for (const missingEntity of missingEntities) {
         finalResults.push(missingEntity);
       }

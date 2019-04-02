@@ -11,10 +11,10 @@ export interface IModelManager<TEntity extends IEntity> {
   /**
    * Finds an entity by its id.
    * @param id Id of the entity.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Entity found
    */
-  get(id: number|string, searchOptions?: ICacheOptions): Promise<TEntity>;
+  get(id: number|string, cacheOptions?: ICacheOptions): Promise<TEntity>;
   /**
    * Deletes multiple entities from the cache layer.
    * @param entities Entities to delete.
@@ -24,10 +24,10 @@ export interface IModelManager<TEntity extends IEntity> {
   /**
    * Finds a collection if entities by its ids.
    * @param ids Ids of the entities.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Entities found.
    */
-  mGet(ids: number[]|string[], searchOptions?: ICacheOptions): Promise<TEntity[]>;
+  mGet(ids: number[]|string[], cacheOptions?: ICacheOptions): Promise<TEntity[]>;
   /**
    * Updates multiple entities at the cache layer.
    * @param entities Entities to be updated.

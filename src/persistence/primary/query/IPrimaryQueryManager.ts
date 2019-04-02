@@ -17,17 +17,17 @@ export interface IBasePrimaryQueryManager<
    */
   get(
     params: any,
-    searchOptions?: ICacheOptions,
+    cacheOptions?: ICacheOptions,
   ): TResult;
   /**
    * Gets the result of multiple queries.
    * @param paramsArray Queries parameters.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Queries results.
    */
   mGet(
     paramsArray: any[],
-    searchOptions?: ICacheOptions,
+    cacheOptions?: ICacheOptions,
   ): Promise<TEntity[]>;
   /**
    * Syncs the remove of an entity in cache.

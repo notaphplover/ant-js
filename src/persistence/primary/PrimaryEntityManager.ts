@@ -71,9 +71,9 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    */
   public getById(
     id: number|string,
-    searchOptions: ICacheOptions = new CacheOptions(),
+    cacheOptions: ICacheOptions = new CacheOptions(),
   ): Promise<TEntity> {
-    return this._innerGetById(id, searchOptions);
+    return this._innerGetById(id, cacheOptions);
   }
 
   /**
@@ -83,9 +83,9 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    */
   public getByIds(
     ids: number[] | string[],
-    searchOptions: ICacheOptions = new CacheOptions(),
+    cacheOptions: ICacheOptions = new CacheOptions(),
   ): Promise<TEntity[]> {
-    return this._innerGetByIds(ids, searchOptions);
+    return this._innerGetByIds(ids, cacheOptions);
   }
 
   /**
@@ -119,35 +119,35 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   /**
    * Cache multiple entities.
    * @param entities Entities to cache.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Promise of entities cached.
    */
   public mUpdate(
     entities: TEntity[],
-    searchOptions: ICacheOptions = new CacheOptions(),
+    cacheOptions: ICacheOptions = new CacheOptions(),
   ): Promise<any> {
     if (null == entities || 0 === entities.length) {
       return new Promise<void>((resolve) => resolve());
     }
-    if (CacheMode.NoCache === searchOptions.cacheOptions) {
+    if (CacheMode.NoCache === cacheOptions.cacheOptions) {
       return new Promise<void>((resolve) => resolve());
     }
-    if (CacheMode.CacheIfNotExist === searchOptions.cacheOptions) {
+    if (CacheMode.CacheIfNotExist === cacheOptions.cacheOptions) {
       throw new Error('This version does not support to cache multiple entities only if they are not cached :(.');
     }
-    if (CacheMode.CacheAndOverwrite !== searchOptions.cacheOptions) {
+    if (CacheMode.CacheAndOverwrite !== cacheOptions.cacheOptions) {
       throw new Error('Unexpected cache options.');
     }
 
     const idField = this.model.id;
 
-    if (searchOptions.ttl) {
+    if (cacheOptions.ttl) {
       return this._redis.eval([
         this._luaGetMultipleSetEx(),
         entities.length,
         ...entities.map((entity) => this._getKey(entity[idField])),
         ...entities.map((entity) => JSON.stringify(entity)),
-        searchOptions.ttl,
+        cacheOptions.ttl,
       ]);
     } else {
       const cacheMap = new Map<string, string>();
@@ -164,21 +164,21 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   /**
    * Caches an entity.
    * @param entity entity to cache.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Promise of redis operation ended
    */
   public update(
     entity: TEntity,
-    searchOptions: ICacheOptions = new CacheOptions(),
+    cacheOptions: ICacheOptions = new CacheOptions(),
   ): Promise<any> {
     if (null == entity) {
       return new Promise((resolve) => resolve());
     }
-    if (CacheMode.NoCache === searchOptions.cacheOptions) {
+    if (CacheMode.NoCache === cacheOptions.cacheOptions) {
       return new Promise((resolve) => resolve());
     }
     const key = this._getKey(entity[this.model.id]);
-    switch (searchOptions.cacheOptions) {
+    switch (cacheOptions.cacheOptions) {
       case CacheMode.CacheIfNotExist:
         return this._redis.setnx(key, JSON.stringify(entity));
       case CacheMode.CacheAndOverwrite:
@@ -223,11 +223,11 @@ end`;
   /**
    * Gets an entity by its id.
    * @param id Entity's id.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    */
   protected async _innerGetById(
     id: number|string,
-    searchOptions: ICacheOptions,
+    cacheOptions: ICacheOptions,
   ): Promise<TEntity> {
     if (null == id) {
       return null;
@@ -240,7 +240,7 @@ end`;
       return null;
     }
     return this._successor.getById(id).then((entity) => {
-      this.update(entity, searchOptions);
+      this.update(entity, cacheOptions);
       return entity;
     });
   }
@@ -249,12 +249,12 @@ end`;
    * Gets entities by its ids.
    * @param ids Entities ids.
    * @param idsAreDifferent True if the ids are different.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Entities found.
    */
   protected async _innerGetByIds(
     ids: number[]|string[],
-    searchOptions: ICacheOptions,
+    cacheOptions: ICacheOptions,
   ): Promise<TEntity[]> {
     if (0 === ids.length) {
       return new Promise((resolve) => { resolve(new Array()); });
@@ -262,19 +262,19 @@ end`;
     return this._innerGetByDistinctIdsNotMapped(
       // Get the different ones.
       (Array.from(new Set<number|string>(ids)) as number[]|string[]),
-      searchOptions,
+      cacheOptions,
     );
   }
 
   /**
    * Gets entities by its ids.
    * @param ids Entities ids.
-   * @param searchOptions Search options.
+   * @param cacheOptions Cache options.
    * @returns Entities found.
    */
   protected async _innerGetByDistinctIdsNotMapped(
     ids: number[]|string[],
-    searchOptions: ICacheOptions,
+    cacheOptions: ICacheOptions,
   ): Promise<TEntity[]> {
     const keysArray = (ids as Array<number|string>).map((id) => this._getKey(id));
     const entities: string[] = await this._redis.mget(...keysArray);
@@ -292,7 +292,7 @@ end`;
 
     if (this._successor && missingIds.length > 0) {
       const missingData = await this._successor.getByIds(missingIds);
-      this.mUpdate(missingData, searchOptions);
+      this.mUpdate(missingData, cacheOptions);
       for (const missingEntity of missingData) {
         results.push(missingEntity);
       }
