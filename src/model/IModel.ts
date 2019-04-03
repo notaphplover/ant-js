@@ -7,8 +7,4 @@ export interface IModel {
    * Model's id field.
    */
   id: string;
-  /**
-   * Model's properties
-   */
-  properties: string[];
 }

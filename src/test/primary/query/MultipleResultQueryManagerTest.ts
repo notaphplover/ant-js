@@ -76,7 +76,7 @@ export class MultipleResultQueryManagerTest implements ITest {
     IPrimaryEntityManager<NamedEntity>,
     SecondaryEntityManagerMock<NamedEntity>,
   ] {
-    const model = new Model('id', ['id', 'name']);
+    const model = new Model('id');
     const secondaryEntityManager =
         new SecondaryEntityManagerMock<NamedEntity>(model, entities);
     const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
@@ -321,7 +321,7 @@ export class MultipleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'name']);
+      const model = new Model('id');
       const entity1: NamedEntityAlternative = {id: '1', name: 'Pepe'};
       const secondaryEntityManager =
         new SecondaryEntityManagerMock<NamedEntityAlternative>(model, [entity1]);

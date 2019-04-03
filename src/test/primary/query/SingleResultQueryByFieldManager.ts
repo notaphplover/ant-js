@@ -26,12 +26,6 @@ export class SingleResultQueryByFieldManager<TEntity extends IEntity>
     queryPrefix: string,
     mQuery: (paramsArray: any) => Promise<number[]|string[]> = null,
   ) {
-    if (
-      undefined === primaryEntityManager.model.properties.find(
-        (property) => field === property)
-    ) {
-      throw new Error('Field not in the model managed.');
-    }
     super(query, primaryEntityManager, redis, reverseHashKey, mQuery);
     this._field = field;
     this._queryPrefix = queryPrefix;

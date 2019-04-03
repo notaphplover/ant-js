@@ -13,7 +13,7 @@ export class ModelTest implements ITest {
     it('mustBeInitializable', () => {
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
-        new Model('id', ['id', 'field']);
+        new Model('id');
       }).not.toThrowError();
     });
   }
@@ -21,10 +21,8 @@ export class ModelTest implements ITest {
   private _itMustStoreInitialValues(): void {
     it ('mustStoreInitialValues', () => {
       const id = 'idField';
-      const properties = ['idField', 'customField'];
-      const customModel = new Model(id, properties);
+      const customModel = new Model(id);
       expect(customModel.id).toBe(id);
-      expect(customModel.properties).toEqual(properties);
     });
   }
 }

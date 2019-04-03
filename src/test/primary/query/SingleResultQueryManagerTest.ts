@@ -78,7 +78,7 @@ export class SingleResultQueryManagerTest implements ITest {
       field: string,
     }>,
   ] {
-    const model = new Model('id', ['id', 'field']);
+    const model = new Model('id');
     const secondaryEntityManager =
         new SecondaryEntityManagerMock<IEntity & {
           id: number,
@@ -331,7 +331,7 @@ export class SingleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field']);
+      const model = new Model('id');
       const entity1: IEntity & {
         id: string,
         field: string,
@@ -508,7 +508,7 @@ export class SingleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field']);
+      const model = new Model('id');
       const entity1: IEntity & {
         id: string,
         field: string,

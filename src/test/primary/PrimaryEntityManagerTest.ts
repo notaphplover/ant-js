@@ -79,7 +79,7 @@ export class PrimaryEntityManagerTest implements ITest {
       field: string,
     }>,
   ] {
-    const model = new Model('id', ['id', 'field']);
+    const model = new Model('id');
     const secondaryEntityManager =
         new SecondaryEntityManagerMock<IEntity & {
           id: number,
@@ -309,7 +309,7 @@ return redis.call('get', ${luaExpression})`,
     const suffix = '/' + this._declareName + '/' + itsName;
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id']);
+      const model = new Model('id');
       const entity: IEntity & {
         id: number,
         field: string,
@@ -344,7 +344,7 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id']);
+      const model = new Model('id');
       const secondaryEntityManager =
         new SecondaryEntityManagerMock<{id: string}>(model);
       expect(() => {
@@ -489,7 +489,7 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id', ['id', 'field']);
+      const model = new Model('id');
       const primaryEntityManager = new PrimaryEntityManager(
         {prefix: prefix},
         model,
