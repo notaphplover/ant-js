@@ -17,7 +17,7 @@ interface IEntityTest extends IEntity {
   strField: string;
 }
 const modelTestProperties = ['id', 'numberField', 'strField'];
-const modelTest = new Model('id', modelTestProperties);
+const modelTest = new Model('id');
 
 export class ModelManagerTest implements ITest {
   /**
