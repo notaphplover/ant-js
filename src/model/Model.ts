@@ -7,28 +7,14 @@ export class Model implements IModel {
   protected _id: string;
 
   /**
-   * Model's properties.
-   */
-  protected _properties: string[];
-
-  /**
    * Constructor.
    * @param id Model's id.
-   * @param properties Model's properties.
    */
-  public constructor(
-    id: string,
-    properties: string[],
-  ) {
+  public constructor(id: string) {
     this._id = id;
-    this._properties = properties;
   }
 
   public get id(): string {
     return this._id;
-  }
-
-  public get properties(): string[] {
-    return this._properties;
   }
 }

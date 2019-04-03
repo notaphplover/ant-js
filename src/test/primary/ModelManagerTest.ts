@@ -16,8 +16,8 @@ interface IEntityTest extends IEntity {
   numberField: number;
   strField: string;
 }
-
-const modelTest = new Model('id', ['id', 'numberField', 'strField']);
+const modelTestProperties = ['id', 'numberField', 'strField'];
+const modelTest = new Model('id');
 
 export class ModelManagerTest implements ITest {
   /**
@@ -156,6 +156,7 @@ export class ModelManagerTest implements ITest {
       try {
         this._modelManagerGenerator.generateModelManager(
           modelTest,
+          modelTestProperties,
           prefix,
           prefix + 'query/',
           prefix + 'reverse/',
@@ -218,6 +219,7 @@ export class ModelManagerTest implements ITest {
         queryManagersByProperty,
       ] = this._modelManagerGenerator.generateModelManager(
         model,
+        modelTestProperties,
         prefix,
         prefix + 'query/',
         prefix + 'reverse/',
@@ -283,6 +285,7 @@ export class ModelManagerTest implements ITest {
         queryManagersByProperty,
       ] = this._modelManagerGenerator.generateModelManager(
         model,
+        modelTestProperties,
         prefix,
         prefix + 'query/',
         prefix + 'reverse/',
@@ -349,6 +352,7 @@ export class ModelManagerTest implements ITest {
         modelManager,
       ] = this._modelManagerGenerator.generateModelManager(
         model,
+        modelTestProperties,
         prefix,
         prefix + 'query/',
         prefix + 'reverse/',
@@ -388,6 +392,7 @@ export class ModelManagerTest implements ITest {
         modelManager,
       ] = this._modelManagerGenerator.generateModelManager(
         model,
+        modelTestProperties,
         prefix,
         prefix + 'query/',
         prefix + 'reverse/',
@@ -438,6 +443,7 @@ export class ModelManagerTest implements ITest {
         queryManagersByProperty,
       ] = this._modelManagerGenerator.generateModelManager(
         model,
+        modelTestProperties,
         prefix,
         prefix + 'query/',
         prefix + 'reverse/',
@@ -501,6 +507,7 @@ export class ModelManagerTest implements ITest {
         queryManagersByProperty,
       ] = this._modelManagerGenerator.generateModelManager(
         model,
+        modelTestProperties,
         prefix,
         prefix + 'query/',
         prefix + 'reverse/',

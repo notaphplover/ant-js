@@ -33,6 +33,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
    */
   public generateModelManager(
     model: IModel,
+    properties: string[],
     modelPrefix: string,
     queryPrefix: string,
     reverseHashKey: string,
@@ -50,7 +51,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     );
     const queryManagers = new Array<IPrimaryQueryManager<TEntity>>();
     const queriesMap = new Map<string, IPrimaryQueryManager<TEntity>>();
-    for (const property of model.properties) {
+    for (const property of properties) {
       if (property === model.id) { continue; }
 
       const singleResultQueryManager = new SingleResultQueryByFieldManager<TEntity>(
