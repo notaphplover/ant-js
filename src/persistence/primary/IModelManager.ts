@@ -1,7 +1,8 @@
 import { IEntity } from '../../model/IEntity';
 import { ICacheOptions } from './ICacheOptions';
+import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 
-export interface IModelManager<TEntity extends IEntity> {
+export interface IBaseModelManager<TEntity extends IEntity> {
   /**
    * Deletes an entity from the cache layer.
    * @param entity Entity to delete.
@@ -48,4 +49,12 @@ export interface IModelManager<TEntity extends IEntity> {
     entity: TEntity,
     cacheOptions?: ICacheOptions,
   ): Promise<any>;
+}
+
+export interface IModelManager<TEntity extends IEntity> extends IBaseModelManager<TEntity> {
+  /**
+   * Adds a query manager to the model manager.
+   * @param queryManager Query manager to add.
+   */
+  addQuery(queryManager: IPrimaryQueryManager<TEntity>): this;
 }
