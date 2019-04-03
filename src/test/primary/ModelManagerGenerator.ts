@@ -22,6 +22,15 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     this._redis = new RedisWrapper();
   }
 
+  /**
+   * Generates a model manager with a query for each property defined in the model to manage.
+   * @param model Model to manage.
+   * @param modelPrefix Model prefix.
+   * @param queryPrefix Query prefix.
+   * @param reverseHashKey Reverse map hash key.
+   * @param secondaryManager Secondary model manager.
+   * @returns Model manager, primary entity manager and a map of properties to query managers.
+   */
   public generateModelManager(
     model: IModel,
     modelPrefix: string,
@@ -65,6 +74,33 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
       new ModelManager(primaryEntityManager, queryManagers),
       primaryEntityManager,
       queriesMap,
+    ];
+  }
+
+  /**
+   * Creates a model manager with no queries
+   * @param model Model to manage.
+   * @param modelPrefix Model prefix.
+   * @param secondaryManager Secondary model manager.
+   */
+  public generateZeroQueriesModelManager(
+    model: IModel,
+    modelPrefix: string,
+    secondaryManager: SecondaryEntityManagerMock<TEntity>,
+  ): [
+    IModelManager<TEntity>,
+    IPrimaryEntityManager<TEntity>,
+  ] {
+    const primaryEntityManager = new PrimaryEntityManager(
+      {prefix: modelPrefix},
+      model,
+      this._redis.redis,
+      secondaryManager,
+    );
+
+    return [
+      new ModelManager(primaryEntityManager),
+      primaryEntityManager,
     ];
   }
 }

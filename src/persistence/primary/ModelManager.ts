@@ -22,10 +22,19 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
    */
   public constructor(
     primaryEntityManager: IPrimaryEntityManager<TEntity>,
-    queryManagers: Array<IPrimaryQueryManager<TEntity>>,
+    queryManagers: Array<IPrimaryQueryManager<TEntity>> = new Array(),
   ) {
     this._primaryEntityManager = primaryEntityManager;
     this._queryManagers = queryManagers;
+  }
+
+  /**
+   * Adds a query manager to the model manager.
+   * @param queryManager Query manager to add.
+   */
+  public addQuery(queryManager: IPrimaryQueryManager<TEntity>): this {
+    this._queryManagers.push(queryManager);
+    return this;
   }
 
   /**

@@ -107,7 +107,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
     }
     const keys = entities.map(
       (entity) =>
-        this._getKey(entity[this._model.id]),
+        this._getKey(entity[this.model.id]),
     );
     return this._redis.eval([
       this._luaGetMultipleDel(),

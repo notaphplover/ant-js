@@ -6,6 +6,7 @@ import { IPrimaryQueryManager } from '../../persistence/primary/query/IPrimaryQu
 import { ITest } from '../ITest';
 import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
 import { ModelManagerGenerator } from './ModelManagerGenerator';
+import { SingleResultQueryByFieldManager } from './query/SingleResultQueryByFieldManager';
 import { RedisWrapper } from './RedisWrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
@@ -16,8 +17,7 @@ interface IEntityTest extends IEntity {
   strField: string;
 }
 
-const modelTestGenerator = () =>
-  new Model('id', ['id', 'numberField', 'strField']);
+const modelTest = new Model('id', ['id', 'numberField', 'strField']);
 
 export class ModelManagerTest implements ITest {
   /**
@@ -50,7 +50,9 @@ export class ModelManagerTest implements ITest {
 
   public performTests(): void {
     describe(this._declareName, () => {
+      this._itMustAddAQuery();
       this._itMustBeInitializable();
+      this._itMustBeInitializableWithNoQueries();
       this._itMustDeleteAnEntity();
       this._itMustDeleteMultipleEntities();
       this._itMustGetAnEntity();
@@ -88,6 +90,64 @@ export class ModelManagerTest implements ITest {
     ];
   }
 
+  private _itMustAddAQuery(): void {
+    const itsName = 'mustAddAQuery';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'b',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+      ];
+      const model = modelTest;
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        prefix,
+        secondaryEntityManager,
+      );
+
+      const singleResultQueryManager = new SingleResultQueryByFieldManager<IEntityTest>(
+        (params: any) =>
+          new Promise((resolve) => {
+            const entity = secondaryEntityManager.store.find(
+              (value: IEntityTest) => value.strField === params.strField,
+            );
+            resolve(entity ? entity[model.id] : null);
+          }),
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/strField/',
+        'strField',
+        prefix + 'query/strField/',
+      );
+
+      modelManager.addQuery(singleResultQueryManager);
+      await singleResultQueryManager.get(entity1);
+      await modelManager.delete(entity1);
+
+      const entity1Search = await singleResultQueryManager.get(entity1);
+      expect(entity1Search).toBeNull();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
   private _itMustBeInitializable(): void {
     const itsName = 'mustBeInitializable';
     const prefix = this._declareName + '/' + itsName + '/';
@@ -95,10 +155,29 @@ export class ModelManagerTest implements ITest {
       await this._beforeAllPromise;
       try {
         this._modelManagerGenerator.generateModelManager(
-          modelTestGenerator(),
+          modelTest,
           prefix,
           prefix + 'query/',
           prefix + 'reverse/',
+          null,
+        );
+      } catch {
+        fail();
+      } finally {
+        done();
+      }
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustBeInitializableWithNoQueries(): void {
+    const itsName = 'mustBeInitializableWithNoQueries';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      try {
+        this._modelManagerGenerator.generateZeroQueriesModelManager(
+          modelTest,
+          prefix,
           null,
         );
       } catch {
@@ -128,7 +207,7 @@ export class ModelManagerTest implements ITest {
         entity1,
         entity2,
       ];
-      const model = modelTestGenerator();
+      const model = modelTest;
       const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
         model,
         entities,
@@ -193,7 +272,7 @@ export class ModelManagerTest implements ITest {
         entity2,
         entity3,
       ];
-      const model = modelTestGenerator();
+      const model = modelTest;
       const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
         model,
         entities,
@@ -261,7 +340,7 @@ export class ModelManagerTest implements ITest {
         entity1,
         entity2,
       ];
-      const model = modelTestGenerator();
+      const model = modelTest;
       const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
         model,
         entities,
@@ -300,7 +379,7 @@ export class ModelManagerTest implements ITest {
         entity1,
         entity2,
       ];
-      const model = modelTestGenerator();
+      const model = modelTest;
       const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
         model,
         entities,
@@ -348,7 +427,7 @@ export class ModelManagerTest implements ITest {
         entity1,
         entity2,
       ];
-      const model = modelTestGenerator();
+      const model = modelTest;
       const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
         model,
         entities,
@@ -411,7 +490,7 @@ export class ModelManagerTest implements ITest {
         entity1,
         entity2,
       ];
-      const model = modelTestGenerator();
+      const model = modelTest;
       const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
         model,
         entities,
