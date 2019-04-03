@@ -237,10 +237,9 @@ export abstract class MultipleResultQueryManager<
     if (null != ids && ids.length > 0) {
       this._redis.eval([
         this._luaSetQueryGenerator(),
-        3,
+        2,
         key,
         this._reverseHashKey,
-        VOID_RESULT_STRING,
         ...idsJSON,
       ]);
       return this._primaryEntityManager.getByIds(ids, cacheOptions);
@@ -249,7 +248,6 @@ export abstract class MultipleResultQueryManager<
         this._luaSetVoidQueryGenerator(),
         1,
         key,
-        VOID_RESULT_STRING,
       );
       return new Array();
     }
@@ -412,12 +410,9 @@ end`;
    * @returns Lua script
    */
   private _luaSetQueryGenerator(): string {
-    return `redis.call('srem', KEYS[1], KEYS[3])
+    return `redis.call('srem', KEYS[1], '${VOID_RESULT_STRING}')
 for i=1, #ARGV do
   redis.call('sadd', KEYS[1], ARGV[i])
-end
-local msetArgs = {}
-for i=1, #ARGV do
   redis.call('hset', KEYS[2], ARGV[i], KEYS[1])
 end`;
   }
@@ -426,8 +421,8 @@ end`;
    * @returns Lua script
    */
   private _luaSetVoidQueryGenerator(): string {
-    return `if (0 == redis.call('scard', KEYS[1])) then
-  redis.call('sadd', KEYS[1], ARGV[1])
+    return `if 0 == redis.call('scard', KEYS[1]) then
+  redis.call('sadd', KEYS[1], '${VOID_RESULT_STRING}')
 end`;
   }
   /**
