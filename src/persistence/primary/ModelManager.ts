@@ -1,8 +1,8 @@
 import { IEntity } from '../../model/IEntity';
-import { CacheOptions } from './CacheOptions';
-import { ICacheOptions } from './ICacheOptions';
 import { IModelManager } from './IModelManager';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
+import { CacheOptions } from './options/CacheOptions';
+import { ICacheOptions } from './options/ICacheOptions';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 
 export class ModelManager<TEntity extends IEntity> implements IModelManager<TEntity> {

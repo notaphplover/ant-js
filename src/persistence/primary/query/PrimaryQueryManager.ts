@@ -1,22 +1,23 @@
 import * as IORedis from 'ioredis';
-import { IEntity } from '../../model/IEntity';
-import { IModel } from '../../model/IModel';
-import { ICacheOptions } from './ICacheOptions';
-import { IPrimaryEntityManager } from './IPrimaryEntityManager';
+import { IEntity } from '../../../model/IEntity';
+import { IModel } from '../../../model/IModel';
+import { IPrimaryEntityManager } from '../IPrimaryEntityManager';
+import { ICacheOptions } from '../options/ICacheOptions';
 import {
   IBasePrimaryQueryManager,
   IPrimaryQueryManager,
-} from './query/IPrimaryQueryManager';
+} from './IPrimaryQueryManager';
 
+export type QueryResult = number | string | number[] | string[];
 type TResult<TEntity, TQueryResult> = TQueryResult extends any[] ?
   TEntity[] :
   TEntity;
-type TMQuery<TQueryResult> = (paramsArray: any[]) => Promise<TQueryResult[]>;
-type TQuery<TQueryResult> = (params: any) => Promise<TQueryResult>;
+export type TMQuery<TQueryResult> = (paramsArray: any[]) => Promise<TQueryResult[]>;
+export type TQuery<TQueryResult> = (params: any) => Promise<TQueryResult>;
 
 export abstract class PrimaryQueryManager<
   TEntity extends IEntity,
-  TQueryResult extends number | string | number[] | string[],
+  TQueryResult extends QueryResult,
 > implements
     IBasePrimaryQueryManager<TEntity, TResult<TEntity, TQueryResult>>,
     IPrimaryQueryManager<TEntity> {

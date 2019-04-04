@@ -1,5 +1,5 @@
 import { IEntity } from '../../model/IEntity';
-import { ICacheOptions } from './ICacheOptions';
+import { ICacheOptions } from './options/ICacheOptions';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 
 export interface IBaseModelManager<TEntity extends IEntity> {
