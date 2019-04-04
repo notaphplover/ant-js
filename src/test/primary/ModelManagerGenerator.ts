@@ -1,3 +1,4 @@
+import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { IModelManager } from '../../persistence/primary/IModelManager';
@@ -34,19 +35,18 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
   public generateModelManager(
     model: IModel,
     properties: string[],
-    modelPrefix: string,
     queryPrefix: string,
     reverseHashKey: string,
     secondaryManager: SecondaryEntityManagerMock<TEntity>,
+    redis?: IORedis.Redis,
   ): [
     IModelManager<TEntity>,
     IPrimaryEntityManager<TEntity>,
     Map<string, IPrimaryQueryManager<TEntity>>,
   ] {
     const primaryEntityManager = new PrimaryEntityManager(
-      {prefix: modelPrefix},
       model,
-      this._redis.redis,
+      redis || this._redis.redis,
       secondaryManager,
     );
     const queryManagers = new Array<IPrimaryQueryManager<TEntity>>();
@@ -86,16 +86,15 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
    */
   public generateZeroQueriesModelManager(
     model: IModel,
-    modelPrefix: string,
     secondaryManager: SecondaryEntityManagerMock<TEntity>,
+    redis?: IORedis.Redis,
   ): [
     IModelManager<TEntity>,
     IPrimaryEntityManager<TEntity>,
   ] {
     const primaryEntityManager = new PrimaryEntityManager(
-      {prefix: modelPrefix},
       model,
-      this._redis.redis,
+      redis || this._redis.redis,
       secondaryManager,
     );
 

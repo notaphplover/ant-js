@@ -78,7 +78,7 @@ export class SingleResultQueryManagerTest implements ITest {
       field: string,
     }>,
   ] {
-    const model = new Model('id');
+    const model = new Model('id', { prefix: prefix });
     const secondaryEntityManager =
         new SecondaryEntityManagerMock<IEntity & {
           id: number,
@@ -88,7 +88,6 @@ export class SingleResultQueryManagerTest implements ITest {
       id: number,
       field: string,
     }>(
-      { prefix: prefix },
       model,
       this._redis.redis,
       secondaryEntityManager,
@@ -331,7 +330,7 @@ export class SingleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id');
+      const model = new Model('id', {prefix: prefix});
       const entity1: IEntity & {
         id: string,
         field: string,
@@ -342,7 +341,6 @@ export class SingleResultQueryManagerTest implements ITest {
           field: string,
         }>(model, [entity1]);
       const primaryEntityManager = new PrimaryEntityManager(
-        {prefix: prefix},
         model,
         this._redis.redis,
         secondaryEntityManager,
@@ -508,7 +506,7 @@ export class SingleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id');
+      const model = new Model('id', {prefix: prefix});
       const entity1: IEntity & {
         id: string,
         field: string,
@@ -519,7 +517,6 @@ export class SingleResultQueryManagerTest implements ITest {
           field: string,
         }>(model, [entity1]);
       const primaryEntityManager = new PrimaryEntityManager(
-        {prefix: prefix},
         model,
         this._redis.redis,
         secondaryEntityManager,
