@@ -1,9 +1,9 @@
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { Model } from '../../model/Model';
-import { CacheMode } from '../../persistence/primary/CacheMode';
-import { CacheOptions } from '../../persistence/primary/CacheOptions';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
+import { CacheMode } from '../../persistence/primary/options/CacheMode';
+import { CacheOptions } from '../../persistence/primary/options/CacheOptions';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { ITest } from '../ITest';
 import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';

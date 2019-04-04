@@ -3,10 +3,10 @@ import { IEntity } from '../../model/IEntity';
 import { IKeyGenParams } from '../../model/IKeyGenParams';
 import { IModel } from '../../model/IModel';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
-import { CacheMode } from './CacheMode';
-import { CacheOptions } from './CacheOptions';
-import { ICacheOptions } from './ICacheOptions';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
+import { CacheMode } from './options/CacheMode';
+import { CacheOptions } from './options/CacheOptions';
+import { ICacheOptions } from './options/ICacheOptions';
 
 export class PrimaryEntityManager<TEntity extends IEntity>
   implements IPrimaryEntityManager<TEntity> {

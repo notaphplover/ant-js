@@ -1,6 +1,6 @@
 import { IEntity } from '../model/IEntity';
 import { IModel } from '../model/IModel';
-import { ICacheOptions } from './primary/ICacheOptions';
+import { ICacheOptions } from './primary/options/ICacheOptions';
 
 export interface IEntityManager<TEntity extends IEntity> {
   /**

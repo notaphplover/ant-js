@@ -1,6 +1,6 @@
 import { IEntity } from '../../model/IEntity';
 import { IEntityManager } from '../IEntityManager';
-import { ICacheOptions } from './ICacheOptions';
+import { ICacheOptions } from './options/ICacheOptions';
 
 /**
  * Represents a manager able to obtain entities by ids.

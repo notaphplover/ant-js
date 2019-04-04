@@ -1,6 +1,6 @@
 import { IEntity } from '../../../model/IEntity';
-import { ICacheOptions } from '../ICacheOptions';
-import { PrimaryQueryManager } from '../PrimaryQueryManager';
+import { ICacheOptions } from '../options/ICacheOptions';
+import { PrimaryQueryManager } from './PrimaryQueryManager';
 
 const VOID_RESULT_STRING = 'v\x06\x15';
 
