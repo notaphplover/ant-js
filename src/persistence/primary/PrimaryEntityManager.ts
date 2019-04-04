@@ -12,10 +12,6 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   implements IPrimaryEntityManager<TEntity> {
 
   /**
-   * Key generation params.
-   */
-  protected _keyGenParams: IKeyGenParams;
-  /**
    * Model managed.
    */
   protected _model: IModel;
@@ -36,12 +32,10 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    * @param successor Secondary entity manager.
    */
   public constructor(
-    keyGenParams: IKeyGenParams,
     model: IModel,
     redis: IORedis.Redis,
     successor: ISecondaryEntityManager<TEntity>,
   ) {
-    this._keyGenParams = keyGenParams;
     this._model = model;
     this._redis = redis;
     this._successor = successor;
@@ -93,7 +87,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    * @returns function able to generate a lua expression that generates a key from a giving id.
    */
   public getKeyGenerationLuaScriptGenerator() {
-    return this._innerGetKeyGenerationLuaScriptGenerator(this._keyGenParams);
+    return this._innerGetKeyGenerationLuaScriptGenerator(this.model.keyGen);
   }
 
   /**
@@ -193,9 +187,10 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    * @param id entity's id.
    */
   protected _getKey(id: number|string): string {
-    return (this._keyGenParams.prefix || '')
+    const keyGen = this.model.keyGen;
+    return (keyGen.prefix || '')
       + id
-      + (this._keyGenParams.suffix || '');
+      + (keyGen.suffix || '');
   }
 
   /**

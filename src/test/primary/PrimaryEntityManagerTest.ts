@@ -79,7 +79,7 @@ export class PrimaryEntityManagerTest implements ITest {
       field: string,
     }>,
   ] {
-    const model = new Model('id');
+    const model = new Model('id', { prefix: prefix });
     const secondaryEntityManager =
         new SecondaryEntityManagerMock<IEntity & {
           id: number,
@@ -89,7 +89,6 @@ export class PrimaryEntityManagerTest implements ITest {
       id: number,
       field: string,
     }>(
-      { prefix: prefix },
       model,
       this._redis.redis,
       secondaryEntityManager,
@@ -309,13 +308,12 @@ return redis.call('get', ${luaExpression})`,
     const suffix = '/' + this._declareName + '/' + itsName;
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id');
+      const model = new Model('id', {suffix: suffix});
       const entity: IEntity & {
         id: number,
         field: string,
       } = {id: 0, field: 'sample'};
       const primaryEntityManager = new PrimaryEntityManager(
-        {suffix: suffix},
         model,
         this._redis.redis,
         null,
@@ -344,13 +342,12 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id');
+      const model = new Model('id', {prefix: prefix});
       const secondaryEntityManager =
         new SecondaryEntityManagerMock<{id: string}>(model);
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
         new PrimaryEntityManager(
-          {prefix: prefix},
           model,
           this._redis.redis,
           secondaryEntityManager,
@@ -489,9 +486,8 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id');
+      const model = new Model('id', {prefix: prefix});
       const primaryEntityManager = new PrimaryEntityManager(
-        {prefix: prefix},
         model,
         this._redis.redis,
         null,

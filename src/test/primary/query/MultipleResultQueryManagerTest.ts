@@ -76,11 +76,10 @@ export class MultipleResultQueryManagerTest implements ITest {
     IPrimaryEntityManager<NamedEntity>,
     SecondaryEntityManagerMock<NamedEntity>,
   ] {
-    const model = new Model('id');
+    const model = new Model('id', { prefix: prefix });
     const secondaryEntityManager =
         new SecondaryEntityManagerMock<NamedEntity>(model, entities);
     const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
-      { prefix: prefix },
       model,
       this._redis.redis,
       secondaryEntityManager,
@@ -321,12 +320,11 @@ export class MultipleResultQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const model = new Model('id');
+      const model = new Model('id', {prefix: prefix});
       const entity1: NamedEntityAlternative = {id: '1', name: 'Pepe'};
       const secondaryEntityManager =
         new SecondaryEntityManagerMock<NamedEntityAlternative>(model, [entity1]);
       const primaryEntityManager = new PrimaryEntityManager(
-        {prefix: prefix},
         model,
         this._redis.redis,
         secondaryEntityManager,
