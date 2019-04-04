@@ -4,7 +4,7 @@ import { ICacheOptions } from '../ICacheOptions';
 
 export interface IBasePrimaryQueryManager<
   TEntity extends IEntity,
-  TResult extends Promise<TEntity | TEntity[]>,
+  TResult extends TEntity | TEntity[],
 > {
   /**
    * Query's model.
@@ -18,7 +18,7 @@ export interface IBasePrimaryQueryManager<
   get(
     params: any,
     cacheOptions?: ICacheOptions,
-  ): TResult;
+  ): Promise<TResult>;
   /**
    * Gets the result of multiple queries.
    * @param paramsArray Queries parameters.
@@ -56,4 +56,4 @@ export interface IBasePrimaryQueryManager<
 }
 
 export interface IPrimaryQueryManager<TEntity extends IEntity>
-  extends IBasePrimaryQueryManager<TEntity, Promise<TEntity | TEntity[]>> {}
+  extends IBasePrimaryQueryManager<TEntity, TEntity | TEntity[]> {}
