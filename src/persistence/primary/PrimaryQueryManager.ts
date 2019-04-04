@@ -9,8 +9,8 @@ import {
 } from './query/IPrimaryQueryManager';
 
 type TResult<TEntity, TQueryResult> = TQueryResult extends any[] ?
-  Promise<TEntity[]> :
-  Promise<TEntity>;
+  TEntity[] :
+  TEntity;
 type TMQuery<TQueryResult> = (paramsArray: any[]) => Promise<TQueryResult[]>;
 type TQuery<TQueryResult> = (params: any) => Promise<TQueryResult>;
 
@@ -83,7 +83,7 @@ export abstract class PrimaryQueryManager<
   public abstract get(
     params: any,
     cacheOptions?: ICacheOptions,
-  ): TResult<TEntity, TQueryResult>;
+  ): Promise<TResult<TEntity, TQueryResult>>;
 
   /**
    * Gets the result of multiple queries.
