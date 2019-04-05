@@ -4,7 +4,7 @@ import { PrimaryQueryManager } from './PrimaryQueryManager';
 
 const VOID_RESULT_STRING = 'v\x06\x15';
 
-export abstract class SingleResultQueryManager<
+export class SingleResultQueryManager<
   TEntity extends IEntity
 > extends PrimaryQueryManager<
   TEntity,
@@ -19,7 +19,7 @@ export abstract class SingleResultQueryManager<
     params: any,
     cacheOptions?: ICacheOptions,
   ): Promise<TEntity> {
-    const key = this._key(params);
+    const key = this._keyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultJson = await this._redis.eval(luaScript, 1, key);
     if (null == resultJson) {
@@ -55,7 +55,7 @@ export abstract class SingleResultQueryManager<
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
     }
-    const keys = paramsArray.map((params) => this._key(params));
+    const keys = paramsArray.map((params) => this._keyGen(params));
     const luaScript = this._luaMGetGenerator();
     const resultsJson = await this._redis.eval(luaScript, keys.length, keys);
     const missingIds: number[]|string[] = new Array();
@@ -129,7 +129,7 @@ export abstract class SingleResultQueryManager<
     return this._redis.eval([
       this._luaMUpdateGenerator(),
       entities.length + 1,
-      ...(entities.map((entity) => this._key(entity))),
+      ...(entities.map((entity) => this._keyGen(entity))),
       this._reverseHashKey,
       ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
     ]);
@@ -145,7 +145,7 @@ export abstract class SingleResultQueryManager<
       this._luaUpdateGenerator(),
       2,
       this._reverseHashKey,
-      this._key(entity),
+      this._keyGen(entity),
       JSON.stringify(entity[this.model.id]),
     );
   }

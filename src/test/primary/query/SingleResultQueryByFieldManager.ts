@@ -26,17 +26,16 @@ export class SingleResultQueryByFieldManager<TEntity extends IEntity>
     queryPrefix: string,
     mQuery: (paramsArray: any) => Promise<number[]|string[]> = null,
   ) {
-    super(query, primaryEntityManager, redis, reverseHashKey, mQuery);
+    /**
+     * Gets a key for a certain query.
+     * @param param query params.
+     * @returns Key generated for the query.
+     */
+    const key = (param: any): string => {
+      return this._queryPrefix + param[this._field];
+    };
+    super(query, primaryEntityManager, redis, reverseHashKey, key, mQuery);
     this._field = field;
     this._queryPrefix = queryPrefix;
-  }
-
-  /**
-   * Gets a key for a certain query.
-   * @param param query params.
-   * @returns Key generated for the query.
-   */
-  protected _key(param: any): string {
-    return this._queryPrefix + param[this._field];
   }
 }
