@@ -27,6 +27,18 @@ export class NamesStartingByLetterAlternative
     reverseHashKey: string,
     prefix: string,
   ) {
+    /**
+     * Creates a query key for the parameters provided.
+     * @param params query parameters.
+     * @returns Key generated.
+     */
+    const key = (params: any): string => {
+      if (params.name && (params.name as string).length) {
+        return this._prefix + (params.name as string)[0];
+      } else {
+        throw new Error('Invalid params');
+      }
+    };
     super(
       (params: any) =>
         new Promise((resolve) => resolve(
@@ -39,19 +51,8 @@ export class NamesStartingByLetterAlternative
       primaryEntityManager,
       redis,
       reverseHashKey,
+      key,
     );
     this._prefix = prefix;
-  }
-
-  /**
-   * Creates a query key for the parameters provided.
-   * @param params query parameters.
-   */
-  protected _key(params: any): string {
-    if (params.name && (params.name as string).length) {
-      return this._prefix + (params.name as string)[0];
-    } else {
-      throw new Error('Invalid params');
-    }
   }
 }

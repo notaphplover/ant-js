@@ -22,6 +22,10 @@ export abstract class PrimaryQueryManager<
     IBasePrimaryQueryManager<TEntity, TResult<TEntity, TQueryResult>>,
     IPrimaryQueryManager<TEntity> {
   /**
+   * Query key generator.
+   */
+  protected _keyGen: (params: any) => string;
+  /**
    * Multiple query
    */
   protected _mquery: TMQuery<TQueryResult>;
@@ -52,18 +56,22 @@ export abstract class PrimaryQueryManager<
    * @param primaryEntityManager Primary entity manager.
    * @param redis Redis connection to manage queries.
    * @param reverseHashKey Key of the reverse structure to obtain a map of entities to queries.
+   * @param keyGen Key generator.
+   * @param mQuery Multiple query.
    */
   public constructor(
     query: TQuery<TQueryResult>,
     primaryEntityManager: IPrimaryEntityManager<TEntity>,
     redis: IORedis.Redis,
     reverseHashKey: string,
+    keyGen: (params: any) => string,
     mQuery: TMQuery<TQueryResult> = null,
   ) {
     this._primaryEntityManager = primaryEntityManager;
     this._query = query;
     this._redis = redis;
     this._reverseHashKey = reverseHashKey;
+    this._keyGen = keyGen;
     this._luaKeyGeneratorFromId = this._primaryEntityManager.getKeyGenerationLuaScriptGenerator();
 
     this._setMQuery(query, mQuery);
@@ -122,13 +130,6 @@ export abstract class PrimaryQueryManager<
    * @param entity updated entity.
    */
   public abstract syncUpdate(entity: TEntity): Promise<void>;
-
-  /**
-   * Gets a key for a certain query.
-   * @param param query params.
-   * @returns Key generated for the query.
-   */
-  protected abstract _key(param: any): string;
 
   /**
    * Creates an standard mquery.

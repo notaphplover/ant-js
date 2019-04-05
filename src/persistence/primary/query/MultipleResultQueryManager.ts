@@ -5,7 +5,7 @@ import { PrimaryQueryManager } from './PrimaryQueryManager';
 const SEPARATOR_STRING = 's\x06\x15';
 const VOID_RESULT_STRING = 'v\x06\x15';
 
-export abstract class MultipleResultQueryManager<
+export class MultipleResultQueryManager<
   TEntity extends IEntity
 > extends PrimaryQueryManager<
   TEntity,
@@ -21,7 +21,7 @@ export abstract class MultipleResultQueryManager<
     params: any,
     cacheOptions?: ICacheOptions,
   ): Promise<TEntity[]> {
-    const key = this._key(params);
+    const key = this._keyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultsJSON = await this._redis.eval(luaScript, 1, key);
 
@@ -59,7 +59,7 @@ export abstract class MultipleResultQueryManager<
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
     }
-    const keys = paramsArray.map((params: any) => this._key(params));
+    const keys = paramsArray.map((params: any) => this._keyGen(params));
     const luaScript = this._luaMGetGenerator();
     const resultsJson = await this._redis.eval(luaScript, keys.length, ...keys);
 
@@ -151,7 +151,7 @@ export abstract class MultipleResultQueryManager<
     return this._redis.eval([
       this._luaMUpdateGenerator(),
       entities.length + 1,
-      ...(entities.map((entity) => this._key(entity))),
+      ...(entities.map((entity) => this._keyGen(entity))),
       this._reverseHashKey,
       ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
     ]);
@@ -167,7 +167,7 @@ export abstract class MultipleResultQueryManager<
       this._luaUpdateGenerator(),
       2,
       this._reverseHashKey,
-      this._key(entity),
+      this._keyGen(entity),
       VOID_RESULT_STRING,
       JSON.stringify(entity[this.model.id]),
     );
