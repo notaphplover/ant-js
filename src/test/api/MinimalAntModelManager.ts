@@ -13,7 +13,7 @@ import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerM
 
 export class MinimalAntModelManager<
   TEntity extends IEntity,
-> extends AntModelManager<TEntity, IAntModelConfig> {
+> extends AntModelManager<TEntity, IAntModelConfig, IModel> {
   /**
    * Model manager generator.
    */
