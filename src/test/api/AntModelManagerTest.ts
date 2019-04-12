@@ -80,7 +80,7 @@ export class AntModelManagerTest implements ITest {
       ] as Array<keyof IModelManager<any>>;
 
       for (const methodToTest of methodsToTest) {
-        spyOn(modelManager, methodToTest).and.returnValue(methodToTest);
+        spyOn(modelManager, methodToTest).and.returnValue(methodToTest as any);
       }
 
       const entity: EntityTest = { id: 0 };
