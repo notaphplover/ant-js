@@ -20,7 +20,11 @@ import { IAntQueryConfig } from './IAntQueryConfig';
 
 export type QueryMapType<TEntity> = Map<string, [IModel, IPrimaryQueryManager<TEntity>]>;
 
-export abstract class AntModelManager<TEntity extends IEntity, TConfig extends IAntModelConfig>
+export abstract class AntModelManager<
+  TEntity extends IEntity,
+  TConfig extends IAntModelConfig,
+  TModel extends IModel,
+>
   implements IAntModelManager<TEntity, TConfig> {
 
   /**
@@ -30,7 +34,7 @@ export abstract class AntModelManager<TEntity extends IEntity, TConfig extends I
   /**
    * Model to manage
    */
-  protected _model: IModel;
+  protected _model: TModel;
   /**
    * AntJS model manager
    */
@@ -49,7 +53,7 @@ export abstract class AntModelManager<TEntity extends IEntity, TConfig extends I
    * @param queriesMap Queries map.
    */
   public constructor(
-    model: IModel,
+    model: TModel,
     queriesMap: QueryMapType<TEntity>,
   ) {
     this._model = model;
@@ -196,7 +200,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param config Manager config.
    */
   protected abstract _generateModelManager(
-    model: IModel,
+    model: TModel,
     config: TConfig,
   ): IModelManager<TEntity>;
   /**
@@ -206,7 +210,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @returns Primary entity manager generated.
    */
   protected abstract _generatePrimaryEntityManager(
-    model: IModel,
+    model: TModel,
     config: TConfig,
   ): IPrimaryEntityManager<TEntity>;
   /**
