@@ -4,7 +4,7 @@ import { IAntModelConfig } from '../../api/config/IAntModelConfig';
 import { IModel } from '../../model/IModel';
 import { MinimalAntModelManager } from './MinimalAntModelManager';
 
-export class MinimalAntManager extends AntManager<IAntModelConfig> {
+export class MinimalAntManager extends AntManager<IAntModelConfig, IModel> {
   /**
    * Queries map.
    */

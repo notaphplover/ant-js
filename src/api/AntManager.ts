@@ -5,7 +5,10 @@ import { IAntModelConfig } from './config/IAntModelConfig';
 import { IAntManager } from './IAntManager';
 import { IAntModelManager } from './IAntModelManager';
 
-export abstract class AntManager<TConfig extends IAntModelConfig> implements IAntManager<TConfig> {
+export abstract class AntManager<
+  TConfig extends IAntModelConfig,
+  TModel extends IModel
+> implements IAntManager<TConfig, TModel> {
   /**
    * AntJS config.
    */
@@ -48,7 +51,7 @@ export abstract class AntManager<TConfig extends IAntModelConfig> implements IAn
    * @param model model of the manager.
    * @returns AntJS model manager found.
    */
-  public get<TEntity extends IEntity>(model: IModel): IAntModelManager<TEntity, TConfig> {
+  public get<TEntity extends IEntity>(model: TModel): IAntModelManager<TEntity, TConfig> {
     let manager = this._managersByModel.get(model) as IAntModelManager<TEntity, TConfig>;
     if (undefined === manager) {
       manager = this._createModelManager(model);
@@ -65,5 +68,7 @@ export abstract class AntManager<TConfig extends IAntModelConfig> implements IAn
    * @param model Model to manage.
    * @returns model manager created.
    */
-  protected abstract _createModelManager<TEntity extends IEntity>(model: IModel): IAntModelManager<TEntity, TConfig>;
+  protected abstract _createModelManager<TEntity extends IEntity>(
+    model: TModel,
+  ): IAntModelManager<TEntity, TConfig>;
 }
