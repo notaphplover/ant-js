@@ -4,7 +4,10 @@ import { IAntConfig } from './config/IAntConfig';
 import { IAntModelConfig } from './config/IAntModelConfig';
 import { IAntModelManager } from './IAntModelManager';
 
-export interface IAntManager<TConfig extends IAntModelConfig> {
+export interface IAntManager<
+  TConfig extends IAntModelConfig,
+  TModel extends IModel
+> {
   /**
    * Gets the AntJS config.
    * @returns AntJS config.
@@ -20,5 +23,5 @@ export interface IAntManager<TConfig extends IAntModelConfig> {
    * @param model model of the manager.
    * @returns model manager of the model provided.
    */
-  get<TEntity extends IEntity>(model: IModel): IAntModelManager<TEntity, TConfig>;
+  get<TEntity extends IEntity>(model: TModel): IAntModelManager<TEntity, TConfig>;
 }
