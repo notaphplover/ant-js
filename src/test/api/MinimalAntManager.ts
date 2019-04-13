@@ -8,7 +8,7 @@ export class MinimalAntManager extends AntManager<IAntModelConfig, IModel> {
   /**
    * Queries map.
    */
-  protected _queriesMap: QueryMapType<any>;
+  protected _queriesMap: QueryMapType<any, IModel>;
 
   /**
    * Creates a new minimal ant manager.

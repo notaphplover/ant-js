@@ -18,7 +18,10 @@ import { IAntModelConfig } from './config/IAntModelConfig';
 import { IAntModelManager, TQueryManager } from './IAntModelManager';
 import { IAntQueryConfig } from './IAntQueryConfig';
 
-export type QueryMapType<TEntity> = Map<string, [IModel, IPrimaryQueryManager<TEntity>]>;
+export type QueryMapType<
+  TEntity extends IEntity,
+  TModel extends IModel
+> = Map<string, [TModel, IPrimaryQueryManager<TEntity>]>;
 
 export abstract class AntModelManager<
   TEntity extends IEntity,
@@ -46,7 +49,7 @@ export abstract class AntModelManager<
   /**
    * Queries map.
    */
-  protected _queriesMap: QueryMapType<TEntity>;
+  protected _queriesMap: QueryMapType<TEntity, TModel>;
   /**
    * Creates a new queries map.
    * @param model Model to manage.
@@ -54,7 +57,7 @@ export abstract class AntModelManager<
    */
   public constructor(
     model: TModel,
-    queriesMap: QueryMapType<TEntity>,
+    queriesMap: QueryMapType<TEntity, TModel>,
   ) {
     this._model = model;
     this._queriesMap = queriesMap;
