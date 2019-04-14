@@ -1,3 +1,4 @@
+import { AntTest } from './AntTest';
 import { AntManagerTest } from './api/AntManagerTest';
 import { AntModelManagerTest } from './api/AntModelManagerTest';
 import { ITest } from './ITest';
@@ -14,6 +15,7 @@ export class AllTest implements ITest {
 
     new AntManagerTest(beforeAllPromise).performTests();
     new AntModelManagerTest(beforeAllPromise).performTests();
+    new AntTest().performTests();
     new ModelManagerTest(beforeAllPromise).performTests();
     new ModelTest().performTests();
     new MultipleResultQueryManagerTest(beforeAllPromise).performTests();

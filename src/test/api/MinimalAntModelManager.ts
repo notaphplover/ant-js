@@ -30,7 +30,7 @@ export class MinimalAntModelManager<
    */
   public constructor(
     model: IModel,
-    queriesMap: QueryMapType<TEntity>,
+    queriesMap: QueryMapType<TEntity, IModel>,
   ) {
     super(model, queriesMap);
     this._modelManagerGenerator = new ModelManagerGenerator();
