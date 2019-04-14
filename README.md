@@ -1,5 +1,6 @@
 [![Build status](https://travis-ci.org/notaphplover/ant-js.svg?branch=develop)](https://travis-ci.org/notaphplover/ant-js.svg?branch=develop)
 [![Coverage Status](https://coveralls.io/repos/github/notaphplover/ant-js/badge.svg?branch=develop)](https://coveralls.io/github/notaphplover/ant-js?branch=develop)
+[![npm version](https://badge.fury.io/js/%40antjs%2Fant-js.svg)](https://badge.fury.io/js/%40antjs%2Fant-js.svg)
 
 ## Description
 
@@ -7,7 +8,15 @@ Scalable query manager for redis. This library receives a set of models and quer
 
 ## Status
 
-Not even in alpha, so please don´t use it for now.
+In alpha phase. We expect to start adding docs at May of 2019.
+
+## How to install the library
+
+You can donwnload the library direclty, clone it or install it as a npm dependency:
+
+```
+npm i @antjs/ant-js
+```
 
 ## How to build the library
 
