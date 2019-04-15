@@ -22,4 +22,12 @@ Lets install the SQL extension:
 npm install @antjs/ant-sql
 ```
 
-That's all! In the following tutorial we will conect AntJS to a MySQL database and start caching some entities.
+In the following tutorial we will conect AntJS to a PostgreSQL database and start caching some entities. In order to use PostgreSQL, we will need to install an additional library:
+
+```
+npm install pg
+```
+
+That's all! Now we are ready to start coding.
+
+Next tutorial: Adding a model ([Javascript](./2_adding_a_model_js.md) or [Typescript](./2_adding_a_model_ts.md)).
