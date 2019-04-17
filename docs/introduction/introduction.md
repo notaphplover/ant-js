@@ -2,7 +2,7 @@
 
 ¿Do you use redis in your projects? If yes, this project could be interesting for you.
 
-AntJS is a NodeJS library to manage a redis server, or even multiple clusters in an easy way. And it scales! For now, it has some limitations that are detailed <TODO>ADD LIMITATIONS</TODO> here, but we expect to solve them in a future major version.
+AntJS is a NodeJS library to manage a redis server, or even multiple clusters in an easy way. And it scales! For now, it has some limitations that are detailed [here](../limitations.md), but we expect to solve them in a future major version.
 
 ### ¿What does "an easy way" mean?
 

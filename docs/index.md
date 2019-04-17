@@ -1,6 +1,6 @@
 # AntJS Documentation pages
 
-Welcome to the AntJS documentation pages.
+Welcome to the AntJS documentation pages. This pages pretends to be an easy way of learning the basics of this library.
 
 Contents:
 
