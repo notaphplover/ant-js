@@ -102,9 +102,10 @@ module.exports = {
 
 That's all, we are ready to work with the manager!
 
-You can access the [tutorial repository](https://github.com/notaphplover/ant-js-tutorial/tree/tutorial/step-2-add-models) in order to see the code in action. If you have Docker installed, you will be able to run the code with the following command:
+You can access the [tutorial repository](https://github.com/notaphplover/ant-js-tutorial) in order to see the code in action. If you have Docker installed, you will be able to run the code with the following command:
 
 ```
 npm run docker-test-user-entity-js
 ```
 
+Next tutorial: Adding queries ([Javascript](./3_adding_queries_js.md) or [Typescript](./3_adding_queries_ts.md)).
