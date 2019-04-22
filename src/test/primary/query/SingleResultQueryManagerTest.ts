@@ -154,7 +154,7 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.get({ field: entity1.field });
-      await queryManager.syncDelete(entity1);
+      await queryManager.syncDelete(entity1.id);
       const entityFoundAfter = await queryManager.get({ field: entity1.field });
 
       expect(entityFoundAfter).toBeNull();
@@ -197,7 +197,7 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.mGet([{ field: entity1.field }, { field: entity2.field }]);
-      await queryManager.syncMDelete([entity1, entity2]);
+      await queryManager.syncMDelete([entity1.id, entity2.id]);
       const entitiesFoundAfter = await queryManager.mGet([
         { field: entity1.field },
         { field: entity2.field },
@@ -318,7 +318,7 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.get({ field: entity1.field });
-      await primaryEntityManager.delete(entity1);
+      await primaryEntityManager.delete(entity1.id);
       const entityFound = await queryManager.get({ field: entity1.field });
       expect(entityFound).toEqual(entity1);
       done();
@@ -362,7 +362,7 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.get({ field: entity1.field });
-      await primaryEntityManager.delete(entity1);
+      await primaryEntityManager.delete(entity1.id);
       const entityFound = await queryManager.get({ field: entity1.field });
       expect(entityFound).toEqual(entity1);
       done();
@@ -494,7 +494,7 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.mGet([{ field: entity1.field }]);
-      await primaryEntityManager.delete(entity1);
+      await primaryEntityManager.delete(entity1.id);
       const entitiesFound = await queryManager.mGet([{ field: entity1.field }]);
       expect(entitiesFound).toEqual([entity1]);
       done();
@@ -538,7 +538,7 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.mGet([{ field: entity1.field }]);
-      await primaryEntityManager.delete(entity1);
+      await primaryEntityManager.delete(entity1.id);
       const entityFound = await queryManager.mGet([{ field: entity1.field }]);
       expect(entityFound).toEqual([entity1]);
       done();

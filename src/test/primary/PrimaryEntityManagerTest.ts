@@ -374,7 +374,7 @@ return redis.call('get', ${luaExpression})`,
 
       await primaryEntityManager.update(entity);
       secondaryEntityManager.store.length = 0;
-      await primaryEntityManager.delete(entity);
+      await primaryEntityManager.delete(entity.id);
       const entityFound = await primaryEntityManager.getById(entity[model.id]);
 
       expect(entityFound).toBeNull();
@@ -399,7 +399,7 @@ return redis.call('get', ${luaExpression})`,
 
       await primaryEntityManager.update(entity);
       secondaryEntityManager.store.length = 0;
-      await primaryEntityManager.mDelete([entity]);
+      await primaryEntityManager.mDelete([entity.id]);
       const entityFound = await primaryEntityManager.getById(entity[model.id]);
 
       expect(entityFound).toBeNull();

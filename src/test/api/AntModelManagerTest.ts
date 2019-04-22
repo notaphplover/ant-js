@@ -93,9 +93,9 @@ export class AntModelManagerTest implements ITest {
         mUpdateResult,
         updateResult,
       ] = await Promise.all([
-        antModelManager.delete(entity),
+        antModelManager.delete(entity.id),
         antModelManager.get(entity.id),
-        antModelManager.mDelete([entity]),
+        antModelManager.mDelete([entity.id]),
         antModelManager.mGet([entity.id]),
         antModelManager.mUpdate([entity]),
         antModelManager.update(entity),

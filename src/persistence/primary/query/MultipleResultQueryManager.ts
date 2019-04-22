@@ -109,15 +109,15 @@ export class MultipleResultQueryManager<
 
   /**
    * Syncs the remove of an entity in cache.
-   * @param entity deleted entity.
+   * @param id Id of the deleted entity.
    * @returns Promise of query sync
    */
-  public syncDelete(entity: TEntity): Promise<void> {
+  public syncDelete(id: number|string): Promise<void> {
     return this._redis.eval(
       this._luaDeleteGenerator(),
       1,
       this._reverseHashKey,
-      JSON.stringify(entity[this.model.id]),
+      JSON.stringify(id),
       VOID_RESULT_STRING,
     );
   }
@@ -127,15 +127,15 @@ export class MultipleResultQueryManager<
    * @param entities deleted entities.
    * @returns Promise of query sync
    */
-  public syncMDelete(entities: TEntity[]): Promise<void> {
-    if (null == entities || 0 === entities.length) {
+  public syncMDelete(ids: number[]|string[]): Promise<void> {
+    if (null == ids || 0 === ids.length) {
       return new Promise((resolve) => { resolve(); });
     }
     return this._redis.eval([
       this._luaMDeleteGenerator(),
       1,
       this._reverseHashKey,
-      ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
+      ...((ids as Array<number|string>).map((id) => JSON.stringify(id))),
     ]);
   }
 

@@ -139,7 +139,7 @@ export class ModelManagerTest implements ITest {
 
       modelManager.addQuery(singleResultQueryManager);
       await singleResultQueryManager.get(entity1);
-      await modelManager.delete(entity1);
+      await modelManager.delete(entity1.id);
 
       const entity1Search = await singleResultQueryManager.get(entity1);
       expect(entity1Search).toBeNull();
@@ -222,7 +222,7 @@ export class ModelManagerTest implements ITest {
         secondaryEntityManager,
       );
       secondaryEntityManager.store.shift();
-      await modelManager.delete(entity1);
+      await modelManager.delete(entity1.id);
 
       const [
         searchEntity1ByPrimaryEntityManager,
@@ -288,7 +288,7 @@ export class ModelManagerTest implements ITest {
       );
       secondaryEntityManager.store.shift();
       secondaryEntityManager.store.shift();
-      await modelManager.mDelete([entity1, entity2]);
+      await modelManager.mDelete([entity1.id, entity2.id]);
 
       const [
         searchEntity1ByPrimaryEntityManager,

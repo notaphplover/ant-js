@@ -49,13 +49,12 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   }
 
   /**
-   * Deletes an entity from the cache.
-   * This operation is not propagated to a successor
-   * @param entity Entity to delete
-   * @returns Promise of entities deleted.
+   * Deletes an entity from the cache
+   * @param id Id of the entity to be deleted.
+   * @returns Promise of entity deleted.
    */
-  public delete(entity: TEntity): Promise<number> {
-    return this._redis.del(this._getKey(entity[this.model.id]));
+  public delete(id: number|string) {
+    return this._redis.del(this._getKey(id));
   }
 
   /**
@@ -92,20 +91,20 @@ export class PrimaryEntityManager<TEntity extends IEntity>
 
   /**
    * Deletes multiple entities.
-   * @param entities Entities to delete.
+   * @param ids Ids of the entities to delete.
    * @returns Promise of entities deleted.
    */
-  public mDelete(entities: TEntity[]): Promise<void> {
-    if (null == entities || 0 === entities.length) {
+  public mDelete(ids: number[]|string[]): Promise<void> {
+    if (null == ids || 0 === ids.length) {
       return new Promise<void>((resolve) => resolve());
     }
-    const keys = entities.map(
-      (entity) =>
-        this._getKey(entity[this.model.id]),
+    const keys = (ids as Array<number|string>).map(
+      (id) =>
+        this._getKey(id),
     );
     return this._redis.eval([
       this._luaGetMultipleDel(),
-      entities.length,
+      ids.length,
       ...keys,
     ]);
   }
