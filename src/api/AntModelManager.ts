@@ -112,11 +112,11 @@ This is probably caused by the absence of a config instance. Ensure that config 
   }
   /**
    * Deletes an entity from the cache layer.
-   * @param entity Entity to delete.
+   * @param id id of the entity to delete.
    * @returns Promise of entity deleted.
    */
-  public delete(entity: TEntity): Promise<any> {
-    return this.modelManager.delete(entity);
+  public delete(id: number|string): Promise<any> {
+    return this.modelManager.delete(id);
   }
   /**
    * Finds an entity by its id.
@@ -129,11 +129,11 @@ This is probably caused by the absence of a config instance. Ensure that config 
   }
   /**
    * Deletes multiple entities from the cache layer.
-   * @param entities Entities to delete.
+   * @param ids Ids of the entities to delete.
    * @returns Promise of entities deleted.
    */
-  public mDelete(entities: TEntity[]): Promise<any> {
-    return this.modelManager.mDelete(entities);
+  public mDelete(ids: number[]|string[]): Promise<any> {
+    return this.modelManager.mDelete(ids);
   }
   /**
    * Finds a collection if entities by its ids.

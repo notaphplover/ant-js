@@ -39,15 +39,15 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
 
   /**
    * Deletes an entity from the cache layer.
-   * @param entity Entity to delete.
+   * @param id id of the entity to delete.
    * @returns Promise of entity deleted.
    */
-  public delete(entity: TEntity): Promise<any> {
+  public delete(id: number|string): Promise<any> {
     const promises = new Array<Promise<any>>();
     for (const queryManager of this._queryManagers) {
-      promises.push(queryManager.syncDelete(entity));
+      promises.push(queryManager.syncDelete(id));
     }
-    promises.push(this._primaryEntityManager.delete(entity));
+    promises.push(this._primaryEntityManager.delete(id));
     return Promise.all(promises);
   }
 
@@ -63,15 +63,15 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
 
   /**
    * Deletes multiple entities from the cache layer.
-   * @param entities Entities to delete.
+   * @param ids Ids of the entities to delete.
    * @returns Promise of entities deleted.
    */
-  public mDelete(entities: TEntity[]): Promise<any> {
+  public mDelete(ids: number[]|string[]): Promise<any> {
     const promises = new Array<Promise<any>>();
     for (const queryManager of this._queryManagers) {
-      promises.push(queryManager.syncMDelete(entities));
+      promises.push(queryManager.syncMDelete(ids));
     }
-    promises.push(this._primaryEntityManager.mDelete(entities));
+    promises.push(this._primaryEntityManager.mDelete(ids));
     return Promise.all(promises);
   }
 

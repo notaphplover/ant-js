@@ -134,7 +134,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         prefix + 'names-starting-with/',
       );
       await queryManager.get(entity);
-      await queryManager.syncDelete(entity);
+      await queryManager.syncDelete(entity.id);
       expect(await queryManager.get(entity)).toEqual(new Array());
       done();
     }, MAX_SAFE_TIMEOUT);
@@ -159,7 +159,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         prefix + 'names-starting-with/',
       );
       await queryManager.get(entity);
-      await queryManager.syncMDelete([entity]);
+      await queryManager.syncMDelete([entity.id]);
       expect(await queryManager.get(entity)).toEqual(new Array());
       done();
     }, MAX_SAFE_TIMEOUT);
@@ -279,7 +279,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       await queryManager.get(searchParams);
       const results = await queryManager.get(searchParams);
       for (let i = 0; i < entitiesSize / 2; ++i) {
-        primaryEntityManager.delete(entitiesMap.get(i));
+        primaryEntityManager.delete(entitiesMap.get(i).id);
       }
       expect(results.length).toBe(entities.length);
       for (const result of results) {
@@ -308,7 +308,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         prefix + 'names-starting-with/',
       );
       await queryManager.get(entity1);
-      await primaryEntityManager.delete(entity1);
+      await primaryEntityManager.delete(entity1.id);
       const entityFound = await queryManager.get(entity1);
       expect(entityFound).toEqual([entity1]);
       done();
@@ -337,7 +337,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         prefix + 'names-starting-with/',
       );
       await queryManager.get(entity1);
-      await primaryEntityManager.delete(entity1);
+      await primaryEntityManager.delete(entity1.id);
       const entityFound = await queryManager.get(entity1);
       expect(entityFound).toEqual([entity1]);
       done();

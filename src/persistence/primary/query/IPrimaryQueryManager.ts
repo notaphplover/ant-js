@@ -31,16 +31,16 @@ export interface IBasePrimaryQueryManager<
   ): Promise<TEntity[]>;
   /**
    * Syncs the remove of an entity in cache.
-   * @param entity deleted entity.
-   * @returns Promise of query sync
+   * @param id Id of the entity whose deletion must be sync.
+   * @returns Promise of query sync.
    */
-  syncDelete(entity: TEntity): Promise<void>;
+  syncDelete(id: number|string): Promise<void>;
   /**
    * Syncs the remove of entities in cache.
-   * @param entities deleted entities.
-   * @returns Promise of query sync
+   * @param ids Ids of the entities to sync.
+   * @returns Promise of query sync.
    */
-  syncMDelete(entities: TEntity[]): Promise<void>;
+  syncMDelete(ids: number[]|string[]): Promise<void>;
   /**
    * Syncs the update of multiple entities.
    * @param entities updated entities.
