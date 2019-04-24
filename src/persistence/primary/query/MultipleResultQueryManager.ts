@@ -118,7 +118,6 @@ export class MultipleResultQueryManager<
       1,
       this._reverseHashKey,
       JSON.stringify(id),
-      VOID_RESULT_STRING,
     );
   }
 
@@ -168,7 +167,6 @@ export class MultipleResultQueryManager<
       2,
       this._reverseHashKey,
       this._keyGen(entity),
-      VOID_RESULT_STRING,
       JSON.stringify(entity[this.model.id]),
     );
   }
@@ -262,7 +260,7 @@ export class MultipleResultQueryManager<
 if key then
   redis.call('srem', key, ARGV[1])
   if 0 == redis.call('scard', key) then
-    redis.call('sadd', key, ARGV[2])
+    redis.call('sadd', key, '${VOID_RESULT_STRING}')
   end
   redis.call('hdel', KEYS[1], ARGV[1])
 end`;
@@ -430,19 +428,19 @@ end`;
    * @returns lua script.
    */
   private _luaUpdateGenerator(): string {
-    return `local key = redis.call('hget', KEYS[1], ARGV[2])
+    return `local key = redis.call('hget', KEYS[1], ARGV[1])
 if key then
-  redis.call('srem', key, ARGV[2])
+  redis.call('srem', key, ARGV[1])
   if 0 == redis.call('scard', key) then
-    redis.call('sadd', key, ARGV[1])
+    redis.call('sadd', key, '${VOID_RESULT_STRING}')
   end
 end
 if 0 == redis.call('scard', KEYS[2]) then
-  redis.call('hdel', KEYS[1], ARGV[2])
+  redis.call('hdel', KEYS[1], ARGV[1])
 else
-  redis.call('hset', KEYS[1], ARGV[2], KEYS[2])
-  redis.call('srem', KEYS[2], ARGV[1])
-  redis.call('sadd', KEYS[2], ARGV[2])
+  redis.call('hset', KEYS[1], ARGV[1], KEYS[2])
+  redis.call('srem', KEYS[2], '${VOID_RESULT_STRING}')
+  redis.call('sadd', KEYS[2], ARGV[1])
 end`;
   }
 

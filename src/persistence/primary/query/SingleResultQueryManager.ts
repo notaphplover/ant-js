@@ -95,7 +95,6 @@ export class SingleResultQueryManager<
       1,
       this._reverseHashKey,
       JSON.stringify(id),
-      VOID_RESULT_STRING,
     );
   }
 
@@ -113,7 +112,6 @@ export class SingleResultQueryManager<
       1,
       this._reverseHashKey,
       ...((ids as Array<number|string>).map((id) => JSON.stringify(id))),
-      VOID_RESULT_STRING,
     ]);
   }
 
@@ -179,7 +177,7 @@ export class SingleResultQueryManager<
   private _luaDeleteGenerator(): string {
     return `local key = redis.call('hget', KEYS[1], ARGV[1])
 if key then
-  redis.call('set', key, ARGV[2])
+  redis.call('set', key, '${VOID_RESULT_STRING}')
   redis.call('hdel', KEYS[1], ARGV[1])
 end`;
   }
@@ -213,11 +211,10 @@ end`;
    */
   private _luaMDeleteGenerator(): string {
     return `local reverseKey = KEYS[1]
-local voidValue = ARGV[#ARGV]
-for i=1, #ARGV-1 do
+for i=1, #ARGV do
   local key = redis.call('hget', reverseKey, ARGV[i])
   if key then
-    redis.call('set', key, voidValue)
+    redis.call('set', key, '${VOID_RESULT_STRING}')
   end
 end`;
   }
