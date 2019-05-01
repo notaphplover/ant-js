@@ -1,8 +1,7 @@
 import { IEntity } from '../../../model/IEntity';
+import { VOID_RESULT_STRING } from '../LuaConstants';
 import { ICacheOptions } from '../options/ICacheOptions';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
-
-const VOID_RESULT_STRING = 'v\x06\x15';
 
 export class SingleResultQueryManager<
   TEntity extends IEntity
@@ -10,6 +9,11 @@ export class SingleResultQueryManager<
   TEntity,
   number | string
 > {
+  /**
+   * True if the queries managed can return multiple results.
+   */
+  public get isMultiple(): boolean { return false; }
+
   /**
    * Gets the result of a query.
    * @param params Query parameters.

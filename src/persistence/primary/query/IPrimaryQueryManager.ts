@@ -7,9 +7,17 @@ export interface IBasePrimaryQueryManager<
   TResult extends TEntity | TEntity[],
 > {
   /**
+   * True if the queries managed can return multiple results.
+   */
+  isMultiple: boolean;
+  /**
    * Query's model.
    */
   model: IModel;
+  /**
+   * Obtains the reverse hash key.
+   */
+  reverseHashKey: string;
   /**
    * Gets a query result.
    * @param params query params.

@@ -1,6 +1,12 @@
+import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
 import { IModelManager } from './IModelManager';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
+import {
+  MULTIPLE_RESULT_QUERY_CODE,
+  SINGLE_RESULT_QUERY_CODE,
+  VOID_RESULT_STRING,
+} from './LuaConstants';
 import { CacheOptions } from './options/CacheOptions';
 import { ICacheOptions } from './options/ICacheOptions';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
@@ -14,6 +20,10 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
    * Query managers.
    */
   protected _queryManagers: Array<IPrimaryQueryManager<TEntity>>;
+  /**
+   * Redis connection to manage queries.
+   */
+  protected _redis: IORedis.Redis;
 
   /**
    * Creates a new model manager.
@@ -21,11 +31,13 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
    * @param queryManagers Query managers.
    */
   public constructor(
+    redis: IORedis.Redis,
     primaryEntityManager: IPrimaryEntityManager<TEntity>,
     queryManagers: Array<IPrimaryQueryManager<TEntity>> = new Array(),
   ) {
     this._primaryEntityManager = primaryEntityManager;
     this._queryManagers = queryManagers;
+    this._redis = redis;
   }
 
   /**

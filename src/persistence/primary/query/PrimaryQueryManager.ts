@@ -78,10 +78,22 @@ export abstract class PrimaryQueryManager<
   }
 
   /**
+   * True if the queries managed can return multiple results.
+   */
+  public abstract get isMultiple(): boolean;
+
+  /**
    * Query's model.
    */
   public get model(): IModel {
     return this._primaryEntityManager.model;
+  }
+
+  /**
+   * Obtains the reverse hash key.
+   */
+  public get reverseHashKey(): string {
+    return this._reverseHashKey;
   }
 
   /**

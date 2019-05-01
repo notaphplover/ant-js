@@ -1,9 +1,10 @@
 import { IEntity } from '../../../model/IEntity';
+import {
+  SEPARATOR_STRING,
+  VOID_RESULT_STRING,
+} from '../LuaConstants';
 import { ICacheOptions } from '../options/ICacheOptions';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
-
-const SEPARATOR_STRING = 's\x06\x15';
-const VOID_RESULT_STRING = 'v\x06\x15';
 
 export class MultipleResultQueryManager<
   TEntity extends IEntity
@@ -11,6 +12,11 @@ export class MultipleResultQueryManager<
   TEntity,
   number[] | string[]
 > {
+  /**
+   * True if the queries managed can return multiple results.
+   */
+  public get isMultiple(): boolean { return true; }
+
   /**
    * Gets the result of a query.
    * @param params Query parameters.
