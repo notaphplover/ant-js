@@ -32,23 +32,15 @@ export interface IBaseModelManager<TEntity extends IEntity> {
   /**
    * Updates multiple entities at the cache layer.
    * @param entities Entities to be updated.
-   * @param cacheOptions Cache options.
    * @returns Priomise of entities updated.
    */
-  mUpdate(
-    entities: TEntity[],
-    cacheOptions?: ICacheOptions,
-  ): Promise<any>;
+  mUpdate(entities: TEntity[]): Promise<any>;
   /**
    * Updates an entity at the cache layer.
    * @param entity Entitty to update.
-   * @param cacheOptions Cache options.
    * @returns Promise of entity updated.
    */
-  update(
-    entity: TEntity,
-    cacheOptions?: ICacheOptions,
-  ): Promise<any>;
+  update(entity: TEntity): Promise<any>;
 }
 
 export interface IModelManager<TEntity extends IEntity> extends IBaseModelManager<TEntity> {

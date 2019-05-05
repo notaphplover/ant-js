@@ -74,6 +74,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     }
     return [
       new ModelManager(
+        model,
         redisConn,
         primaryEntityManager,
         queryManagers,
@@ -105,7 +106,11 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     );
 
     return [
-      new ModelManager(redisConn, primaryEntityManager),
+      new ModelManager(
+        model,
+        redisConn,
+        primaryEntityManager,
+      ),
       primaryEntityManager,
     ];
   }
