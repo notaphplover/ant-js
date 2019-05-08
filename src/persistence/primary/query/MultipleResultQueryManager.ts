@@ -275,7 +275,7 @@ redis.call('srem', currentKey, '${VOID_RESULT_STRING}')
 for i=1, #ARGV do
   if ARGV[i] == '${SEPARATOR_STRING}' then
     currentKeyCounter = currentKeyCounter + 1;
-    local currentKey = KEYS[currentKeyCounter]
+    currentKey = KEYS[currentKeyCounter]
     redis.call('srem', currentKey, '${VOID_RESULT_STRING}')
   else
     if ARGV[i] == '${VOID_RESULT_STRING}' then

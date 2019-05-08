@@ -1,10 +1,14 @@
 import * as IORedis from 'ioredis';
 import { IEntity } from '../../../model/IEntity';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
-import { SingleResultQueryManager } from '../../../persistence/primary/query/SingleResultQueryManager';
+import { MultipleResultQueryManager } from '../../../persistence/primary/query/MultipleResultQueryManager';
+import {
+  TMQuery,
+  TQuery,
+} from '../../../persistence/primary/query/PrimaryQueryManager';
 
-export class SingleResultQueryByFieldManager<TEntity extends IEntity>
-  extends SingleResultQueryManager<TEntity> {
+export class MultipleResultQueryByFieldManager<TEntity extends IEntity>
+  extends MultipleResultQueryManager<TEntity> {
 
   /**
    * Field to filter.
@@ -26,13 +30,13 @@ export class SingleResultQueryByFieldManager<TEntity extends IEntity>
    * @param mQuery Multiple result query.
    */
   public constructor(
-    query: (params: any) => Promise<number|string>,
+    query: TQuery<number[]|string[]>,
     primaryEntityManager: IPrimaryEntityManager<TEntity>,
     redis: IORedis.Redis,
     reverseHashKey: string,
     field: string,
     queryPrefix: string,
-    mQuery: (paramsArray: any) => Promise<number[]|string[]> = null,
+    mQuery: TMQuery<number[]|string[]> = null,
   ) {
     /**
      * Gets a key for a certain query.
