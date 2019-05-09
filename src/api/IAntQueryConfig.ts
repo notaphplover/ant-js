@@ -1,18 +1,23 @@
+import { IEntity } from '../model/IEntity';
 import {
   QueryResult,
   TMQuery,
   TQuery,
 } from '../persistence/primary/query/PrimaryQueryManager';
 
-export interface IAntQueryConfig<TQueryResult extends QueryResult> {
+export interface IAntQueryConfig<TEntity extends IEntity, TQueryResult extends QueryResult> {
   /**
    * True if the query returns an array of results instead of a single result.
    */
   isMultiple: boolean;
   /**
+   * Entity key generator
+   */
+  entityKeyGen?: (entity: TEntity) => string;
+  /**
    * Query key generator.
    */
-  keyGen: (params: any) => string;
+  queryKeyGen: (params: any) => string;
   /**
    * Multiple query.
    */

@@ -1,6 +1,5 @@
 import * as IORedis from 'ioredis';
 import { IEntity } from '../../../model/IEntity';
-import { IModel } from '../../../model/IModel';
 import { IPrimaryEntityManager } from '../IPrimaryEntityManager';
 import { ICacheOptions } from '../options/ICacheOptions';
 import {
@@ -22,9 +21,13 @@ export abstract class PrimaryQueryManager<
     IBasePrimaryQueryManager<TEntity, TResult<TEntity, TQueryResult>>,
     IPrimaryQueryManager<TEntity> {
   /**
+   * Entity key generator.
+   */
+  protected _entityKeyGen: (entity: TEntity) => string;
+  /**
    * Query key generator.
    */
-  protected _keyGen: (params: any) => string;
+  protected _queryKeyGen: (params: any) => string;
   /**
    * Multiple query
    */
@@ -56,7 +59,7 @@ export abstract class PrimaryQueryManager<
    * @param primaryEntityManager Primary entity manager.
    * @param redis Redis connection to manage queries.
    * @param reverseHashKey Key of the reverse structure to obtain a map of entities to queries.
-   * @param keyGen Key generator.
+   * @param queryKeyGen Query key generator.
    * @param mQuery Multiple query.
    */
   public constructor(
@@ -64,14 +67,16 @@ export abstract class PrimaryQueryManager<
     primaryEntityManager: IPrimaryEntityManager<TEntity>,
     redis: IORedis.Redis,
     reverseHashKey: string,
-    keyGen: (params: any) => string,
-    mQuery: TMQuery<TQueryResult> = null,
+    queryKeyGen: (params: any) => string,
+    entityKeyGen?: (entity: TEntity) => string,
+    mQuery?: TMQuery<TQueryResult>,
   ) {
     this._primaryEntityManager = primaryEntityManager;
     this._query = query;
     this._redis = redis;
     this._reverseHashKey = reverseHashKey;
-    this._keyGen = keyGen;
+    this._queryKeyGen = queryKeyGen;
+    this._entityKeyGen = entityKeyGen ? entityKeyGen : queryKeyGen;
     this._luaKeyGeneratorFromId = this._primaryEntityManager.getKeyGenerationLuaScriptGenerator();
 
     this._setMQuery(query, mQuery);
@@ -85,15 +90,15 @@ export abstract class PrimaryQueryManager<
   /**
    * Query key generator.
    */
-  public get keyGen(): (params: any) => string {
-    return this._keyGen;
+  public get entityKeyGen(): (entity: TEntity) => string {
+    return this._entityKeyGen;
   }
 
   /**
-   * Query's model.
+   * Query key generator.
    */
-  public get model(): IModel {
-    return this._primaryEntityManager.model;
+  public get queryKeyGen(): (params: any) => string {
+    return this._queryKeyGen;
   }
 
   /**

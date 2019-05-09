@@ -160,7 +160,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @returns Query manager generated from the config.
    */
   public query<TQueryResult extends QueryResult>(
-    queryConfig: IAntQueryConfig<TQueryResult>,
+    queryConfig: IAntQueryConfig<TEntity, TQueryResult>,
     aliasOrNothing?: string,
   ): TQueryManager<TEntity, TQueryResult>;
   /**
@@ -170,7 +170,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @returns Query found r this instance.
    */
   public query<TResult extends QueryResult & (TEntity | TEntity[])>(
-    queryOrAlias: IAntQueryConfig<TResult>|string,
+    queryOrAlias: IAntQueryConfig<TEntity, TResult>|string,
     aliasOrNothing?: string,
   ): IBasePrimaryQueryManager<TEntity, TResult> | TQueryManager<TEntity, TResult> {
     if ('string' === typeof queryOrAlias) {
@@ -239,7 +239,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @returns This instance
    */
   private _querySetQuery<TResult extends QueryResult>(
-    queryConfig: IAntQueryConfig<TResult>,
+    queryConfig: IAntQueryConfig<TEntity, TResult>,
     aliasOrNothing?: string,
   ): TQueryManager<TEntity, TResult> {
     let query: TQueryManager<TEntity, TResult>;
@@ -249,7 +249,8 @@ This is probably caused by the absence of a config instance. Ensure that config 
         this.primaryEntityManager,
         this._config.redis,
         queryConfig.reverseHashKey,
-        queryConfig.keyGen,
+        queryConfig.queryKeyGen,
+        queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number[] | string[]>,
       ) as TQueryManager<TEntity, TResult>;
     } else {
@@ -258,7 +259,8 @@ This is probably caused by the absence of a config instance. Ensure that config 
         this.primaryEntityManager,
         this._config.redis,
         queryConfig.reverseHashKey,
-        queryConfig.keyGen,
+        queryConfig.queryKeyGen,
+        queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number | string>,
       ) as TQueryManager<TEntity, TResult>;
     }

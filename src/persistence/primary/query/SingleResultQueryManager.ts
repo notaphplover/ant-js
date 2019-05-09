@@ -23,7 +23,7 @@ export class SingleResultQueryManager<
     params: any,
     cacheOptions?: ICacheOptions,
   ): Promise<TEntity> {
-    const key = this._keyGen(params);
+    const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultJson = await this._redis.eval(luaScript, 1, key);
     if (null == resultJson) {
@@ -59,7 +59,7 @@ export class SingleResultQueryManager<
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
     }
-    const keys = paramsArray.map((params) => this._keyGen(params));
+    const keys = paramsArray.map((params) => this.queryKeyGen(params));
     const luaScript = this._luaMGetGenerator();
     const resultsJson = await this._redis.eval(luaScript, keys.length, keys);
     const missingIds: number[]|string[] = new Array();

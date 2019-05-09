@@ -138,7 +138,7 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
     for (const queryManager of this._queryManagers) {
       evalParams.push(queryManager.reverseHashKey);
       for (const entity of entities) {
-        evalParams.push(queryManager.keyGen(entity));
+        evalParams.push(queryManager.entityKeyGen(entity));
       }
     }
     for (const entity of entities) {
@@ -166,7 +166,7 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
     ];
     for (const queryManager of this._queryManagers) {
       evalParams.push(queryManager.reverseHashKey);
-      evalParams.push(queryManager.keyGen(entity));
+      evalParams.push(queryManager.entityKeyGen(entity));
     }
     evalParams.push(JSON.stringify(entity[this._model.id]));
     evalParams.push(JSON.stringify(entity));

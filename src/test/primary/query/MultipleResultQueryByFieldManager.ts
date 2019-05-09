@@ -46,7 +46,7 @@ export class MultipleResultQueryByFieldManager<TEntity extends IEntity>
     const key = (param: any): string => {
       return this._queryPrefix + param[this._field];
     };
-    super(query, primaryEntityManager, redis, reverseHashKey, key, mQuery);
+    super(query, primaryEntityManager, redis, reverseHashKey, key, key, mQuery);
     this._field = field;
     this._queryPrefix = queryPrefix;
   }

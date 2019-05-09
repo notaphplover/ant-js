@@ -27,7 +27,7 @@ export class MultipleResultQueryManager<
     params: any,
     cacheOptions?: ICacheOptions,
   ): Promise<TEntity[]> {
-    const key = this._keyGen(params);
+    const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultsJSON = await this._redis.eval(luaScript, 1, key);
 
@@ -65,7 +65,7 @@ export class MultipleResultQueryManager<
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
     }
-    const keys = paramsArray.map((params: any) => this._keyGen(params));
+    const keys = paramsArray.map((params: any) => this.queryKeyGen(params));
     const luaScript = this._luaMGetGenerator();
     const resultsJson = await this._redis.eval(luaScript, keys.length, ...keys);
 
