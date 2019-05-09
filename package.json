@@ -1,6 +1,6 @@
 {
   "name": "@antjs/ant-js",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Generic query manager.",
   "main": "src/ant.js",
   "scripts": {
