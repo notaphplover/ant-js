@@ -1,5 +1,4 @@
 import { IEntity } from '../../../model/IEntity';
-import { IModel } from '../../../model/IModel';
 import { ICacheOptions } from '../options/ICacheOptions';
 
 export interface IBasePrimaryQueryManager<
@@ -13,11 +12,11 @@ export interface IBasePrimaryQueryManager<
   /**
    * Query key generator.
    */
-  keyGen: (params: any) => string;
+  entityKeyGen: (entity: TEntity) => string;
   /**
-   * Query's model.
+   * Query key generator.
    */
-  model: IModel;
+  queryKeyGen: (params: any) => string;
   /**
    * Obtains the reverse hash key.
    */
