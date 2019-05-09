@@ -1,5 +1,4 @@
 import { IEntity } from '../../../model/IEntity';
-import { IModel } from '../../../model/IModel';
 import { ICacheOptions } from '../options/ICacheOptions';
 
 export interface IBasePrimaryQueryManager<
@@ -7,9 +6,21 @@ export interface IBasePrimaryQueryManager<
   TResult extends TEntity | TEntity[],
 > {
   /**
-   * Query's model.
+   * True if the queries managed can return multiple results.
    */
-  model: IModel;
+  isMultiple: boolean;
+  /**
+   * Query key generator.
+   */
+  entityKeyGen: (entity: TEntity) => string;
+  /**
+   * Query key generator.
+   */
+  queryKeyGen: (params: any) => string;
+  /**
+   * Obtains the reverse hash key.
+   */
+  reverseHashKey: string;
   /**
    * Gets a query result.
    * @param params query params.
@@ -29,30 +40,6 @@ export interface IBasePrimaryQueryManager<
     paramsArray: any[],
     cacheOptions?: ICacheOptions,
   ): Promise<TEntity[]>;
-  /**
-   * Syncs the remove of an entity in cache.
-   * @param entity deleted entity.
-   * @returns Promise of query sync
-   */
-  syncDelete(entity: TEntity): Promise<void>;
-  /**
-   * Syncs the remove of entities in cache.
-   * @param entities deleted entities.
-   * @returns Promise of query sync
-   */
-  syncMDelete(entities: TEntity[]): Promise<void>;
-  /**
-   * Syncs the update of multiple entities.
-   * @param entities updated entities.
-   * @returns Promise of query sync
-   */
-  syncMUpdate(entities: TEntity[]): Promise<void>;
-  /**
-   * Syncs the update of an entity in cache.
-   * @param entity updated entity.
-   * @returns Promise of query sync
-   */
-  syncUpdate(entity: TEntity): Promise<void>;
 }
 
 export interface IPrimaryQueryManager<TEntity extends IEntity>

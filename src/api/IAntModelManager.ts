@@ -40,7 +40,7 @@ export interface IAntModelManager<TEntity extends IEntity, TConfig extends IAntM
    * @returns This instance.
    */
   query<TQueryResult extends QueryResult>(
-    queryConfig: IAntQueryConfig<TQueryResult>,
+    queryConfig: IAntQueryConfig<TEntity, TQueryResult>,
     aliasOrNothing?: string,
   ): TQueryManager<TEntity, TQueryResult>;
 }

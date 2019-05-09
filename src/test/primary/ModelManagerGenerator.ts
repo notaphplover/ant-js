@@ -44,9 +44,10 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     IPrimaryEntityManager<TEntity>,
     Map<string, IPrimaryQueryManager<TEntity>>,
   ] {
+    const redisConn = redis || this._redis.redis;
     const primaryEntityManager = new PrimaryEntityManager(
       model,
-      redis || this._redis.redis,
+      redisConn,
       secondaryManager,
     );
     const queryManagers = new Array<IPrimaryQueryManager<TEntity>>();
@@ -63,7 +64,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
             resolve(entity ? entity[model.id] : null);
           }),
         primaryEntityManager,
-        this._redis.redis,
+        redisConn,
         reverseHashKey + property + '/',
         property,
         queryPrefix + property + '/',
@@ -72,7 +73,12 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
       queryManagers.push(singleResultQueryManager);
     }
     return [
-      new ModelManager(primaryEntityManager, queryManagers),
+      new ModelManager(
+        model,
+        redisConn,
+        primaryEntityManager,
+        queryManagers,
+      ),
       primaryEntityManager,
       queriesMap,
     ];
@@ -92,14 +98,19 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     IModelManager<TEntity>,
     IPrimaryEntityManager<TEntity>,
   ] {
+    const redisConn = redis || this._redis.redis;
     const primaryEntityManager = new PrimaryEntityManager(
       model,
-      redis || this._redis.redis,
+      redisConn,
       secondaryManager,
     );
 
     return [
-      new ModelManager(primaryEntityManager),
+      new ModelManager(
+        model,
+        redisConn,
+        primaryEntityManager,
+      ),
       primaryEntityManager,
     ];
   }

@@ -6,6 +6,7 @@ import { IPrimaryQueryManager } from '../../persistence/primary/query/IPrimaryQu
 import { ITest } from '../ITest';
 import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
 import { ModelManagerGenerator } from './ModelManagerGenerator';
+import { MultipleResultQueryByFieldManager } from './query/MultipleResultQueryByFieldManager';
 import { SingleResultQueryByFieldManager } from './query/SingleResultQueryByFieldManager';
 import { RedisWrapper } from './RedisWrapper';
 
@@ -55,10 +56,20 @@ export class ModelManagerTest implements ITest {
       this._itMustBeInitializableWithNoQueries();
       this._itMustDeleteAnEntity();
       this._itMustDeleteMultipleEntities();
+      this._itMustDeleteZeroEntities();
       this._itMustGetAnEntity();
       this._itMustGetMultipleEntities();
+      this._itMustSyncAMRQWhenDeletingAnEntity();
+      this._itMustSyncAMRQWhenDeletingMultipleEntities();
+      this._itMustSyncAMRQWhenUpdatingAnEntity();
+      this._itMustSyncAMRQWhenUpdatingMultipleEntities();
+      this._itMustSyncASRQWhenDeletingAnEntity();
+      this._itMustSyncASRQWhenDeletingMultipleEntities();
+      this._itMustSyncASRQWhenUpdatingAnEntity();
+      this._itMustSyncASRQWhenUpdatingMultipleEntities();
       this._itMustUpdateAnEntity();
       this._itMustUpdateMultipleEntities();
+      this._itMustUpdateZeroEntities();
     });
   }
 
@@ -139,7 +150,7 @@ export class ModelManagerTest implements ITest {
 
       modelManager.addQuery(singleResultQueryManager);
       await singleResultQueryManager.get(entity1);
-      await modelManager.delete(entity1);
+      await modelManager.delete(entity1.id);
 
       const entity1Search = await singleResultQueryManager.get(entity1);
       expect(entity1Search).toBeNull();
@@ -222,7 +233,7 @@ export class ModelManagerTest implements ITest {
         secondaryEntityManager,
       );
       secondaryEntityManager.store.shift();
-      await modelManager.delete(entity1);
+      await modelManager.delete(entity1.id);
 
       const [
         searchEntity1ByPrimaryEntityManager,
@@ -288,7 +299,7 @@ export class ModelManagerTest implements ITest {
       );
       secondaryEntityManager.store.shift();
       secondaryEntityManager.store.shift();
-      await modelManager.mDelete([entity1, entity2]);
+      await modelManager.mDelete([entity1.id, entity2.id]);
 
       const [
         searchEntity1ByPrimaryEntityManager,
@@ -314,6 +325,50 @@ export class ModelManagerTest implements ITest {
       expect(searchEntity3ByPrimaryEntityManager).toEqual(entity3);
       for (const search of searchEntity3ByQueryManager) {
         expect(search).toEqual(entity3);
+      }
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustDeleteZeroEntities(): void {
+    const itsName = 'mustDeleteZeroEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+      ];
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+        queryManagersByProperty,
+      ] = this._modelManagerGenerator.generateModelManager(
+        model,
+        modelTestProperties,
+        prefix + 'query/',
+        prefix + 'reverse/',
+        secondaryEntityManager,
+      );
+      await modelManager.mDelete(new Array());
+
+      const [
+        searchEntity1ByPrimaryEntityManager,
+        searchEntity1ByQueryManager,
+      ] = await this._helperSearchEntity(entity1, model, primaryEntityManager, queryManagersByProperty);
+
+      expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1);
+      for (const search of searchEntity1ByQueryManager) {
+        expect(search).toEqual(entity1);
       }
       done();
     }, MAX_SAFE_TIMEOUT);
@@ -397,6 +452,576 @@ export class ModelManagerTest implements ITest {
       ]);
       expect(entityFound).toContain(entity1);
       expect(entityFound).toContain(entity2);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSyncAMRQWhenDeletingAnEntity(): void {
+    const itsName = 'mustSyncAMRQWhenDeletingAnEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'a',
+      };
+      const entity3: IEntityTest = {
+        id: 2,
+        numberField: 3,
+        strField: 'b',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+        entity3,
+      ];
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        secondaryEntityManager,
+      );
+      const query = new MultipleResultQueryByFieldManager(
+        (params: any) =>
+          new Promise((resolve) => {
+            const entities = secondaryEntityManager.store.filter(
+              (entity) => params.strField === entity.strField,
+            );
+            resolve(entities.map((entity) => entity.id));
+          }),
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        'strField',
+        prefix + 'query/',
+      );
+      modelManager.addQuery(query);
+      await query.mGet([entity1, entity2, entity3]);
+      secondaryEntityManager.store.shift();
+      await modelManager.delete(entity1.id);
+      expect(await modelManager.get(entity1.id)).toBeNull();
+      expect(await modelManager.get(entity2.id)).toEqual(entity2);
+      expect(await modelManager.get(entity3.id)).toEqual(entity3);
+      expect(await query.get(entity2)).toEqual([entity2]);
+      expect(await query.get(entity3)).toEqual([entity3]);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSyncAMRQWhenDeletingMultipleEntities(): void {
+    const itsName = 'mustSyncAMRQWhenDeletingMultipleEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'a',
+      };
+      const entity3: IEntityTest = {
+        id: 2,
+        numberField: 3,
+        strField: 'b',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+        entity3,
+      ];
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        secondaryEntityManager,
+      );
+      const query = new MultipleResultQueryByFieldManager(
+        (params: any) =>
+          new Promise((resolve) => {
+            const entities = secondaryEntityManager.store.filter(
+              (entity) => params.strField === entity.strField,
+            );
+            resolve(entities.map((entity) => entity.id));
+          }),
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        'strField',
+        prefix + 'query/',
+      );
+      modelManager.addQuery(query);
+      await query.mGet([entity1, entity2, entity3]);
+      secondaryEntityManager.store.pop();
+      secondaryEntityManager.store.shift();
+      await modelManager.mDelete([entity1.id, entity3.id]);
+      expect(await modelManager.get(entity1.id)).toBeNull();
+      expect(await modelManager.get(entity2.id)).toEqual(entity2);
+      expect(await modelManager.get(entity3.id)).toBeNull();
+      expect(await query.get(entity2)).toEqual([entity2]);
+      expect(await query.get(entity3)).toEqual(new Array());
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSyncAMRQWhenUpdatingAnEntity(): void {
+    const itsName = 'mustSyncAMRQWhenUpdatingAnEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity1After: IEntityTest = {
+        id: 0,
+        numberField: 4,
+        strField: 'b',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'a',
+      };
+      const entity3: IEntityTest = {
+        id: 2,
+        numberField: 3,
+        strField: 'b',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+        entity3,
+      ];
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        secondaryEntityManager,
+      );
+      const query = new MultipleResultQueryByFieldManager(
+        (params: any) =>
+          new Promise((resolve) => {
+            const entities = secondaryEntityManager.store.filter(
+              (entity) => params.strField === entity.strField,
+            );
+            resolve(entities.map((entity) => entity.id));
+          }),
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        'strField',
+        prefix + 'query/',
+      );
+      modelManager.addQuery(query);
+      await query.mGet([entity1, entity2, entity3]);
+      secondaryEntityManager.store[0] = entity1After;
+      await modelManager.update(entity1After);
+      const [
+        entity1SearchResult,
+        entity2SearchResult,
+        entity3SearchResult,
+      ] = await modelManager.mGet([
+        entity1After.id,
+        entity2.id,
+        entity3.id,
+      ]);
+      const [
+        querySearchByStrAResult,
+        querySearchByStrBResult,
+      ] = await Promise.all([
+        query.get({ strField: 'a' }),
+        query.get({ strField: 'b' }),
+      ]);
+
+      expect(entity1SearchResult).toEqual(entity1After);
+      expect(entity2SearchResult).toEqual(entity2);
+      expect(entity3SearchResult).toEqual(entity3);
+      expect(querySearchByStrAResult).toEqual([entity2]);
+      expect(querySearchByStrBResult).toContain(entity1After);
+      expect(querySearchByStrBResult).toContain(entity3);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSyncAMRQWhenUpdatingMultipleEntities(): void {
+    const itsName = 'mustSyncAMRQWhenUpdatingMultipleEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity1After: IEntityTest = {
+        id: 0,
+        numberField: 4,
+        strField: 'b',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'a',
+      };
+      const entity3: IEntityTest = {
+        id: 2,
+        numberField: 3,
+        strField: 'b',
+      };
+      const entity3After: IEntityTest = {
+        id: 2,
+        numberField: 4,
+        strField: 'c',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+        entity3,
+      ];
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        secondaryEntityManager,
+      );
+      const query = new MultipleResultQueryByFieldManager(
+        (params: any) =>
+          new Promise((resolve) => {
+            const entities = secondaryEntityManager.store.filter(
+              (entity) => params.strField === entity.strField,
+            );
+            resolve(entities.map((entity) => entity.id));
+          }),
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        'strField',
+        prefix + 'query/',
+      );
+      modelManager.addQuery(query);
+      await query.mGet([entity1, entity2, entity3]);
+      secondaryEntityManager.store[0] = entity1After;
+      secondaryEntityManager.store[2] = entity3After;
+      await modelManager.mUpdate([entity1After, entity3After]);
+      const [
+        entity1SearchResult,
+        entity2SearchResult,
+        entity3SearchResult,
+      ] = await modelManager.mGet([
+        entity1After.id,
+        entity2.id,
+        entity3After.id,
+      ]);
+      const [
+        querySearchByStrAResult,
+        querySearchByStrBResult,
+        querySearchByStrCResult,
+      ] = await Promise.all([
+        query.get({ strField: 'a' }),
+        query.get({ strField: 'b' }),
+        query.get({ strField: 'c' }),
+      ]);
+
+      expect(entity1SearchResult).toEqual(entity1After);
+      expect(entity2SearchResult).toEqual(entity2);
+      expect(entity3SearchResult).toEqual(entity3After);
+      expect(querySearchByStrAResult).toEqual([entity2]);
+      expect(querySearchByStrBResult).toEqual([entity1After]);
+      expect(querySearchByStrCResult).toEqual([entity3After]);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSyncASRQWhenDeletingAnEntity(): void {
+    const itsName = 'mustSyncASRQWhenDeletingAnEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'b',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+      ];
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        secondaryEntityManager,
+      );
+      const query = new SingleResultQueryByFieldManager(
+        (params: any) =>
+          new Promise((resolve) => {
+            const entity = secondaryEntityManager.store.find(
+              (entity) => params.strField === entity.strField,
+            );
+            resolve(entity ? entity.id : null);
+          }),
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        'strField',
+        prefix + 'query/',
+      );
+      modelManager.addQuery(query);
+      await Promise.all([
+        query.get(entity1),
+        query.get(entity2),
+      ]);
+      secondaryEntityManager.store.shift();
+      await modelManager.delete(entity1.id);
+      expect(await modelManager.get(entity1.id)).toBeNull();
+      expect(await modelManager.get(entity2.id)).toEqual(entity2);
+      expect(await query.get(entity1)).toBeNull();
+      expect(await query.get(entity2)).toEqual(entity2);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSyncASRQWhenDeletingMultipleEntities(): void {
+    const itsName = 'mustSyncASRQWhenDeletingMultipleEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'b',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+      ];
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        secondaryEntityManager,
+      );
+      const query = new SingleResultQueryByFieldManager(
+        (params: any) =>
+          new Promise((resolve) => {
+            const entity = secondaryEntityManager.store.find(
+              (entity) => params.strField === entity.strField,
+            );
+            resolve(entity ? entity.id : null);
+          }),
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        'strField',
+        prefix + 'query/',
+      );
+      modelManager.addQuery(query);
+      await Promise.all([
+        query.get(entity1),
+        query.get(entity2),
+      ]);
+      secondaryEntityManager.store.length = 0;
+      await modelManager.mDelete([entity1.id, entity2.id]);
+      expect(await modelManager.get(entity1.id)).toBeNull();
+      expect(await modelManager.get(entity2.id)).toBeNull();
+      expect(await query.get(entity1)).toBeNull();
+      expect(await query.get(entity2)).toBeNull();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSyncASRQWhenUpdatingAnEntity(): void {
+    const itsName = 'mustSyncASRQWhenUpdatingAnEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity1After: IEntityTest = {
+        id: 0,
+        numberField: 3,
+        strField: 'c',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'b',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+      ];
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        secondaryEntityManager,
+      );
+      const query = new SingleResultQueryByFieldManager(
+        (params: any) =>
+          new Promise((resolve) => {
+            const entity = secondaryEntityManager.store.find(
+              (entity) => params.strField === entity.strField,
+            );
+            resolve(entity ? entity.id : null);
+          }),
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        'strField',
+        prefix + 'query/',
+      );
+      modelManager.addQuery(query);
+      await Promise.all([
+        query.get(entity1),
+        query.get(entity2),
+      ]);
+      secondaryEntityManager.store[0] = entity1After;
+      await modelManager.update(entity1After);
+      expect(await modelManager.get(entity1After.id)).toEqual(entity1After);
+      expect(await modelManager.get(entity2.id)).toEqual(entity2);
+      expect(await query.get(entity1)).toBeNull();
+      expect(await query.get(entity1After)).toEqual(entity1After);
+      expect(await query.get(entity2)).toEqual(entity2);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSyncASRQWhenUpdatingMultipleEntities(): void {
+    const itsName = 'mustSyncASRQWhenUpdatingMultipleEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity1After: IEntityTest = {
+        id: 0,
+        numberField: 3,
+        strField: 'c',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'b',
+      };
+      const entity2After: IEntityTest = {
+        id: 1,
+        numberField: 4,
+        strField: 'd',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+      ];
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        secondaryEntityManager,
+      );
+      const query = new SingleResultQueryByFieldManager(
+        (params: any) =>
+          new Promise((resolve) => {
+            const entity = secondaryEntityManager.store.find(
+              (entity) => params.strField === entity.strField,
+            );
+            resolve(entity ? entity.id : null);
+          }),
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        'strField',
+        prefix + 'query/',
+      );
+      modelManager.addQuery(query);
+      await Promise.all([
+        query.get(entity1),
+        query.get(entity2),
+      ]);
+      secondaryEntityManager.store[0] = entity1After;
+      secondaryEntityManager.store[1] = entity2After;
+      await modelManager.mUpdate([entity1After, entity2After]);
+      expect(await modelManager.get(entity1After.id)).toEqual(entity1After);
+      expect(await modelManager.get(entity2After.id)).toEqual(entity2After);
+      expect(await query.get(entity1)).toBeNull();
+      expect(await query.get(entity1After)).toEqual(entity1After);
+      expect(await query.get(entity2)).toBeNull();
+      expect(await query.get(entity2After)).toEqual(entity2After);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -522,6 +1147,50 @@ export class ModelManagerTest implements ITest {
       expect(searchEntity2ByPrimaryEntityManager).toEqual(entity2);
       for (const search of searchEntity2ByQueryManager) {
         expect(search).toEqual(entity2);
+      }
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustUpdateZeroEntities(): void {
+    const itsName = 'mustUpdateZeroEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+      ];
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+        queryManagersByProperty,
+      ] = this._modelManagerGenerator.generateModelManager(
+        model,
+        modelTestProperties,
+        prefix + 'query/',
+        prefix + 'reverse/',
+        secondaryEntityManager,
+      );
+      await modelManager.mUpdate(new Array());
+
+      const [
+        searchEntity1ByPrimaryEntityManager,
+        searchEntity1ByQueryManager,
+      ] = await this._helperSearchEntity(entity1, model, primaryEntityManager, queryManagersByProperty);
+
+      expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1);
+      for (const search of searchEntity1ByQueryManager) {
+        expect(search).toEqual(entity1);
       }
       done();
     }, MAX_SAFE_TIMEOUT);

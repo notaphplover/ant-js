@@ -93,9 +93,9 @@ export class AntModelManagerTest implements ITest {
         mUpdateResult,
         updateResult,
       ] = await Promise.all([
-        antModelManager.delete(entity),
+        antModelManager.delete(entity.id),
         antModelManager.get(entity.id),
-        antModelManager.mDelete([entity]),
+        antModelManager.mDelete([entity.id]),
         antModelManager.mGet([entity.id]),
         antModelManager.mUpdate([entity]),
         antModelManager.update(entity),
@@ -148,13 +148,13 @@ export class AntModelManagerTest implements ITest {
 
       const queryConfig = {
         isMultiple: true,
-        keyGen: (params: any) => prefix + 'query/' + params.field,
         query: (params: any) =>
           new Promise<number[]>((resolve) => resolve(
             (antModelManager.secondaryModelManager.store as Array<{ id: number, field: string}>).filter(
               (entity) => params.field === entity.field,
             ).map((entity) => entity.id),
           )),
+        queryKeyGen: (params: any) => prefix + 'query/' + params.field,
         reverseHashKey: prefix + 'query/reverse',
       };
       const queryAlias = 'query-alias';
@@ -177,7 +177,6 @@ export class AntModelManagerTest implements ITest {
 
       const queryConfig = {
         isMultiple: false,
-        keyGen: (params: any) => prefix + 'query/' + params.field,
         query: (params: any) =>
           new Promise<number>((resolve) => {
             const entity = (antModelManager.secondaryModelManager.store as Array<{ id: number, field: string}>).find(
@@ -185,6 +184,7 @@ export class AntModelManagerTest implements ITest {
             );
             resolve(entity ? entity.id : null);
         }),
+        queryKeyGen: (params: any) => prefix + 'query/' + params.field,
         reverseHashKey: prefix + 'query/reverse',
       };
       const queryAlias = 'query-alias';
@@ -255,13 +255,13 @@ export class AntModelManagerTest implements ITest {
 
       const queryConfig = {
         isMultiple: true,
-        keyGen: (params: any) => prefix + 'query/' + params.field,
         query: (params: any) =>
           new Promise<number[]>((resolve) => resolve(
             (antModelManager.secondaryModelManager.store as Array<{ id: number, field: string}>).filter(
               (entity) => params.field === entity.field,
             ).map((entity) => entity.id),
           )),
+        queryKeyGen: (params: any) => prefix + 'query/' + params.field,
         reverseHashKey: prefix + 'query/reverse',
       };
       const queryAlias = 'query-alias';

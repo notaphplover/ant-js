@@ -112,11 +112,11 @@ This is probably caused by the absence of a config instance. Ensure that config 
   }
   /**
    * Deletes an entity from the cache layer.
-   * @param entity Entity to delete.
+   * @param id id of the entity to delete.
    * @returns Promise of entity deleted.
    */
-  public delete(entity: TEntity): Promise<any> {
-    return this.modelManager.delete(entity);
+  public delete(id: number|string): Promise<any> {
+    return this.modelManager.delete(id);
   }
   /**
    * Finds an entity by its id.
@@ -129,11 +129,11 @@ This is probably caused by the absence of a config instance. Ensure that config 
   }
   /**
    * Deletes multiple entities from the cache layer.
-   * @param entities Entities to delete.
+   * @param ids Ids of the entities to delete.
    * @returns Promise of entities deleted.
    */
-  public mDelete(entities: TEntity[]): Promise<any> {
-    return this.modelManager.mDelete(entities);
+  public mDelete(ids: number[]|string[]): Promise<any> {
+    return this.modelManager.mDelete(ids);
   }
   /**
    * Finds a collection if entities by its ids.
@@ -160,7 +160,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @returns Query manager generated from the config.
    */
   public query<TQueryResult extends QueryResult>(
-    queryConfig: IAntQueryConfig<TQueryResult>,
+    queryConfig: IAntQueryConfig<TEntity, TQueryResult>,
     aliasOrNothing?: string,
   ): TQueryManager<TEntity, TQueryResult>;
   /**
@@ -170,7 +170,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @returns Query found r this instance.
    */
   public query<TResult extends QueryResult & (TEntity | TEntity[])>(
-    queryOrAlias: IAntQueryConfig<TResult>|string,
+    queryOrAlias: IAntQueryConfig<TEntity, TResult>|string,
     aliasOrNothing?: string,
   ): IBasePrimaryQueryManager<TEntity, TResult> | TQueryManager<TEntity, TResult> {
     if ('string' === typeof queryOrAlias) {
@@ -182,20 +182,18 @@ This is probably caused by the absence of a config instance. Ensure that config 
   /**
    * Updates multiple entities at the cache layer.
    * @param entities Entities to be updated.
-   * @param cacheOptions Cache options.
    * @returns Priomise of entities updated.
    */
-  public mUpdate(entities: TEntity[], cacheOptions?: ICacheOptions): Promise<any> {
-    return this.modelManager.mUpdate(entities, cacheOptions);
+  public mUpdate(entities: TEntity[]): Promise<any> {
+    return this.modelManager.mUpdate(entities);
   }
   /**
    * Updates an entity at the cache layer.
    * @param entity Entitty to update.
-   * @param cacheOptions Cache options.
    * @returns Promise of entity updated.
    */
-  public update(entity: TEntity, cacheOptions?: ICacheOptions): Promise<any> {
-    return this.modelManager.update(entity, cacheOptions);
+  public update(entity: TEntity): Promise<any> {
+    return this.modelManager.update(entity);
   }
   /**
    * Generates a new model manager.
@@ -241,7 +239,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @returns This instance
    */
   private _querySetQuery<TResult extends QueryResult>(
-    queryConfig: IAntQueryConfig<TResult>,
+    queryConfig: IAntQueryConfig<TEntity, TResult>,
     aliasOrNothing?: string,
   ): TQueryManager<TEntity, TResult> {
     let query: TQueryManager<TEntity, TResult>;
@@ -251,7 +249,8 @@ This is probably caused by the absence of a config instance. Ensure that config 
         this.primaryEntityManager,
         this._config.redis,
         queryConfig.reverseHashKey,
-        queryConfig.keyGen,
+        queryConfig.queryKeyGen,
+        queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number[] | string[]>,
       ) as TQueryManager<TEntity, TResult>;
     } else {
@@ -260,7 +259,8 @@ This is probably caused by the absence of a config instance. Ensure that config 
         this.primaryEntityManager,
         this._config.redis,
         queryConfig.reverseHashKey,
-        queryConfig.keyGen,
+        queryConfig.queryKeyGen,
+        queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number | string>,
       ) as TQueryManager<TEntity, TResult>;
     }

@@ -1,8 +1,7 @@
 import { IEntity } from '../../../model/IEntity';
+import { VOID_RESULT_STRING } from '../LuaConstants';
 import { ICacheOptions } from '../options/ICacheOptions';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
-
-const VOID_RESULT_STRING = 'v\x06\x15';
 
 export class SingleResultQueryManager<
   TEntity extends IEntity
@@ -10,6 +9,11 @@ export class SingleResultQueryManager<
   TEntity,
   number | string
 > {
+  /**
+   * True if the queries managed can return multiple results.
+   */
+  public get isMultiple(): boolean { return false; }
+
   /**
    * Gets the result of a query.
    * @param params Query parameters.
@@ -19,7 +23,7 @@ export class SingleResultQueryManager<
     params: any,
     cacheOptions?: ICacheOptions,
   ): Promise<TEntity> {
-    const key = this._keyGen(params);
+    const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultJson = await this._redis.eval(luaScript, 1, key);
     if (null == resultJson) {
@@ -55,7 +59,7 @@ export class SingleResultQueryManager<
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
     }
-    const keys = paramsArray.map((params) => this._keyGen(params));
+    const keys = paramsArray.map((params) => this.queryKeyGen(params));
     const luaScript = this._luaMGetGenerator();
     const resultsJson = await this._redis.eval(luaScript, keys.length, keys);
     const missingIds: number[]|string[] = new Array();
@@ -85,72 +89,6 @@ export class SingleResultQueryManager<
   }
 
   /**
-   * Syncs the remove of an entity in cache.
-   * @param entity deleted entity.
-   * @returns Promise of query sync
-   */
-  public syncDelete(entity: TEntity): Promise<void> {
-    return this._redis.eval(
-      this._luaDeleteGenerator(),
-      1,
-      this._reverseHashKey,
-      JSON.stringify(entity[this.model.id]),
-      VOID_RESULT_STRING,
-    );
-  }
-
-  /**
-   * Syncs the remove of entities in cache.
-   * @param entities deleted entities.
-   * @returns Promise of query sync
-   */
-  public syncMDelete(entities: TEntity[]): Promise<void> {
-    if (null == entities || 0 === entities.length) {
-      return new Promise((resolve) => { resolve(); });
-    }
-    return this._redis.eval([
-      this._luaMDeleteGenerator(),
-      1,
-      this._reverseHashKey,
-      ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
-      VOID_RESULT_STRING,
-    ]);
-  }
-
-  /**
-   * Syncs the update of multiple entities in cache.
-   * @param entities updated entities.
-   * @returns Promise of query sync.
-   */
-  public syncMUpdate(entities: TEntity[]): Promise<void> {
-    if (null == entities || 0 === entities.length) {
-      return new Promise((resolve) => { resolve(); });
-    }
-    return this._redis.eval([
-      this._luaMUpdateGenerator(),
-      entities.length + 1,
-      ...(entities.map((entity) => this._keyGen(entity))),
-      this._reverseHashKey,
-      ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
-    ]);
-  }
-
-  /**
-   * Syncs the update of an entity in cache.
-   * @param entity updated entity.
-   * @returns Promise of query sync
-   */
-  public syncUpdate(entity: TEntity): Promise<void> {
-    return this._redis.eval(
-      this._luaUpdateGenerator(),
-      2,
-      this._reverseHashKey,
-      this._keyGen(entity),
-      JSON.stringify(entity[this.model.id]),
-    );
-  }
-
-  /**
    * Gets an id for the query and sets it as the result of the query in the cache server.
    * @param key Key of the query.
    * @param params Query params.
@@ -170,18 +108,6 @@ export class SingleResultQueryManager<
       );
     }
     return id;
-  }
-
-  /**
-   * Gets the lua script for a delete request.
-   * @returns lua script.
-   */
-  private _luaDeleteGenerator(): string {
-    return `local key = redis.call('hget', KEYS[1], ARGV[1])
-if key then
-  redis.call('set', key, ARGV[2])
-  redis.call('hdel', KEYS[1], ARGV[1])
-end`;
   }
 
   /**
@@ -208,29 +134,15 @@ end`;
   }
 
   /**
-   * Gets the lua script for a multiple delete request.
-   * @returns lua script.
-   */
-  private _luaMDeleteGenerator(): string {
-    return `local reverseKey = KEYS[1]
-local voidValue = ARGV[#ARGV]
-for i=1, #ARGV-1 do
-  local key = redis.call('hget', reverseKey, ARGV[i])
-  if key then
-    redis.call('set', key, voidValue)
-  end
-end`;
-  }
-
-  /**
    * Gets the lua script for a multiple get request.
    * @returns lua script.
    */
   private _luaMGetGenerator(): string {
+    const ithQueryKey = 'KEYS[i]';
     const keyAlias = 'key';
     return `local results = {}
 for i=1, #KEYS do
-  local ${keyAlias} = redis.call('get', KEYS[i])
+  local ${keyAlias} = redis.call('get', ${ithQueryKey})
   if ${keyAlias} then
     if ${keyAlias} == '${VOID_RESULT_STRING}' then
       results[i] = '${VOID_RESULT_STRING}'
@@ -264,41 +176,12 @@ end`;
   }
 
   /**
-   * Gets the lua script for a multiple update request.
-   * @returns lua script.
-   */
-  private _luaMUpdateGenerator(): string {
-    return `local reverseKey = KEYS[#KEYS]
-for i=1, #KEYS-1 do
-  local key = redis.call('hget', reverseKey, ARGV[i])
-  if key then
-    redis.call('del', key)
-  end
-  redis.call('hset', reverseKey, ARGV[i], KEYS[i]);
-  redis.call('set', KEYS[i], ARGV[i])
-end`;
-  }
-
-  /**
    * Gets the lua script for a query set request.
    * @returns lua script.
    */
   private _luaSetGenerator(): string {
     return `redis.call('set', KEYS[1], ARGV[1])
 redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
-  }
-
-  /**
-   * Gets the lua script for an update request.
-   * @returns lua script.
-   */
-  private _luaUpdateGenerator(): string {
-    return `local key = redis.call('hget', KEYS[1], ARGV[1])
-if key then
-  redis.call('del', key)
-end
-redis.call('hset', KEYS[1], ARGV[1], KEYS[2]);
-redis.call('set', KEYS[2], ARGV[1])`;
   }
 
   /**

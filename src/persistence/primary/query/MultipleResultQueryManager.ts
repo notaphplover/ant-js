@@ -1,9 +1,10 @@
 import { IEntity } from '../../../model/IEntity';
+import {
+  SEPARATOR_STRING,
+  VOID_RESULT_STRING,
+} from '../LuaConstants';
 import { ICacheOptions } from '../options/ICacheOptions';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
-
-const SEPARATOR_STRING = 's\x06\x15';
-const VOID_RESULT_STRING = 'v\x06\x15';
 
 export class MultipleResultQueryManager<
   TEntity extends IEntity
@@ -11,6 +12,11 @@ export class MultipleResultQueryManager<
   TEntity,
   number[] | string[]
 > {
+  /**
+   * True if the queries managed can return multiple results.
+   */
+  public get isMultiple(): boolean { return true; }
+
   /**
    * Gets the result of a query.
    * @param params Query parameters.
@@ -21,7 +27,7 @@ export class MultipleResultQueryManager<
     params: any,
     cacheOptions?: ICacheOptions,
   ): Promise<TEntity[]> {
-    const key = this._keyGen(params);
+    const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultsJSON = await this._redis.eval(luaScript, 1, key);
 
@@ -59,7 +65,7 @@ export class MultipleResultQueryManager<
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
     }
-    const keys = paramsArray.map((params: any) => this._keyGen(params));
+    const keys = paramsArray.map((params: any) => this.queryKeyGen(params));
     const luaScript = this._luaMGetGenerator();
     const resultsJson = await this._redis.eval(luaScript, keys.length, ...keys);
 
@@ -105,72 +111,6 @@ export class MultipleResultQueryManager<
     await this._getProcessMissingOptions(missingIds, finalResults, cacheOptions);
 
     return finalResults;
-  }
-
-  /**
-   * Syncs the remove of an entity in cache.
-   * @param entity deleted entity.
-   * @returns Promise of query sync
-   */
-  public syncDelete(entity: TEntity): Promise<void> {
-    return this._redis.eval(
-      this._luaDeleteGenerator(),
-      1,
-      this._reverseHashKey,
-      JSON.stringify(entity[this.model.id]),
-      VOID_RESULT_STRING,
-    );
-  }
-
-  /**
-   * Syncs the remove of entities in cache.
-   * @param entities deleted entities.
-   * @returns Promise of query sync
-   */
-  public syncMDelete(entities: TEntity[]): Promise<void> {
-    if (null == entities || 0 === entities.length) {
-      return new Promise((resolve) => { resolve(); });
-    }
-    return this._redis.eval([
-      this._luaMDeleteGenerator(),
-      1,
-      this._reverseHashKey,
-      ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
-    ]);
-  }
-
-  /**
-   * Syncs the update of multiple entities.
-   * @param entities updated entities.
-   * @returns Promise of query sync
-   */
-  public syncMUpdate(entities: TEntity[]): Promise<void> {
-    if (null == entities || 0 === entities.length) {
-      return new Promise((resolve) => { resolve(); });
-    }
-    return this._redis.eval([
-      this._luaMUpdateGenerator(),
-      entities.length + 1,
-      ...(entities.map((entity) => this._keyGen(entity))),
-      this._reverseHashKey,
-      ...(entities.map((entity) => JSON.stringify(entity[this.model.id]))),
-    ]);
-  }
-
-  /**
-   * Updates an entity in queries related to the entity.
-   * @param entity entity to be updated.
-   * @returns Promise of query sync.
-   */
-  public syncUpdate(entity: TEntity): Promise<void> {
-    return this._redis.eval(
-      this._luaUpdateGenerator(),
-      2,
-      this._reverseHashKey,
-      this._keyGen(entity),
-      VOID_RESULT_STRING,
-      JSON.stringify(entity[this.model.id]),
-    );
   }
 
   /**
@@ -254,29 +194,15 @@ export class MultipleResultQueryManager<
   }
 
   /**
-   * Gets the lua script for a delete request.
-   * @returns lua script.
-   */
-  private _luaDeleteGenerator(): string {
-    return `local key = redis.call('hget', KEYS[1], ARGV[1])
-if key then
-  redis.call('srem', key, ARGV[1])
-  if 0 == redis.call('scard', key) then
-    redis.call('sadd', key, ARGV[2])
-  end
-  redis.call('hdel', KEYS[1], ARGV[1])
-end`;
-  }
-
-  /**
    * Gets the lua script for a get request.
    * @returns lua script.
    */
   private _luaGetGenerator(): string {
+    const entityId = 'KEYS[1]';
     const entitiesAlias = 'entities';
     const idsAlias = 'ids';
     const resultAlias = 'result';
-    return `local ${idsAlias} = redis.call('smembers', KEYS[1])
+    return `local ${idsAlias} = redis.call('smembers', ${entityId})
 if #${idsAlias} == 0 then
   return nil
 else
@@ -301,33 +227,16 @@ end`;
   }
 
   /**
-   * Gets the lua script for a multiple delete request.
-   * @returns Lua script.
-   */
-  private _luaMDeleteGenerator(): string {
-    return `local reverseKey = KEYS[1]
-for i=1, #ARGV do
-  local key = redis.call('hget', reverseKey, ARGV[i])
-  if key then
-    redis.call('srem', key, ARGV[i])
-    if 0 == redis.call('scard', key) then
-      redis.call('sadd', key, '${VOID_RESULT_STRING}')
-    end
-    redis.call('hdel', reverseKey, ARGV[i])
-  end
-end`;
-  }
-
-  /**
    * Gets the lua script for a multiple get request.
    * @returns Lua script.
    */
   private _luaMGetGenerator(): string {
+    const ithQueryKey = 'KEYS[i]';
     const entitiesAlias = 'entities';
     const idsAlias = 'ids';
     return `local results = {}
 for i=1, #KEYS do
-  local ${idsAlias} = redis.call('smembers', KEYS[i])
+  local ${idsAlias} = redis.call('smembers', ${ithQueryKey})
   if #${idsAlias} > 0 then
     if ${idsAlias}[1] == '${VOID_RESULT_STRING}' then
       results[#results + 1] = '${VOID_RESULT_STRING}'
@@ -366,7 +275,7 @@ redis.call('srem', currentKey, '${VOID_RESULT_STRING}')
 for i=1, #ARGV do
   if ARGV[i] == '${SEPARATOR_STRING}' then
     currentKeyCounter = currentKeyCounter + 1;
-    local currentKey = KEYS[currentKeyCounter]
+    currentKey = KEYS[currentKeyCounter]
     redis.call('srem', currentKey, '${VOID_RESULT_STRING}')
   else
     if ARGV[i] == '${VOID_RESULT_STRING}' then
@@ -377,30 +286,6 @@ for i=1, #ARGV do
       redis.call('hset', reverseKey, ARGV[i], currentKey)
       redis.call('sadd', currentKey, ARGV[i])
     end
-  end
-end`;
-  }
-
-  /**
-   * Gets the lua script for an mUpdate request.
-   * @returns Lua script.
-   */
-  private _luaMUpdateGenerator(): string {
-    return `local reverseKey = KEYS[#KEYS]
-for i=1, #KEYS-1 do
-  local key = redis.call('hget', reverseKey, ARGV[i])
-  if key then
-    redis.call('srem', key, ARGV[i])
-    if 0 == redis.call('scard', key) then
-      redis.call('sadd', key, '${VOID_RESULT_STRING}')
-    end
-  end
-  if 0 == redis.call('scard', KEYS[i]) then
-    redis.call('hdel', reverseKey, ARGV[i])
-  else
-    redis.call('hset', reverseKey, ARGV[i], KEYS[i])
-    redis.call('srem', KEYS[i], '${VOID_RESULT_STRING}')
-    redis.call('sadd', KEYS[i], ARGV[i])
   end
 end`;
   }
@@ -423,26 +308,6 @@ end`;
   private _luaSetVoidQueryGenerator(): string {
     return `if 0 == redis.call('scard', KEYS[1]) then
   redis.call('sadd', KEYS[1], '${VOID_RESULT_STRING}')
-end`;
-  }
-  /**
-   * Gets the lua script for an update request.
-   * @returns lua script.
-   */
-  private _luaUpdateGenerator(): string {
-    return `local key = redis.call('hget', KEYS[1], ARGV[2])
-if key then
-  redis.call('srem', key, ARGV[2])
-  if 0 == redis.call('scard', key) then
-    redis.call('sadd', key, ARGV[1])
-  end
-end
-if 0 == redis.call('scard', KEYS[2]) then
-  redis.call('hdel', KEYS[1], ARGV[2])
-else
-  redis.call('hset', KEYS[1], ARGV[2], KEYS[2])
-  redis.call('srem', KEYS[2], ARGV[1])
-  redis.call('sadd', KEYS[2], ARGV[2])
 end`;
   }
 

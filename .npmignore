@@ -11,5 +11,8 @@
 # npm dependencies
 /node_modules
 
+# AntJS development scripts
+/scripts
+
 # coveralls config
 .coveralls.yml

@@ -16,13 +16,7 @@ export interface IPrimaryEntityManager<TEntity extends IEntity> {
    * @param entity Entity to delete
    * @returns Promise of entities deleted.
    */
-  delete(entity: TEntity): Promise<number>;
-  /**
-   * Deletes multiple entities.
-   * @param entities Entities to delete.
-   * @returns Promise of entities deleted.
-   */
-  mDelete(entities: TEntity[]): Promise<void>;
+  delete(id: number|string): Promise<number>;
   /**
    * Gets a model by its id.
    * @param id: Model's id.
@@ -33,7 +27,6 @@ export interface IPrimaryEntityManager<TEntity extends IEntity> {
     id: number|string,
     cacheOptions?: ICacheOptions,
   ): Promise<TEntity>;
-
   /**
    * Gets a collection of models by its ids.
    * @param ids Model ids.
@@ -49,6 +42,12 @@ export interface IPrimaryEntityManager<TEntity extends IEntity> {
    * @returns function able to generate a lua expression that generates a key from a giving id.
    */
   getKeyGenerationLuaScriptGenerator(): (alias: string) => string;
+  /**
+   * Deletes multiple entities.
+   * @param ids Ids of the entities to delete.
+   * @returns Promise of entities deleted.
+   */
+  mDelete(ids: number[]|string[]): Promise<void>;
   /**
    * Cache multiple entities.
    * @param entities Entities to cache.
