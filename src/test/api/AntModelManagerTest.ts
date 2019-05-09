@@ -1,4 +1,3 @@
-import { IAntQueryConfig } from '../../api/IAntQueryConfig';
 import { IEntity } from '../../model/IEntity';
 import { Model } from '../../model/Model';
 import { IModelManager } from '../../persistence/primary/IModelManager';
