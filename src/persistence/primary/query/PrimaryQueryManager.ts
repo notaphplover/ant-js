@@ -78,10 +78,29 @@ export abstract class PrimaryQueryManager<
   }
 
   /**
+   * True if the queries managed can return multiple results.
+   */
+  public abstract get isMultiple(): boolean;
+
+  /**
+   * Query key generator.
+   */
+  public get keyGen(): (params: any) => string {
+    return this._keyGen;
+  }
+
+  /**
    * Query's model.
    */
   public get model(): IModel {
     return this._primaryEntityManager.model;
+  }
+
+  /**
+   * Obtains the reverse hash key.
+   */
+  public get reverseHashKey(): string {
+    return this._reverseHashKey;
   }
 
   /**
@@ -104,33 +123,6 @@ export abstract class PrimaryQueryManager<
     paramsArray: any[],
     cacheOptions?: ICacheOptions,
   ): Promise<TEntity[]>;
-
-  /**
-   * Syncs the remove of an entity in cache.
-   * @param id Id of the entity whose deletion must be sync.
-   * @returns Promise of query sync.
-   */
-  public abstract syncDelete(id: number|string): Promise<void>;
-
-  /**
-   * Syncs the remove of entities in cache.
-   * @param entities deleted entities.
-   * @returns Promise of query sync
-   */
-  public abstract syncMDelete(ids: number[]|string[]): Promise<void>;
-
-  /**
-   * Syncs the update of multiple entities.
-   * @param entities updated entities.
-   * @returns Promise of query sync
-   */
-  public abstract syncMUpdate(entities: TEntity[]): Promise<void>;
-
-  /**
-   * Syncs the update of an entity in cache.
-   * @param entity updated entity.
-   */
-  public abstract syncUpdate(entity: TEntity): Promise<void>;
 
   /**
    * Creates an standard mquery.

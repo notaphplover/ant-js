@@ -182,20 +182,18 @@ This is probably caused by the absence of a config instance. Ensure that config 
   /**
    * Updates multiple entities at the cache layer.
    * @param entities Entities to be updated.
-   * @param cacheOptions Cache options.
    * @returns Priomise of entities updated.
    */
-  public mUpdate(entities: TEntity[], cacheOptions?: ICacheOptions): Promise<any> {
-    return this.modelManager.mUpdate(entities, cacheOptions);
+  public mUpdate(entities: TEntity[]): Promise<any> {
+    return this.modelManager.mUpdate(entities);
   }
   /**
    * Updates an entity at the cache layer.
    * @param entity Entitty to update.
-   * @param cacheOptions Cache options.
    * @returns Promise of entity updated.
    */
-  public update(entity: TEntity, cacheOptions?: ICacheOptions): Promise<any> {
-    return this.modelManager.update(entity, cacheOptions);
+  public update(entity: TEntity): Promise<any> {
+    return this.modelManager.update(entity);
   }
   /**
    * Generates a new model manager.
