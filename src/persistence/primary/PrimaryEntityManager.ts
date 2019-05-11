@@ -49,15 +49,6 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   }
 
   /**
-   * Deletes an entity from the cache
-   * @param id Id of the entity to be deleted.
-   * @returns Promise of entity deleted.
-   */
-  public delete(id: number|string) {
-    return this._redis.del(this._getKey(id));
-  }
-
-  /**
    * Gets an entity by its id.
    * @param id: Entity's id.
    * @returns Model found.
@@ -90,23 +81,139 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   }
 
   /**
-   * Deletes multiple entities.
-   * @param ids Ids of the entities to delete.
-   * @returns Promise of entities deleted.
+   * Gets the key of an entity.
+   * @param id entity's id.
    */
-  public mDelete(ids: number[]|string[]): Promise<void> {
-    if (null == ids || 0 === ids.length) {
-      return new Promise<void>((resolve) => resolve());
+  protected _getKey(id: number|string): string {
+    const keyGen = this.model.keyGen;
+    return (keyGen.prefix || '')
+      + id
+      + (keyGen.suffix || '');
+  }
+
+  /**
+   * Gets an entity by its id.
+   * @param id Entity's id.
+   * @param cacheOptions Cache options.
+   */
+  protected async _innerGetById(
+    id: number|string,
+    cacheOptions: ICacheOptions,
+  ): Promise<TEntity> {
+    if (null == id) {
+      return null;
     }
-    const keys = (ids as Array<number|string>).map(
-      (id) =>
-        this._getKey(id),
+    const cachedEntity = await this._redis.get(this._getKey(id));
+    if (cachedEntity) {
+      return JSON.parse(cachedEntity);
+    }
+    if (!this._successor) {
+      return null;
+    }
+    return this._successor.getById(id).then((entity) => {
+      this._update(entity, cacheOptions);
+      return entity;
+    });
+  }
+
+  /**
+   * Gets entities by its ids.
+   * @param ids Entities ids.
+   * @param idsAreDifferent True if the ids are different.
+   * @param cacheOptions Cache options.
+   * @returns Entities found.
+   */
+  protected async _innerGetByIds(
+    ids: number[]|string[],
+    cacheOptions: ICacheOptions,
+  ): Promise<TEntity[]> {
+    if (0 === ids.length) {
+      return new Promise((resolve) => { resolve(new Array()); });
+    }
+    return this._innerGetByDistinctIdsNotMapped(
+      // Get the different ones.
+      Array.from(new Set<number|string>(ids)) as number[]|string[],
+      cacheOptions,
     );
-    return this._redis.eval([
-      this._luaGetMultipleDel(),
-      ids.length,
-      ...keys,
-    ]);
+  }
+
+  /**
+   * Gets entities by its ids.
+   * @param ids Entities ids.
+   * @param cacheOptions Cache options.
+   * @returns Entities found.
+   */
+  protected async _innerGetByDistinctIdsNotMapped(
+    ids: number[]|string[],
+    cacheOptions: ICacheOptions,
+  ): Promise<TEntity[]> {
+    const keysArray = (ids as Array<number|string>).map((id) => this._getKey(id));
+    const entities: string[] = await this._redis.mget(...keysArray);
+    const cacheResults: TEntity[] = entities.map((entity) => JSON.parse(entity));
+    const results = new Array<TEntity>();
+    const missingIds = new Array();
+
+    for (let i = 0; i < keysArray.length; ++i) {
+      if (null == cacheResults[i]) {
+        missingIds.push(ids[i]);
+      } else {
+        results.push(cacheResults[i]);
+      }
+    }
+
+    if (this._successor && missingIds.length > 0) {
+      const missingData = await this._successor.getByIds(missingIds);
+      this._mUpdate(missingData, cacheOptions);
+      for (const missingEntity of missingData) {
+        results.push(missingEntity);
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Creates a function that creates a lua script to create an entity key from an id.
+   * @param keyGenParams Key generation params.
+   */
+  protected _innerGetKeyGenerationLuaScriptGenerator(keyGenParams: IKeyGenParams) {
+    const instructions = new Array<(alias: string) => string>();
+    if (null != keyGenParams.prefix && '' !== keyGenParams.prefix) {
+      instructions.push(() => '"' + keyGenParams.prefix + '" .. ');
+    }
+    instructions.push((alias) => alias);
+    if (null != keyGenParams.suffix && '' !== keyGenParams.suffix) {
+      instructions.push(() => ' .. "' + keyGenParams.suffix + '"');
+    }
+    return (alias: string) => {
+      return instructions.reduce(
+        (previousValue, currentValue) =>
+          previousValue + currentValue(alias),
+        '',
+      );
+    };
+  }
+
+  /**
+   * Gets the script for deleting multiple keys.
+   * @returns Lua script.
+   */
+  protected _luaGetMultipleDel(): string {
+    return `for i=1, #KEYS do
+  redis.call('del', KEYS[i])
+end`;
+  }
+
+  /**
+   * Gets the script for setting multiple keys with a TTL value.
+   * @param ttl TTL to apply.
+   * @returns generated script.
+   */
+  protected _luaGetMultipleSetEx(): string {
+    return `local ttl = ARGV[#ARGV]
+for i=1, #KEYS do
+  redis.call('setex', KEYS[i], ttl, ARGV[i])
+end`;
   }
 
   /**
@@ -115,7 +222,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    * @param cacheOptions Cache options.
    * @returns Promise of entities cached.
    */
-  public mUpdate(
+  protected _mUpdate(
     entities: TEntity[],
     cacheOptions: ICacheOptions = new CacheOptions(),
   ): Promise<any> {
@@ -160,7 +267,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    * @param cacheOptions Cache options.
    * @returns Promise of redis operation ended
    */
-  public update(
+  protected _update(
     entity: TEntity,
     cacheOptions: ICacheOptions = new CacheOptions(),
   ): Promise<any> {
@@ -179,141 +286,5 @@ export class PrimaryEntityManager<TEntity extends IEntity>
       default:
         throw new Error('Unexpected cache options.');
     }
-  }
-
-  /**
-   * Gets the key of an entity.
-   * @param id entity's id.
-   */
-  protected _getKey(id: number|string): string {
-    const keyGen = this.model.keyGen;
-    return (keyGen.prefix || '')
-      + id
-      + (keyGen.suffix || '');
-  }
-
-  /**
-   * Gets the script for deleting multiple keys.
-   * @returns Lua script.
-   */
-  protected _luaGetMultipleDel(): string {
-    return `for i=1, #KEYS do
-  redis.call('del', KEYS[i])
-end`;
-  }
-
-  /**
-   * Gets the script for setting multiple keys with a TTL value.
-   * @param ttl TTL to apply.
-   * @returns generated script.
-   */
-  protected _luaGetMultipleSetEx(): string {
-    return `local ttl = ARGV[#ARGV]
-for i=1, #KEYS do
-  redis.call('setex', KEYS[i], ttl, ARGV[i])
-end`;
-  }
-
-  /**
-   * Gets an entity by its id.
-   * @param id Entity's id.
-   * @param cacheOptions Cache options.
-   */
-  protected async _innerGetById(
-    id: number|string,
-    cacheOptions: ICacheOptions,
-  ): Promise<TEntity> {
-    if (null == id) {
-      return null;
-    }
-    const cachedEntity = await this._redis.get(this._getKey(id));
-    if (cachedEntity) {
-      return JSON.parse(cachedEntity);
-    }
-    if (!this._successor) {
-      return null;
-    }
-    return this._successor.getById(id).then((entity) => {
-      this.update(entity, cacheOptions);
-      return entity;
-    });
-  }
-
-  /**
-   * Gets entities by its ids.
-   * @param ids Entities ids.
-   * @param idsAreDifferent True if the ids are different.
-   * @param cacheOptions Cache options.
-   * @returns Entities found.
-   */
-  protected async _innerGetByIds(
-    ids: number[]|string[],
-    cacheOptions: ICacheOptions,
-  ): Promise<TEntity[]> {
-    if (0 === ids.length) {
-      return new Promise((resolve) => { resolve(new Array()); });
-    }
-    return this._innerGetByDistinctIdsNotMapped(
-      // Get the different ones.
-      (Array.from(new Set<number|string>(ids)) as number[]|string[]),
-      cacheOptions,
-    );
-  }
-
-  /**
-   * Gets entities by its ids.
-   * @param ids Entities ids.
-   * @param cacheOptions Cache options.
-   * @returns Entities found.
-   */
-  protected async _innerGetByDistinctIdsNotMapped(
-    ids: number[]|string[],
-    cacheOptions: ICacheOptions,
-  ): Promise<TEntity[]> {
-    const keysArray = (ids as Array<number|string>).map((id) => this._getKey(id));
-    const entities: string[] = await this._redis.mget(...keysArray);
-    const cacheResults: TEntity[] = entities.map((entity) => JSON.parse(entity));
-    const results = new Array<TEntity>();
-    const missingIds = new Array();
-
-    for (let i = 0; i < keysArray.length; ++i) {
-      if (null == cacheResults[i]) {
-        missingIds.push(ids[i]);
-      } else {
-        results.push(cacheResults[i]);
-      }
-    }
-
-    if (this._successor && missingIds.length > 0) {
-      const missingData = await this._successor.getByIds(missingIds);
-      this.mUpdate(missingData, cacheOptions);
-      for (const missingEntity of missingData) {
-        results.push(missingEntity);
-      }
-    }
-
-    return results;
-  }
-
-  /**
-   * Creates a function that creates a lua script to create an entity key from an id.
-   * @param keyGenParams Key generation params.
-   */
-  protected _innerGetKeyGenerationLuaScriptGenerator(keyGenParams: IKeyGenParams) {
-    const instructions = new Array<(alias: string) => string>();
-    if (null != keyGenParams.prefix && '' !== keyGenParams.prefix) {
-      instructions.push(() => '"' + keyGenParams.prefix + '" .. ');
-    }
-    instructions.push((alias) => alias);
-    if (null != keyGenParams.suffix && '' !== keyGenParams.suffix) {
-      instructions.push(() => ' .. "' + keyGenParams.suffix + '"');
-    }
-    return (alias: string) => {
-      return instructions.reduce(
-        (previousValue, currentValue) =>
-          previousValue + currentValue(alias),
-        '',
-      );
-    };
   }
 }
