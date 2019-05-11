@@ -11,6 +11,11 @@ import { RedisWrapper } from './RedisWrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
+type IEntityTest = IEntity & {
+  id: number,
+  field: string,
+};
+
 export class PrimaryEntityManagerTest implements ITest {
   /**
    * Before all task performed promise.
@@ -42,18 +47,11 @@ export class PrimaryEntityManagerTest implements ITest {
       this._itGeneratesALuaKeyGeneratorUsingAPrefix();
       this._itGeneratesALuaKeyGeneratorUsingASuffix();
       this._itMustBeInitializable();
-      this._itMustDeleteAnEntity();
-      this._itMustDeleteMultipleEntitities();
-      this._itMustDeleteZeroEntitities();
       this._itMustFindAnEntityOutsideCache();
       this._itMustFindNullIfNullIdIsProvided();
       this._itMustFindMultipleEntitiesOutsideCache();
       this._itMustFindNullIfNoSuccessorIsProvidedAndCacheFails();
       this._itMustFindZeroEntities();
-      this._itMustPersistAnEntity();
-      this._itMustPersistMultipleEntities();
-      this._itMustPersistMultipleEntitiesWithTTL();
-      this._itMustPersistZeroEntities();
     });
   }
 
@@ -64,31 +62,16 @@ export class PrimaryEntityManagerTest implements ITest {
    */
   private _helperGenerateBaseInstances(
     prefix: string,
-    entities: Array<IEntity & {
-      id: number,
-      field: string,
-    }>,
+    entities: IEntityTest[],
   ): [
     IModel,
-    IPrimaryEntityManager<IEntity & {
-      id: number,
-      field: string,
-    }>,
-    SecondaryEntityManagerMock<IEntity & {
-      id: number,
-      field: string,
-    }>,
+    IPrimaryEntityManager<IEntityTest>,
+    SecondaryEntityManagerMock<IEntityTest>,
   ] {
     const model = new Model('id', { prefix: prefix });
     const secondaryEntityManager =
-        new SecondaryEntityManagerMock<IEntity & {
-          id: number,
-          field: string,
-        }>(model, entities);
-    const primaryEntityManager = new PrimaryEntityManager<IEntity & {
-      id: number,
-      field: string,
-    }>(
+        new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+    const primaryEntityManager = new PrimaryEntityManager<IEntityTest>(
       model,
       this._redis.redis,
       secondaryEntityManager,
@@ -105,25 +88,24 @@ export class PrimaryEntityManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
+
+      const entity1: IEntityTest = {id: 1, field: 'sample-1'};
+      const entity1Modified: IEntityTest = {id: 1, field: 'sample-modified'};
+
       const [
         model,
         primaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, new Array());
-      const entity1: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 1, field: 'sample-1'};
-      const entity1Modified: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 1, field: 'sample-modified'};
+        secondaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity1]);
 
-      await primaryEntityManager.update(entity1);
-      await primaryEntityManager.update(
-        entity1Modified,
+      await primaryEntityManager.getById(entity1[model.id]);
+      secondaryEntityManager.store[0] = entity1Modified;
+
+      expect(await primaryEntityManager.getById(
+        entity1Modified[model.id],
         new CacheOptions(CacheMode.CacheIfNotExist),
-      );
-      expect(await primaryEntityManager.getById(entity1Modified[model.id])).toEqual(entity1);
+      )).toEqual(entity1);
+
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -133,22 +115,22 @@ export class PrimaryEntityManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
+
+      const entity1: IEntityTest = {id: 1, field: 'sample-1'};
+
       const [
         model,
         primaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, new Array());
-      const entity1: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 1, field: 'sample-1'};
+        secondaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity1]);
 
-      await primaryEntityManager.mUpdate(
-        [entity1],
+      await primaryEntityManager.getById(
+        entity1[model.id],
         new CacheOptions(CacheMode.NoCache),
       );
+      secondaryEntityManager.store.pop();
 
-      expect(await primaryEntityManager.getById(entity1[model.id]))
-        .toBe(null);
+      expect(await primaryEntityManager.getById(entity1[model.id])).toBe(null);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -158,22 +140,22 @@ export class PrimaryEntityManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
+
+      const entity1: IEntityTest = {id: 1, field: 'sample-1'};
+
       const [
         model,
         primaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, new Array());
-      const entity1: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 1, field: 'sample-1'};
+        secondaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity1]);
 
-      await primaryEntityManager.update(
-        entity1,
+      await primaryEntityManager.getById(
+        entity1[model.id],
         new CacheOptions(CacheMode.NoCache),
       );
+      secondaryEntityManager.store.pop();
 
-      expect(await primaryEntityManager.getById(entity1[model.id]))
-        .toBe(null);
+      expect(await primaryEntityManager.getById(entity1[model.id])).toBe(null);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -183,22 +165,21 @@ export class PrimaryEntityManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
+
+      const entity1: IEntityTest = {id: 1, field: 'sample-1'};
+
       const [
-        ,
+        model,
         primaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, new Array());
-      const entity1: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 1, field: 'sample-1'};
+      ] = this._helperGenerateBaseInstances(prefix, [entity1]);
 
       /*
        * Expect async to throw error just sucks:
        * https://github.com/jasmine/jasmine/issues/1410
        */
       try {
-        await primaryEntityManager.mUpdate(
-          [entity1],
+        await primaryEntityManager.getByIds(
+          [entity1[model.id]],
           new CacheOptions(CacheMode.CacheIfNotExist),
         );
         fail();
@@ -214,22 +195,21 @@ export class PrimaryEntityManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
+
+      const entity1: IEntityTest = {id: 1, field: 'sample-1'};
+
       const [
-        ,
+        model,
         primaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, new Array());
-      const entity1: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 1, field: 'sample-1'};
+      ] = this._helperGenerateBaseInstances(prefix, [entity1]);
 
       /*
        * Expect async to throw error just sucks:
        * https://github.com/jasmine/jasmine/issues/1410
        */
       try {
-        await primaryEntityManager.mUpdate(
-          [entity1],
+        await primaryEntityManager.getByIds(
+          [entity1[model.id]],
           new CacheOptions('Ohhh yeaaaahh!' as unknown as CacheMode),
         );
         fail();
@@ -245,22 +225,21 @@ export class PrimaryEntityManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
+
+      const entity1: IEntityTest = {id: 1, field: 'sample-1'};
+
       const [
-        ,
+        model,
         primaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, new Array());
-      const entity1: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 1, field: 'sample-1'};
+      ] = this._helperGenerateBaseInstances(prefix, [entity1]);
 
       /*
        * Expect async to throw error just sucks:
        * https://github.com/jasmine/jasmine/issues/1410
        */
       try {
-        await primaryEntityManager.update(
-          entity1,
+        await primaryEntityManager.getById(
+          entity1[model.id],
           new CacheOptions('Ohhh yeaaaahh!' as unknown as CacheMode),
         );
         fail();
@@ -276,15 +255,12 @@ export class PrimaryEntityManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const entity: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 0, field: 'sample'};
+      const entity: IEntityTest = {id: 0, field: 'sample'};
       const [
-        ,
+        model,
         primaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, new Array());
-      await primaryEntityManager.update(entity);
+      ] = this._helperGenerateBaseInstances(prefix, [entity]);
+      await primaryEntityManager.getById(entity[model.id]);
       const luaKey = 'key';
       const luaExpression = primaryEntityManager.getKeyGenerationLuaScriptGenerator()(luaKey);
       const valueFound = await this._redis.redis.eval(
@@ -309,16 +285,14 @@ return redis.call('get', ${luaExpression})`,
     it(itsName, async (done) => {
       await this._beforeAllPromise;
       const model = new Model('id', {suffix: suffix});
-      const entity: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 0, field: 'sample'};
+      const entity: IEntityTest = {id: 0, field: 'sample'};
+      const secondaryEntityManager = new SecondaryEntityManagerMock(model, [entity]);
       const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
-        null,
+        secondaryEntityManager,
       );
-      await primaryEntityManager.update(entity);
+      await primaryEntityManager.getById(entity[model.id]);
       const luaKey = 'key';
       const luaExpression = primaryEntityManager.getKeyGenerationLuaScriptGenerator()(luaKey);
       const valueFound = await this._redis.redis.eval(
@@ -357,90 +331,12 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private _itMustDeleteAnEntity(): void {
-    const itsName = 'mustDeleteAnEntity';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(itsName, async (done) => {
-      await this._beforeAllPromise;
-      const entity: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 0, field: 'sample'};
-      const [
-        model,
-        primaryEntityManager,
-        secondaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, [entity]);
-
-      await primaryEntityManager.update(entity);
-      secondaryEntityManager.store.length = 0;
-      await primaryEntityManager.delete(entity.id);
-      const entityFound = await primaryEntityManager.getById(entity[model.id]);
-
-      expect(entityFound).toBeNull();
-      done();
-    }, MAX_SAFE_TIMEOUT);
-  }
-
-  private _itMustDeleteMultipleEntitities(): void {
-    const itsName = 'mustDeleteMultipleEntitities';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(itsName, async (done) => {
-      await this._beforeAllPromise;
-      const entity: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 0, field: 'sample'};
-      const [
-        model,
-        primaryEntityManager,
-        secondaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, [entity]);
-
-      await primaryEntityManager.update(entity);
-      secondaryEntityManager.store.length = 0;
-      await primaryEntityManager.mDelete([entity.id]);
-      const entityFound = await primaryEntityManager.getById(entity[model.id]);
-
-      expect(entityFound).toBeNull();
-      done();
-    }, MAX_SAFE_TIMEOUT);
-  }
-
-  private _itMustDeleteZeroEntitities(): void {
-    const itsName = 'mustDeleteZeroEntitities';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(itsName, async (done) => {
-      await this._beforeAllPromise;
-      const entity: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 0, field: 'sample'};
-      const [
-        model,
-        primaryEntityManager,
-        secondaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, [entity]);
-
-      await primaryEntityManager.update(entity);
-      secondaryEntityManager.store.length = 0;
-      await primaryEntityManager.mDelete(new Array());
-      const entityFound = await primaryEntityManager.getById(entity[model.id]);
-
-      expect(entityFound).toEqual(entity);
-      done();
-    }, MAX_SAFE_TIMEOUT);
-  }
-
   private _itMustFindAnEntityOutsideCache(): void {
     const itsName = 'mustFindAnEntityOutsideCache';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const entity: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 0, field: 'sample'};
+      const entity: IEntityTest = {id: 0, field: 'sample'};
       const [
         model,
         primaryEntityManager,
@@ -457,14 +353,8 @@ return redis.call('get', ${luaExpression})`,
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
-      const entity1: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 1, field: 'sample-1'};
-      const entity2: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 2, field: 'sample-2'};
+      const entity1: IEntityTest = {id: 1, field: 'sample-1'};
+      const entity2: IEntityTest = {id: 2, field: 'sample-2'};
       const [
         model,
         primaryEntityManager,
@@ -526,114 +416,6 @@ return redis.call('get', ${luaExpression})`,
 
       expect(async () => {
         await primaryEntityManager.getByIds(new Array());
-      }).not.toThrowError();
-      done();
-    }, MAX_SAFE_TIMEOUT);
-  }
-
-  private _itMustPersistAnEntity(): void {
-    const itsName = 'mustPersistAnEntity';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(itsName, async (done) => {
-      await this._beforeAllPromise;
-      const entity: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 0, field: 'sample'};
-      const [
-        model,
-        primaryEntityManager,
-        secondaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, [entity]);
-
-      await primaryEntityManager.update(entity);
-      secondaryEntityManager.store.length = 0;
-      const entityFound = await primaryEntityManager.getById(entity[model.id]);
-
-      expect(entityFound).toEqual(entity);
-      done();
-    }, MAX_SAFE_TIMEOUT);
-  }
-
-  private _itMustPersistMultipleEntities(): void {
-    const itsName = 'mustPersistMultipleEntities';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(itsName, async (done) => {
-      await this._beforeAllPromise;
-      const entity1: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 1, field: 'sample-1'};
-      const entity2: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 2, field: 'sample-2'};
-      const [
-        model,
-        primaryEntityManager,
-        secondaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
-
-      await primaryEntityManager.mUpdate([entity1, entity2]);
-      secondaryEntityManager.store.length = 0;
-      const entitiesFound = await primaryEntityManager.getByIds([
-        entity1[model.id],
-        entity2[model.id],
-      ]);
-
-      expect(entitiesFound).toContain(entity1);
-      expect(entitiesFound).toContain(entity2);
-      done();
-    }, MAX_SAFE_TIMEOUT);
-  }
-
-  private _itMustPersistMultipleEntitiesWithTTL(): void {
-    const itsName = 'mustPersistMultipleEntitiesWithTTL';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(itsName, async (done) => {
-      await this._beforeAllPromise;
-      const entity1: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 1, field: 'sample-1'};
-      const entity2: IEntity & {
-        id: number,
-        field: string,
-      } = {id: 2, field: 'sample-2'};
-      const [
-        model,
-        primaryEntityManager,
-        secondaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
-      const options = new CacheOptions(CacheMode.CacheAndOverwrite, 3600);
-      await primaryEntityManager.getByIds([
-        entity1[model.id],
-        entity2[model.id],
-      ], options);
-      secondaryEntityManager.store.length = 0;
-      const entitiesFound = await primaryEntityManager.getByIds([
-        entity1[model.id],
-        entity2[model.id],
-      ], options);
-
-      expect(entitiesFound).toContain(entity1);
-      expect(entitiesFound).toContain(entity2);
-      done();
-    }, MAX_SAFE_TIMEOUT);
-  }
-
-  private _itMustPersistZeroEntities(): void {
-    const itsName = 'mustPersistZeroEntities';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(itsName, async (done) => {
-      await this._beforeAllPromise;
-      const [
-        ,
-        primaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, new Array());
-
-      expect(async () => {
-        await primaryEntityManager.mUpdate(new Array());
       }).not.toThrowError();
       done();
     }, MAX_SAFE_TIMEOUT);

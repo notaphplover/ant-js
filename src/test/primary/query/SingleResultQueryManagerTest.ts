@@ -2,6 +2,7 @@ import { IEntity } from '../../../model/IEntity';
 import { IModel } from '../../../model/IModel';
 import { Model } from '../../../model/Model';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
+import { ModelManager } from '../../../persistence/primary/ModelManager';
 import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
 import { ITest } from '../../ITest';
 import { SecondaryEntityManagerMock } from '../../secondary/SecondaryEntityManagerMock';
@@ -164,10 +165,15 @@ export class SingleResultQueryManagerTest implements ITest {
         field: string,
       } = {id: 1, field: 'sample-1'};
       const [
-        ,
+        model,
         primaryEntityManager,
         secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
+      const modelManager = new ModelManager(
+        model,
+        this._redis.redis,
+        primaryEntityManager,
+      );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
@@ -185,7 +191,7 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.get({ field: entity1.field });
-      await primaryEntityManager.delete(entity1.id);
+      await modelManager.delete(entity1.id);
       const entityFound = await queryManager.get({ field: entity1.field });
       expect(entityFound).toEqual(entity1);
       done();
@@ -212,6 +218,11 @@ export class SingleResultQueryManagerTest implements ITest {
         this._redis.redis,
         secondaryEntityManager,
       );
+      const modelManager = new ModelManager(
+        model,
+        this._redis.redis,
+        primaryEntityManager,
+      );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
@@ -229,7 +240,7 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.get({ field: entity1.field });
-      await primaryEntityManager.delete(entity1.id);
+      await modelManager.delete(entity1.id);
       const entityFound = await queryManager.get({ field: entity1.field });
       expect(entityFound).toEqual(entity1);
       done();
@@ -340,10 +351,15 @@ export class SingleResultQueryManagerTest implements ITest {
         field: string,
       } = {id: 1, field: 'sample-1'};
       const [
-        ,
+        model,
         primaryEntityManager,
         secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
+      const modelManager = new ModelManager(
+        model,
+        this._redis.redis,
+        primaryEntityManager,
+      );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
@@ -361,7 +377,7 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.mGet([{ field: entity1.field }]);
-      await primaryEntityManager.delete(entity1.id);
+      await modelManager.delete(entity1.id);
       const entitiesFound = await queryManager.mGet([{ field: entity1.field }]);
       expect(entitiesFound).toEqual([entity1]);
       done();
@@ -388,6 +404,11 @@ export class SingleResultQueryManagerTest implements ITest {
         this._redis.redis,
         secondaryEntityManager,
       );
+      const modelManager = new ModelManager(
+        model,
+        this._redis.redis,
+        primaryEntityManager,
+      );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {
@@ -405,7 +426,7 @@ export class SingleResultQueryManagerTest implements ITest {
         prefix + 'query-by-field/',
       );
       await queryManager.mGet([{ field: entity1.field }]);
-      await primaryEntityManager.delete(entity1.id);
+      await modelManager.delete(entity1.id);
       const entityFound = await queryManager.mGet([{ field: entity1.field }]);
       expect(entityFound).toEqual([entity1]);
       done();
