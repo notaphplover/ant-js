@@ -10,6 +10,8 @@
     "build-and-test-debug": "npm run build && npm run test-debug-only",
     "clear-js": "node ./scripts/clear-compiled.js",
     "linter": "./node_modules/tslint/bin/tslint -c ./tslint.json -p ./src.tsconfig.commonjs.json",
+    "publish-npm": "npm run test && npm publish --access public",
+    "publish-npm-beta": "npm run test && npm publish --access public --tag beta",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "test": "npm run test-docker",
     "test-coverage": "npm run test-docker-coverage",
