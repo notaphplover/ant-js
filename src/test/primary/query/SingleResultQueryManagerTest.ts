@@ -48,6 +48,7 @@ export class SingleResultQueryManagerTest implements ITest {
       this._itMustPerformAnUncachedSearch();
       this._itMustPerformAnUnexistingCachedSearch();
       this._itMustPerformAnUnexistingUncachedSearch();
+      this._itMustProcessANegativeCachedEntity();
     });
   }
 
@@ -173,6 +174,7 @@ export class SingleResultQueryManagerTest implements ITest {
         model,
         this._redis.redis,
         primaryEntityManager,
+        false,
       );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
@@ -222,6 +224,7 @@ export class SingleResultQueryManagerTest implements ITest {
         model,
         this._redis.redis,
         primaryEntityManager,
+        false,
       );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
@@ -359,6 +362,7 @@ export class SingleResultQueryManagerTest implements ITest {
         model,
         this._redis.redis,
         primaryEntityManager,
+        false,
       );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
@@ -408,6 +412,7 @@ export class SingleResultQueryManagerTest implements ITest {
         model,
         this._redis.redis,
         primaryEntityManager,
+        false,
       );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
@@ -666,6 +671,49 @@ export class SingleResultQueryManagerTest implements ITest {
         primaryEntityManager,
         secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
+      const query = async (params: any) => {
+        const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
+        if (null == entityFound) {
+          return null;
+        } else {
+          return entityFound.id;
+        }
+      };
+      const queryManager = new SingleResultQueryByFieldManager(
+        query,
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        'field',
+        prefix + 'query-by-field/',
+      );
+      const entityFound = await queryManager.get({ field: entity1.field });
+      expect(entityFound).toBeNull();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustProcessANegativeCachedEntity(): void {
+    const itsName = 'mustProcessANegativeCachedEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntity & {
+        id: number,
+        field: string,
+      } = {id: 1, field: 'sample-1'};
+      const [
+        model,
+        primaryEntityManager,
+        secondaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity1]);
+      const modelManager = new ModelManager(
+        model,
+        this._redis.redis,
+        primaryEntityManager,
+        true,
+      );
+      modelManager.delete(entity1[model.id]);
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
         if (null == entityFound) {

@@ -17,6 +17,10 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
    */
   protected _model: IModel;
   /**
+   * True to use negative entity cache.
+   */
+  protected _negativeEntityCache: boolean;
+  /**
    * Primary entity manager.
    */
   protected _primaryEntityManager: IPrimaryEntityManager<TEntity>;
@@ -34,15 +38,18 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
    * @param model Model managed.
    * @param redis Redis connection.
    * @param primaryEntityManager Primary entity manager.
+   * @param negativeEntityCache True to use negative entity cache.
    * @param queryManagers Query managers.
    */
   public constructor(
     model: IModel,
     redis: IORedis.Redis,
     primaryEntityManager: IPrimaryEntityManager<TEntity>,
+    negativeEntityCache: boolean = true,
     queryManagers: Array<IPrimaryQueryManager<TEntity>> = new Array(),
   ) {
     this._model = model;
+    this._negativeEntityCache = negativeEntityCache;
     this._primaryEntityManager = primaryEntityManager;
     this._queryManagers = queryManagers;
     this._redis = redis;
@@ -190,6 +197,10 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
     const queriesNumber: string = '#KEYS';
     const ithQCode: string = 'ARGV[1 + i]';
 
+    const deleteSentence = this._negativeEntityCache ?
+      `redis.call('set', ${entityKey}, '${VOID_RESULT_STRING}')` :
+      `redis.call('del', ${entityKey})`;
+
     return `for i=1, ${queriesNumber} do
   local qCode = ${ithQCode}
   if '${SINGLE_RESULT_QUERY_CODE}' == qCode then
@@ -211,7 +222,7 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
     end
   end
 end
-redis.call('del', ${entityKey})`;
+${deleteSentence}`;
   }
 
   /**
@@ -227,6 +238,11 @@ redis.call('del', ${entityKey})`;
     const ithReverseKey = 'KEYS[i]';
     const jthEntityId = 'ARGV[j]';
     const jthEntityKey: string = this._primaryEntityManager.getKeyGenerationLuaScriptGenerator()(jthEntityId);
+
+    const deleteSentence = this._negativeEntityCache ?
+      `redis.call('set', ${jthEntityKey}, '${VOID_RESULT_STRING}')` :
+      `redis.call('del', ${jthEntityKey})`;
+
     return `local entitiesCount = ${entitiesCount}
 for i=1, ${queriesNumber} do
   local qCode = ${ithQCode}
@@ -256,7 +272,7 @@ for i=1, ${queriesNumber} do
   end
 end
 for j=1, entitiesCount do
-  redis.call('del', ${jthEntityKey})
+  ${deleteSentence}
 end`;
   }
 

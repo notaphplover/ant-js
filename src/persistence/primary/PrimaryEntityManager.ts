@@ -4,6 +4,7 @@ import { IKeyGenParams } from '../../model/IKeyGenParams';
 import { IModel } from '../../model/IModel';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
+import { VOID_RESULT_STRING } from './LuaConstants';
 import { CacheMode } from './options/CacheMode';
 import { CacheOptions } from './options/CacheOptions';
 import { ICacheOptions } from './options/ICacheOptions';
@@ -105,7 +106,11 @@ export class PrimaryEntityManager<TEntity extends IEntity>
     }
     const cachedEntity = await this._redis.get(this._getKey(id));
     if (cachedEntity) {
-      return JSON.parse(cachedEntity);
+      if (VOID_RESULT_STRING === cachedEntity) {
+        return null;
+      } else {
+        return JSON.parse(cachedEntity);
+      }
     }
     if (!this._successor) {
       return null;
@@ -149,15 +154,18 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   ): Promise<TEntity[]> {
     const keysArray = (ids as Array<number|string>).map((id) => this._getKey(id));
     const entities: string[] = await this._redis.mget(...keysArray);
-    const cacheResults: TEntity[] = entities.map((entity) => JSON.parse(entity));
     const results = new Array<TEntity>();
     const missingIds = new Array();
 
     for (let i = 0; i < keysArray.length; ++i) {
-      if (null == cacheResults[i]) {
+      if (VOID_RESULT_STRING === entities[i]) {
+        continue;
+      }
+      const cacheResult = JSON.parse(entities[i]);
+      if (null == cacheResult) {
         missingIds.push(ids[i]);
       } else {
-        results.push(cacheResults[i]);
+        results.push(cacheResult);
       }
     }
 
@@ -195,16 +203,6 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   }
 
   /**
-   * Gets the script for deleting multiple keys.
-   * @returns Lua script.
-   */
-  protected _luaGetMultipleDel(): string {
-    return `for i=1, #KEYS do
-  redis.call('del', KEYS[i])
-end`;
-  }
-
-  /**
    * Gets the script for setting multiple keys with a TTL value.
    * @param ttl TTL to apply.
    * @returns generated script.
@@ -224,7 +222,7 @@ end`;
    */
   protected _mUpdate(
     entities: TEntity[],
-    cacheOptions: ICacheOptions = new CacheOptions(),
+    cacheOptions: ICacheOptions,
   ): Promise<any> {
     if (null == entities || 0 === entities.length) {
       return new Promise<void>((resolve) => resolve());
@@ -269,7 +267,7 @@ end`;
    */
   protected _update(
     entity: TEntity,
-    cacheOptions: ICacheOptions = new CacheOptions(),
+    cacheOptions: ICacheOptions,
   ): Promise<any> {
     if (null == entity) {
       return new Promise((resolve) => resolve());
