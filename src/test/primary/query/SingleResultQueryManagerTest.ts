@@ -173,6 +173,7 @@ export class SingleResultQueryManagerTest implements ITest {
         model,
         this._redis.redis,
         primaryEntityManager,
+        false,
       );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
@@ -222,6 +223,7 @@ export class SingleResultQueryManagerTest implements ITest {
         model,
         this._redis.redis,
         primaryEntityManager,
+        false,
       );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
@@ -359,6 +361,7 @@ export class SingleResultQueryManagerTest implements ITest {
         model,
         this._redis.redis,
         primaryEntityManager,
+        false,
       );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
@@ -408,6 +411,7 @@ export class SingleResultQueryManagerTest implements ITest {
         model,
         this._redis.redis,
         primaryEntityManager,
+        false,
       );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);

@@ -30,6 +30,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
    * @param queryPrefix Query prefix.
    * @param reverseHashKey Reverse map hash key.
    * @param secondaryManager Secondary model manager.
+   * @param useEntityNegativeCache True to use negative entity cache.
    * @returns Model manager, primary entity manager and a map of properties to query managers.
    */
   public generateModelManager(
@@ -38,6 +39,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     queryPrefix: string,
     reverseHashKey: string,
     secondaryManager: SecondaryEntityManagerMock<TEntity>,
+    useEntityNegativeCache = true,
     redis?: IORedis.Redis,
   ): [
     IModelManager<TEntity>,
@@ -77,6 +79,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
         model,
         redisConn,
         primaryEntityManager,
+        useEntityNegativeCache,
         queryManagers,
       ),
       primaryEntityManager,
