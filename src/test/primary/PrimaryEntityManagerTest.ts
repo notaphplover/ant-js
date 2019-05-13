@@ -2,6 +2,7 @@ import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { Model } from '../../model/Model';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
+import { ModelManager } from '../../persistence/primary/ModelManager';
 import { CacheMode } from '../../persistence/primary/options/CacheMode';
 import { CacheOptions } from '../../persistence/primary/options/CacheOptions';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
@@ -52,6 +53,11 @@ export class PrimaryEntityManagerTest implements ITest {
       this._itMustFindMultipleEntitiesOutsideCache();
       this._itMustFindNullIfNoSuccessorIsProvidedAndCacheFails();
       this._itMustFindZeroEntities();
+      this._itMustSearchForAnEntityAndCacheIfNotExistsWhenCacheIfNotExistsIsSet();
+      this._itMustSearchForAnEntityAndFindANegativeCachedEntity();
+      this._itMustSearchForEntitiesAndCacheThemWithTTL();
+      this._itMustSearchForUnexistingEntities();
+      this._itMustSearchMultipleEntitiesAndFindANegativeCachedEntity();
     });
   }
 
@@ -124,8 +130,8 @@ export class PrimaryEntityManagerTest implements ITest {
         secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
 
-      await primaryEntityManager.getById(
-        entity1[model.id],
+      await primaryEntityManager.getByIds(
+        [entity1[model.id]],
         new CacheOptions(CacheMode.NoCache),
       );
       secondaryEntityManager.store.pop();
@@ -417,6 +423,117 @@ return redis.call('get', ${luaExpression})`,
       expect(async () => {
         await primaryEntityManager.getByIds(new Array());
       }).not.toThrowError();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSearchForAnEntityAndCacheIfNotExistsWhenCacheIfNotExistsIsSet(): void {
+    const itsName = 'mustSearchForAnEntityAndCacheIfNotExistsWhenCacheIfNotExistsIsSet';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity: IEntityTest = {id: 0, field: 'sample'};
+      const [
+        model,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity]);
+      const entityFound = await primaryEntityManager.getById(
+        entity[model.id],
+        new CacheOptions(CacheMode.CacheIfNotExist),
+      );
+
+      expect(entityFound).toEqual(entity);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSearchForAnEntityAndFindANegativeCachedEntity(): void {
+    const itsName = 'mustSearchForAnEntityAndFindANegativeCachedEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity: IEntityTest = {id: 0, field: 'sample'};
+      const [
+        model,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity]);
+      const modelManager = new ModelManager(
+        model,
+        this._redis.redis,
+        primaryEntityManager,
+        true,
+      );
+      await modelManager.delete(entity.id);
+      const entityFound = await primaryEntityManager.getById(entity[model.id]);
+
+      expect(entityFound).toBeNull();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSearchForEntitiesAndCacheThemWithTTL(): void {
+    const itsName = 'mustSearchForEntitiesAndCacheThemWithTTL';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity: IEntityTest = {id: 0, field: 'sample'};
+      const [
+        model,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity]);
+      const entityFound = await primaryEntityManager.getByIds(
+        [entity[model.id]],
+        new CacheOptions(CacheMode.CacheAndOverwrite, 1000),
+      );
+
+      expect(entityFound).toEqual([entity]);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSearchForUnexistingEntities(): void {
+    const itsName = 'mustSearchForUnexistingEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity: IEntityTest = {id: 0, field: 'sample'};
+      const [
+        model,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, new Array());
+      const entityFound = await primaryEntityManager.getByIds([
+        entity[model.id],
+      ]);
+
+      expect(entityFound).toEqual(new Array());
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSearchMultipleEntitiesAndFindANegativeCachedEntity(): void {
+    const itsName = 'mustSearchMultipleEntitiesAndFindANegativeCachedEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity: IEntityTest = {id: 0, field: 'sample'};
+      const entity2: IEntityTest = {id: 1, field: 'sample-2'};
+      const [
+        model,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity, entity2]);
+      const modelManager = new ModelManager(
+        model,
+        this._redis.redis,
+        primaryEntityManager,
+        true,
+      );
+      await modelManager.delete(entity.id);
+      const entityFound = await primaryEntityManager.getByIds([
+        entity[model.id],
+        entity2[model.id],
+      ]);
+
+      expect(entityFound).toEqual([entity2]);
       done();
     }, MAX_SAFE_TIMEOUT);
   }

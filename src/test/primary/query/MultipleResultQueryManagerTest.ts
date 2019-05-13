@@ -53,6 +53,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       this._itMustPerformAnUnexistingCachedSearch();
       this._itMustPerformAnUnexistingMultipleCachedSearch();
       this._itMustPerformAnUnexistingUncachedSearch();
+      this._itMustProcessANegativeCachedEntity();
     });
   }
 
@@ -463,6 +464,36 @@ export class MultipleResultQueryManagerTest implements ITest {
       );
       expect(await queryManager.get(entity)).toEqual(new Array());
       done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+  private _itMustProcessANegativeCachedEntity(): void {
+    const itsName = 'mustProcessANegativeCachedEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      done();
+      const entity1: NamedEntity = { id: 0, name: 'Pepe' };
+      const [
+        model,
+        primaryEntityManager,
+        secondaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity1]);
+      const modelManager = new ModelManager(
+        model,
+        this._redis.redis,
+        primaryEntityManager,
+        true,
+      );
+      const queryManager = new NamesStartingByLetter(
+        primaryEntityManager,
+        secondaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        prefix + 'names-starting-with/',
+      );
+      modelManager.delete(entity1[model.id]);
+      const entityFound = await queryManager.get({ name: entity1.name });
+      expect(entityFound).toEqual(new Array());
     }, MAX_SAFE_TIMEOUT);
   }
 }
