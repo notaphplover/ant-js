@@ -41,3 +41,7 @@ A coverage report will be generated at the coverage directory.
 ## Aknowledgements
 
 Special thanks to [Pablo López Torres](https://github.com/supertowers) for the theoretical knowledge and conversations that led to this project.
+
+## Tutorials and Documentation
+
+See more [tutorials](https://notaphplover.github.io/ant-js/tutorial/introduction.html) and [documentation](https://notaphplover.github.io/ant-js/).
