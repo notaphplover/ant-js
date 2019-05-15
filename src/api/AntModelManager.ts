@@ -15,8 +15,11 @@ import {
 } from '../persistence/primary/query/PrimaryQueryManager';
 import { SingleResultQueryManager } from '../persistence/primary/query/SingleResultQueryManager';
 import { IAntModelConfig } from './config/IAntModelConfig';
-import { IAntModelManager, TQueryManager } from './IAntModelManager';
-import { IAntQueryConfig } from './IAntQueryConfig';
+import { IAntQueryConfig } from './config/IAntQueryConfig';
+import {
+  IAntModelManager,
+  TQueryManager,
+} from './IAntModelManager';
 
 export type QueryMapType<
   TEntity extends IEntity,

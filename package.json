@@ -1,6 +1,6 @@
 {
   "name": "@antjs/ant-js",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "description": "Generic query manager.",
   "main": "src/ant.js",
   "scripts": {
@@ -10,6 +10,8 @@
     "build-and-test-debug": "npm run build && npm run test-debug-only",
     "clear-js": "node ./scripts/clear-compiled.js",
     "linter": "./node_modules/tslint/bin/tslint -c ./tslint.json -p ./src.tsconfig.commonjs.json",
+    "publish-npm": "npm run test && npm publish --access public",
+    "publish-npm-beta": "npm run test && npm publish --access public --tag beta",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "test": "npm run test-docker",
     "test-coverage": "npm run test-docker-coverage",
@@ -29,14 +31,14 @@
   "devDependencies": {
     "@types/ioredis": "^4.0.10",
     "@types/jasmine": "^3.3.12",
-    "@types/node": "^11.13.6",
+    "@types/node": "^11.13.10",
     "coveralls": "^3.0.3",
     "jasmine": "^3.4.0",
-    "nyc": "^14.0.0",
+    "nyc": "^14.1.1",
     "tslint": "^5.16.0",
-    "typescript": "^3.4.4"
+    "typescript": "^3.4.5"
   },
   "dependencies": {
-    "ioredis": "^4.9.0"
+    "ioredis": "^4.9.3"
   }
 }

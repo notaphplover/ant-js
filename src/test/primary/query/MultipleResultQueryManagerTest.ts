@@ -1,6 +1,7 @@
 import { IModel } from '../../../model/IModel';
 import { Model } from '../../../model/Model';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
+import { ModelManager } from '../../../persistence/primary/ModelManager';
 import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
 import { ITest } from '../../ITest';
 import { SecondaryEntityManagerMock } from '../../secondary/SecondaryEntityManagerMock';
@@ -52,6 +53,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       this._itMustPerformAnUnexistingCachedSearch();
       this._itMustPerformAnUnexistingMultipleCachedSearch();
       this._itMustPerformAnUnexistingUncachedSearch();
+      this._itMustProcessANegativeCachedEntity();
     });
   }
 
@@ -195,9 +197,6 @@ export class MultipleResultQueryManagerTest implements ITest {
       const searchParams = {name: 'P'};
       await queryManager.get(searchParams);
       const results = await queryManager.get(searchParams);
-      for (let i = 0; i < entitiesSize / 2; ++i) {
-        primaryEntityManager.delete(entitiesMap.get(i).id);
-      }
       expect(results.length).toBe(entities.length);
       for (const result of results) {
         expect(entitiesMap.get(result.id)).toEqual(result);
@@ -213,10 +212,16 @@ export class MultipleResultQueryManagerTest implements ITest {
       await this._beforeAllPromise;
       const entity1: NamedEntity = {id: 1, name: 'Pepe'};
       const [
-        ,
+        model,
         primaryEntityManager,
         secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
+      const modelManager = new ModelManager(
+        model,
+        this._redis.redis,
+        primaryEntityManager,
+        false,
+      );
       const queryManager = new NamesStartingByLetter(
         primaryEntityManager,
         secondaryEntityManager,
@@ -225,7 +230,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         prefix + 'names-starting-with/',
       );
       await queryManager.get(entity1);
-      await primaryEntityManager.delete(entity1.id);
+      await modelManager.delete(entity1.id);
       const entityFound = await queryManager.get(entity1);
       expect(entityFound).toEqual([entity1]);
       done();
@@ -246,6 +251,12 @@ export class MultipleResultQueryManagerTest implements ITest {
         this._redis.redis,
         secondaryEntityManager,
       );
+      const modelManager = new ModelManager(
+        model,
+        this._redis.redis,
+        primaryEntityManager,
+        false,
+      );
       const queryManager = new NamesStartingByLetterAlternative(
         primaryEntityManager,
         secondaryEntityManager,
@@ -254,7 +265,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         prefix + 'names-starting-with/',
       );
       await queryManager.get(entity1);
-      await primaryEntityManager.delete(entity1.id);
+      await modelManager.delete(entity1.id);
       const entityFound = await queryManager.get(entity1);
       expect(entityFound).toEqual([entity1]);
       done();
@@ -453,6 +464,36 @@ export class MultipleResultQueryManagerTest implements ITest {
       );
       expect(await queryManager.get(entity)).toEqual(new Array());
       done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+  private _itMustProcessANegativeCachedEntity(): void {
+    const itsName = 'mustProcessANegativeCachedEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      done();
+      const entity1: NamedEntity = { id: 0, name: 'Pepe' };
+      const [
+        model,
+        primaryEntityManager,
+        secondaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity1]);
+      const modelManager = new ModelManager(
+        model,
+        this._redis.redis,
+        primaryEntityManager,
+        true,
+      );
+      const queryManager = new NamesStartingByLetter(
+        primaryEntityManager,
+        secondaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/',
+        prefix + 'names-starting-with/',
+      );
+      modelManager.delete(entity1[model.id]);
+      const entityFound = await queryManager.get({ name: entity1.name });
+      expect(entityFound).toEqual(new Array());
     }, MAX_SAFE_TIMEOUT);
   }
 }

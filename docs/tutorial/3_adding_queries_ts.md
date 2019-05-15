@@ -29,7 +29,7 @@ In this tutorial we are creating two queries:
   1. A query to search all the users whose username is a certain string.
   2. A query to search all the users whose username starts by a certain letter.
 
-Now, the idea is to inject the queries into the manager. It could be a good idea to provide an interface for injecting queries and them coding a class that implements the interface:
+Now, the idea is to inject the queries into the manager. It could be a good idea to provide an interface for injecting queries and then coding a class that implements the interface:
 
 __src/provider/IQueryInjector.ts__
 ```typescript
@@ -111,7 +111,7 @@ export class UserQueriesProvider implements IQueryInjector<IUser> {
 
     return userManager.query<number>({
       isMultiple: false,
-      keyGen: (params: any) => 'user/name::' + params.letter,
+      queryKeyGen: (params: any) => 'user/name::' + params.letter,
       query: usersByUsername,
       reverseHashKey: 'user/name/reverse',
     });
@@ -140,7 +140,7 @@ export class UserQueriesProvider implements IQueryInjector<IUser> {
     };
     return userManager.query<number[]>({
       isMultiple: true,
-      keyGen: (params: any) => 'user/name-start::' + params.letter,
+      queryKeyGen: (params: any) => 'user/name-start::' + params.letter,
       query: usersStaringByLetterDBQuery,
       reverseHashKey: 'user/name-start/reverse',
     });
@@ -154,8 +154,9 @@ The steps to follow are simple. For each query:
   1. Create a query to the database. We are using knex for this purpose. Keep in mind that this query must return an id or a collection of ids of the entities that must be the result of the query.
   2. Create the AntJS query generation object. This object has the following params:
 
+  * __entityKeyGen (optional)__: function that determines, for an entity, the redis key of the query associated to the entity. If no entityKeyGen is provided, the function provided as queryKeyGen will be used for this purpose.
   * __isMultiple__: Must be true if the query returns an array of ids (that could be empty) or false if the query returns one id (that could be null if no entity is valid).
-  * __keyGen__: function that determines, for each query params, the redis key of the query results.
+  * __queryKeyGen__: function that determines, for each query params, the redis key of the query results.
   * __query__: Query created at the step 1.
   * __reverseHashKey__: Key of a special hash that is used by this library to manage query results of this query.
 

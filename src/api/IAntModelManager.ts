@@ -5,7 +5,7 @@ import { MultipleResultQueryManager } from '../persistence/primary/query/Multipl
 import { QueryResult } from '../persistence/primary/query/PrimaryQueryManager';
 import { SingleResultQueryManager } from '../persistence/primary/query/SingleResultQueryManager';
 import { IAntModelConfig } from './config/IAntModelConfig';
-import { IAntQueryConfig } from './IAntQueryConfig';
+import { IAntQueryConfig } from './config/IAntQueryConfig';
 
 export type TQueryManager<TEntity, TQueryResult> =
   TQueryResult extends any[]
