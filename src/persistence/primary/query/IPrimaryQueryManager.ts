@@ -1,10 +1,10 @@
 import { IEntity } from '../../../model/IEntity';
-import { ICacheOptions } from '../options/ICacheOptions';
+import { IQueryManager } from './IQueryManager';
 
 export interface IBasePrimaryQueryManager<
   TEntity extends IEntity,
   TResult extends TEntity | TEntity[],
-> {
+> extends IQueryManager<TEntity, TResult> {
   /**
    * True if the queries managed can return multiple results.
    */
@@ -21,25 +21,6 @@ export interface IBasePrimaryQueryManager<
    * Obtains the reverse hash key.
    */
   reverseHashKey: string;
-  /**
-   * Gets a query result.
-   * @param params query params.
-   * @returns query results.
-   */
-  get(
-    params: any,
-    cacheOptions?: ICacheOptions,
-  ): Promise<TResult>;
-  /**
-   * Gets the result of multiple queries.
-   * @param paramsArray Queries parameters.
-   * @param cacheOptions Cache options.
-   * @returns Queries results.
-   */
-  mGet(
-    paramsArray: any[],
-    cacheOptions?: ICacheOptions,
-  ): Promise<TEntity[]>;
 }
 
 export interface IPrimaryQueryManager<TEntity extends IEntity>

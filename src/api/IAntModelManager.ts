@@ -1,16 +1,16 @@
 import { IEntity } from '../model/IEntity';
 import { IBaseModelManager } from '../persistence/primary/IModelManager';
-import { IBasePrimaryQueryManager, IPrimaryQueryManager } from '../persistence/primary/query/IPrimaryQueryManager';
-import { MultipleResultQueryManager } from '../persistence/primary/query/MultipleResultQueryManager';
 import { QueryResult } from '../persistence/primary/query/PrimaryQueryManager';
-import { SingleResultQueryManager } from '../persistence/primary/query/SingleResultQueryManager';
 import { IAntModelConfig } from './config/IAntModelConfig';
 import { IAntQueryConfig } from './config/IAntQueryConfig';
+import { IAntMultipleResultQueryManager } from './query/IAntMultipleResultQueryManager';
+import { IAntQueryManager } from './query/IAntQueryManager';
+import { IAntSingleResultQueryManager } from './query/IAntSingleResultQueryManager';
 
-export type TQueryManager<TEntity, TQueryResult> =
+export type TAntQueryManager<TEntity, TQueryResult> =
   TQueryResult extends any[]
-    ? MultipleResultQueryManager<TEntity>
-    : SingleResultQueryManager<TEntity>;
+    ? IAntMultipleResultQueryManager<TEntity>
+    : IAntSingleResultQueryManager<TEntity>;
 
 export interface IAntModelManager<TEntity extends IEntity, TConfig extends IAntModelConfig>
   extends IBaseModelManager<TEntity> {
@@ -32,7 +32,7 @@ export interface IAntModelManager<TEntity extends IEntity, TConfig extends IAntM
    */
   query<TResult extends TEntity | TEntity[]>(
     alias: string,
-  ): IBasePrimaryQueryManager<TEntity, TResult>;
+  ): IAntQueryManager<TEntity, TResult>;
   /**
    * Adds a query to the manager.
    * @param query Query to add.
@@ -42,5 +42,5 @@ export interface IAntModelManager<TEntity extends IEntity, TConfig extends IAntM
   query<TQueryResult extends QueryResult>(
     queryConfig: IAntQueryConfig<TEntity, TQueryResult>,
     aliasOrNothing?: string,
-  ): TQueryManager<TEntity, TQueryResult>;
+  ): TAntQueryManager<TEntity, TQueryResult>;
 }
