@@ -55,6 +55,7 @@ export abstract class AntManager<
     let manager = this._managersByModel.get(model) as IAntModelManager<TEntity, TConfig>;
     if (undefined === manager) {
       manager = this._createModelManager(model);
+      this._managersByModel.set(model, manager);
       const config = this.config();
       if (config && config.default) {
         manager.config(config.default);

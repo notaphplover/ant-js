@@ -1,6 +1,7 @@
 import { AntTest } from './AntTest';
 import { AntManagerTest } from './api/AntManagerTest';
 import { AntModelManagerTest } from './api/AntModelManagerTest';
+import { AntQueryManagerTest } from './api/query/AntQueryManagerTest';
 import { ITest } from './ITest';
 import { ModelTest } from './model/ModelTest';
 import { ModelManagerTest } from './primary/ModelManagerTest';
@@ -15,6 +16,7 @@ export class AllTest implements ITest {
 
     new AntManagerTest(beforeAllPromise).performTests();
     new AntModelManagerTest(beforeAllPromise).performTests();
+    new AntQueryManagerTest(beforeAllPromise).performTests();
     new AntTest().performTests();
     new ModelManagerTest(beforeAllPromise).performTests();
     new ModelTest().performTests();

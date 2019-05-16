@@ -18,13 +18,18 @@ import { IAntModelConfig } from './config/IAntModelConfig';
 import { IAntQueryConfig } from './config/IAntQueryConfig';
 import {
   IAntModelManager,
-  TQueryManager,
+  TAntQueryManager,
 } from './IAntModelManager';
+import { AntMultipleResultQueryManager } from './query/AntMultipleResultQueryManager';
+import { AntSingleResultQueryManager } from './query/AntSingleResultQueryManager';
+import { IAntMultipleResultQueryManager } from './query/IAntMultipleResultQueryManager';
+import { IAntQueryManager } from './query/IAntQueryManager';
+import { IAntSingleResultQueryManager } from './query/IAntSingleResultQueryManager';
 
 export type QueryMapType<
   TEntity extends IEntity,
   TModel extends IModel
-> = Map<string, [TModel, IPrimaryQueryManager<TEntity>]>;
+> = Map<string, [TModel, IAntQueryManager<TEntity, TEntity|TEntity[]>]>;
 
 export abstract class AntModelManager<
   TEntity extends IEntity,
@@ -155,7 +160,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    */
   public query<TResult extends TEntity | TEntity[]>(
     alias: string,
-  ): IBasePrimaryQueryManager<TEntity, TResult>;
+  ): IAntQueryManager<TEntity, TResult>;
   /**
    * Adds a query to the manager.
    * @param queryConfig query manager config to add.
@@ -165,7 +170,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
   public query<TQueryResult extends QueryResult>(
     queryConfig: IAntQueryConfig<TEntity, TQueryResult>,
     aliasOrNothing?: string,
-  ): TQueryManager<TEntity, TQueryResult>;
+  ): TAntQueryManager<TEntity, TQueryResult>;
   /**
    * Adds or obtains a query.
    * @param queryOrAlias Query to manage or alias of the query to obtain.
@@ -175,7 +180,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
   public query<TResult extends QueryResult & (TEntity | TEntity[])>(
     queryOrAlias: IAntQueryConfig<TEntity, TResult>|string,
     aliasOrNothing?: string,
-  ): IBasePrimaryQueryManager<TEntity, TResult> | TQueryManager<TEntity, TResult> {
+  ): IAntQueryManager<TEntity, TResult> | TAntQueryManager<TEntity, TResult> {
     if ('string' === typeof queryOrAlias) {
       return this._queryGetQuery(queryOrAlias) as IBasePrimaryQueryManager<TEntity, TResult>;
     } else {
@@ -222,14 +227,14 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param alias Alias of the query.
    * @returns Query found.
    */
-  private _queryGetQuery(alias: string): IPrimaryQueryManager<TEntity> {
+  private _queryGetQuery(alias: string): IAntQueryManager<TEntity, TEntity|TEntity[]> {
     const mapEntry = this._queriesMap.get(alias);
     if (undefined === mapEntry) {
       return undefined;
     } else {
       const [model, query] = mapEntry;
       if (this._model === model) {
-        return query as IBasePrimaryQueryManager<TEntity, TEntity[]>;
+        return query as IAntQueryManager<TEntity, TEntity|TEntity[]>;
       } else {
         throw new Error('The query found manages a different model than the model managed by this manager.');
       }
@@ -244,10 +249,11 @@ This is probably caused by the absence of a config instance. Ensure that config 
   private _querySetQuery<TResult extends QueryResult>(
     queryConfig: IAntQueryConfig<TEntity, TResult>,
     aliasOrNothing?: string,
-  ): TQueryManager<TEntity, TResult> {
-    let query: TQueryManager<TEntity, TResult>;
+  ): TAntQueryManager<TEntity, TResult> {
+    let query: TAntQueryManager<TEntity, TResult>;
+    let innerQueryManager: IPrimaryQueryManager<TEntity>;
     if (queryConfig.isMultiple) {
-      query = new MultipleResultQueryManager<TEntity>(
+      innerQueryManager = new MultipleResultQueryManager<TEntity>(
         queryConfig.query as TQuery<number[] | string[]>,
         this.primaryEntityManager,
         this._config.redis,
@@ -255,9 +261,12 @@ This is probably caused by the absence of a config instance. Ensure that config 
         queryConfig.queryKeyGen,
         queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number[] | string[]>,
-      ) as TQueryManager<TEntity, TResult>;
+      );
+      query = new AntMultipleResultQueryManager<TEntity>(
+        innerQueryManager as MultipleResultQueryManager<TEntity>,
+      ) as IAntMultipleResultQueryManager<TEntity> as TAntQueryManager<TEntity, TResult>;
     } else {
-      query = new SingleResultQueryManager<TEntity>(
+      innerQueryManager = new SingleResultQueryManager<TEntity>(
         queryConfig.query as TQuery<number | string>,
         this.primaryEntityManager,
         this._config.redis,
@@ -265,9 +274,11 @@ This is probably caused by the absence of a config instance. Ensure that config 
         queryConfig.queryKeyGen,
         queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number | string>,
-      ) as TQueryManager<TEntity, TResult>;
+      );
+      query = new AntSingleResultQueryManager<TEntity>(
+        innerQueryManager as SingleResultQueryManager<TEntity>,
+      ) as IAntSingleResultQueryManager<TEntity> as TAntQueryManager<TEntity, TResult>;
     }
-    this.modelManager.addQuery(query);
     if (null != aliasOrNothing) {
       if (undefined === this._queriesMap.get(aliasOrNothing)) {
         this._queriesMap.set(aliasOrNothing, [this._model, query]);
@@ -275,6 +286,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
         throw new Error('There is already a query with this alias');
       }
     }
+    this.modelManager.addQuery(innerQueryManager);
     return query;
   }
 }

@@ -54,8 +54,10 @@ export class ModelManagerTest implements ITest {
       this._itMustAddAQuery();
       this._itMustBeInitializable();
       this._itMustBeInitializableWithNoQueries();
-      this._itMustDeleteAnEntity();
-      this._itMustDeleteMultipleEntities();
+      this._itMustDeleteAnEntityUsingNegativeCache();
+      this._itMustDeleteAnEntityWithoutUsingNegativeCache();
+      this._itMustDeleteMultipleEntitiesUsingNegativeCache();
+      this._itMustDeleteMultipleEntitiesWithoutUsingNegativeCache();
       this._itMustDeleteZeroEntities();
       this._itMustGetAnEntity();
       this._itMustGetMultipleEntities();
@@ -67,8 +69,10 @@ export class ModelManagerTest implements ITest {
       this._itMustSyncASRQWhenDeletingMultipleEntities();
       this._itMustSyncASRQWhenUpdatingAnEntity();
       this._itMustSyncASRQWhenUpdatingMultipleEntities();
-      this._itMustUpdateAnEntity();
-      this._itMustUpdateMultipleEntities();
+      this._itMustUpdateAnEntityUsingNegativeCache();
+      this._itMustUpdateAnEntityWithoutUsingNegativeCache();
+      this._itMustUpdateMultipleEntitiesUsingNegativeCache();
+      this._itMustUpdateMultipleEntitiesWithoutUsingNegativeCache();
       this._itMustUpdateZeroEntities();
     });
   }
@@ -197,8 +201,8 @@ export class ModelManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private _itMustDeleteAnEntity(): void {
-    const itsName = 'mustDeleteAnEntity';
+  private _itMustDeleteAnEntityUsingNegativeCache(): void {
+    const itsName = 'mustDeleteAnEntityUsingNegativeCache';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
@@ -231,6 +235,7 @@ export class ModelManagerTest implements ITest {
         prefix + 'query/',
         prefix + 'reverse/',
         secondaryEntityManager,
+        true,
       );
       secondaryEntityManager.store.shift();
       await modelManager.delete(entity1.id);
@@ -256,8 +261,68 @@ export class ModelManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private _itMustDeleteMultipleEntities(): void {
-    const itsName = 'mustDeleteMultipleEntities';
+  private _itMustDeleteAnEntityWithoutUsingNegativeCache(): void {
+    const itsName = 'mustDeleteAnEntityWithoutUsingNegativeCache';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'b',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+      ];
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+        queryManagersByProperty,
+      ] = this._modelManagerGenerator.generateModelManager(
+        model,
+        modelTestProperties,
+        prefix + 'query/',
+        prefix + 'reverse/',
+        secondaryEntityManager,
+        false,
+      );
+      secondaryEntityManager.store.shift();
+      await modelManager.delete(entity1.id);
+
+      const [
+        searchEntity1ByPrimaryEntityManager,
+        searchEntity1ByQueryManager,
+      ] = await this._helperSearchEntity(entity1, model, primaryEntityManager, queryManagersByProperty);
+      const [
+        searchEntity2ByPrimaryEntityManager,
+        searchEntity2ByQueryManager,
+      ] = await this._helperSearchEntity(entity2, model, primaryEntityManager, queryManagersByProperty);
+
+      expect(searchEntity1ByPrimaryEntityManager).toBeNull();
+      for (const search of searchEntity1ByQueryManager) {
+        expect(search).toBeNull();
+      }
+      expect(searchEntity2ByPrimaryEntityManager).toEqual(entity2);
+      for (const search of searchEntity2ByQueryManager) {
+        expect(search).toEqual(entity2);
+      }
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustDeleteMultipleEntitiesUsingNegativeCache(): void {
+    const itsName = 'mustDeleteMultipleEntitiesUsingNegativeCache';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
@@ -296,6 +361,82 @@ export class ModelManagerTest implements ITest {
         prefix + 'query/',
         prefix + 'reverse/',
         secondaryEntityManager,
+        true,
+      );
+      secondaryEntityManager.store.shift();
+      secondaryEntityManager.store.shift();
+      await modelManager.mDelete([entity1.id, entity2.id]);
+
+      const [
+        searchEntity1ByPrimaryEntityManager,
+        searchEntity1ByQueryManager,
+      ] = await this._helperSearchEntity(entity1, model, primaryEntityManager, queryManagersByProperty);
+      const [
+        searchEntity2ByPrimaryEntityManager,
+        searchEntity2ByQueryManager,
+      ] = await this._helperSearchEntity(entity2, model, primaryEntityManager, queryManagersByProperty);
+      const [
+        searchEntity3ByPrimaryEntityManager,
+        searchEntity3ByQueryManager,
+      ] = await this._helperSearchEntity(entity3, model, primaryEntityManager, queryManagersByProperty);
+
+      expect(searchEntity1ByPrimaryEntityManager).toBeNull();
+      for (const search of searchEntity1ByQueryManager) {
+        expect(search).toBeNull();
+      }
+      expect(searchEntity2ByPrimaryEntityManager).toBeNull();
+      for (const search of searchEntity2ByQueryManager) {
+        expect(search).toBeNull();
+      }
+      expect(searchEntity3ByPrimaryEntityManager).toEqual(entity3);
+      for (const search of searchEntity3ByQueryManager) {
+        expect(search).toEqual(entity3);
+      }
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustDeleteMultipleEntitiesWithoutUsingNegativeCache(): void {
+    const itsName = 'mustDeleteMultipleEntitiesWithoutUsingNegativeCache';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'b',
+      };
+      const entity3: IEntityTest = {
+        id: 2,
+        numberField: 3,
+        strField: 'c',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+        entity3,
+      ];
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+        queryManagersByProperty,
+      ] = this._modelManagerGenerator.generateModelManager(
+        model,
+        modelTestProperties,
+        prefix + 'query/',
+        prefix + 'reverse/',
+        secondaryEntityManager,
+        false,
       );
       secondaryEntityManager.store.shift();
       secondaryEntityManager.store.shift();
@@ -1026,8 +1167,8 @@ export class ModelManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private _itMustUpdateAnEntity(): void {
-    const itsName = 'mustUpdateAnEntity';
+  private _itMustUpdateAnEntityUsingNegativeCache(): void {
+    const itsName = 'mustUpdateAnEntityUsingNegativeCache';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
@@ -1065,6 +1206,7 @@ export class ModelManagerTest implements ITest {
         prefix + 'query/',
         prefix + 'reverse/',
         secondaryEntityManager,
+        true,
       );
       await modelManager.update(entity1After);
 
@@ -1089,8 +1231,8 @@ export class ModelManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private _itMustUpdateMultipleEntities(): void {
-    const itsName = 'mustUpdateMultipleEntities';
+  private _itMustUpdateAnEntityWithoutUsingNegativeCache(): void {
+    const itsName = 'mustUpdateAnEntityWithoutUsingNegativeCache';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       await this._beforeAllPromise;
@@ -1128,6 +1270,135 @@ export class ModelManagerTest implements ITest {
         prefix + 'query/',
         prefix + 'reverse/',
         secondaryEntityManager,
+        false,
+      );
+      await modelManager.update(entity1After);
+
+      const [
+        searchEntity1ByPrimaryEntityManager,
+        searchEntity1ByQueryManager,
+      ] = await this._helperSearchEntity(entity1After, model, primaryEntityManager, queryManagersByProperty);
+      const [
+        searchEntity2ByPrimaryEntityManager,
+        searchEntity2ByQueryManager,
+      ] = await this._helperSearchEntity(entity2, model, primaryEntityManager, queryManagersByProperty);
+
+      expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1After);
+      for (const search of searchEntity1ByQueryManager) {
+        expect(search).toEqual(entity1After);
+      }
+      expect(searchEntity2ByPrimaryEntityManager).toEqual(entity2);
+      for (const search of searchEntity2ByQueryManager) {
+        expect(search).toEqual(entity2);
+      }
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustUpdateMultipleEntitiesUsingNegativeCache(): void {
+    const itsName = 'mustUpdateMultipleEntitiesUsingNegativeCache';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'b',
+      };
+      const entity1After: IEntityTest = {
+        id: 0,
+        numberField: 11,
+        strField: 'aa',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+      ];
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+        queryManagersByProperty,
+      ] = this._modelManagerGenerator.generateModelManager(
+        model,
+        modelTestProperties,
+        prefix + 'query/',
+        prefix + 'reverse/',
+        secondaryEntityManager,
+        true,
+      );
+      await modelManager.mUpdate([entity1After]);
+
+      const [
+        searchEntity1ByPrimaryEntityManager,
+        searchEntity1ByQueryManager,
+      ] = await this._helperSearchEntity(entity1After, model, primaryEntityManager, queryManagersByProperty);
+      const [
+        searchEntity2ByPrimaryEntityManager,
+        searchEntity2ByQueryManager,
+      ] = await this._helperSearchEntity(entity2, model, primaryEntityManager, queryManagersByProperty);
+
+      expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1After);
+      for (const search of searchEntity1ByQueryManager) {
+        expect(search).toEqual(entity1After);
+      }
+      expect(searchEntity2ByPrimaryEntityManager).toEqual(entity2);
+      for (const search of searchEntity2ByQueryManager) {
+        expect(search).toEqual(entity2);
+      }
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustUpdateMultipleEntitiesWithoutUsingNegativeCache(): void {
+    const itsName = 'mustUpdateMultipleEntitiesWithoutUsingNegativeCache';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'b',
+      };
+      const entity1After: IEntityTest = {
+        id: 0,
+        numberField: 11,
+        strField: 'aa',
+      };
+      const entities: IEntityTest[] = [
+        entity1,
+        entity2,
+      ];
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        entities,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+        queryManagersByProperty,
+      ] = this._modelManagerGenerator.generateModelManager(
+        model,
+        modelTestProperties,
+        prefix + 'query/',
+        prefix + 'reverse/',
+        secondaryEntityManager,
+        false,
       );
       await modelManager.mUpdate([entity1After]);
 
