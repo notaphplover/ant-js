@@ -34,6 +34,8 @@ export class AntManagerTest implements ITest {
     describe(this._declareName, () => {
       this._itMustBeInitializable();
       this._itMustGetAModelManager();
+      this._itMustGetAModelManagerWithoutConfig();
+      this._itMustGetAnExistingModelManager();
       this._itMustGetAndSetConfig();
     });
   }
@@ -62,6 +64,36 @@ export class AntManagerTest implements ITest {
       };
       antManager.config(config);
       expect(antManager.get(model) instanceof AntModelManager).toBe(true);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustGetAModelManagerWithoutConfig(): void {
+    const itsName = 'mustGetAModelManagerWithoutConfig';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      const model = modelGenerator(prefix);
+      const antManager = new MinimalAntManager();
+      const antModelManager = antManager.get(model);
+      expect(antModelManager.config()).toBeUndefined();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustGetAnExistingModelManager(): void {
+    const itsName = 'mustGetAnExistingModelManager';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      const model = modelGenerator(prefix);
+      const antManager = new MinimalAntManager();
+      const config: IAntConfig<IAntModelConfig> = {
+        default: {
+          redis: this._redis.redis,
+        },
+      };
+      antManager.config(config);
+      const antModelManager = antManager.get(model);
+      expect(antManager.get(model)).toBe(antModelManager);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
