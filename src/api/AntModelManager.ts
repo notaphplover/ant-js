@@ -279,7 +279,6 @@ This is probably caused by the absence of a config instance. Ensure that config 
         innerQueryManager as SingleResultQueryManager<TEntity>,
       ) as IAntSingleResultQueryManager<TEntity> as TAntQueryManager<TEntity, TResult>;
     }
-    this.modelManager.addQuery(innerQueryManager);
     if (null != aliasOrNothing) {
       if (undefined === this._queriesMap.get(aliasOrNothing)) {
         this._queriesMap.set(aliasOrNothing, [this._model, query]);
@@ -287,6 +286,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
         throw new Error('There is already a query with this alias');
       }
     }
+    this.modelManager.addQuery(innerQueryManager);
     return query;
   }
 }
