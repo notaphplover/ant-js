@@ -1,21 +1,47 @@
-# Github config
-/.github
-
-# Visual studio code
-/.vscode
-
-# IstambulJS coverage reports
-/.nyc_output
-/coverage
-
-# AntJS Docs
-/docs
-
 # npm dependencies
 /node_modules
 
-# AntJS development scripts
+# npm build
+src.tsconfig.commonjs.json
+
+# npm docker builds
+docker-compose.test.yml
+docker-compose.test.coverage.yml
+docker-compose.test.debug.yml
+Dockerfile
+
+# npm lint
+tslint.json
+
+# npm development scripts
 /scripts
+
+# Github config
+/.github
+
+# Github docs
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+
+# AntJS Docs for GitHub pages
+/docs
+
+# Jekyll theme config for Github pages
+_config.yml
+
+# IstambulJS coverage reports
+.nycrc
+/.nyc_output
+/coverage
+
+# AntJS Tests
+/src/test
+
+# Travis build
+.travis.yml
 
 # coveralls config
 .coveralls.yml
+
+# Visual studio code
+/.vscode
