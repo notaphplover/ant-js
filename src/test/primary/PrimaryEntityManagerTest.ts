@@ -483,7 +483,7 @@ return redis.call('get', ${luaExpression})`,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const entityFound = await primaryEntityManager.getByIds(
         [entity[model.id]],
-        new CacheOptions(CacheMode.CacheAndOverwrite, 1000),
+        new CacheOptions(CacheMode.CacheAndOverwrite, 10000),
       );
 
       expect(entityFound).toEqual([entity]);

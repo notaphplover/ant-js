@@ -7,7 +7,7 @@ export class CacheOptions implements ICacheOptions {
    */
   protected _cacheOptions: CacheMode;
   /**
-   * TTL of the entity. A null value represents no TTL.
+   * TTL of the entity (in milliseconds). A null value represents no TTL.
    */
   protected _ttl?: number;
 

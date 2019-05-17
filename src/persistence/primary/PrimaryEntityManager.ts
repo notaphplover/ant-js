@@ -204,14 +204,34 @@ export class PrimaryEntityManager<TEntity extends IEntity>
 
   /**
    * Gets the script for setting multiple keys with a TTL value.
-   * @param ttl TTL to apply.
    * @returns generated script.
    */
   protected _luaGetMultipleSetEx(): string {
     return `local ttl = ARGV[#ARGV]
 for i=1, #KEYS do
-  redis.call('setex', KEYS[i], ttl, ARGV[i])
+  redis.call('psetex', KEYS[i], ttl, ARGV[i])
 end`;
+  }
+
+  /**
+   * Gets the script for setting multiple keys with NX option.
+   * @returns generated script.
+   */
+  protected _luaGetMultipleSetNx(): string {
+    return `for i=1, #KEYS do
+    redis.call('set', KEYS[i], ARGV[i], 'NX')
+  end`;
+  }
+
+  /**
+   * Gets the script for setting multiple keys with a TTL value and NX option.
+   * @returns generated script.
+   */
+  protected _luaGetMultipleSetNxEx(): string {
+    return `local ttl = ARGV[#ARGV]
+    for i=1, #KEYS do
+      redis.call('set', KEYS[i], ARGV[i], 'NX', 'PX', ttl)
+    end`;
   }
 
   /**
@@ -230,32 +250,14 @@ end`;
     if (CacheMode.NoCache === cacheOptions.cacheOptions) {
       return new Promise<void>((resolve) => resolve());
     }
-    if (CacheMode.CacheIfNotExist === cacheOptions.cacheOptions) {
-      throw new Error('This version does not support to cache multiple entities only if they are not cached :(.');
-    }
-    if (CacheMode.CacheAndOverwrite !== cacheOptions.cacheOptions) {
-      throw new Error('Unexpected cache options.');
-    }
 
-    const idField = this.model.id;
-
-    if (cacheOptions.ttl) {
-      return this._redis.eval([
-        this._luaGetMultipleSetEx(),
-        entities.length,
-        ...entities.map((entity) => this._getKey(entity[idField])),
-        ...entities.map((entity) => JSON.stringify(entity)),
-        cacheOptions.ttl,
-      ]);
-    } else {
-      const cacheMap = new Map<string, string>();
-      for (const entity of entities) {
-        cacheMap.set(
-          this._getKey(entity[idField]),
-          JSON.stringify(entity),
-        );
-      }
-      return (this._redis.mset as unknown as (map: Map<string, string>) => Promise<any>)(cacheMap);
+    switch (cacheOptions.cacheOptions) {
+      case CacheMode.CacheIfNotExist:
+        return this._mUpdateCacheIfNotExists(entities, cacheOptions);
+      case CacheMode.CacheAndOverwrite:
+        return this._mUpdateCacheAndOverWrite(entities, cacheOptions);
+      default:
+        throw new Error('Unexpected cache options.');
     }
   }
 
@@ -278,11 +280,77 @@ end`;
     const key = this._getKey(entity[this.model.id]);
     switch (cacheOptions.cacheOptions) {
       case CacheMode.CacheIfNotExist:
-        return this._redis.setnx(key, JSON.stringify(entity));
+        if (null == cacheOptions.ttl) {
+          return this._redis.setnx(key, JSON.stringify(entity));
+        } else {
+          return this._redis.set(key, JSON.stringify(entity), 'PX', cacheOptions.ttl, 'NX');
+        }
       case CacheMode.CacheAndOverwrite:
-        return this._redis.set(key, JSON.stringify(entity));
+        if (null == cacheOptions.ttl) {
+          return this._redis.set(key, JSON.stringify(entity));
+        } else {
+          return this._redis.psetex(key, cacheOptions.ttl, JSON.stringify(entity));
+        }
       default:
         throw new Error('Unexpected cache options.');
+    }
+  }
+
+  /**
+   *
+   * @param entities Entities to update.
+   * @param cacheOptions Cache options.
+   */
+  private _mUpdateCacheAndOverWrite(
+    entities: TEntity[],
+    cacheOptions: ICacheOptions,
+  ): Promise<any> {
+    const idField = this.model.id;
+    if (cacheOptions.ttl) {
+      return this._redis.eval([
+        this._luaGetMultipleSetEx(),
+        entities.length,
+        ...entities.map((entity) => this._getKey(entity[idField])),
+        ...entities.map((entity) => JSON.stringify(entity)),
+        cacheOptions.ttl,
+      ]);
+    } else {
+      const cacheMap = new Map<string, string>();
+      for (const entity of entities) {
+        cacheMap.set(
+          this._getKey(entity[idField]),
+          JSON.stringify(entity),
+        );
+      }
+      return (this._redis.mset as unknown as (map: Map<string, string>) => Promise<any>)(cacheMap);
+    }
+  }
+
+  /**
+   *
+   * @param entities Entities to update.
+   * @param cacheOptions Cache options.
+   */
+  private _mUpdateCacheIfNotExists(
+    entities: TEntity[],
+    cacheOptions: ICacheOptions,
+  ): Promise<any> {
+    const idField = this.model.id;
+    if (null == cacheOptions.ttl) {
+      return this._redis.eval([
+        this._luaGetMultipleSetNx(),
+        entities.length,
+        ...entities.map((entity) => this._getKey(entity[idField])),
+        ...entities.map((entity) => JSON.stringify(entity)),
+      ]);
+    } else {
+      return this._redis.eval([
+        this._luaGetMultipleSetNxEx(),
+        entities.length,
+        ...entities.map((entity) => this._getKey(entity[idField])),
+        ...entities.map((entity) => JSON.stringify(entity)),
+        cacheOptions.ttl,
+      ]);
     }
   }
 }

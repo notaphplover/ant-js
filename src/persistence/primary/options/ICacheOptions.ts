@@ -7,7 +7,7 @@ export interface ICacheOptions {
   cacheOptions: CacheMode;
 
   /**
-   * TTL of the entity. A null value represents no TTL.
+   * TTL of the entity (in milliseconds). A null value represents no TTL.
    */
   ttl: number;
 }
