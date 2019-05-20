@@ -85,6 +85,7 @@ export class MinimalAntModelManager<
     return new PrimaryEntityManager(
       model,
       config.redis,
+      config.negativeCache,
       this._secondaryEntityManager,
     );
   }

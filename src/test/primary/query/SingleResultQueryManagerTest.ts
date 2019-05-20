@@ -86,6 +86,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }>(
       model,
       this._redis.redis,
+      true,
       secondaryEntityManager,
     );
     return [
@@ -218,6 +219,7 @@ export class SingleResultQueryManagerTest implements ITest {
       const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
+        true,
         secondaryEntityManager,
       );
       const modelManager = new ModelManager(
@@ -406,6 +408,7 @@ export class SingleResultQueryManagerTest implements ITest {
       const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
+        true,
         secondaryEntityManager,
       );
       const modelManager = new ModelManager(

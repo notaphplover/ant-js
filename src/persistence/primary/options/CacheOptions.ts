@@ -5,7 +5,7 @@ export class CacheOptions implements ICacheOptions {
   /**
    * Cache options.
    */
-  protected _cacheOptions: CacheMode;
+  protected _cacheMode: CacheMode;
   /**
    * TTL of the entity (in milliseconds). A null value represents no TTL.
    */
@@ -13,22 +13,22 @@ export class CacheOptions implements ICacheOptions {
 
   /**
    * Creates a new entity search options.
-   * @param cacheOptions Cache options.
+   * @param cacheMode Cache options.
    * @param ttl TTL of the entity. A null value represents no TTL.
    */
   public constructor(
-    cacheOptions: CacheMode = CacheMode.CacheAndOverwrite,
+    cacheMode: CacheMode = CacheMode.CacheAndOverwrite,
     ttl: number = null,
   ) {
-    this._cacheOptions = cacheOptions;
+    this._cacheMode = cacheMode;
     this._ttl = ttl;
   }
 
   /**
    * Cache options.
    */
-  public get cacheOptions(): CacheMode {
-    return this._cacheOptions;
+  public get cacheMode(): CacheMode {
+    return this._cacheMode;
   }
 
   /**

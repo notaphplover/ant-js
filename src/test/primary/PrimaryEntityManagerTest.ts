@@ -42,7 +42,6 @@ export class PrimaryEntityManagerTest implements ITest {
       this._itDoesNotCacheIfCacheExistsAndCacheIfNotExistsIsProvided();
       this._itDoesNotCacheEntitiesIfNoCacheOptionIsProvided();
       this._itDoesNotCacheEntityIfNoCacheOptionIsProvided();
-      this._itDoesNotSupportCacheIfNotExiststCacheEntities();
       this._itDoesNotSupportUndefinedCacheOptionAtCacheEntities();
       this._itDoesNotSupportUndefinedCacheOptionAtCacheEntity();
       this._itGeneratesALuaKeyGeneratorUsingAPrefix();
@@ -55,6 +54,7 @@ export class PrimaryEntityManagerTest implements ITest {
       this._itMustFindZeroEntities();
       this._itMustSearchForAnEntityAndCacheIfNotExistsWhenCacheIfNotExistsIsSet();
       this._itMustSearchForAnEntityAndFindANegativeCachedEntity();
+      this._itMustSearchForEntitiesAndCacheThemIfNotExistsWhenCacheIfNotExistsIsSet();
       this._itMustSearchForEntitiesAndCacheThemWithTTL();
       this._itMustSearchForUnexistingEntities();
       this._itMustSearchMultipleEntitiesAndFindANegativeCachedEntity();
@@ -64,11 +64,14 @@ export class PrimaryEntityManagerTest implements ITest {
   /**
    * Generates instances needed in almost every test.
    * @param prefix prefix to generate redis keys.
+   * @param entities Entities to be stored in the secondary entity manager.
+   * @param useNegativeCache True to use negative entitty caching.
    * @returns model, primary entity manager and secondary entity manager instanes.
    */
   private _helperGenerateBaseInstances(
     prefix: string,
     entities: IEntityTest[],
+    useNegativeCache: boolean = true,
   ): [
     IModel,
     IPrimaryEntityManager<IEntityTest>,
@@ -80,6 +83,7 @@ export class PrimaryEntityManagerTest implements ITest {
     const primaryEntityManager = new PrimaryEntityManager<IEntityTest>(
       model,
       this._redis.redis,
+      useNegativeCache,
       secondaryEntityManager,
     );
     return [
@@ -163,36 +167,6 @@ export class PrimaryEntityManagerTest implements ITest {
 
       expect(await primaryEntityManager.getById(entity1[model.id])).toBe(null);
       done();
-    }, MAX_SAFE_TIMEOUT);
-  }
-
-  private _itDoesNotSupportCacheIfNotExiststCacheEntities(): void {
-    const itsName = 'doesNotSupportCacheIfNotExiststCacheEntities';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(itsName, async (done) => {
-      await this._beforeAllPromise;
-
-      const entity1: IEntityTest = {id: 1, field: 'sample-1'};
-
-      const [
-        model,
-        primaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, [entity1]);
-
-      /*
-       * Expect async to throw error just sucks:
-       * https://github.com/jasmine/jasmine/issues/1410
-       */
-      try {
-        await primaryEntityManager.getByIds(
-          [entity1[model.id]],
-          new CacheOptions(CacheMode.CacheIfNotExist),
-        );
-        fail();
-        done();
-      } catch {
-        done();
-      }
     }, MAX_SAFE_TIMEOUT);
   }
 
@@ -296,6 +270,7 @@ return redis.call('get', ${luaExpression})`,
       const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
+        true,
         secondaryEntityManager,
       );
       await primaryEntityManager.getById(entity[model.id]);
@@ -330,6 +305,7 @@ return redis.call('get', ${luaExpression})`,
         new PrimaryEntityManager(
           model,
           this._redis.redis,
+          true,
           secondaryEntityManager,
         );
       }).not.toThrowError();
@@ -467,6 +443,26 @@ return redis.call('get', ${luaExpression})`,
       const entityFound = await primaryEntityManager.getById(entity[model.id]);
 
       expect(entityFound).toBeNull();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSearchForEntitiesAndCacheThemIfNotExistsWhenCacheIfNotExistsIsSet(): void {
+    const itsName = 'mustSearchForEntitiesAndCacheThemIfNotExistsWhenCacheIfNotExistsIsSet';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity: IEntityTest = {id: 0, field: 'sample'};
+      const [
+        model,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity]);
+      const entityFound = await primaryEntityManager.getByIds(
+        [entity[model.id]],
+        new CacheOptions(CacheMode.CacheIfNotExist),
+      );
+
+      expect(entityFound).toEqual([entity]);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
