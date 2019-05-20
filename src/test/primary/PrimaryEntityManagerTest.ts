@@ -53,8 +53,11 @@ export class PrimaryEntityManagerTest implements ITest {
       this._itMustFindNullIfNoSuccessorIsProvidedAndCacheFails();
       this._itMustFindZeroEntities();
       this._itMustSearchForAnEntityAndCacheIfNotExistsWhenCacheIfNotExistsIsSet();
+      this._itMustSearchForAnEntityAndCacheIfNotExistsWhenCacheIfNotExistsIsSetAntTTLIsProvided();
+      this._itMustSearchForAnEntityAndCacheIfTTLIsProvided();
       this._itMustSearchForAnEntityAndFindANegativeCachedEntity();
       this._itMustSearchForEntitiesAndCacheThemIfNotExistsWhenCacheIfNotExistsIsSet();
+      this._itMustSearchForEntitiesAndCacheThemIfNotExistsWhenCacheIfNotExistsIsSetAntTTLIsProvided();
       this._itMustSearchForEntitiesAndCacheThemWithTTL();
       this._itMustSearchForUnexistingEntities();
       this._itMustSearchMultipleEntitiesAndFindANegativeCachedEntity();
@@ -423,6 +426,46 @@ return redis.call('get', ${luaExpression})`,
     }, MAX_SAFE_TIMEOUT);
   }
 
+  private _itMustSearchForAnEntityAndCacheIfNotExistsWhenCacheIfNotExistsIsSetAntTTLIsProvided(): void {
+    const itsName = 'mustSearchForAnEntityAndCacheIfNotExistsWhenCacheIfNotExistsIsSetAntTTLIsProvided';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity: IEntityTest = {id: 0, field: 'sample'};
+      const [
+        model,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity]);
+      const entityFound = await primaryEntityManager.getById(
+        entity[model.id],
+        new CacheOptions(CacheMode.CacheIfNotExist, 10000),
+      );
+
+      expect(entityFound).toEqual(entity);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSearchForAnEntityAndCacheIfTTLIsProvided(): void {
+    const itsName = 'mustSearchForAnEntityAndCacheIfTTLIsProvided';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity: IEntityTest = {id: 0, field: 'sample'};
+      const [
+        model,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity]);
+      const entityFound = await primaryEntityManager.getById(
+        entity[model.id],
+        new CacheOptions(CacheMode.CacheAndOverwrite, 10000),
+      );
+
+      expect(entityFound).toEqual(entity);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
   private _itMustSearchForAnEntityAndFindANegativeCachedEntity(): void {
     const itsName = 'mustSearchForAnEntityAndFindANegativeCachedEntity';
     const prefix = this._declareName + '/' + itsName + '/';
@@ -460,6 +503,26 @@ return redis.call('get', ${luaExpression})`,
       const entityFound = await primaryEntityManager.getByIds(
         [entity[model.id]],
         new CacheOptions(CacheMode.CacheIfNotExist),
+      );
+
+      expect(entityFound).toEqual([entity]);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSearchForEntitiesAndCacheThemIfNotExistsWhenCacheIfNotExistsIsSetAntTTLIsProvided(): void {
+    const itsName = 'mustSearchForEntitiesAndCacheThemIfNotExistsWhenCacheIfNotExistsIsSetAntTTLIsProvided';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity: IEntityTest = {id: 0, field: 'sample'};
+      const [
+        model,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity]);
+      const entityFound = await primaryEntityManager.getByIds(
+        [entity[model.id]],
+        new CacheOptions(CacheMode.CacheIfNotExist, 10000),
       );
 
       expect(entityFound).toEqual([entity]);

@@ -103,6 +103,9 @@ export class PrimaryEntityManager<TEntity extends IEntity>
     ids: number[] | string[],
     cacheOptions: ICacheOptions,
   ): Promise<any> {
+    if (null == ids || 0 === ids.length) {
+      return new Promise((resolve) => resolve());
+    }
     if (CacheMode.CacheAndOverwrite === cacheOptions.cacheMode) {
       if (cacheOptions.ttl) {
         return this._redis.eval([
@@ -239,7 +242,6 @@ export class PrimaryEntityManager<TEntity extends IEntity>
     }
 
     await this._innerGetByDistinctIdsNotMappedProcessMissingIds(
-      ids,
       missingIds,
       results,
       cacheOptions,
@@ -387,8 +389,13 @@ end`;
     }
   }
 
+  /**
+   * Process missing ids.
+   * @param missingIds Missing ids to process.
+   * @param results Results array.
+   * @param cacheOptions Cache options.
+   */
   private async _innerGetByDistinctIdsNotMappedProcessMissingIds(
-    ids: number[] | string[],
     missingIds: number[] | string[],
     results: TEntity[],
     cacheOptions: ICacheOptions,
@@ -400,17 +407,20 @@ end`;
         if (missingData.length === missingIds.length) {
           this._updateEntities(missingData, cacheOptions);
         } else {
-          const sortedIds = 'number' === typeof ids[0] ?
-            (ids as number[]).sort((a: number, b: number) => a - b) :
-            ids.sort();
+          const sortedIds = 'number' === typeof missingIds[0] ?
+            (missingIds as number[]).sort((a: number, b: number) => a - b) :
+            missingIds.sort();
           let offset = 0;
           const idsToApplyNegativeCache: number[] | string[] = new Array();
           for (let i = 0; i < missingData.length; ++i) {
             const missingDataId = missingData[i + offset][this.model.id];
             if (sortedIds[i] !== missingDataId) {
-              idsToApplyNegativeCache.push(missingDataId);
+              idsToApplyNegativeCache.push(sortedIds[i] as number & string);
               ++offset;
             }
+          }
+          for (let i = missingData.length + offset; i <  sortedIds.length; ++i) {
+            idsToApplyNegativeCache.push(sortedIds[i] as number&string);
           }
           this._deleteEntitiesUsingNegativeCache(idsToApplyNegativeCache, cacheOptions);
         }
@@ -425,9 +435,10 @@ end`;
   }
 
   /**
-   *
+   * Updates entities caching the new result in the cache server.
    * @param entities Entities to update.
    * @param cacheOptions Cache options.
+   * @returns Promise of entities cached.
    */
   private _updateEntitiesCacheAndOverWrite(
     entities: TEntity[],
