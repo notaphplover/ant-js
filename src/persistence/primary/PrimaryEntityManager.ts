@@ -279,7 +279,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   protected _luaGetMultipleDeleteUsingNegativeCache(): string {
     const keyGenerator = this._luaKeyGeneratorFromId('ARGV[i]');
     return `for i=1, #ARGV do
-  redis.call('set', ${keyGenerator}, ${VOID_RESULT_STRING})
+  redis.call('set', ${keyGenerator}, '${VOID_RESULT_STRING}')
 end`;
   }
 
@@ -291,7 +291,7 @@ end`;
     const keyGenerator = this._luaKeyGeneratorFromId('ARGV[i]');
     return `local ttl = ARGV[#ARGV]
 for i=1, #ARGV - 1 do
-  redis.call('psetex', ${keyGenerator}, ttl, ${VOID_RESULT_STRING})
+  redis.call('psetex', ${keyGenerator}, ttl, '${VOID_RESULT_STRING}')
 end`;
   }
 
@@ -413,10 +413,11 @@ end`;
           let offset = 0;
           const idsToApplyNegativeCache: number[] | string[] = new Array();
           for (let i = 0; i < missingData.length; ++i) {
-            const missingDataId = missingData[i + offset][this.model.id];
-            if (sortedIds[i] !== missingDataId) {
+            const missingDataId = missingData[i][this.model.id];
+            if (sortedIds[i + offset] !== missingDataId) {
               idsToApplyNegativeCache.push(sortedIds[i] as number & string);
               ++offset;
+              --i;
             }
           }
           for (let i = missingData.length + offset; i <  sortedIds.length; ++i) {
