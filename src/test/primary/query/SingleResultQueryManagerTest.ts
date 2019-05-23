@@ -174,7 +174,7 @@ export class SingleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         false,
       );
       const query = async (params: any) => {
@@ -225,7 +225,7 @@ export class SingleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         false,
       );
       const query = async (params: any) => {
@@ -363,7 +363,7 @@ export class SingleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         false,
       );
       const query = async (params: any) => {
@@ -414,7 +414,7 @@ export class SingleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         false,
       );
       const query = async (params: any) => {
@@ -713,7 +713,7 @@ export class SingleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         true,
       );
       modelManager.delete(entity1[model.id]);

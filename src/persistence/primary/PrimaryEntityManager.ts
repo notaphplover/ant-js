@@ -67,7 +67,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    * @param id: Entity's id.
    * @returns Model found.
    */
-  public getById(
+  public get(
     id: number|string,
     cacheOptions: ICacheOptions = new CacheOptions(),
   ): Promise<TEntity> {
@@ -79,7 +79,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
    * @param ids Entities ids.
    * @returns Entities found.
    */
-  public getByIds(
+  public mGet(
     ids: number[] | string[],
     cacheOptions: ICacheOptions = new CacheOptions(),
   ): Promise<TEntity[]> {

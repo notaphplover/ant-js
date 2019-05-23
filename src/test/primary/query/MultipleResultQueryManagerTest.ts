@@ -220,7 +220,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         false,
       );
       const queryManager = new NamesStartingByLetter(
@@ -256,7 +256,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         false,
       );
       const queryManager = new NamesStartingByLetterAlternative(
@@ -483,7 +483,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         true,
       );
       const queryManager = new NamesStartingByLetter(

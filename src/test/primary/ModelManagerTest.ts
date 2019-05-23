@@ -91,7 +91,7 @@ export class ModelManagerTest implements ITest {
     primaryEntityManager: IPrimaryEntityManager<IEntityTest>,
     queriesMap: Map<string, IPrimaryQueryManager<IEntityTest>>,
   ): Promise<[IEntityTest, IEntityTest[]]> {
-    const searchEntityByPrimaryEntityManager = await primaryEntityManager.getById(entity[model.id]);
+    const searchEntityByPrimaryEntityManager = await primaryEntityManager.get(entity[model.id]);
     const searchEntityByQueryManager = new Array();
     for (const [property, query] of queriesMap) {
       const searchArgs: any = {};

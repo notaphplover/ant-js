@@ -126,7 +126,7 @@ export class MultipleResultQueryManager<
     cacheOptions: ICacheOptions,
   ): Promise<void> {
     if (0 < missingIds.length) {
-      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, cacheOptions);
+      const missingEntities = await this._primaryEntityManager.mGet(missingIds, cacheOptions);
       for (const missingEntity of missingEntities) {
         finalResults.push(missingEntity);
       }
@@ -182,7 +182,7 @@ export class MultipleResultQueryManager<
         this._reverseHashKey,
         ...idsJSON,
       ]);
-      return this._primaryEntityManager.getByIds(ids, cacheOptions);
+      return this._primaryEntityManager.mGet(ids, cacheOptions);
     } else {
       this._redis.eval(
         this._luaSetVoidQueryGenerator(),

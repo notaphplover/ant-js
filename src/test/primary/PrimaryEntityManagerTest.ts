@@ -17,6 +17,11 @@ type IEntityTest = IEntity & {
   field: string,
 };
 
+type IEntityTestString = IEntity & {
+  id: string,
+  field: string,
+};
+
 export class PrimaryEntityManagerTest implements ITest {
   /**
    * Before all task performed promise.
@@ -66,6 +71,7 @@ export class PrimaryEntityManagerTest implements ITest {
       this._itMustSearchForUnexistingEntities();
       this._itMustSearchForUnexistingEntitiesCachingEntitiesIfNotExistWithTTL();
       this._itMustSearchForUnexistingEntitiesWithTTL();
+      this._itMustSearchForUnexistingEntitiesWithTTLAndIdAsString();
       this._itMustSearchMultipleEntitiesAndFindANegativeCachedEntity();
     });
   }
@@ -117,10 +123,10 @@ export class PrimaryEntityManagerTest implements ITest {
         secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
 
-      await primaryEntityManager.getById(entity1[model.id]);
+      await primaryEntityManager.get(entity1[model.id]);
       secondaryEntityManager.store[0] = entity1Modified;
 
-      expect(await primaryEntityManager.getById(
+      expect(await primaryEntityManager.get(
         entity1Modified[model.id],
         new CacheOptions(CacheMode.CacheIfNotExist),
       )).toEqual(entity1);
@@ -143,13 +149,13 @@ export class PrimaryEntityManagerTest implements ITest {
         secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
 
-      await primaryEntityManager.getByIds(
+      await primaryEntityManager.mGet(
         [entity1[model.id]],
         new CacheOptions(CacheMode.NoCache),
       );
       secondaryEntityManager.store.pop();
 
-      expect(await primaryEntityManager.getById(entity1[model.id])).toBe(null);
+      expect(await primaryEntityManager.get(entity1[model.id])).toBe(null);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -168,13 +174,13 @@ export class PrimaryEntityManagerTest implements ITest {
         secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1]);
 
-      await primaryEntityManager.getById(
+      await primaryEntityManager.get(
         entity1[model.id],
         new CacheOptions(CacheMode.NoCache),
       );
       secondaryEntityManager.store.pop();
 
-      expect(await primaryEntityManager.getById(entity1[model.id])).toBe(null);
+      expect(await primaryEntityManager.get(entity1[model.id])).toBe(null);
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -197,7 +203,7 @@ export class PrimaryEntityManagerTest implements ITest {
        * https://github.com/jasmine/jasmine/issues/1410
        */
       try {
-        await primaryEntityManager.getByIds(
+        await primaryEntityManager.mGet(
           [entity1[model.id]],
           new CacheOptions('Ohhh yeaaaahh!' as unknown as CacheMode),
         );
@@ -227,7 +233,7 @@ export class PrimaryEntityManagerTest implements ITest {
        * https://github.com/jasmine/jasmine/issues/1410
        */
       try {
-        await primaryEntityManager.getById(
+        await primaryEntityManager.get(
           entity1[model.id],
           new CacheOptions('Ohhh yeaaaahh!' as unknown as CacheMode),
         );
@@ -249,7 +255,7 @@ export class PrimaryEntityManagerTest implements ITest {
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
-      await primaryEntityManager.getById(entity[model.id]);
+      await primaryEntityManager.get(entity[model.id]);
       const luaKey = 'key';
       const luaExpression = primaryEntityManager.getKeyGenerationLuaScriptGenerator()(luaKey);
       const valueFound = await this._redis.redis.eval(
@@ -282,7 +288,7 @@ return redis.call('get', ${luaExpression})`,
         true,
         secondaryEntityManager,
       );
-      await primaryEntityManager.getById(entity[model.id]);
+      await primaryEntityManager.get(entity[model.id]);
       const luaKey = 'key';
       const luaExpression = primaryEntityManager.getKeyGenerationLuaScriptGenerator()(luaKey);
       const valueFound = await this._redis.redis.eval(
@@ -332,7 +338,7 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
-      const entityFound = await primaryEntityManager.getById(entity[model.id]);
+      const entityFound = await primaryEntityManager.get(entity[model.id]);
 
       expect(entityFound).toEqual(entity);
       done();
@@ -356,7 +362,7 @@ return redis.call('get', ${luaExpression})`,
         false,
       );
 
-      const entitiesFound = await primaryEntityManager.getByIds([
+      const entitiesFound = await primaryEntityManager.mGet([
         entity1[model.id],
         entity2[model.id],
         unexistingEntity[model.id],
@@ -383,7 +389,7 @@ return redis.call('get', ${luaExpression})`,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
 
-      const entitiesFound = await primaryEntityManager.getByIds([
+      const entitiesFound = await primaryEntityManager.mGet([
         entity1[model.id],
         entity2[model.id],
         unexistingEntity1[model.id],
@@ -411,7 +417,7 @@ return redis.call('get', ${luaExpression})`,
       );
       const idToSearch = 3;
 
-      expect(await primaryEntityManager.getById(idToSearch)).toBeNull();
+      expect(await primaryEntityManager.get(idToSearch)).toBeNull();
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -426,7 +432,7 @@ return redis.call('get', ${luaExpression})`,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
 
-      expect(await primaryEntityManager.getById(null)).toBeNull();
+      expect(await primaryEntityManager.get(null)).toBeNull();
       done();
     }, MAX_SAFE_TIMEOUT);
   }
@@ -442,7 +448,7 @@ return redis.call('get', ${luaExpression})`,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
 
       expect(async () => {
-        await primaryEntityManager.getByIds(new Array());
+        await primaryEntityManager.mGet(new Array());
       }).not.toThrowError();
       done();
     }, MAX_SAFE_TIMEOUT);
@@ -458,7 +464,7 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
-      const entityFound = await primaryEntityManager.getById(
+      const entityFound = await primaryEntityManager.get(
         entity[model.id],
         new CacheOptions(CacheMode.CacheIfNotExist),
       );
@@ -478,7 +484,7 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
-      const entityFound = await primaryEntityManager.getById(
+      const entityFound = await primaryEntityManager.get(
         entity[model.id],
         new CacheOptions(CacheMode.CacheIfNotExist, 10000),
       );
@@ -498,7 +504,7 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
-      const entityFound = await primaryEntityManager.getById(
+      const entityFound = await primaryEntityManager.get(
         entity[model.id],
         new CacheOptions(CacheMode.CacheAndOverwrite, 10000),
       );
@@ -517,15 +523,16 @@ return redis.call('get', ${luaExpression})`,
       const [
         model,
         primaryEntityManager,
-      ] = this._helperGenerateBaseInstances(prefix, [entity]);
+        secondaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, [entity], true);
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         true,
       );
       await modelManager.delete(entity.id);
-      const entityFound = await primaryEntityManager.getById(entity[model.id]);
+      const entityFound = await primaryEntityManager.get(entity[model.id]);
 
       expect(entityFound).toBeNull();
       done();
@@ -542,7 +549,7 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
-      const entityFound = await primaryEntityManager.getById(
+      const entityFound = await primaryEntityManager.get(
         entity[model.id],
       );
 
@@ -561,7 +568,7 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
-      const entityFound = await primaryEntityManager.getById(
+      const entityFound = await primaryEntityManager.get(
         entity[model.id],
         new CacheOptions(CacheMode.CacheIfNotExist),
       );
@@ -581,7 +588,7 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
-      const entityFound = await primaryEntityManager.getById(
+      const entityFound = await primaryEntityManager.get(
         entity[model.id],
         new CacheOptions(CacheMode.CacheAndOverwrite, 10000),
       );
@@ -601,7 +608,7 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
-      const entityFound = await primaryEntityManager.getByIds(
+      const entityFound = await primaryEntityManager.mGet(
         [entity[model.id]],
         new CacheOptions(CacheMode.CacheIfNotExist),
       );
@@ -621,7 +628,7 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
-      const entityFound = await primaryEntityManager.getByIds(
+      const entityFound = await primaryEntityManager.mGet(
         [entity[model.id]],
         new CacheOptions(CacheMode.CacheIfNotExist, 10000),
       );
@@ -641,7 +648,7 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
-      const entityFound = await primaryEntityManager.getByIds(
+      const entityFound = await primaryEntityManager.mGet(
         [entity[model.id]],
         new CacheOptions(CacheMode.CacheAndOverwrite, 10000),
       );
@@ -661,7 +668,7 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
-      const entityFound = await primaryEntityManager.getByIds([
+      const entityFound = await primaryEntityManager.mGet([
         entity[model.id],
       ]);
 
@@ -680,7 +687,7 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
-      const entityFound = await primaryEntityManager.getByIds([
+      const entityFound = await primaryEntityManager.mGet([
         entity[model.id],
       ], new CacheOptions(CacheMode.CacheIfNotExist, 10000));
 
@@ -699,9 +706,33 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
-      const entityFound = await primaryEntityManager.getByIds([
+      const entityFound = await primaryEntityManager.mGet([
         entity[model.id],
       ], new CacheOptions(CacheMode.CacheAndOverwrite, 10000));
+
+      expect(entityFound).toEqual(new Array());
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSearchForUnexistingEntitiesWithTTLAndIdAsString(): void {
+    const itsName = 'mustSearchForUnexistingEntitiesWithTTLAndIdAsString';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity: IEntityTestString = {id: 'id0', field: 'sample'};
+      const model = new Model('id', {prefix: prefix});
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTestString>(model, new Array());
+      const primaryEntityManager = new PrimaryEntityManager(
+        model,
+        this._redis.redis,
+        true,
+        secondaryEntityManager,
+      );
+      const entityFound = await primaryEntityManager.mGet(
+        [entity[model.id]],
+        new CacheOptions(CacheMode.CacheAndOverwrite, 10000),
+      );
 
       expect(entityFound).toEqual(new Array());
       done();
@@ -718,15 +749,16 @@ return redis.call('get', ${luaExpression})`,
       const [
         model,
         primaryEntityManager,
+        secondaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity, entity2]);
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         true,
       );
       await modelManager.delete(entity.id);
-      const entityFound = await primaryEntityManager.getByIds([
+      const entityFound = await primaryEntityManager.mGet([
         entity[model.id],
         entity2[model.id],
       ]);

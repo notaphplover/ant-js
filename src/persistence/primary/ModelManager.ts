@@ -1,37 +1,22 @@
 import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
+import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { IModelManager } from './IModelManager';
-import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 import {
   MULTIPLE_RESULT_QUERY_CODE,
   SINGLE_RESULT_QUERY_CODE,
   VOID_RESULT_STRING,
 } from './LuaConstants';
-import { ICacheOptions } from './options/ICacheOptions';
+import { PrimaryEntityManager } from './PrimaryEntityManager';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 
-export class ModelManager<TEntity extends IEntity> implements IModelManager<TEntity> {
-  /**
-   * Model managed.
-   */
-  protected _model: IModel;
-  /**
-   * True to use negative entity cache.
-   */
-  protected _negativeEntityCache: boolean;
-  /**
-   * Primary entity manager.
-   */
-  protected _primaryEntityManager: IPrimaryEntityManager<TEntity>;
+export class ModelManager<TEntity extends IEntity>
+  extends PrimaryEntityManager<TEntity> implements IModelManager<TEntity> {
   /**
    * Query managers.
    */
   protected _queryManagers: Array<IPrimaryQueryManager<TEntity>>;
-  /**
-   * Redis connection to manage queries.
-   */
-  protected _redis: IORedis.Redis;
 
   /**
    * Creates a new model manager.
@@ -44,15 +29,17 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
   public constructor(
     model: IModel,
     redis: IORedis.Redis,
-    primaryEntityManager: IPrimaryEntityManager<TEntity>,
+    secondaryEntityManager?: ISecondaryEntityManager<TEntity>,
     negativeEntityCache: boolean = true,
     queryManagers: Array<IPrimaryQueryManager<TEntity>> = new Array(),
   ) {
-    this._model = model;
-    this._negativeEntityCache = negativeEntityCache;
-    this._primaryEntityManager = primaryEntityManager;
+    super(
+      model,
+      redis,
+      negativeEntityCache,
+      secondaryEntityManager,
+    );
     this._queryManagers = queryManagers;
-    this._redis = redis;
   }
 
   /**
@@ -85,16 +72,6 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
   }
 
   /**
-   * Finds an entity by its id.
-   * @param id Id of the entity.
-   * @param cacheOptions Cache options.
-   * @returns Entity found
-   */
-  public get(id: number|string, cacheOptions?: ICacheOptions): Promise<TEntity> {
-    return this._primaryEntityManager.getById(id, cacheOptions);
-  }
-
-  /**
    * Deletes multiple entities from the cache layer.
    * @param ids Ids of the entities to delete.
    * @returns Promise of entities deleted.
@@ -117,16 +94,6 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
       evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
     }
     return this._redis.eval(evalParams);
-  }
-
-  /**
-   * Finds a collection if entities by its ids.
-   * @param ids Ids of the entities.
-   * @param cacheOptions Cache options.
-   * @returns Entities found.
-   */
-  public mGet(ids: number[]|string[], cacheOptions?: ICacheOptions): Promise<TEntity[]> {
-    return this._primaryEntityManager.getByIds(ids, cacheOptions);
   }
 
   /**
@@ -193,7 +160,7 @@ export class ModelManager<TEntity extends IEntity> implements IModelManager<TEnt
     const reverseHashKey: string = 'KEYS[i]';
 
     const entityId: string = 'ARGV[1]';
-    const entityKey: string = this._primaryEntityManager.getKeyGenerationLuaScriptGenerator()(entityId);
+    const entityKey: string = this._luaKeyGeneratorFromId(entityId);
     const queriesNumber: string = '#KEYS';
     const ithQCode: string = 'ARGV[1 + i]';
 
@@ -237,7 +204,7 @@ ${deleteSentence}`;
     const ithQCode = 'ARGV[entitiesCount + i]';
     const ithReverseKey = 'KEYS[i]';
     const jthEntityId = 'ARGV[j]';
-    const jthEntityKey: string = this._primaryEntityManager.getKeyGenerationLuaScriptGenerator()(jthEntityId);
+    const jthEntityKey: string = this._luaKeyGeneratorFromId(jthEntityId);
 
     const deleteSentence = this._negativeEntityCache ?
       `redis.call('set', ${jthEntityKey}, '${VOID_RESULT_STRING}')` :
@@ -290,7 +257,7 @@ end`;
     const ithReverseKey = 'KEYS[ithReverseKeyIndex]';
     const jthEntity = 'ARGV[entitiesCount + j]';
     const jthEntityId = 'ARGV[j]';
-    const jthEntityKey: string = this._primaryEntityManager.getKeyGenerationLuaScriptGenerator()(jthEntityId);
+    const jthEntityKey: string = this._luaKeyGeneratorFromId(jthEntityId);
     const jthQueryKeyIndex = 'ithReverseKeyIndex + j';
     const jthQueryKey = 'KEYS[jthQueryKeyIndex]';
     return `local queriesNumber = ARGV[#ARGV]
@@ -350,7 +317,7 @@ end`;
 
     const entityId = 'ARGV[1]';
     const entity = 'ARGV[2]';
-    const entityKey: string = this._primaryEntityManager.getKeyGenerationLuaScriptGenerator()(entityId);
+    const entityKey: string = this._luaKeyGeneratorFromId(entityId);
     const reverseHashKey = 'KEYS[2 * i - 1]';
     const queryKey = 'KEYS[2 * i]';
 
