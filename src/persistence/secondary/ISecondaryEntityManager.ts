@@ -20,4 +20,11 @@ export interface ISecondaryEntityManager<TEntity extends IEntity> {
    * @returns Models found.
    */
   getByIds(ids: number[]| string[]): Promise<TEntity[]>;
+
+  /**
+   * Gets a collection of models by its ids ordered by id asc.
+   * @param ids Model ids.
+   * @returns Models found.
+   */
+  getByIdsOrderedAsc(ids: number[]| string[]): Promise<TEntity[]>;
 }

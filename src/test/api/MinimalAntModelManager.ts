@@ -45,12 +45,6 @@ export class MinimalAntModelManager<
     return super.modelManager;
   }
   /**
-   * Primary entity manager.
-   */
-  public get primaryEntityManager(): IPrimaryEntityManager<TEntity> {
-    return super.primaryEntityManager;
-  }
-  /**
    * Secondary model manager.
    * @returns secondary model manager.
    */
@@ -70,22 +64,5 @@ export class MinimalAntModelManager<
       this._secondaryEntityManager,
     );
     return modelManager;
-  }
-
-  /**
-   * Creates a new primary entity manager.
-   * @param model Model of the manager.
-   * @param config Manager config.
-   * @returns Primary entity manager generated.
-   */
-  protected _generatePrimaryEntityManager(
-    model: IModel,
-    config: IAntModelConfig,
-  ): IPrimaryEntityManager<TEntity> {
-    return new PrimaryEntityManager(
-      model,
-      config.redis,
-      this._secondaryEntityManager,
-    );
   }
 }

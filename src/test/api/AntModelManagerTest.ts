@@ -71,6 +71,7 @@ export class AntModelManagerTest implements ITest {
         redis: this._redis.redis,
       });
       const modelManager = antModelManager.modelManager;
+
       const methodsToTest = [
         'delete',
         'get',
@@ -81,7 +82,7 @@ export class AntModelManagerTest implements ITest {
       ] as Array<keyof IModelManager<any>>;
 
       for (const methodToTest of methodsToTest) {
-        spyOn(modelManager, methodToTest).and.returnValue(methodToTest as any);
+        spyOn(modelManager, methodToTest as any).and.returnValue(methodToTest as any);
       }
 
       const entity: EntityTest = { id: 0 };
@@ -316,11 +317,6 @@ export class AntModelManagerTest implements ITest {
       const config = {
         redis: this._redis.redis,
       };
-
-      expect(() => {
-        // tslint:disable-next-line:no-unused-expression
-        antModelManager.primaryEntityManager;
-      }).toThrowError();
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
         antModelManager.modelManager;

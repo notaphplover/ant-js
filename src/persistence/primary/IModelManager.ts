@@ -1,8 +1,9 @@
 import { IEntity } from '../../model/IEntity';
-import { ICacheOptions } from './options/ICacheOptions';
+import { IPrimaryEntityManager, IPrimaryEntityManagerBase } from './IPrimaryEntityManager';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 
-export interface IBaseModelManager<TEntity extends IEntity> {
+export interface IBaseModelManager<TEntity extends IEntity>
+  extends IPrimaryEntityManagerBase<TEntity> {
   /**
    * Deletes an entity from the cache layer.
    * @param id id of the entity to delete.
@@ -10,25 +11,11 @@ export interface IBaseModelManager<TEntity extends IEntity> {
    */
   delete(id: number|string): Promise<any>;
   /**
-   * Finds an entity by its id.
-   * @param id Id of the entity.
-   * @param cacheOptions Cache options.
-   * @returns Entity found
-   */
-  get(id: number|string, cacheOptions?: ICacheOptions): Promise<TEntity>;
-  /**
    * Deletes multiple entities from the cache layer.
    * @param ids Ids of the entities to delete.
    * @returns Promise of entities deleted.
    */
   mDelete(ids: number[]|string[]): Promise<any>;
-  /**
-   * Finds a collection if entities by its ids.
-   * @param ids Ids of the entities.
-   * @param cacheOptions Cache options.
-   * @returns Entities found.
-   */
-  mGet(ids: number[]|string[], cacheOptions?: ICacheOptions): Promise<TEntity[]>;
   /**
    * Updates multiple entities at the cache layer.
    * @param entities Entities to be updated.
@@ -43,7 +30,8 @@ export interface IBaseModelManager<TEntity extends IEntity> {
   update(entity: TEntity): Promise<any>;
 }
 
-export interface IModelManager<TEntity extends IEntity> extends IBaseModelManager<TEntity> {
+export interface IModelManager<TEntity extends IEntity>
+  extends IBaseModelManager<TEntity>, IPrimaryEntityManager<TEntity> {
   /**
    * Adds a query manager to the model manager.
    * @param queryManager Query manager to add.
