@@ -8,6 +8,8 @@ import {
   SINGLE_RESULT_QUERY_CODE,
   VOID_RESULT_STRING,
 } from './LuaConstants';
+import { CacheOptions } from './options/CacheOptions';
+import { ICacheOptions } from './options/ICacheOptions';
 import { PrimaryEntityManager } from './PrimaryEntityManager';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 
@@ -101,12 +103,15 @@ export class ModelManager<TEntity extends IEntity>
    * @param entities Entities to be updated.
    * @returns Promise of entities updated.
    */
-  public mUpdate(entities: TEntity[]): Promise<any> {
+  public mUpdate(
+    entities: TEntity[],
+    cacheOptions: ICacheOptions = new CacheOptions(),
+  ): Promise<any> {
     if (null == entities || 0 === entities.length) {
       return new Promise((resolve) => resolve());
     }
     const evalParams = [
-      this._luaSyncMUpdateGenerator(),
+      this._luaSyncMUpdateGenerator(cacheOptions),
       this._queryManagers.length * (entities.length + 1),
     ];
     for (const queryManager of this._queryManagers) {
@@ -126,16 +131,25 @@ export class ModelManager<TEntity extends IEntity>
     }
     evalParams.push(this._queryManagers.length);
 
+    if (cacheOptions.ttl) {
+      evalParams.push(cacheOptions.ttl);
+    }
+
     return this._redis.eval(evalParams);
   }
 
   /**
    * Updates an entity at the cache layer.
    * @param entity Entity to be updated.
+   * @param cacheOptions Cache options.
+   * @returns Promise of entity updated.
    */
-  public update(entity: TEntity): Promise<any> {
+  public update(
+    entity: TEntity,
+    cacheOptions: ICacheOptions = new CacheOptions(),
+  ): Promise<any> {
     const evalParams = [
-      this._luaSyncUpdateGenerator(),
+      this._luaSyncUpdateGenerator(cacheOptions),
       2 * this._queryManagers.length,
     ];
     for (const queryManager of this._queryManagers) {
@@ -144,6 +158,9 @@ export class ModelManager<TEntity extends IEntity>
     }
     evalParams.push(JSON.stringify(entity[this._model.id]));
     evalParams.push(JSON.stringify(entity));
+    if (cacheOptions.ttl) {
+      evalParams.push(cacheOptions.ttl);
+    }
     for (const queryManager of this._queryManagers) {
       evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
     }
@@ -247,11 +264,13 @@ end`;
    * Generates a lua script to update multiple entities in the cache server.
    * This script also updates al the queries related to the entities.
    *
+   * @param cacheOptions Cache options.
    * @returns script generated.
    */
-  private _luaSyncMUpdateGenerator(): string {
-    const queriesNumber: string = 'ARGV[#ARGV]';
-    const entitiesCount = '(#ARGV - queriesNumber - 1) / 2';
+  private _luaSyncMUpdateGenerator(cacheOptions: ICacheOptions): string {
+    const ttl = 'ARGV[#ARGV]';
+    const queriesNumber: string = cacheOptions.ttl ? 'ARGV[#ARGV - 1]' : 'ARGV[#ARGV]';
+    const entitiesCount = cacheOptions.ttl ? '(#ARGV - queriesNumber) / 2 - 1' : '(#ARGV - queriesNumber - 1) / 2';
     const ithQCode = 'ARGV[2 * entitiesCount + i]';
     const ithReverseKeyIndex = '(entitiesCount + 1) * (i - 1) + 1';
     const ithReverseKey = 'KEYS[ithReverseKeyIndex]';
@@ -260,9 +279,12 @@ end`;
     const jthEntityKey: string = this._luaKeyGeneratorFromId(jthEntityId);
     const jthQueryKeyIndex = 'ithReverseKeyIndex + j';
     const jthQueryKey = 'KEYS[jthQueryKeyIndex]';
-    return `local queriesNumber = ARGV[#ARGV]
+
+    const updateStatement = this._luaGetUpdateStatement(cacheOptions, jthEntityKey, jthEntity, ttl);
+
+    return `local queriesNumber = ${queriesNumber}
 local entitiesCount = ${entitiesCount}
-for i=1, ${queriesNumber} do
+for i=1, queriesNumber do
   local qCode = ${ithQCode}
   local ithReverseKeyIndex = ${ithReverseKeyIndex}
   if '${SINGLE_RESULT_QUERY_CODE}' == qCode then
@@ -302,7 +324,7 @@ for i=1, ${queriesNumber} do
   end
 end
 for j=1, entitiesCount do
-  redis.call('set', ${jthEntityKey}, ${jthEntity})
+  ${updateStatement}
 end`;
   }
 
@@ -310,18 +332,22 @@ end`;
    * Generates a lua script to update an entity in the cache server.
    * This script also updates al the queries related to the entity.
    *
+   * @param cacheOptions Cache options.
    * @returns script generated.
    */
-  private _luaSyncUpdateGenerator(): string {
+  private _luaSyncUpdateGenerator(cacheOptions: ICacheOptions): string {
     const queriesNumber: string = '#KEYS / 2';
 
     const entityId = 'ARGV[1]';
     const entity = 'ARGV[2]';
+    const ttl = 'ARV[3]';
+    const ithQCode: string = cacheOptions.ttl ? 'ARGV[3 + i]' : 'ARGV[2 + i]';
+
     const entityKey: string = this._luaKeyGeneratorFromId(entityId);
     const reverseHashKey = 'KEYS[2 * i - 1]';
     const queryKey = 'KEYS[2 * i]';
 
-    const ithQCode: string = 'ARGV[2 + i]';
+    const updateStatement = this._luaGetUpdateStatement(cacheOptions, entityKey, entity, ttl);
 
     return `for i=1, ${queriesNumber} do
   local qCode = ${ithQCode}
@@ -355,6 +381,6 @@ end`;
     end
   end
 end
-redis.call('set', ${entityKey}, ${entity})`;
+${updateStatement}`;
   }
 }
