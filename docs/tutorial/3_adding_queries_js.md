@@ -14,7 +14,7 @@ __Example of a bad query__: A query that takes a letter and finds all the users 
 
 This restriction is one of the keys to build a fast cache algorithm.
 
-If you really need to cache a "bad" query, you can try to simulate it as a multiple "good" queries:
+If you really need to cache a "bad" query, you can try to simulate it as a set of multiple "good" queries:
 
   * Supose the user model has a "money" field. Supose we want to search users with in a certain range of money. We could create a query of appropiate ranges and then create the query as a process of the result of multiple queries. We could create, for example, a query that takes a number and returns users with money between (number * 10000) and ((number + 1) * 10000 - 1).Then, we could use this query multiple times to search users at almost any range.
 
