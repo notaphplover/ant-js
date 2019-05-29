@@ -257,7 +257,7 @@ export class PrimaryEntityManagerTest implements ITest {
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       await primaryEntityManager.get(entity[model.id]);
       const luaKey = 'key';
-      const luaExpression = primaryEntityManager.getKeyGenerationLuaScriptGenerator()(luaKey);
+      const luaExpression = primaryEntityManager.getLuaKeyGeneratorFromId()(luaKey);
       const valueFound = await this._redis.redis.eval(
 `local ${luaKey} = ${entity.id}
 return redis.call('get', ${luaExpression})`,
@@ -290,7 +290,7 @@ return redis.call('get', ${luaExpression})`,
       );
       await primaryEntityManager.get(entity[model.id]);
       const luaKey = 'key';
-      const luaExpression = primaryEntityManager.getKeyGenerationLuaScriptGenerator()(luaKey);
+      const luaExpression = primaryEntityManager.getLuaKeyGeneratorFromId()(luaKey);
       const valueFound = await this._redis.redis.eval(
 `local ${luaKey} = ${entity.id}
 return redis.call('get', ${luaExpression})`,

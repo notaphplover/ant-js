@@ -52,7 +52,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
     this._redis = redis;
     this._successor = successor;
 
-    this._luaKeyGeneratorFromId = this.getKeyGenerationLuaScriptGenerator();
+    this._luaKeyGeneratorFromId = this._innerGetKeyGenerationLuaScriptGenerator(this.model.keyGen);
   }
 
   /**
@@ -75,6 +75,14 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   }
 
   /**
+   * Gets the lua key generator from id.
+   * @returns Lua key generator
+   */
+  public getLuaKeyGeneratorFromId(): (alias: string) => string {
+    return this._luaKeyGeneratorFromId;
+  }
+
+  /**
    * Gets a collection of entities by its ids.
    * @param ids Entities ids.
    * @returns Entities found.
@@ -84,14 +92,6 @@ export class PrimaryEntityManager<TEntity extends IEntity>
     cacheOptions: ICacheOptions = new CacheOptions(),
   ): Promise<TEntity[]> {
     return this._innerGetByIds(ids, cacheOptions);
-  }
-
-  /**
-   * Gets the key generation lua script generator.
-   * @returns function able to generate a lua expression that generates a key from a giving id.
-   */
-  public getKeyGenerationLuaScriptGenerator() {
-    return this._innerGetKeyGenerationLuaScriptGenerator(this.model.keyGen);
   }
 
   /**
