@@ -34,9 +34,10 @@ export interface IPrimaryEntityManager<TEntity extends IEntity>
    * Model of the manager.
    */
   model: IModel;
+
   /**
-   * Gets the key generation lua script generator.
-   * @returns function able to generate a lua expression that generates a key from a giving id.
+   * Gets the lua key generator from id.
+   * @returns Lua key generator
    */
-  getKeyGenerationLuaScriptGenerator(): (alias: string) => string;
+  getLuaKeyGeneratorFromId(): (alias: string) => string;
 }
