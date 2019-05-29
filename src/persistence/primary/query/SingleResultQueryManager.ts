@@ -31,7 +31,7 @@ export class SingleResultQueryManager<
       if (null == id) {
         return null;
       } else {
-        return await this._primaryEntityManager.getById(id, cacheOptions);
+        return await this._primaryEntityManager.get(id, cacheOptions);
       }
     } else {
       let result: TEntity | Promise<TEntity>;
@@ -39,7 +39,7 @@ export class SingleResultQueryManager<
         key,
         resultJson,
         (entity) => { result = entity; },
-        (id: number| string) => { result = this._primaryEntityManager.getById(id, cacheOptions); },
+        (id: number| string) => { result = this._primaryEntityManager.get(id, cacheOptions); },
         () => { result = null; },
       );
       return result;
@@ -224,7 +224,7 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
     cacheOptions?: ICacheOptions,
   ): Promise<void> {
     if (0 < missingIds.length) {
-      const missingEntities = await this._primaryEntityManager.getByIds(missingIds, cacheOptions);
+      const missingEntities = await this._primaryEntityManager.mGet(missingIds, cacheOptions);
       for (const missingEntity of missingEntities) {
         finalResults.push(missingEntity);
       }

@@ -2,21 +2,14 @@ import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { ICacheOptions } from './options/ICacheOptions';
 
-/**
- * Represents a manager able to obtain entities by ids.
- */
-export interface IPrimaryEntityManager<TEntity extends IEntity> {
-  /**
-   * Model of the manager.
-   */
-  model: IModel;
+export interface IPrimaryEntityManagerBase<TEntity extends IEntity> {
   /**
    * Gets a model by its id.
    * @param id: Model's id.
    * @param cacheOptions Cache options.
    * @returns Model found.
    */
-  getById(
+  get(
     id: number|string,
     cacheOptions?: ICacheOptions,
   ): Promise<TEntity>;
@@ -26,13 +19,25 @@ export interface IPrimaryEntityManager<TEntity extends IEntity> {
    * @param cacheOptions Cache options.
    * @returns Models found.
    */
-  getByIds(
+  mGet(
     ids: number[]| string[],
     cacheOptions?: ICacheOptions,
   ): Promise<TEntity[]>;
+}
+
+/**
+ * Represents a manager able to obtain entities by ids.
+ */
+export interface IPrimaryEntityManager<TEntity extends IEntity>
+  extends IPrimaryEntityManagerBase<TEntity> {
   /**
-   * Gets the key generation lua script generator.
-   * @returns function able to generate a lua expression that generates a key from a giving id.
+   * Model of the manager.
    */
-  getKeyGenerationLuaScriptGenerator(): (alias: string) => string;
+  model: IModel;
+
+  /**
+   * Gets the lua key generator from id.
+   * @returns Lua key generator
+   */
+  getLuaKeyGeneratorFromId(): (alias: string) => string;
 }

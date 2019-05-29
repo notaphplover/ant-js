@@ -77,7 +77,7 @@ export abstract class PrimaryQueryManager<
     this._reverseHashKey = reverseHashKey;
     this._queryKeyGen = queryKeyGen;
     this._entityKeyGen = entityKeyGen ? entityKeyGen : queryKeyGen;
-    this._luaKeyGeneratorFromId = this._primaryEntityManager.getKeyGenerationLuaScriptGenerator();
+    this._luaKeyGeneratorFromId = this._primaryEntityManager.getLuaKeyGeneratorFromId();
 
     this._setMQuery(query, mQuery);
   }

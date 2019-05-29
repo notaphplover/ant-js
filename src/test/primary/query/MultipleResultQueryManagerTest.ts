@@ -76,6 +76,7 @@ export class MultipleResultQueryManagerTest implements ITest {
     const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
       model,
       this._redis.redis,
+      true,
       secondaryEntityManager,
     );
     return [
@@ -219,7 +220,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         false,
       );
       const queryManager = new NamesStartingByLetter(
@@ -249,12 +250,13 @@ export class MultipleResultQueryManagerTest implements ITest {
       const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
+        true,
         secondaryEntityManager,
       );
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         false,
       );
       const queryManager = new NamesStartingByLetterAlternative(
@@ -302,7 +304,7 @@ export class MultipleResultQueryManagerTest implements ITest {
     it(itsName, async (done) => {
       await this._beforeAllPromise;
       const entity1: NamedEntity = { id: 0, name: 'Pepe' };
-      const entity2: NamedEntity = { id: 0, name: 'Juan' };
+      const entity2: NamedEntity = { id: 1, name: 'Juan' };
       const [
         ,
         primaryEntityManager,
@@ -481,7 +483,7 @@ export class MultipleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         true,
       );
       const queryManager = new NamesStartingByLetter(

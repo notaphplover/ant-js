@@ -1,7 +1,6 @@
 import { IEntity } from '../model/IEntity';
 import { IModel } from '../model/IModel';
 import { IModelManager } from '../persistence/primary/IModelManager';
-import { IPrimaryEntityManager } from '../persistence/primary/IPrimaryEntityManager';
 import { ICacheOptions } from '../persistence/primary/options/ICacheOptions';
 import {
   IBasePrimaryQueryManager,
@@ -51,10 +50,6 @@ export abstract class AntModelManager<
    */
   protected _modelManager: IModelManager<TEntity>;
   /**
-   * AntJS Primary entity manager.
-   */
-  protected _primaryEntityManager: IPrimaryEntityManager<TEntity>;
-  /**
    * Queries map.
    */
   protected _queriesMap: QueryMapType<TEntity, TModel>;
@@ -83,18 +78,6 @@ This is probably caused by the absence of a config instance. Ensure that config 
     return this._modelManager;
   }
   /**
-   * Primary entity manager.
-   */
-  protected get primaryEntityManager(): IPrimaryEntityManager<TEntity> {
-    if (!this._primaryEntityManager) {
-      throw new Error(
-`The current action could not be performed because the primary entity manager is not ready.
-This is probably caused by the absence of a config instance. Ensure that config is set.`,
-      );
-    }
-    return this._primaryEntityManager;
-  }
-  /**
    * Gets the current AntJS model config.
    * @returns Current AntJS model config.
    */
@@ -113,7 +96,6 @@ This is probably caused by the absence of a config instance. Ensure that config 
         throw new Error('The model manager already has a configuration. It\'s not possible to change it.');
       }
       this._config = config;
-      this._primaryEntityManager = this._generatePrimaryEntityManager(this._model, this._config);
       this._modelManager = this._generateModelManager(this._model, this._config);
       return this;
     }
@@ -213,16 +195,6 @@ This is probably caused by the absence of a config instance. Ensure that config 
     config: TConfig,
   ): IModelManager<TEntity>;
   /**
-   * Creates a new primary entity manager.
-   * @param model Model of the manager.
-   * @param config Manager config.
-   * @returns Primary entity manager generated.
-   */
-  protected abstract _generatePrimaryEntityManager(
-    model: TModel,
-    config: TConfig,
-  ): IPrimaryEntityManager<TEntity>;
-  /**
    * Gets a query by its alias.
    * @param alias Alias of the query.
    * @returns Query found.
@@ -255,7 +227,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
     if (queryConfig.isMultiple) {
       innerQueryManager = new MultipleResultQueryManager<TEntity>(
         queryConfig.query as TQuery<number[] | string[]>,
-        this.primaryEntityManager,
+        this.modelManager,
         this._config.redis,
         queryConfig.reverseHashKey,
         queryConfig.queryKeyGen,
@@ -268,7 +240,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
     } else {
       innerQueryManager = new SingleResultQueryManager<TEntity>(
         queryConfig.query as TQuery<number | string>,
-        this.primaryEntityManager,
+        this.modelManager,
         this._config.redis,
         queryConfig.reverseHashKey,
         queryConfig.queryKeyGen,

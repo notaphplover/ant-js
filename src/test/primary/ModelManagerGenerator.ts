@@ -51,6 +51,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     const primaryEntityManager = new PrimaryEntityManager(
       model,
       redisConn,
+      useEntityNegativeCache,
       secondaryManager,
     );
     const queryManagers = new Array<IPrimaryQueryManager<TEntity>>();
@@ -79,7 +80,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
       new ModelManager(
         model,
         redisConn,
-        primaryEntityManager,
+        secondaryManager,
         useEntityNegativeCache,
         queryManagers,
       ),
@@ -108,6 +109,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     const primaryEntityManager = new PrimaryEntityManager(
       model,
       redisConn,
+      useEntityNegativeCache,
       secondaryManager,
     );
 
@@ -115,7 +117,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
       new ModelManager(
         model,
         redisConn,
-        primaryEntityManager,
+        secondaryManager,
         useEntityNegativeCache,
       ),
       primaryEntityManager,

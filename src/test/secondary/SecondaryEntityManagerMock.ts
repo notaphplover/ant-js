@@ -67,4 +67,25 @@ export class SecondaryEntityManagerMock<TEntity extends IEntity>
       ),
     );
   }
+
+  /**
+   * Finds entities by its ids sorted.
+   * @param ids Entities ids.
+   * @returns Promise of entities found.
+   */
+  public getByIdsOrderedAsc(ids: number[]| string[]): Promise<TEntity[]> {
+    return new Promise<TEntity[]>((resolve, reject) => {
+      this.getByIds(ids).then((entities) => {
+        if (0 === entities.length) {
+          resolve(entities);
+        } else {
+          resolve(
+            'number' === typeof ids[0] ?
+              entities.sort((a: TEntity, b: TEntity) => a[this.model.id] - b[this.model.id]) :
+              entities.sort(),
+          );
+        }
+      }).catch(reject);
+    });
+  }
 }

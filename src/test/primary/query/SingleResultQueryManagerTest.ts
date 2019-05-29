@@ -86,6 +86,7 @@ export class SingleResultQueryManagerTest implements ITest {
     }>(
       model,
       this._redis.redis,
+      true,
       secondaryEntityManager,
     );
     return [
@@ -173,7 +174,7 @@ export class SingleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         false,
       );
       const query = async (params: any) => {
@@ -218,12 +219,13 @@ export class SingleResultQueryManagerTest implements ITest {
       const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
+        true,
         secondaryEntityManager,
       );
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         false,
       );
       const query = async (params: any) => {
@@ -361,7 +363,7 @@ export class SingleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         false,
       );
       const query = async (params: any) => {
@@ -406,12 +408,13 @@ export class SingleResultQueryManagerTest implements ITest {
       const primaryEntityManager = new PrimaryEntityManager(
         model,
         this._redis.redis,
+        true,
         secondaryEntityManager,
       );
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         false,
       );
       const query = async (params: any) => {
@@ -710,7 +713,7 @@ export class SingleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        primaryEntityManager,
+        secondaryEntityManager,
         true,
       );
       modelManager.delete(entity1[model.id]);
