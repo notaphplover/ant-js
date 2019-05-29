@@ -101,6 +101,7 @@ export class ModelManager<TEntity extends IEntity>
   /**
    * Updates multiple entities at the cache layer.
    * @param entities Entities to be updated.
+   * @param cacheOptions Cache options.
    * @returns Promise of entities updated.
    */
   public mUpdate(
@@ -340,7 +341,7 @@ end`;
 
     const entityId = 'ARGV[1]';
     const entity = 'ARGV[2]';
-    const ttl = 'ARV[3]';
+    const ttl = 'ARGV[3]';
     const ithQCode: string = cacheOptions.ttl ? 'ARGV[3 + i]' : 'ARGV[2 + i]';
 
     const entityKey: string = this._luaKeyGeneratorFromId(entityId);

@@ -2,6 +2,8 @@ import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { Model } from '../../model/Model';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
+import { CacheMode } from '../../persistence/primary/options/CacheMode';
+import { CacheOptions } from '../../persistence/primary/options/CacheOptions';
 import { IPrimaryQueryManager } from '../../persistence/primary/query/IPrimaryQueryManager';
 import { ITest } from '../ITest';
 import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
@@ -70,6 +72,10 @@ export class ModelManagerTest implements ITest {
       this._itMustSyncASRQWhenUpdatingAnEntity();
       this._itMustSyncASRQWhenUpdatingMultipleEntities();
       this._itMustUpdateAnEntityUsingNegativeCache();
+      this._itMustUpdateAnEntityWithCacheAndOverwrite();
+      this._itMustUpdateAnEntityWithCacheAndOverwriteWithTTL();
+      this._itMustUpdateAnEntityWithCacheIfNotExists();
+      this._itMustUpdateAnEntityWithCacheIfNotExistsWithTTL();
       this._itMustUpdateAnEntityWithoutUsingNegativeCache();
       this._itMustUpdateMultipleEntitiesUsingNegativeCache();
       this._itMustUpdateMultipleEntitiesWithoutUsingNegativeCache();
@@ -1227,6 +1233,162 @@ export class ModelManagerTest implements ITest {
       for (const search of searchEntity2ByQueryManager) {
         expect(search).toEqual(entity2);
       }
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustUpdateAnEntityWithCacheAndOverwrite(): void {
+    const itsName = 'mustUpdateAnEntityWithCacheAndOverwrite';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        [entity1],
+      );
+      const [
+        modelManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        secondaryEntityManager,
+        false,
+      );
+      await modelManager.update(entity1, new CacheOptions(CacheMode.CacheAndOverwrite));
+
+      expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
+
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustUpdateAnEntityWithCacheAndOverwriteWithTTL(): void {
+    const itsName = 'mustUpdateAnEntityWithCacheAndOverwriteWithTTL';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        [entity1],
+      );
+      const [
+        modelManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        secondaryEntityManager,
+        false,
+      );
+      await modelManager.update(entity1, new CacheOptions(CacheMode.CacheAndOverwrite, 10000));
+
+      expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
+
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustUpdateAnEntityWithCacheIfNotExists(): void {
+    const itsName = 'mustUpdateAnEntityWithCacheIfNotExists';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'b',
+      };
+      const entity2After: IEntityTest = {
+        id: 1,
+        numberField: 3,
+        strField: 'bAfter',
+      };
+
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        [entity1, entity2],
+      );
+      const [
+        modelManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        secondaryEntityManager,
+        false,
+      );
+      await modelManager.update(entity1, new CacheOptions(CacheMode.CacheIfNotExist));
+      await modelManager.update(entity2, new CacheOptions(CacheMode.CacheIfNotExist));
+      await modelManager.update(entity2After, new CacheOptions(CacheMode.CacheIfNotExist));
+
+      expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
+      expect(await modelManager.get(entity2[model.id])).toEqual(entity2);
+
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustUpdateAnEntityWithCacheIfNotExistsWithTTL(): void {
+    const itsName = 'mustUpdateAnEntityWithCacheIfNotExistsWithTTL';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+
+      const entity2: IEntityTest = {
+        id: 1,
+        numberField: 2,
+        strField: 'b',
+      };
+      const entity2After: IEntityTest = {
+        id: 1,
+        numberField: 3,
+        strField: 'bAfter',
+      };
+
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        [entity1, entity2],
+      );
+      const [
+        modelManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        secondaryEntityManager,
+        false,
+      );
+      await modelManager.update(entity1, new CacheOptions(CacheMode.CacheIfNotExist, 10000));
+      await modelManager.update(entity2, new CacheOptions(CacheMode.CacheIfNotExist, 10000));
+      await modelManager.update(entity2After, new CacheOptions(CacheMode.CacheIfNotExist, 10000));
+
+      expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
+      expect(await modelManager.get(entity2[model.id])).toEqual(entity2);
+
       done();
     }, MAX_SAFE_TIMEOUT);
   }
