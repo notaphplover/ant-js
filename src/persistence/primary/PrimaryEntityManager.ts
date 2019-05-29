@@ -107,20 +107,15 @@ export class PrimaryEntityManager<TEntity extends IEntity>
       return new Promise((resolve) => resolve());
     }
     if (CacheMode.CacheAndOverwrite === cacheOptions.cacheMode) {
+      const evalArray = [
+        this._luaGetMultipleDeleteUsingNegativeCache(cacheOptions),
+        0,
+        ...ids,
+      ];
       if (cacheOptions.ttl) {
-        return this._redis.eval([
-          this._luaGetMultipleDeleteUsingNegativeCacheEx(),
-          0,
-          ...ids,
-          cacheOptions.ttl,
-        ]);
-      } else {
-        return this._redis.eval([
-          this._luaGetMultipleDeleteUsingNegativeCache(),
-          0,
-          ...ids,
-        ]);
+        evalArray.push(cacheOptions.ttl);
       }
+      return this._redis.eval(evalArray);
     } else {
       return new Promise((resolve) => resolve());
     }
@@ -138,7 +133,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
     if (CacheMode.CacheAndOverwrite === cacheOptions.cacheMode) {
       const key = this._getKey(id);
       if (cacheOptions.ttl) {
-        return this._redis.psetex(key, cacheOptions.ttl, VOID_RESULT_STRING);
+        return this._redis.set(key, VOID_RESULT_STRING, 'PX', cacheOptions.ttl);
       } else {
         return this._redis.set(key, VOID_RESULT_STRING);
       }
@@ -274,24 +269,21 @@ export class PrimaryEntityManager<TEntity extends IEntity>
 
   /**
    * Gets the script for setting negative cache to multiple entities.
+   *
+   * @param cacheOptions Cache options.
    * @returns generated script.
    */
-  protected _luaGetMultipleDeleteUsingNegativeCache(): string {
+  protected _luaGetMultipleDeleteUsingNegativeCache(cacheOptions: ICacheOptions): string {
     const keyGenerator = this._luaKeyGeneratorFromId('ARGV[i]');
-    return `for i=1, #ARGV do
-  redis.call('set', ${keyGenerator}, '${VOID_RESULT_STRING}')
-end`;
-  }
-
-  /**
-   * Gets the script for setting negative cache to multiple entities with ttl.
-   * @returns generated script.
-   */
-  protected _luaGetMultipleDeleteUsingNegativeCacheEx(): string {
-    const keyGenerator = this._luaKeyGeneratorFromId('ARGV[i]');
-    return `local ttl = ARGV[#ARGV]
-for i=1, #ARGV - 1 do
-  redis.call('psetex', ${keyGenerator}, ttl, '${VOID_RESULT_STRING}')
+    const iteratorMaxValue = cacheOptions.ttl ? '#ARGV - 1' : '#ARGV';
+    const updateStatement = this._luaGetUpdateStatement(
+      cacheOptions,
+      keyGenerator,
+      `'${VOID_RESULT_STRING}'`,
+      'ARGV[#ARGV]',
+    );
+    return `for i=1, ${iteratorMaxValue} do
+  ${updateStatement}
 end`;
   }
 
@@ -325,6 +317,40 @@ end`;
     for i=1, #KEYS do
       redis.call('set', KEYS[i], ARGV[i], 'NX', 'PX', ttl)
     end`;
+  }
+
+  /**
+   * Gets the lua update statement for a certain cache options.
+   * @param cacheOptions Cache options.
+   * @param keyExpression Entity key alias.
+   * @param entityExpression Entity alias.
+   * @param ttlExpression TTL expression.
+   * @returns Lua update statement.
+   */
+  protected _luaGetUpdateStatement(
+    cacheOptions: ICacheOptions,
+    keyExpression: string,
+    entityExpression: string,
+    ttlExpression: string = 'ttl',
+  ): string {
+    switch (cacheOptions.cacheMode) {
+      case CacheMode.CacheAndOverwrite:
+        if (cacheOptions.ttl) {
+          return `redis.call('set', ${keyExpression}, ${entityExpression}, 'PX', ${ttlExpression})`;
+        } else {
+          return `redis.call('set', ${keyExpression}, ${entityExpression})`;
+        }
+      case CacheMode.CacheIfNotExist:
+        if (cacheOptions.ttl) {
+          return `redis.call('set', ${keyExpression}, ${entityExpression}, 'NX', 'PX', ${ttlExpression})`;
+        } else {
+          return `redis.call('set', ${keyExpression}, ${entityExpression}, 'NX')`;
+        }
+      case CacheMode.NoCache:
+        return '';
+      default:
+        throw new Error('Unexpected cache mode');
+    }
   }
 
   /**
@@ -374,7 +400,7 @@ end`;
     switch (cacheOptions.cacheMode) {
       case CacheMode.CacheIfNotExist:
         if (null == cacheOptions.ttl) {
-          return this._redis.setnx(key, JSON.stringify(entity));
+          return this._redis.set(key, JSON.stringify(entity), 'NX');
         } else {
           return this._redis.set(key, JSON.stringify(entity), 'PX', cacheOptions.ttl, 'NX');
         }
@@ -382,7 +408,7 @@ end`;
         if (null == cacheOptions.ttl) {
           return this._redis.set(key, JSON.stringify(entity));
         } else {
-          return this._redis.psetex(key, cacheOptions.ttl, JSON.stringify(entity));
+          return this._redis.set(key, JSON.stringify(entity), 'PX', cacheOptions.ttl);
         }
       default:
         throw new Error('Unexpected cache options.');
