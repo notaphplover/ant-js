@@ -13,8 +13,10 @@ import { ICacheOptions } from './options/ICacheOptions';
 import { PrimaryEntityManager } from './PrimaryEntityManager';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 
-export class ModelManager<TEntity extends IEntity>
-  extends PrimaryEntityManager<TEntity> implements IModelManager<TEntity> {
+export class ModelManager<
+  TEntity extends IEntity,
+  TSecondaryManager extends ISecondaryEntityManager<TEntity>
+> extends PrimaryEntityManager<TEntity, TSecondaryManager> implements IModelManager<TEntity> {
   /**
    * Query managers.
    */
@@ -31,7 +33,7 @@ export class ModelManager<TEntity extends IEntity>
   public constructor(
     model: IModel,
     redis: IORedis.Redis,
-    secondaryEntityManager?: ISecondaryEntityManager<TEntity>,
+    secondaryEntityManager?: TSecondaryManager,
     negativeEntityCache: boolean = true,
     queryManagers: Array<IPrimaryQueryManager<TEntity>> = new Array(),
   ) {
