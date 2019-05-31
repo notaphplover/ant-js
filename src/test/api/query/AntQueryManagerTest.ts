@@ -2,6 +2,7 @@ import { IAntQueryManager } from '../../../api/query/IAntQueryManager';
 import { IEntity } from '../../../model/IEntity';
 import { Model } from '../../../model/Model';
 import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
+import { ISecondaryEntityManager } from '../../../persistence/secondary/ISecondaryEntityManager';
 import { ITest } from '../../ITest';
 import { SingleResultQueryByFieldManager } from '../../primary/query/SingleResultQueryByFieldManager';
 import { RedisWrapper } from '../../primary/RedisWrapper';
@@ -58,7 +59,11 @@ export class AntQueryManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       const model = modelGenerator(prefix);
-      const primaryEntityManager = new PrimaryEntityManager<EntityTest>(model, this._redis.redis, null);
+      const primaryEntityManager = new PrimaryEntityManager<EntityTest, ISecondaryEntityManager<EntityTest>>(
+        model,
+        this._redis.redis,
+        null,
+      );
       const queryManager = new SingleResultQueryByFieldManager<EntityTest>(
         async (params: any) =>  null,
         primaryEntityManager,

@@ -9,8 +9,10 @@ import { CacheMode } from './options/CacheMode';
 import { CacheOptions } from './options/CacheOptions';
 import { ICacheOptions } from './options/ICacheOptions';
 
-export class PrimaryEntityManager<TEntity extends IEntity>
-  implements IPrimaryEntityManager<TEntity> {
+export class PrimaryEntityManager<
+  TEntity extends IEntity,
+  TSecondaryManager extends ISecondaryEntityManager<TEntity>
+> implements IPrimaryEntityManager<TEntity> {
 
   /**
    * Lua expression generator.
@@ -31,7 +33,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
   /**
    * Secondary model manager of the model.
    */
-  protected _successor: ISecondaryEntityManager<TEntity>;
+  protected _successor: TSecondaryManager;
 
   /**
    * Creates a new primary model manager.
@@ -45,7 +47,7 @@ export class PrimaryEntityManager<TEntity extends IEntity>
     model: IModel,
     redis: IORedis.Redis,
     negativeEntityCache: boolean,
-    successor?: ISecondaryEntityManager<TEntity>,
+    successor?: TSecondaryManager,
   ) {
     this._model = model;
     this._negativeEntityCache = negativeEntityCache;
