@@ -6,6 +6,7 @@ import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityM
 import { ModelManager } from '../../persistence/primary/ModelManager';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { IPrimaryQueryManager } from '../../persistence/primary/query/IPrimaryQueryManager';
+import { ISecondaryEntityManager } from '../../persistence/secondary/ISecondaryEntityManager';
 import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
 import { SingleResultQueryByFieldManager } from './query/SingleResultQueryByFieldManager';
 import { RedisWrapper } from './RedisWrapper';
@@ -48,7 +49,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     Map<string, IPrimaryQueryManager<TEntity>>,
   ] {
     const redisConn = redis || this._redis.redis;
-    const primaryEntityManager = new PrimaryEntityManager(
+    const primaryEntityManager = new PrimaryEntityManager<TEntity, ISecondaryEntityManager<TEntity>>(
       model,
       redisConn,
       useEntityNegativeCache,
@@ -106,7 +107,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     IPrimaryEntityManager<TEntity>,
   ] {
     const redisConn = redis || this._redis.redis;
-    const primaryEntityManager = new PrimaryEntityManager(
+    const primaryEntityManager = new PrimaryEntityManager<TEntity, ISecondaryEntityManager<TEntity>>(
       model,
       redisConn,
       useEntityNegativeCache,

@@ -3,6 +3,7 @@ import { Model } from '../../../model/Model';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { ModelManager } from '../../../persistence/primary/ModelManager';
 import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
+import { ISecondaryEntityManager } from '../../../persistence/secondary/ISecondaryEntityManager';
 import { ITest } from '../../ITest';
 import { SecondaryEntityManagerMock } from '../../secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from '../RedisWrapper';
@@ -73,7 +74,10 @@ export class MultipleResultQueryManagerTest implements ITest {
     const model = new Model('id', { prefix: prefix });
     const secondaryEntityManager =
         new SecondaryEntityManagerMock<NamedEntity>(model, entities);
-    const primaryEntityManager = new PrimaryEntityManager<NamedEntity>(
+    const primaryEntityManager = new PrimaryEntityManager<
+      NamedEntity,
+      ISecondaryEntityManager<NamedEntity>
+    >(
       model,
       this._redis.redis,
       true,
@@ -247,7 +251,10 @@ export class MultipleResultQueryManagerTest implements ITest {
       const entity1: NamedEntityAlternative = {id: '1', name: 'Pepe'};
       const secondaryEntityManager =
         new SecondaryEntityManagerMock<NamedEntityAlternative>(model, [entity1]);
-      const primaryEntityManager = new PrimaryEntityManager(
+      const primaryEntityManager = new PrimaryEntityManager<
+        NamedEntityAlternative,
+        ISecondaryEntityManager<NamedEntityAlternative>
+      >(
         model,
         this._redis.redis,
         true,

@@ -6,6 +6,7 @@ import { ModelManager } from '../../persistence/primary/ModelManager';
 import { CacheMode } from '../../persistence/primary/options/CacheMode';
 import { CacheOptions } from '../../persistence/primary/options/CacheOptions';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
+import { ISecondaryEntityManager } from '../../persistence/secondary/ISecondaryEntityManager';
 import { ITest } from '../ITest';
 import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from './RedisWrapper';
@@ -95,7 +96,7 @@ export class PrimaryEntityManagerTest implements ITest {
     const model = new Model('id', { prefix: prefix });
     const secondaryEntityManager =
         new SecondaryEntityManagerMock<IEntityTest>(model, entities);
-    const primaryEntityManager = new PrimaryEntityManager<IEntityTest>(
+    const primaryEntityManager = new PrimaryEntityManager<IEntityTest, ISecondaryEntityManager<IEntityTest>>(
       model,
       this._redis.redis,
       useNegativeCache,
