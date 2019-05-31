@@ -3,7 +3,6 @@ import { IModel } from '../model/IModel';
 import { IModelManager } from '../persistence/primary/IModelManager';
 import { ICacheOptions } from '../persistence/primary/options/ICacheOptions';
 import {
-  IBasePrimaryQueryManager,
   IPrimaryQueryManager,
 } from '../persistence/primary/query/IPrimaryQueryManager';
 import { MultipleResultQueryManager } from '../persistence/primary/query/MultipleResultQueryManager';
@@ -164,7 +163,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
     aliasOrNothing?: string,
   ): IAntQueryManager<TEntity, TResult> | TAntQueryManager<TEntity, TResult> {
     if ('string' === typeof queryOrAlias) {
-      return this._queryGetQuery(queryOrAlias) as IBasePrimaryQueryManager<TEntity, TResult>;
+      return this._queryGetQuery<TResult>(queryOrAlias);
     } else {
       return this._querySetQuery(queryOrAlias, aliasOrNothing);
     }
@@ -199,14 +198,16 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param alias Alias of the query.
    * @returns Query found.
    */
-  private _queryGetQuery(alias: string): IAntQueryManager<TEntity, TEntity|TEntity[]> {
+  private _queryGetQuery<
+    TResult extends TEntity|TEntity[] = TEntity|TEntity[]
+  >(alias: string): IAntQueryManager<TEntity, TResult> {
     const mapEntry = this._queriesMap.get(alias);
     if (undefined === mapEntry) {
       return undefined;
     } else {
       const [model, query] = mapEntry;
       if (this._model === model) {
-        return query as IAntQueryManager<TEntity, TEntity|TEntity[]>;
+        return query as IAntQueryManager<TEntity, TResult>;
       } else {
         throw new Error('The query found manages a different model than the model managed by this manager.');
       }
