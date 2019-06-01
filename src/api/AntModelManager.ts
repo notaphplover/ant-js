@@ -33,6 +33,7 @@ export abstract class AntModelManager<
   TEntity extends IEntity,
   TConfig extends IAntModelConfig,
   TModel extends IModel,
+  TModelManager extends IModelManager<TEntity>,
 >
   implements IAntModelManager<TEntity, TConfig> {
 
@@ -47,7 +48,7 @@ export abstract class AntModelManager<
   /**
    * AntJS model manager
    */
-  protected _modelManager: IModelManager<TEntity>;
+  protected _modelManager: TModelManager;
   /**
    * Queries map.
    */
@@ -67,7 +68,7 @@ export abstract class AntModelManager<
   /**
    * Model manager
    */
-  protected get modelManager(): IModelManager<TEntity> {
+  protected get modelManager(): TModelManager {
     if (!this._modelManager) {
       throw new Error(
 `The current action could not be performed because the model manager is not ready.
@@ -192,7 +193,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
   protected abstract _generateModelManager(
     model: TModel,
     config: TConfig,
-  ): IModelManager<TEntity>;
+  ): TModelManager;
   /**
    * Gets a query by its alias.
    * @param alias Alias of the query.
