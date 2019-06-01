@@ -7,7 +7,7 @@ import { IAntModelManager } from './IAntModelManager';
 export interface IAntManager<
   TConfig extends IAntModelConfig,
   TModel extends IModel,
-  TAntModelManager extends IAntModelManager<any, TConfig>,
+  TAntModelManager extends IAntModelManager<IEntity, TConfig>,
 > {
   /**
    * Gets the AntJS config.
