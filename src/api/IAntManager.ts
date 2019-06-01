@@ -6,7 +6,8 @@ import { IAntModelManager } from './IAntModelManager';
 
 export interface IAntManager<
   TConfig extends IAntModelConfig,
-  TModel extends IModel
+  TModel extends IModel,
+  TAntModelManager extends IAntModelManager<IEntity, TConfig>,
 > {
   /**
    * Gets the AntJS config.
@@ -23,5 +24,5 @@ export interface IAntManager<
    * @param model model of the manager.
    * @returns model manager of the model provided.
    */
-  get<TEntity extends IEntity>(model: TModel): IAntModelManager<TEntity, TConfig>;
+  get(model: TModel): TAntModelManager;
 }

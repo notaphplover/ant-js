@@ -6,14 +6,12 @@ import { IAntModelConfig } from '../../api/config/IAntModelConfig';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { IModelManager } from '../../persistence/primary/IModelManager';
-import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
-import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { ModelManagerGenerator } from '../primary/ModelManagerGenerator';
 import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
 
 export class MinimalAntModelManager<
   TEntity extends IEntity,
-> extends AntModelManager<TEntity, IAntModelConfig, IModel> {
+> extends AntModelManager<TEntity, IAntModelConfig, IModel, IModelManager<TEntity>> {
   /**
    * Model manager generator.
    */
