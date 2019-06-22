@@ -12,6 +12,7 @@ services:
       TRAVIS_PULL_REQUEST: ${TRAVIS_PULL_REQUEST}
     volumes:
       - .:/app
+      - /app/node_modules/
     depends_on:
       - ant_redis
     ports:
