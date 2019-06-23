@@ -47,7 +47,7 @@ const knex = Knex({
   version: '11.2',
 });
 
-export { knex };
+module.exports = { knex };
 
 ```
 
