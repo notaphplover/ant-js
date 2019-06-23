@@ -9,8 +9,7 @@
     "removeComments": true,
     "sourceMap": true,
     "rootDir": "src",
-    "target": "es2017",
-    "types": ["ioredis", "jasmine", "node"]
+    "target": "es2017"
   },
   "exclude" : [
 
