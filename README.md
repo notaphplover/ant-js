@@ -8,7 +8,7 @@ Scalable query manager for redis. This library receives a set of models and quer
 
 ## Status
 
-In alpha phase. We expect to start adding docs at May of 2019.
+In beta phase. The library is being tested in a preproduction environments of a backend service.
 
 ## How to install the library
 
