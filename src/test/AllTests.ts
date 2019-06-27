@@ -9,10 +9,18 @@ import { PrimaryEntityManagerTest } from './primary/PrimaryEntityManagerTest';
 import { MultipleResultQueryManagerTest } from './primary/query/MultipleResultQueryManagerTest';
 import { SingleResultQueryManagerTest } from './primary/query/SingleResultQueryManagerTest';
 import { RedisWrapper } from './primary/RedisWrapper';
+import { RedisCachedScriptSetByCacheModeTest } from './primary/script/RedisCachedScriptSetByCacheModeTest';
+import { RedisCachedScriptTest } from './primary/script/RedisCachedScriptTest';
 
 export class AllTest implements ITest {
   public performTests(): void {
-    const beforeAllPromise: Promise<any> = new RedisWrapper().redis.flushall();
+    const redisWrapper = new RedisWrapper();
+    const redis = redisWrapper.redis;
+    const beforeAllPromise: Promise<any> = redis
+      .flushall()
+      .then(
+        () => redis.script(['flush']),
+      );
 
     new AntManagerTest(beforeAllPromise).performTests();
     new AntModelManagerTest(beforeAllPromise).performTests();
@@ -22,6 +30,8 @@ export class AllTest implements ITest {
     new ModelTest().performTests();
     new MultipleResultQueryManagerTest(beforeAllPromise).performTests();
     new PrimaryEntityManagerTest(beforeAllPromise).performTests();
+    new RedisCachedScriptSetByCacheModeTest(beforeAllPromise).performTests();
+    new RedisCachedScriptTest(beforeAllPromise).performTests();
     new SingleResultQueryManagerTest(beforeAllPromise).performTests();
   }
 }

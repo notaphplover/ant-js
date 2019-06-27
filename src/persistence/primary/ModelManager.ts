@@ -12,11 +12,31 @@ import { CacheOptions } from './options/CacheOptions';
 import { ICacheOptions } from './options/ICacheOptions';
 import { PrimaryEntityManager } from './PrimaryEntityManager';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
+import { RedisCachedScript } from './script/RedisCachedScript';
+import { RedisCachedScriptSetByCacheMode } from './script/RedisCachedScriptSetByCacheMode';
 
 export class ModelManager<
   TEntity extends IEntity,
   TSecondaryManager extends ISecondaryEntityManager<TEntity>
 > extends PrimaryEntityManager<TEntity, TSecondaryManager> implements IModelManager<TEntity> {
+
+  /**
+   * Cached script for deleting an entity.
+   */
+  protected _luaDeleteCachedQuery: RedisCachedScript;
+  /**
+   * Cached script for deleting multiple entities.
+   */
+  protected _luaMDeleteCachedQuery: RedisCachedScript;
+  /**
+   * Cached script set for updating multiple entities.
+   */
+  protected _luaMUpdateCachedQuerySet: RedisCachedScriptSetByCacheMode;
+  /**
+   * Cached script set for updating an entity.
+   */
+  protected _luaUpdateCachedQuerySet: RedisCachedScriptSetByCacheMode;
+
   /**
    * Query managers.
    */
@@ -43,6 +63,9 @@ export class ModelManager<
       negativeEntityCache,
       secondaryEntityManager,
     );
+
+    this._initializeCachedQueries();
+
     this._queryManagers = queryManagers;
   }
 
@@ -61,18 +84,20 @@ export class ModelManager<
    * @returns Promise of entity deleted.
    */
   public delete(id: number|string): Promise<any> {
-    const evalParams = [
-      this._luaSyncDeleteGenerator(),
-      this._queryManagers.length,
-    ];
-    for (const queryManager of this._queryManagers) {
-      evalParams.push(queryManager.reverseHashKey);
-    }
-    evalParams.push(JSON.stringify(id));
-    for (const queryManager of this._queryManagers) {
-      evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
-    }
-    return this._redis.eval(evalParams);
+    return this._luaDeleteCachedQuery.eval((scriptArg: string) => {
+      const evalParams = [
+        scriptArg,
+        this._queryManagers.length,
+      ];
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.reverseHashKey);
+      }
+      evalParams.push(JSON.stringify(id));
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
+      }
+      return evalParams;
+    });
   }
 
   /**
@@ -84,20 +109,22 @@ export class ModelManager<
     if (null == ids || 0 === ids.length) {
       return new Promise((resolve) => resolve());
     }
-    const evalParams = [
-      this._luaSyncMDeleteGenerator(),
-      this._queryManagers.length,
-    ];
-    for (const queryManager of this._queryManagers) {
-      evalParams.push(queryManager.reverseHashKey);
-    }
-    for (const id of ids) {
-      evalParams.push(JSON.stringify(id));
-    }
-    for (const queryManager of this._queryManagers) {
-      evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
-    }
-    return this._redis.eval(evalParams);
+    return this._luaMDeleteCachedQuery.eval((scriptArg) => {
+      const evalParams = [
+        scriptArg,
+        this._queryManagers.length,
+      ];
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.reverseHashKey);
+      }
+      for (const id of ids) {
+        evalParams.push(JSON.stringify(id));
+      }
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
+      }
+      return evalParams;
+    });
   }
 
   /**
@@ -113,32 +140,32 @@ export class ModelManager<
     if (null == entities || 0 === entities.length) {
       return new Promise((resolve) => resolve());
     }
-    const evalParams = [
-      this._luaSyncMUpdateGenerator(cacheOptions),
-      this._queryManagers.length * (entities.length + 1),
-    ];
-    for (const queryManager of this._queryManagers) {
-      evalParams.push(queryManager.reverseHashKey);
-      for (const entity of entities) {
-        evalParams.push(queryManager.entityKeyGen(entity));
+    return this._luaMUpdateCachedQuerySet.eval(cacheOptions, (scriptArg) => {
+      const evalParams = [
+        scriptArg,
+        this._queryManagers.length * (entities.length + 1),
+      ];
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.reverseHashKey);
+        for (const entity of entities) {
+          evalParams.push(queryManager.entityKeyGen(entity));
+        }
       }
-    }
-    for (const entity of entities) {
-      evalParams.push(entity[this._model.id]);
-    }
-    for (const entity of entities) {
-      evalParams.push(JSON.stringify(entity));
-    }
-    for (const queryManager of this._queryManagers) {
-      evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
-    }
-    evalParams.push(this._queryManagers.length);
-
-    if (cacheOptions.ttl) {
-      evalParams.push(cacheOptions.ttl);
-    }
-
-    return this._redis.eval(evalParams);
+      for (const entity of entities) {
+        evalParams.push(entity[this._model.id]);
+      }
+      for (const entity of entities) {
+        evalParams.push(JSON.stringify(entity));
+      }
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
+      }
+      evalParams.push(this._queryManagers.length);
+      if (cacheOptions.ttl) {
+        evalParams.push(cacheOptions.ttl);
+      }
+      return evalParams;
+    });
   }
 
   /**
@@ -151,23 +178,51 @@ export class ModelManager<
     entity: TEntity,
     cacheOptions: ICacheOptions = new CacheOptions(),
   ): Promise<any> {
-    const evalParams = [
-      this._luaSyncUpdateGenerator(cacheOptions),
-      2 * this._queryManagers.length,
-    ];
-    for (const queryManager of this._queryManagers) {
-      evalParams.push(queryManager.reverseHashKey);
-      evalParams.push(queryManager.entityKeyGen(entity));
-    }
-    evalParams.push(JSON.stringify(entity[this._model.id]));
-    evalParams.push(JSON.stringify(entity));
-    if (cacheOptions.ttl) {
-      evalParams.push(cacheOptions.ttl);
-    }
-    for (const queryManager of this._queryManagers) {
-      evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
-    }
-    return this._redis.eval(evalParams);
+    return this._luaUpdateCachedQuerySet.eval(cacheOptions, (scriptArg) => {
+      const evalParams = [
+        scriptArg,
+        2 * this._queryManagers.length,
+      ];
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.reverseHashKey);
+        evalParams.push(queryManager.entityKeyGen(entity));
+      }
+      evalParams.push(JSON.stringify(entity[this._model.id]));
+      evalParams.push(JSON.stringify(entity));
+      if (cacheOptions.ttl) {
+        evalParams.push(cacheOptions.ttl);
+      }
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
+      }
+      return evalParams;
+    });
+  }
+
+  /**
+   * Initializes all the cached queries managed by the instance.
+   */
+  private _initializeCachedQueries(): void {
+    this._luaDeleteCachedQuery = new RedisCachedScript(
+      this._luaSyncDeleteGenerator(),
+      this._redis,
+    );
+    this._luaMDeleteCachedQuery = new RedisCachedScript(
+      this._luaSyncMDeleteGenerator(),
+      this._redis,
+    );
+    this._luaMUpdateCachedQuerySet = new RedisCachedScriptSetByCacheMode(
+      (options) => new RedisCachedScript(
+        this._luaSyncMUpdateGenerator(options),
+        this._redis,
+      ),
+    );
+    this._luaUpdateCachedQuerySet = new RedisCachedScriptSetByCacheMode(
+      (options) => new RedisCachedScript(
+        this._luaSyncUpdateGenerator(options),
+        this._redis,
+      ),
+    );
   }
 
   /**
