@@ -530,8 +530,8 @@ return redis.call('get', ${luaExpression})`,
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        secondaryEntityManager,
         true,
+        secondaryEntityManager,
       );
       await modelManager.delete(entity.id);
       const entityFound = await primaryEntityManager.get(entity[model.id]);
@@ -776,8 +776,8 @@ return redis.call('get', ${luaExpression})`,
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        secondaryEntityManager,
         true,
+        secondaryEntityManager,
       );
       await modelManager.delete(entity.id);
       const entityFound = await primaryEntityManager.mGet([

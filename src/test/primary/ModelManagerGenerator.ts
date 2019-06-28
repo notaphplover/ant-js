@@ -81,8 +81,8 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
       new ModelManager(
         model,
         redisConn,
-        secondaryManager,
         useEntityNegativeCache,
+        secondaryManager,
         queryManagers,
       ),
       primaryEntityManager,
@@ -118,8 +118,8 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
       new ModelManager(
         model,
         redisConn,
-        secondaryManager,
         useEntityNegativeCache,
+        secondaryManager,
       ),
       primaryEntityManager,
     ];
