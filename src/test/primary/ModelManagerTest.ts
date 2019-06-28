@@ -78,6 +78,7 @@ export class ModelManagerTest implements ITest {
       this._itMustUpdateAnEntityWithCacheIfNotExistsWithTTL();
       this._itMustUpdateAnEntityWithoutUsingNegativeCache();
       this._itMustUpdateMultipleEntitiesUsingNegativeCache();
+      this._itMustUpdateMultipleEntitiesWithCacheAndOverwriteAndTTL();
       this._itMustUpdateMultipleEntitiesWithoutUsingNegativeCache();
       this._itMustUpdateZeroEntities();
     });
@@ -1517,6 +1518,38 @@ export class ModelManagerTest implements ITest {
       for (const search of searchEntity2ByQueryManager) {
         expect(search).toEqual(entity2);
       }
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustUpdateMultipleEntitiesWithCacheAndOverwriteAndTTL(): void {
+    const itsName = 'mustUpdateMultipleEntitiesWithCacheAndOverwriteAndTTL';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+
+      const entity1: IEntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: 'a',
+      };
+
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+        [entity1],
+      );
+      const [
+        modelManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        secondaryEntityManager,
+        false,
+      );
+      await modelManager.mUpdate([entity1], new CacheOptions(CacheMode.CacheAndOverwrite, 10000));
+
+      expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
+
       done();
     }, MAX_SAFE_TIMEOUT);
   }

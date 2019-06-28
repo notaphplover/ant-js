@@ -176,8 +176,8 @@ export class SingleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        secondaryEntityManager,
         false,
+        secondaryEntityManager,
       );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
@@ -227,8 +227,8 @@ export class SingleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        secondaryEntityManager,
         false,
+        secondaryEntityManager,
       );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
@@ -365,8 +365,8 @@ export class SingleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        secondaryEntityManager,
         false,
+        secondaryEntityManager,
       );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
@@ -416,8 +416,8 @@ export class SingleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        secondaryEntityManager,
         false,
+        secondaryEntityManager,
       );
       const query = async (params: any) => {
         const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
@@ -715,8 +715,8 @@ export class SingleResultQueryManagerTest implements ITest {
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        secondaryEntityManager,
         true,
+        secondaryEntityManager,
       );
       modelManager.delete(entity1[model.id]);
       const query = async (params: any) => {
