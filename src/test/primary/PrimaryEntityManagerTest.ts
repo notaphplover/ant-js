@@ -65,6 +65,7 @@ export class PrimaryEntityManagerTest implements ITest {
       this._itMustSearchForAnEntityAndFindANegativeCachedEntity();
       this._itMustSearchForAnUnexistingEntity();
       this._itMustSearchForAnUnexistingEntityCachingIfNotExist();
+      this._itMustSearchForAnUnexistingEntityWithNegativeCacheAndTTL();
       this._itMustSearchForAnUnexistingEntityWithTTL();
       this._itMustSearchForEntitiesAndCacheThemIfNotExistsWhenCacheIfNotExistsIsSet();
       this._itMustSearchForEntitiesAndCacheThemIfNotExistsWhenCacheIfNotExistsIsSetAntTTLIsProvided();
@@ -529,8 +530,8 @@ return redis.call('get', ${luaExpression})`,
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        secondaryEntityManager,
         true,
+        secondaryEntityManager,
       );
       await modelManager.delete(entity.id);
       const entityFound = await primaryEntityManager.get(entity[model.id]);
@@ -572,6 +573,26 @@ return redis.call('get', ${luaExpression})`,
       const entityFound = await primaryEntityManager.get(
         entity[model.id],
         new CacheOptions(CacheMode.CacheIfNotExist),
+      );
+
+      expect(entityFound).toBeNull();
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustSearchForAnUnexistingEntityWithNegativeCacheAndTTL(): void {
+    const itsName = 'mustSearchForAnUnexistingEntityWithNegativeCacheAndTTL';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+      const entity: IEntityTest = {id: 0, field: 'sample'};
+      const [
+        model,
+        primaryEntityManager,
+      ] = this._helperGenerateBaseInstances(prefix, new Array(), true);
+      const entityFound = await primaryEntityManager.get(
+        entity[model.id],
+        new CacheOptions(CacheMode.CacheAndOverwrite, 10000),
       );
 
       expect(entityFound).toBeNull();
@@ -755,8 +776,8 @@ return redis.call('get', ${luaExpression})`,
       const modelManager = new ModelManager(
         model,
         this._redis.redis,
-        secondaryEntityManager,
         true,
+        secondaryEntityManager,
       );
       await modelManager.delete(entity.id);
       const entityFound = await primaryEntityManager.mGet([

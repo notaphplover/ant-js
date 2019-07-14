@@ -46,15 +46,15 @@ export class ModelManager<
    * Creates a new model manager.
    * @param model Model managed.
    * @param redis Redis connection.
-   * @param primaryEntityManager Primary entity manager.
    * @param negativeEntityCache True to use negative entity cache.
+   * @param secondaryEntityManager Secondary entity manager.
    * @param queryManagers Query managers.
    */
   public constructor(
     model: IModel,
     redis: IORedis.Redis,
+    negativeEntityCache: boolean,
     secondaryEntityManager?: TSecondaryManager,
-    negativeEntityCache: boolean = true,
     queryManagers: Array<IPrimaryQueryManager<TEntity>> = new Array(),
   ) {
     super(
