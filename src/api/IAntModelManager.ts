@@ -1,6 +1,10 @@
 import { IEntity } from '../model/IEntity';
 import { IBaseModelManager } from '../persistence/primary/IModelManager';
-import { QueryResult } from '../persistence/primary/query/PrimaryQueryManager';
+import {
+  MultipleQueryResult,
+  QueryResult,
+  SingleQueryResult,
+} from '../persistence/primary/query/PrimaryQueryManager';
 import { IAntModelConfig } from './config/IAntModelConfig';
 import { IAntQueryConfig } from './config/IAntQueryConfig';
 import { IAntMultipleResultQueryManager } from './query/IAntMultipleResultQueryManager';
@@ -8,9 +12,11 @@ import { IAntQueryManager } from './query/IAntQueryManager';
 import { IAntSingleResultQueryManager } from './query/IAntSingleResultQueryManager';
 
 export type TAntQueryManager<TEntity, TQueryResult> =
-  TQueryResult extends any[]
-    ? IAntMultipleResultQueryManager<TEntity>
-    : IAntSingleResultQueryManager<TEntity>;
+  TQueryResult extends MultipleQueryResult ?
+    IAntMultipleResultQueryManager<TEntity> :
+    TQueryResult extends SingleQueryResult ?
+      IAntSingleResultQueryManager<TEntity> :
+      never;
 
 export interface IAntModelManager<TEntity extends IEntity, TConfig extends IAntModelConfig>
   extends IBaseModelManager<TEntity> {

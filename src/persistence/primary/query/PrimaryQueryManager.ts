@@ -7,10 +7,17 @@ import {
   IPrimaryQueryManager,
 } from './IPrimaryQueryManager';
 
-export type QueryResult = number | string | number[] | string[];
-type TResult<TEntity, TQueryResult> = TQueryResult extends any[] ?
-  TEntity[] :
-  TEntity;
+export type MultipleQueryResult = number[] | string[];
+export type SingleQueryResult = number | string;
+
+export type QueryResult = MultipleQueryResult | SingleQueryResult;
+type TResult<TEntity, TQueryResult> =
+  TQueryResult extends MultipleQueryResult ?
+    TEntity[] :
+    TQueryResult extends SingleQueryResult ?
+      TEntity :
+      never;
+
 export type TMQuery<TQueryResult> = (paramsArray: any[]) => Promise<TQueryResult[]>;
 export type TQuery<TQueryResult> = (params: any) => Promise<TQueryResult>;
 
