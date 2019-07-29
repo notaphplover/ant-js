@@ -1,6 +1,10 @@
 import { IEntity } from '../model/IEntity';
 import { IBaseModelManager } from '../persistence/primary/IModelManager';
-import { MultipleQueryResult, QueryResult, SingleQueryResult } from '../persistence/primary/query/PrimaryQueryManager';
+import {
+  MultipleQueryResult,
+  QueryResult,
+  SingleQueryResult,
+} from '../persistence/primary/query/PrimaryQueryManager';
 import { IAntModelConfig } from './config/IAntModelConfig';
 import { IAntQueryConfig } from './config/IAntQueryConfig';
 import { IAntMultipleResultQueryManager } from './query/IAntMultipleResultQueryManager';
