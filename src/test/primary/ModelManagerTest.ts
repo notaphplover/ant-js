@@ -5,7 +5,7 @@ import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityM
 import { CacheMode } from '../../persistence/primary/options/CacheMode';
 import { CacheOptions } from '../../persistence/primary/options/CacheOptions';
 import { IPrimaryQueryManager } from '../../persistence/primary/query/IPrimaryQueryManager';
-import { ITest } from '../ITest';
+import { ITest } from '../../test-api/ITest';
 import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
 import { ModelManagerGenerator } from './ModelManagerGenerator';
 import { MultipleResultQueryByFieldManager } from './query/MultipleResultQueryByFieldManager';

@@ -4,7 +4,7 @@ import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEnti
 import { ModelManager } from '../../../persistence/primary/ModelManager';
 import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
 import { ISecondaryEntityManager } from '../../../persistence/secondary/ISecondaryEntityManager';
-import { ITest } from '../../ITest';
+import { ITest } from '../../../test-api/ITest';
 import { SecondaryEntityManagerMock } from '../../secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from '../RedisWrapper';
 import {

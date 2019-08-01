@@ -1,8 +1,8 @@
+import { ITest } from '../test-api/ITest';
 import { AntTest } from './AntTest';
 import { AntManagerTest } from './api/AntManagerTest';
 import { AntModelManagerTest } from './api/AntModelManagerTest';
 import { AntQueryManagerTest } from './api/query/AntQueryManagerTest';
-import { ITest } from './ITest';
 import { ModelTest } from './model/ModelTest';
 import { ModelManagerTest } from './primary/ModelManagerTest';
 import { PrimaryEntityManagerTest } from './primary/PrimaryEntityManagerTest';

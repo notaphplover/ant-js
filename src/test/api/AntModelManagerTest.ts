@@ -2,7 +2,7 @@ import { AntQueryManager } from '../../api/query/AntQueryManager';
 import { IEntity } from '../../model/IEntity';
 import { Model } from '../../model/Model';
 import { IModelManager } from '../../persistence/primary/IModelManager';
-import { ITest } from '../ITest';
+import { ITest } from '../../test-api/ITest';
 import { RedisWrapper } from '../primary/RedisWrapper';
 import { MinimalAntModelManager } from './MinimalAntModelManager';
 

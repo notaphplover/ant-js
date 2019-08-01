@@ -7,7 +7,7 @@ import { CacheMode } from '../../persistence/primary/options/CacheMode';
 import { CacheOptions } from '../../persistence/primary/options/CacheOptions';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { ISecondaryEntityManager } from '../../persistence/secondary/ISecondaryEntityManager';
-import { ITest } from '../ITest';
+import { ITest } from '../../test-api/ITest';
 import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from './RedisWrapper';
 
