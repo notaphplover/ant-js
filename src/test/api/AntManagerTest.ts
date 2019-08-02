@@ -2,7 +2,7 @@ import { AntModelManager } from '../../api/AntModelManager';
 import { IAntConfig } from '../../api/config/IAntConfig';
 import { IAntModelConfig } from '../../api/config/IAntModelConfig';
 import { Model } from '../../model/Model';
-import { ITest } from '../../test-api/ITest';
+import { ITest } from '../ITest';
 import { RedisWrapper } from '../primary/RedisWrapper';
 import { MinimalAntManager } from './MinimalAntManager';
 
