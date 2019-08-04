@@ -1,4 +1,4 @@
-import * as IORedis from 'ioredis';
+import { IRedisMiddleware } from '../../persistence/primary/IRedisMiddleware';
 
 export interface IAntModelConfig {
   /**
@@ -8,5 +8,5 @@ export interface IAntModelConfig {
   /**
    * Redis connection.
    */
-  redis: IORedis.Redis;
+  redis: IRedisMiddleware;
 }

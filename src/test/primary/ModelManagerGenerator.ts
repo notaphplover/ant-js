@@ -1,8 +1,8 @@
-import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { IModelManager } from '../../persistence/primary/IModelManager';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
+import { IRedisMiddleware } from '../../persistence/primary/IRedisMiddleware';
 import { ModelManager } from '../../persistence/primary/ModelManager';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { IPrimaryQueryManager } from '../../persistence/primary/query/IPrimaryQueryManager';
@@ -42,7 +42,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     reverseHashKey: string,
     secondaryManager: SecondaryEntityManagerMock<TEntity>,
     useEntityNegativeCache: boolean = true,
-    redis?: IORedis.Redis,
+    redis?: IRedisMiddleware,
   ): [
     IModelManager<TEntity>,
     IPrimaryEntityManager<TEntity>,
@@ -101,7 +101,7 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
     model: IModel,
     secondaryManager: SecondaryEntityManagerMock<TEntity>,
     useEntityNegativeCache: boolean = true,
-    redis?: IORedis.Redis,
+    redis?: IRedisMiddleware,
   ): [
     IModelManager<TEntity>,
     IPrimaryEntityManager<TEntity>,

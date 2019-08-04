@@ -1,8 +1,8 @@
-import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { IModelManager } from './IModelManager';
+import { IRedisMiddleware } from './IRedisMiddleware';
 import {
   MULTIPLE_RESULT_QUERY_CODE,
   SINGLE_RESULT_QUERY_CODE,
@@ -52,7 +52,7 @@ export class ModelManager<
    */
   public constructor(
     model: IModel,
-    redis: IORedis.Redis,
+    redis: IRedisMiddleware,
     negativeEntityCache: boolean,
     secondaryEntityManager?: TSecondaryManager,
     queryManagers: Array<IPrimaryQueryManager<TEntity>> = new Array(),
