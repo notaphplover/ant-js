@@ -1,9 +1,9 @@
-import * as IORedis from 'ioredis';
 import { IEntity } from '../../model/IEntity';
 import { IKeyGenParams } from '../../model/IKeyGenParams';
 import { IModel } from '../../model/IModel';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
+import { IRedisMiddleware } from './IRedisMiddleware';
 import { VOID_RESULT_STRING } from './LuaConstants';
 import { CacheMode } from './options/CacheMode';
 import { CacheOptions } from './options/CacheOptions';
@@ -29,7 +29,7 @@ export class PrimaryEntityManager<
   /**
    * Redis connection.
    */
-  protected _redis: IORedis.Redis;
+  protected _redis: IRedisMiddleware;
   /**
    * Secondary model manager of the model.
    */
@@ -45,7 +45,7 @@ export class PrimaryEntityManager<
    */
   public constructor(
     model: IModel,
-    redis: IORedis.Redis,
+    redis: IRedisMiddleware,
     negativeEntityCache: boolean,
     successor?: TSecondaryManager,
   ) {

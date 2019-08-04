@@ -1,6 +1,6 @@
-import * as IORedis from 'ioredis';
 import { IEntity } from '../../../model/IEntity';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
+import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
 import { MultipleResultQueryManager } from '../../../persistence/primary/query/MultipleResultQueryManager';
 import {
   TMQuery,
@@ -32,7 +32,7 @@ export class MultipleResultQueryByFieldManager<TEntity extends IEntity>
   public constructor(
     query: TQuery<number[]|string[]>,
     primaryEntityManager: IPrimaryEntityManager<TEntity>,
-    redis: IORedis.Redis,
+    redis: IRedisMiddleware,
     reverseHashKey: string,
     field: string,
     queryPrefix: string,
