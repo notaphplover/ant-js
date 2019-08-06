@@ -3,7 +3,7 @@ import { IEntity } from '../../../model/IEntity';
 import { Model } from '../../../model/Model';
 import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
 import { ISecondaryEntityManager } from '../../../persistence/secondary/ISecondaryEntityManager';
-import { ITest } from '../../ITest';
+import { ITest } from '../../../testapi/api/ITest';
 import { SingleResultQueryByFieldManager } from '../../primary/query/SingleResultQueryByFieldManager';
 import { RedisWrapper } from '../../primary/RedisWrapper';
 import { MinimalAntQueryManager } from './MinimalAntQueryManager';
