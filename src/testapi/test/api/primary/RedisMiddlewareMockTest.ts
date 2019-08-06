@@ -29,7 +29,9 @@ export class RedisMiddlewareMockTest implements ITest {
     describe(RedisMiddlewareMockTest.name, () => {
       this._itMustBeInitializable();
       this._itMustNotBreakAModelManagerDelete();
+      this._itMustNotBreakAModelManagerGet();
       this._itMustNotBreakAModelManagerMDelete();
+      this._itMustNotBreakAModelManagerMGet();
       this._itMustNotBreakAModelManagerMUpdate();
       this._itMustNotBreakAModelManagerUpdate();
     });
@@ -77,6 +79,32 @@ export class RedisMiddlewareMockTest implements ITest {
     });
   }
 
+  private _itMustNotBreakAModelManagerGet(): void {
+    const itsName = 'It must not break a model manager get';
+    const prefix = RedisMiddlewareMockTest.name + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      const model = modelTestGenerator(prefix);
+      const entity = {
+        id: 1,
+        numberField: 2,
+        strField: 'two',
+      };
+      const [modelManager] = this._modelManagerGenerator.generateModelManager(
+        model,
+        modelTestProperties,
+        prefix + 'query/',
+        prefix + 'reverse/',
+        new SecondaryEntityManagerMock(model, [entity]),
+        true,
+        new RedisMiddlewareMock(),
+      );
+
+      const entityFound = await modelManager.get(entity.id);
+      expect(entityFound).toEqual(entity);
+      done();
+    });
+  }
+
   private _itMustNotBreakAModelManagerMDelete(): void {
     const itsName = 'It must not break a model manager mDelete';
     const prefix = RedisMiddlewareMockTest.name + '/' + itsName + '/';
@@ -105,6 +133,32 @@ export class RedisMiddlewareMockTest implements ITest {
       await modelManager.mDelete([entityToDelete.id]);
       const entityFound = await modelManager.get(anotherEntity.id);
       expect(entityFound).toEqual(anotherEntity);
+      done();
+    });
+  }
+
+  private _itMustNotBreakAModelManagerMGet(): void {
+    const itsName = 'It must not break a model manager mGet';
+    const prefix = RedisMiddlewareMockTest.name + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      const model = modelTestGenerator(prefix);
+      const entity = {
+        id: 1,
+        numberField: 2,
+        strField: 'two',
+      };
+      const [modelManager] = this._modelManagerGenerator.generateModelManager(
+        model,
+        modelTestProperties,
+        prefix + 'query/',
+        prefix + 'reverse/',
+        new SecondaryEntityManagerMock(model, [entity]),
+        true,
+        new RedisMiddlewareMock(),
+      );
+
+      const entityFound = await modelManager.mGet([entity.id]);
+      expect(entityFound).toContain(entity);
       done();
     });
   }
