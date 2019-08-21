@@ -2,8 +2,8 @@
 /.vscode
 
 # IstambulJS coverage reports
-/.nyc_output
-/coverage
+/api.nyc_output
+/api-coverage
 
 # Compiled files
 /src/**/*.js
