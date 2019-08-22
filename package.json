@@ -1,18 +1,18 @@
 {
   "name": "@antjs/ant-js",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "description": "Generic query manager.",
   "main": "src/ant.js",
   "scripts": {
     "build": "./node_modules/typescript/bin/tsc --build src.tsconfig.commonjs.json",
-    "build-and-test": "npm run build && npm run test-only",
+    "build-and-test": "npm run build && npm run test-only && npm run testapi-test-only",
     "build-and-test-and-coverage": "npm run build-and-test && npm run report-coverage",
-    "build-and-test-debug": "npm run build && npm run test-debug-only",
+    "build-and-test-debug": "npm run build && npm run test-debug-only && npm run testapi-test-debug-only",
     "clear-js": "node ./scripts/clear-compiled.js",
     "linter": "./node_modules/tslint/bin/tslint -c ./tslint.json -p ./src.tsconfig.commonjs.json",
     "publish-npm": "npm run clear-js && npm run test && npm publish --access public",
     "publish-npm-beta": " npm run clear-js && npm run test && npm publish --access public --tag beta",
-    "report-coverage": "cat ./coverage/lcov.info | coveralls",
+    "report-coverage": "cat ./api-coverage/lcov.info | coveralls",
     "test": "npm run test-docker",
     "test-coverage": "npm run test-docker-coverage",
     "test-debug": "npm run test-docker-debug",
@@ -20,7 +20,9 @@
     "test-docker": "docker-compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from ant_lib",
     "test-docker-debug": "docker-compose -f docker-compose.test.debug.yml up --abort-on-container-exit --exit-code-from ant_lib",
     "test-docker-coverage": "sh scripts/prepare-env.sh && docker-compose -f docker-compose.test.coverage.yml up --abort-on-container-exit --exit-code-from ant_lib",
-    "test-only": "node_modules/nyc/bin/nyc.js --reporter=lcov node ./node_modules/jasmine/bin/jasmine.js ./src/test/main.test.js"
+    "test-only": "node_modules/nyc/bin/nyc.js --nycrc-path=api.nycrc node ./node_modules/jasmine/bin/jasmine.js ./src/test/main.test.js",
+    "testapi-test-debug-only": "node --inspect-brk=0.0.0.0:${NODE_DEBUG_PORT_INNER} node_modules/jasmine/bin/jasmine.js ./src/testapi/test/main.test.js",
+    "testapi-test-only": "node_modules/jasmine/bin/jasmine.js ./src/testapi/test/main.test.js"
   },
   "repository": {
     "type": "git",
@@ -29,17 +31,17 @@
   "author": "Roberto Pintos López",
   "license": "ISC",
   "devDependencies": {
-    "@types/ioredis": "^4.0.13",
-    "@types/jasmine": "^3.3.15",
-    "@types/node": "^12.6.8",
-    "coveralls": "^3.0.5",
+    "@types/ioredis": "^4.0.15",
+    "@types/jasmine": "^3.4.0",
+    "@types/node": "^12.7.2",
+    "coveralls": "^3.0.6",
     "jasmine": "^3.4.0",
     "lodash": "^4.17.15",
     "nyc": "^14.1.1",
-    "tslint": "^5.18.0",
+    "tslint": "^5.19.0",
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "ioredis": "^4.11.2"
+    "ioredis": "^4.14.0"
   }
 }

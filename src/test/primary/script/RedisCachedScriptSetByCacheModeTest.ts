@@ -1,7 +1,7 @@
 import { CacheOptions } from '../../../persistence/primary/options/CacheOptions';
 import { RedisCachedScript } from '../../../persistence/primary/script/RedisCachedScript';
 import { RedisCachedScriptSetByCacheMode } from '../../../persistence/primary/script/RedisCachedScriptSetByCacheMode';
-import { ITest } from '../../ITest';
+import { ITest } from '../../../testapi/api/ITest';
 import { RedisWrapper } from '../RedisWrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;

@@ -1,6 +1,6 @@
 import { IKeyGenParams } from '../../model/IKeyGenParams';
 import { Model } from '../../model/Model';
-import { ITest } from '../ITest';
+import { ITest } from '../../testapi/api/ITest';
 
 export class ModelTest implements ITest {
   public performTests(): void {

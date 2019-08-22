@@ -339,6 +339,12 @@ end`;
     return finalIds;
   }
 
+  /**
+   * Prepares a set of ids in order to send a redis command.
+   * @param evalParams Eval params.
+   * @param currentIds Ids of the entities to be found.
+   * @param finalIds Stringified ids.
+   */
   private _mGetProcessQueriesNotFoundProcessIds(
     evalParams: Array<string|number>,
     currentIds: Array<string&number>,

@@ -1,6 +1,6 @@
-import * as IORedis from 'ioredis';
 import { IEntity } from '../../../model/IEntity';
 import { IPrimaryEntityManager } from '../IPrimaryEntityManager';
+import { IRedisMiddleware } from '../IRedisMiddleware';
 import { ICacheOptions } from '../options/ICacheOptions';
 import {
   IBasePrimaryQueryManager,
@@ -50,7 +50,7 @@ export abstract class PrimaryQueryManager<
   /**
    * Redis connection to manage queries.
    */
-  protected _redis: IORedis.Redis;
+  protected _redis: IRedisMiddleware;
   /**
    * Key of the reverse structure to obtain a map of entities to queries.
    */
@@ -72,7 +72,7 @@ export abstract class PrimaryQueryManager<
   public constructor(
     query: TQuery<TQueryResult>,
     primaryEntityManager: IPrimaryEntityManager<TEntity>,
-    redis: IORedis.Redis,
+    redis: IRedisMiddleware,
     reverseHashKey: string,
     queryKeyGen: (params: any) => string,
     entityKeyGen?: (entity: TEntity) => string,

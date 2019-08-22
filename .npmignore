@@ -30,9 +30,9 @@ CONTRIBUTING.md
 _config.yml
 
 # IstambulJS coverage reports
-.nycrc
-/.nyc_output
-/coverage
+api.nycrc
+/api.nyc_output
+/api-coverage
 
 # AntJS Tests
 /src/test
