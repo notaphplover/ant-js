@@ -4,6 +4,7 @@ import {
   VOID_RESULT_STRING,
 } from '../LuaConstants';
 import { ICacheOptions } from '../options/ICacheOptions';
+import { IMultipleResultQueryManager } from './IMultipleResultQueryManager';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
 
 export class MultipleResultQueryManager<
@@ -11,7 +12,7 @@ export class MultipleResultQueryManager<
 > extends PrimaryQueryManager<
   TEntity,
   number[] | string[]
-> {
+> implements IMultipleResultQueryManager<TEntity> {
   /**
    * True if the queries managed can return multiple results.
    */
