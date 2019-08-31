@@ -40,4 +40,10 @@ export interface IModelManager<TEntity extends IEntity>
    * @param queryManager Query manager to add.
    */
   addQuery(queryManager: IPrimaryQueryManager<TEntity>): this;
+
+  /**
+   * Returns the queries managed.
+   * @returns Queries managed.
+   */
+  getQueries(): Array<IPrimaryQueryManager<TEntity>>;
 }

@@ -63,6 +63,7 @@ export class ModelManagerTest implements ITest {
       this._itMustDeleteZeroEntities();
       this._itMustGetAnEntity();
       this._itMustGetMultipleEntities();
+      this._itMustGetQueriesManaged();
       this._itMustSyncAMRQWhenDeletingAnEntity();
       this._itMustSyncAMRQWhenDeletingMultipleEntities();
       this._itMustSyncAMRQWhenUpdatingAnEntity();
@@ -600,6 +601,47 @@ export class ModelManagerTest implements ITest {
       ]);
       expect(entityFound).toContain(entity1);
       expect(entityFound).toContain(entity2);
+      done();
+    }, MAX_SAFE_TIMEOUT);
+  }
+
+  private _itMustGetQueriesManaged(): void {
+    const itsName = 'mustGetQueriesManaged';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      await this._beforeAllPromise;
+
+      const model = modelTestGenerator(prefix);
+      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
+        model,
+      );
+      const [
+        modelManager,
+        primaryEntityManager,
+      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
+        model,
+        secondaryEntityManager,
+      );
+
+      const singleResultQueryManager = new SingleResultQueryByFieldManager<IEntityTest>(
+        (params: any) =>
+          new Promise((resolve) => {
+            const entity = secondaryEntityManager.store.find(
+              (value: IEntityTest) => value.strField === params.strField,
+            );
+            resolve(entity ? entity[model.id] : null);
+          }),
+        primaryEntityManager,
+        this._redis.redis,
+        prefix + 'reverse/strField/',
+        'strField',
+        prefix + 'query/strField/',
+      );
+
+      modelManager.addQuery(singleResultQueryManager);
+      const queriesManaged = modelManager.getQueries();
+
+      expect(queriesManaged).toEqual([singleResultQueryManager]);
       done();
     }, MAX_SAFE_TIMEOUT);
   }

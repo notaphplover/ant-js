@@ -79,6 +79,14 @@ export class ModelManager<
   }
 
   /**
+   * Returns the queries managed.
+   * @returns Queries managed.
+   */
+  public getQueries(): Array<IPrimaryQueryManager<TEntity>> {
+    return Object.assign(new Array(), this._queryManagers);
+  }
+
+  /**
    * Deletes an entity from the cache layer.
    * @param id id of the entity to delete.
    * @returns Promise of entity deleted.
