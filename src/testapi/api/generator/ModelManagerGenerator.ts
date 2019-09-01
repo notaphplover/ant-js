@@ -9,11 +9,17 @@ import { MultipleResultQueryManager } from '../../../persistence/primary/query/M
 import { SingleResultQueryManager } from '../../../persistence/primary/query/SingleResultQueryManager';
 import { ISecondaryEntityManager } from '../../../persistence/secondary/ISecondaryEntityManager';
 import { IModelManagerGeneratorOptions } from './IModelManagerGeneratorOptions';
+import { IModelManagerGeneratorRedisOptions } from './IModelManagerGeneratorRedisOptions';
+import { IModelManagerGeneratorSecodaryManagerOptions } from './IModelManagerGeneratorSecodaryManagerOptions';
 
 export abstract class ModelManagerGenerator<
-  TOptions extends IModelManagerGeneratorOptions<IModel>,
+  TOptions extends IModelManagerGeneratorOptions<
+    IModel,
+    IModelManagerGeneratorRedisOptions,
+    IModelManagerGeneratorSecodaryManagerOptions<TSecondaryManager>
+  >,
   TModelManager extends IModelManager<IEntity>,
-  TSecondaryManager extends ISecondaryEntityManager<IEntity>
+  TSecondaryManager extends ISecondaryEntityManager<IEntity>,
 > {
   /**
    * Default redis middleware.
@@ -32,10 +38,11 @@ export abstract class ModelManagerGenerator<
    * Generates a model manager with query managers attached.
    * @param options Generation options.
    */
-  public generateModelManager<TEntity extends IEntity>(options: TOptions): [
+  public generateModelManager(options: TOptions): [
     TModelManager,
-    Map<string, ISingleResultQueryManager<TEntity>>,
-    Map<string, IMultipleResultQueryManager<TEntity>>,
+    TSecondaryManager,
+    Map<string, ISingleResultQueryManager<IEntity>>,
+    Map<string, IMultipleResultQueryManager<IEntity>>,
   ] {
     if (!options.redisOptions) {
       options.redisOptions = {};
@@ -45,10 +52,20 @@ export abstract class ModelManagerGenerator<
       redisOptions.redis = this._defaultRedisMiddleware;
     }
 
-    const secondaryManager = this._generateSecondaryManager(options);
+    if (!options.secondaryOptions) {
+      options.secondaryOptions = {};
+    }
+
+    const secondaryManagerOptions = options.secondaryOptions;
+
+    if (!secondaryManagerOptions.manager) {
+      secondaryManagerOptions.manager = this._generateDefaultSecondaryManager(options);
+    }
+
+    const secondaryManager = secondaryManagerOptions.manager;
     const modelManager = this._generateModelManager(options, secondaryManager);
 
-    const singleResultQueryManagers: Map<string, ISingleResultQueryManager<TEntity>>
+    const singleResultQueryManagers: Map<string, ISingleResultQueryManager<IEntity>>
       = redisOptions.singleResultQueryManagersOptions ?
         this._generateSingleResultQueryManagers(
           options,
@@ -58,7 +75,7 @@ export abstract class ModelManagerGenerator<
 
     this._attachQueryManagers(modelManager, singleResultQueryManagers.values());
 
-    const multipleResultQueryManagers: Map<string, IMultipleResultQueryManager<TEntity>>
+    const multipleResultQueryManagers: Map<string, IMultipleResultQueryManager<IEntity>>
       = redisOptions.multipleResultQueryManagersOptions ?
         this._generateMultipleResultQueryManagers(
           options,
@@ -70,6 +87,7 @@ export abstract class ModelManagerGenerator<
 
     return [
       modelManager,
+      secondaryManager,
       singleResultQueryManagers,
       multipleResultQueryManagers,
     ];
@@ -164,7 +182,7 @@ export abstract class ModelManagerGenerator<
    * @param options Generation options.
    * @returns secondary model manager generated.
    */
-  protected abstract _generateSecondaryManager(options: TOptions): TSecondaryManager;
+  protected abstract _generateDefaultSecondaryManager(options: TOptions): TSecondaryManager;
 
   /**
    * Generates a single result query manager.

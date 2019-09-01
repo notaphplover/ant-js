@@ -2,12 +2,22 @@ import { IEntity } from '../../../model/IEntity';
 import { IModel } from '../../../model/IModel';
 import { IModelManager } from '../../../persistence/primary/IModelManager';
 import { ModelManager } from '../../../persistence/primary/ModelManager';
+import { IMultipleResultQueryManager } from '../../../persistence/primary/query/IMultipleResultQueryManager';
+import { ISingleResultQueryManager } from '../../../persistence/primary/query/ISingleResultQueryManager';
 import { SecondaryEntityManagerMock } from '../../../test/secondary/SecondaryEntityManagerMock';
 import { IModelManagerGeneratorOptions } from './IModelManagerGeneratorOptions';
+import { IModelManagerGeneratorRedisOptions } from './IModelManagerGeneratorRedisOptions';
+import { IModelManagerGeneratorSecodaryManagerOptions } from './IModelManagerGeneratorSecodaryManagerOptions';
 import { ModelManagerGenerator } from './ModelManagerGenerator';
 
+type TModelManagerOptions = IModelManagerGeneratorOptions<
+  IModel,
+  IModelManagerGeneratorRedisOptions,
+  IModelManagerGeneratorSecodaryManagerOptions<SecondaryEntityManagerMock<IEntity>>
+>;
+
 export class AntJsModelManagerGenerator extends ModelManagerGenerator<
-  IModelManagerGeneratorOptions<IModel>,
+  TModelManagerOptions,
   IModelManager<IEntity>,
   SecondaryEntityManagerMock<IEntity>
 > {
@@ -15,7 +25,7 @@ export class AntJsModelManagerGenerator extends ModelManagerGenerator<
    * @inheritdoc
    */
   protected _generateModelManager(
-    options: IModelManagerGeneratorOptions<IModel>,
+    options: TModelManagerOptions,
     secondaryManager: SecondaryEntityManagerMock<IEntity>,
   ): IModelManager<IEntity> {
     return new ModelManager(
@@ -29,8 +39,8 @@ export class AntJsModelManagerGenerator extends ModelManagerGenerator<
   /**
    * @inheritdoc
    */
-  protected _generateSecondaryManager(
-    options: IModelManagerGeneratorOptions<IModel>,
+  protected _generateDefaultSecondaryManager(
+    options: TModelManagerOptions,
   ): SecondaryEntityManagerMock<IEntity> {
     return new SecondaryEntityManagerMock(options.model);
   }

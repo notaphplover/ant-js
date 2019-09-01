@@ -1,6 +1,7 @@
 import { IModel } from '../../../../model/IModel';
 import { ModelManager } from '../../../../persistence/primary/ModelManager';
 import { RedisWrapper } from '../../../../test/primary/RedisWrapper';
+import { SecondaryEntityManagerMock } from '../../../../test/secondary/SecondaryEntityManagerMock';
 import { AntJsModelManagerGenerator } from '../../../api/generator/AntJsModelManagerGenerator';
 import { ITest } from '../../../api/ITest';
 
@@ -9,7 +10,7 @@ export class ModelManagerGeneratorTest implements ITest {
     describe(ModelManagerGeneratorTest.name, () => {
       this._itMustBeInitializable();
       this._itMustGenerateAModelManagerWithMultipleResultQueries();
-      this._itMustGenerateAModelManagerWithNoQueries();
+      this._itMustGenerateAModelManagerWithNoQueriesAndASecondaryModelManager();
       this._itMustGenerateAModelManagerWithSingleResultQueries();
     });
   }
@@ -34,6 +35,7 @@ export class ModelManagerGeneratorTest implements ITest {
       const properties = ['pm1', 'pm2'];
       const [
         modelManager,
+        ,
         singleResultQueryManagers,
         multipleResultQueryManagers,
       ] = modelManagerGenerator.generateModelManager({
@@ -51,8 +53,8 @@ export class ModelManagerGeneratorTest implements ITest {
     });
   }
 
-  private _itMustGenerateAModelManagerWithNoQueries(): void {
-    it(this._itMustGenerateAModelManagerWithNoQueries.name, async (done) => {
+  private _itMustGenerateAModelManagerWithNoQueriesAndASecondaryModelManager(): void {
+    it(this._itMustGenerateAModelManagerWithNoQueriesAndASecondaryModelManager.name, async (done) => {
       const model: IModel = {
         id: 'id',
         keyGen: { prefix: 'random_prefix' },
@@ -60,12 +62,14 @@ export class ModelManagerGeneratorTest implements ITest {
       const modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
       const [
         modelManager,
+        secondaryManager,
         singleResultQueryManagers,
         multipleResultQueryManagers,
       ] = modelManagerGenerator.generateModelManager({
         model: model,
       });
       expect(modelManager instanceof ModelManager).toBe(true);
+      expect(secondaryManager instanceof SecondaryEntityManagerMock).toBe(true);
       expect(singleResultQueryManagers).toEqual(new Map());
       expect(multipleResultQueryManagers).toEqual(new Map());
       done();
@@ -82,6 +86,7 @@ export class ModelManagerGeneratorTest implements ITest {
       const properties = ['ps1', 'ps2'];
       const [
         modelManager,
+        ,
         singleResultQueryManagers,
         multipleResultQueryManagers,
       ] = modelManagerGenerator.generateModelManager({
