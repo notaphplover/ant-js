@@ -11,6 +11,7 @@ import { ISecondaryEntityManager } from '../../../persistence/secondary/ISeconda
 import { IModelManagerGeneratorOptions } from './IModelManagerGeneratorOptions';
 import { IModelManagerGeneratorRedisOptions } from './IModelManagerGeneratorRedisOptions';
 import { IModelManagerGeneratorSecodaryManagerOptions } from './IModelManagerGeneratorSecodaryManagerOptions';
+import { IQueriesManagerGeneratorOptions } from './IQueriesManagerGeneratorOptions';
 
 export abstract class ModelManagerGenerator<
   TOptions extends IModelManagerGeneratorOptions<
@@ -134,13 +135,11 @@ export abstract class ModelManagerGenerator<
     if (!mrqmOptions) {
       return queryManagersMap;
     }
-    if (!mrqmOptions.reverseHashKey) {
-      mrqmOptions.reverseHashKey = this._generateRandomKey();
-    }
+    this._processQueryManagersGenerationOptions(mrqmOptions);
 
     for (const property of mrqmOptions.properties) {
       const queryKeyGen = (param: any): string => {
-        return mrqmOptions.reverseHashKey + param[property];
+        return mrqmOptions.queryPrefix + param[property];
       };
       const queryManager = new MultipleResultQueryManager(
         (params: any) =>
@@ -201,13 +200,11 @@ export abstract class ModelManagerGenerator<
     if (!srqmOptions) {
       return queryManagersMap;
     }
-    if (!srqmOptions.reverseHashKey) {
-      srqmOptions.reverseHashKey = this._generateRandomKey();
-    }
+    this._processQueryManagersGenerationOptions(srqmOptions);
 
     for (const property of srqmOptions.properties) {
       const queryKeyGen = (param: any): string => {
-        return srqmOptions.reverseHashKey + param[property];
+        return srqmOptions.queryPrefix + property + '/' + param[property];
       };
       const queryManager = new SingleResultQueryManager(
         (params: any) =>
@@ -229,6 +226,20 @@ export abstract class ModelManagerGenerator<
     }
 
     return queryManagersMap;
+  }
+
+  /**
+   * Process a query managers generation options.
+   */
+  protected _processQueryManagersGenerationOptions(
+    options: IQueriesManagerGeneratorOptions,
+  ): void {
+    if (!options.queryPrefix) {
+      options.queryPrefix = this._generateRandomKey();
+    }
+    if (!options.reverseHashKey) {
+      options.reverseHashKey = this._generateRandomKey();
+    }
   }
 
   /**

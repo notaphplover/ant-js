@@ -4,6 +4,10 @@ export interface IQueriesManagerGeneratorOptions {
    */
   properties: string[];
   /**
+   * Query prefix used to store queries.
+   */
+  queryPrefix?: string;
+  /**
    * Reverse hash key to be used by the queries manager.
    */
   reverseHashKey?: string;
