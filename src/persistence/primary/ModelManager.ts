@@ -55,7 +55,6 @@ export class ModelManager<
     redis: IRedisMiddleware,
     negativeEntityCache: boolean,
     secondaryEntityManager?: TSecondaryManager,
-    queryManagers: Array<IPrimaryQueryManager<TEntity>> = new Array(),
   ) {
     super(
       model,
@@ -66,7 +65,7 @@ export class ModelManager<
 
     this._initializeCachedQueries();
 
-    this._queryManagers = queryManagers;
+    this._queryManagers = new Array();
   }
 
   /**

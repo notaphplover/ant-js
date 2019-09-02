@@ -77,14 +77,18 @@ export class ModelManagerGenerator<TEntity extends IEntity> {
       queriesMap.set(property, singleResultQueryManager);
       queryManagers.push(singleResultQueryManager);
     }
+    const modelManager = new ModelManager<TEntity, SecondaryEntityManagerMock<TEntity>>(
+      model,
+      redisConn,
+      useEntityNegativeCache,
+      secondaryManager,
+    );
+
+    for (const queryManager of queryManagers) {
+      modelManager.addQuery(queryManager);
+    }
     return [
-      new ModelManager(
-        model,
-        redisConn,
-        useEntityNegativeCache,
-        secondaryManager,
-        queryManagers,
-      ),
+      modelManager,
       primaryEntityManager,
       queriesMap,
     ];
