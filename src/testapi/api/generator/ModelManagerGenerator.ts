@@ -109,6 +109,18 @@ export abstract class ModelManagerGenerator<
   }
 
   /**
+   * Builds a query keygen for a certain property.
+   * @param queryPrefix Query prefix
+   * @param property Query property.
+   * @returns Key generator built.
+   */
+  protected _buildQueryKeyGen(queryPrefix: string, property: string): (param: any) => string {
+    return (param: any): string => {
+      return queryPrefix + property + '/' + param[property];
+    };
+  }
+
+  /**
    * Generates a raw model manager.
    * @param options Generation options.
    * @param secondaryManager seconday manager to be user by the model manager.
@@ -138,16 +150,14 @@ export abstract class ModelManagerGenerator<
     this._processQueryManagersGenerationOptions(mrqmOptions);
 
     for (const property of mrqmOptions.properties) {
-      const queryKeyGen = (param: any): string => {
-        return mrqmOptions.queryPrefix + param[property];
-      };
+      const queryKeyGen = this._buildQueryKeyGen(mrqmOptions.queryPrefix, property);
       const queryManager = new MultipleResultQueryManager(
         (params: any) =>
           this._searchEntitiesByProperty(secondaryManager, property, params[property])
             .then((entities) => entities.map((entity) => entity[options.model.id])),
         modelManager,
         options.redisOptions.redis,
-        mrqmOptions.reverseHashKey,
+        mrqmOptions.reverseHashKey + property,
         queryKeyGen,
         queryKeyGen,
       );
@@ -203,9 +213,7 @@ export abstract class ModelManagerGenerator<
     this._processQueryManagersGenerationOptions(srqmOptions);
 
     for (const property of srqmOptions.properties) {
-      const queryKeyGen = (param: any): string => {
-        return srqmOptions.queryPrefix + property + '/' + param[property];
-      };
+      const queryKeyGen = this._buildQueryKeyGen(srqmOptions.queryPrefix, property);
       const queryManager = new SingleResultQueryManager(
         (params: any) =>
           this._searchEntityByProperty(secondaryManager, property, params[property])
@@ -217,7 +225,7 @@ export abstract class ModelManagerGenerator<
           }),
         modelManager,
         options.redisOptions.redis,
-        srqmOptions.reverseHashKey,
+        srqmOptions.reverseHashKey + property,
         queryKeyGen,
         queryKeyGen,
       );
