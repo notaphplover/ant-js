@@ -30,7 +30,7 @@ CONTRIBUTING.md
 _config.yml
 
 # IstambulJS coverage reports
-api.nycrc
+api.nycrc.json
 /api.nyc_output
 /api-coverage
 
