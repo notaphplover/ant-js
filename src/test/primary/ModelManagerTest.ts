@@ -10,7 +10,6 @@ import { ISingleResultQueryManager } from '../../persistence/primary/query/ISing
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/AntJsModelManagerGenerator';
 import { ITest } from '../../testapi/api/ITest';
 import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
-import { ModelManagerGenerator } from './ModelManagerGenerator';
 import { MultipleResultQueryByFieldManager } from './query/MultipleResultQueryByFieldManager';
 import { SingleResultQueryByFieldManager } from './query/SingleResultQueryByFieldManager';
 import { RedisWrapper } from './RedisWrapper';
@@ -27,10 +26,6 @@ const modelTestGenerator = (prefix: string) => new Model('id', {prefix: prefix})
 
 export class ModelManagerTest implements ITest {
   /**
-   * Model manager generator.
-   */
-  protected _antJsModelManagerGenerator: AntJsModelManagerGenerator;
-  /**
    * Before all task performed promise.
    */
   protected _beforeAllPromise: Promise<any>;
@@ -41,7 +36,7 @@ export class ModelManagerTest implements ITest {
   /**
    * Model manager generator.
    */
-  protected _modelManagerGenerator: ModelManagerGenerator<IEntityTest>;
+  protected _modelManagerGenerator: AntJsModelManagerGenerator;
   /**
    * Redis Wrapper
    */
@@ -52,10 +47,9 @@ export class ModelManagerTest implements ITest {
    * @param beforeAllPromise Before all promise.
    */
   public constructor(beforeAllPromise: Promise<any>) {
-    this._antJsModelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
+    this._modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
     this._beforeAllPromise = beforeAllPromise;
     this._declareName = 'ModelManagerTest';
-    this._modelManagerGenerator = new ModelManagerGenerator();
     this._redis = new RedisWrapper();
   }
 
@@ -146,7 +140,7 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         secondaryOptions: {
           manager: secondaryEntityManager,
@@ -184,7 +178,7 @@ export class ModelManagerTest implements ITest {
     it(itsName, async (done) => {
       await this._beforeAllPromise;
       try {
-        this._antJsModelManagerGenerator.generateModelManager({
+        this._modelManagerGenerator.generateModelManager({
           model: modelTestGenerator(prefix),
         });
       } catch {
@@ -223,7 +217,7 @@ export class ModelManagerTest implements ITest {
         modelManager,
         ,
         queryManagersByProperty,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           singleResultQueryManagersOptions: {
@@ -301,7 +295,7 @@ export class ModelManagerTest implements ITest {
         modelManager,
         ,
         queryManagersByProperty,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           singleResultQueryManagersOptions: {
@@ -384,7 +378,7 @@ export class ModelManagerTest implements ITest {
         modelManager,
         ,
         queryManagersByProperty,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           singleResultQueryManagersOptions: {
@@ -480,7 +474,7 @@ export class ModelManagerTest implements ITest {
         modelManager,
         ,
         queryManagersByProperty,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           singleResultQueryManagersOptions: {
@@ -564,7 +558,7 @@ export class ModelManagerTest implements ITest {
         modelManager,
         ,
         queryManagersByProperty,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           singleResultQueryManagersOptions: {
@@ -624,7 +618,7 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           useEntityNegativeCache: true,
@@ -665,7 +659,7 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           useEntityNegativeCache: true,
@@ -696,7 +690,7 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           useEntityNegativeCache: true,
@@ -761,7 +755,7 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           useEntityNegativeCache: true,
@@ -829,7 +823,7 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           useEntityNegativeCache: true,
@@ -903,7 +897,7 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           useEntityNegativeCache: true,
@@ -999,7 +993,7 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           useEntityNegativeCache: true,
@@ -1082,7 +1076,7 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           useEntityNegativeCache: true,
@@ -1146,7 +1140,7 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           useEntityNegativeCache: true,
@@ -1215,7 +1209,7 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           useEntityNegativeCache: true,
@@ -1290,7 +1284,7 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           useEntityNegativeCache: true,
@@ -1364,7 +1358,7 @@ export class ModelManagerTest implements ITest {
         modelManager,
         ,
         queryManagersByProperty,
-      ] = this._antJsModelManagerGenerator.generateModelManager({
+      ] = this._modelManagerGenerator.generateModelManager({
         model: model,
         redisOptions: {
           singleResultQueryManagersOptions: {
@@ -1431,11 +1425,15 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
-        model,
-        secondaryEntityManager,
-        false,
-      );
+      ] = this._modelManagerGenerator.generateModelManager({
+        model: model,
+        redisOptions: {
+          useEntityNegativeCache: false,
+        },
+        secondaryOptions: {
+          manager: secondaryEntityManager,
+        },
+      });
       await modelManager.update(entity1, new CacheOptions(CacheMode.CacheAndOverwrite));
 
       expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
@@ -1463,11 +1461,15 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
-        model,
-        secondaryEntityManager,
-        false,
-      );
+      ] = this._modelManagerGenerator.generateModelManager({
+        model: model,
+        redisOptions: {
+          useEntityNegativeCache: false,
+        },
+        secondaryOptions: {
+          manager: secondaryEntityManager,
+        },
+      });
       await modelManager.update(entity1, new CacheOptions(CacheMode.CacheAndOverwrite, 10000));
 
       expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
@@ -1506,11 +1508,15 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
-        model,
-        secondaryEntityManager,
-        false,
-      );
+      ] = this._modelManagerGenerator.generateModelManager({
+        model: model,
+        redisOptions: {
+          useEntityNegativeCache: false,
+        },
+        secondaryOptions: {
+          manager: secondaryEntityManager,
+        },
+      });
       await modelManager.update(entity1, new CacheOptions(CacheMode.CacheIfNotExist));
       await modelManager.update(entity2, new CacheOptions(CacheMode.CacheIfNotExist));
       await modelManager.update(entity2After, new CacheOptions(CacheMode.CacheIfNotExist));
@@ -1552,11 +1558,15 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
-        model,
-        secondaryEntityManager,
-        false,
-      );
+      ] = this._modelManagerGenerator.generateModelManager({
+        model: model,
+        redisOptions: {
+          useEntityNegativeCache: false,
+        },
+        secondaryOptions: {
+          manager: secondaryEntityManager,
+        },
+      });
       await modelManager.update(entity1, new CacheOptions(CacheMode.CacheIfNotExist, 10000));
       await modelManager.update(entity2, new CacheOptions(CacheMode.CacheIfNotExist, 10000));
       await modelManager.update(entity2After, new CacheOptions(CacheMode.CacheIfNotExist, 10000));
@@ -1599,26 +1609,42 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-        primaryEntityManager,
+        ,
         queryManagersByProperty,
-      ] = this._modelManagerGenerator.generateModelManager(
-        model,
-        modelTestProperties,
-        prefix + 'query/',
-        prefix + 'reverse/',
-        secondaryEntityManager,
-        false,
-      );
+      ] = this._modelManagerGenerator.generateModelManager({
+        model: model,
+        redisOptions: {
+          singleResultQueryManagersOptions: {
+            properties: modelTestProperties,
+            queryPrefix: prefix + 'query/',
+            reverseHashKey: prefix + 'reverse/',
+          },
+          useEntityNegativeCache: false,
+        },
+        secondaryOptions: {
+          manager: secondaryEntityManager,
+        },
+      });
       await modelManager.update(entity1After);
 
       const [
         searchEntity1ByPrimaryEntityManager,
         searchEntity1ByQueryManager,
-      ] = await this._helperSearchEntity(entity1After, model, primaryEntityManager, queryManagersByProperty);
+      ] = await this._helperSearchEntity(
+        entity1After,
+        model,
+        modelManager as IModelManager<IEntityTest>,
+        queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+      );
       const [
         searchEntity2ByPrimaryEntityManager,
         searchEntity2ByQueryManager,
-      ] = await this._helperSearchEntity(entity2, model, primaryEntityManager, queryManagersByProperty);
+      ] = await this._helperSearchEntity(
+        entity2,
+        model,
+        modelManager as IModelManager<IEntityTest>,
+        queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+      );
 
       expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1After);
       for (const search of searchEntity1ByQueryManager) {
@@ -1663,26 +1689,42 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-        primaryEntityManager,
+        ,
         queryManagersByProperty,
-      ] = this._modelManagerGenerator.generateModelManager(
-        model,
-        modelTestProperties,
-        prefix + 'query/',
-        prefix + 'reverse/',
-        secondaryEntityManager,
-        true,
-      );
+      ] = this._modelManagerGenerator.generateModelManager({
+        model: model,
+        redisOptions: {
+          singleResultQueryManagersOptions: {
+            properties: modelTestProperties,
+            queryPrefix: prefix + 'query/',
+            reverseHashKey: prefix + 'reverse/',
+          },
+          useEntityNegativeCache: true,
+        },
+        secondaryOptions: {
+          manager: secondaryEntityManager,
+        },
+      });
       await modelManager.mUpdate([entity1After]);
 
       const [
         searchEntity1ByPrimaryEntityManager,
         searchEntity1ByQueryManager,
-      ] = await this._helperSearchEntity(entity1After, model, primaryEntityManager, queryManagersByProperty);
+      ] = await this._helperSearchEntity(
+        entity1After,
+        model,
+        modelManager as IModelManager<IEntityTest>,
+        queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+      );
       const [
         searchEntity2ByPrimaryEntityManager,
         searchEntity2ByQueryManager,
-      ] = await this._helperSearchEntity(entity2, model, primaryEntityManager, queryManagersByProperty);
+      ] = await this._helperSearchEntity(
+        entity2,
+        model,
+        modelManager as IModelManager<IEntityTest>,
+        queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+      );
 
       expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1After);
       for (const search of searchEntity1ByQueryManager) {
@@ -1715,11 +1757,15 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-      ] = this._modelManagerGenerator.generateZeroQueriesModelManager(
-        model,
-        secondaryEntityManager,
-        false,
-      );
+      ] = this._modelManagerGenerator.generateModelManager({
+        model: model,
+        redisOptions: {
+          useEntityNegativeCache: false,
+        },
+        secondaryOptions: {
+          manager: secondaryEntityManager,
+        },
+      });
       await modelManager.mUpdate([entity1], new CacheOptions(CacheMode.CacheAndOverwrite, 10000));
 
       expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
@@ -1759,26 +1805,42 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-        primaryEntityManager,
+        ,
         queryManagersByProperty,
-      ] = this._modelManagerGenerator.generateModelManager(
-        model,
-        modelTestProperties,
-        prefix + 'query/',
-        prefix + 'reverse/',
-        secondaryEntityManager,
-        false,
-      );
+      ] = this._modelManagerGenerator.generateModelManager({
+        model: model,
+        redisOptions: {
+          singleResultQueryManagersOptions: {
+            properties: modelTestProperties,
+            queryPrefix: prefix + 'query/',
+            reverseHashKey: prefix + 'reverse/',
+          },
+          useEntityNegativeCache: false,
+        },
+        secondaryOptions: {
+          manager: secondaryEntityManager,
+        },
+      });
       await modelManager.mUpdate([entity1After]);
 
       const [
         searchEntity1ByPrimaryEntityManager,
         searchEntity1ByQueryManager,
-      ] = await this._helperSearchEntity(entity1After, model, primaryEntityManager, queryManagersByProperty);
+      ] = await this._helperSearchEntity(
+        entity1After,
+        model,
+        modelManager as IModelManager<IEntityTest>,
+        queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+      );
       const [
         searchEntity2ByPrimaryEntityManager,
         searchEntity2ByQueryManager,
-      ] = await this._helperSearchEntity(entity2, model, primaryEntityManager, queryManagersByProperty);
+      ] = await this._helperSearchEntity(
+        entity2,
+        model,
+        modelManager as IModelManager<IEntityTest>,
+        queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+      );
 
       expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1After);
       for (const search of searchEntity1ByQueryManager) {
@@ -1812,21 +1874,33 @@ export class ModelManagerTest implements ITest {
       );
       const [
         modelManager,
-        primaryEntityManager,
+        ,
         queryManagersByProperty,
-      ] = this._modelManagerGenerator.generateModelManager(
-        model,
-        modelTestProperties,
-        prefix + 'query/',
-        prefix + 'reverse/',
-        secondaryEntityManager,
-      );
+      ] = this._modelManagerGenerator.generateModelManager({
+        model: model,
+        redisOptions: {
+          singleResultQueryManagersOptions: {
+            properties: modelTestProperties,
+            queryPrefix: prefix + 'query/',
+            reverseHashKey: prefix + 'reverse/',
+          },
+          useEntityNegativeCache: true,
+        },
+        secondaryOptions: {
+          manager: secondaryEntityManager,
+        },
+      });
       await modelManager.mUpdate(new Array());
 
       const [
         searchEntity1ByPrimaryEntityManager,
         searchEntity1ByQueryManager,
-      ] = await this._helperSearchEntity(entity1, model, primaryEntityManager, queryManagersByProperty);
+      ] = await await this._helperSearchEntity(
+        entity1,
+        model,
+        modelManager as IModelManager<IEntityTest>,
+        queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+      );
 
       expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1);
       for (const search of searchEntity1ByQueryManager) {
