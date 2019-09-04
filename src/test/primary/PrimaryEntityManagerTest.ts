@@ -8,7 +8,7 @@ import { CacheOptions } from '../../persistence/primary/options/CacheOptions';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
 import { ISecondaryEntityManager } from '../../persistence/secondary/ISecondaryEntityManager';
 import { ITest } from '../../testapi/api/ITest';
-import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
+import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from './RedisWrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;

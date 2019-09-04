@@ -9,7 +9,7 @@ import { IPrimaryQueryManager } from '../../persistence/primary/query/IPrimaryQu
 import { ISingleResultQueryManager } from '../../persistence/primary/query/ISingleResultQueryManager';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/AntJsModelManagerGenerator';
 import { ITest } from '../../testapi/api/ITest';
-import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
+import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
 import { MultipleResultQueryByFieldManager } from './query/MultipleResultQueryByFieldManager';
 import { SingleResultQueryByFieldManager } from './query/SingleResultQueryByFieldManager';
 import { RedisWrapper } from './RedisWrapper';

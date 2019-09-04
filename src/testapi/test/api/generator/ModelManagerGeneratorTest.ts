@@ -1,9 +1,9 @@
 import { IModel } from '../../../../model/IModel';
 import { ModelManager } from '../../../../persistence/primary/ModelManager';
 import { RedisWrapper } from '../../../../test/primary/RedisWrapper';
-import { SecondaryEntityManagerMock } from '../../../../test/secondary/SecondaryEntityManagerMock';
 import { AntJsModelManagerGenerator } from '../../../api/generator/AntJsModelManagerGenerator';
 import { ITest } from '../../../api/ITest';
+import { SecondaryEntityManagerMock } from '../../../api/secondary/SecondaryEntityManagerMock';
 
 export class ModelManagerGeneratorTest implements ITest {
   public performTests() {

@@ -7,8 +7,8 @@ import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { IModelManager } from '../../persistence/primary/IModelManager';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/AntJsModelManagerGenerator';
+import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from '../primary/RedisWrapper';
-import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
 
 export class MinimalAntModelManager<
   TEntity extends IEntity,
