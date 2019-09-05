@@ -34,6 +34,10 @@ api.nycrc.json
 /api.nyc_output
 /api-coverage
 
+testapi.nycrc.json
+/testapi.nyc_output
+/testapi-coverage
+
 # AntJS Tests
 /src/test
 
