@@ -67,22 +67,20 @@ export abstract class ModelManagerGenerator<
     const modelManager = this._generateModelManager(options, secondaryManager);
 
     const singleResultQueryManagers: Map<string, ISingleResultQueryManager<IEntity>>
-      = redisOptions.singleResultQueryManagersOptions ?
-        this._generateSingleResultQueryManagers(
+      = this._generateSingleResultQueryManagers(
           options,
           secondaryManager,
           modelManager,
-        ) : new Map();
+        );
 
     this._attachQueryManagers(modelManager, singleResultQueryManagers.values());
 
     const multipleResultQueryManagers: Map<string, IMultipleResultQueryManager<IEntity>>
-      = redisOptions.multipleResultQueryManagersOptions ?
-        this._generateMultipleResultQueryManagers(
+      = this._generateMultipleResultQueryManagers(
           options,
           secondaryManager,
           modelManager,
-        ) : new Map();
+        );
 
     this._attachQueryManagers(modelManager, multipleResultQueryManagers.values());
 
@@ -92,6 +90,39 @@ export abstract class ModelManagerGenerator<
       singleResultQueryManagers,
       multipleResultQueryManagers,
     ];
+  }
+
+  /**
+   * Search for entities in a set of query managers by property.
+   * @param entities Entities to search for.
+   * @param srQueryManagers Map of single result queru managers.
+   * @param mrQueryManagers Map of multiple result query managers.
+   * @returns Promises of results obtained from the query managers.
+   */
+  public searchEntititiesInQueries(
+    entities: IEntity[],
+    srQueryManagers: Map<string, ISingleResultQueryManager<IEntity>>,
+    mrQueryManagers: Map<string, IMultipleResultQueryManager<IEntity>>,
+  ): [
+    Map<[IEntity, string], Promise<IEntity>>,
+    Map<[IEntity, string], Promise<IEntity[]>>,
+  ] {
+    const srqmResults: Map<[IEntity, string], Promise<IEntity>> = new Map();
+    const mrqmResults: Map<[IEntity, string], Promise<IEntity[]>> = new Map();
+
+    for (const [property, manager] of srQueryManagers) {
+      for (const entity of entities) {
+        srqmResults.set([entity, property], manager.get(entity));
+      }
+    }
+
+    for (const [property, manager] of mrQueryManagers) {
+      for (const entity of entities) {
+        mrqmResults.set([entity, property], manager.get(entity));
+      }
+    }
+
+    return [srqmResults, mrqmResults];
   }
 
   /**
