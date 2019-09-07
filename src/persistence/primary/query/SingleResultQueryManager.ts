@@ -1,6 +1,7 @@
 import { IEntity } from '../../../model/IEntity';
 import { VOID_RESULT_STRING } from '../LuaConstants';
 import { ICacheOptions } from '../options/ICacheOptions';
+import { ISingleResultQueryManager } from './ISingleResultQueryManager';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
 
 export class SingleResultQueryManager<
@@ -8,7 +9,7 @@ export class SingleResultQueryManager<
 > extends PrimaryQueryManager<
   TEntity,
   number | string
-> {
+> implements ISingleResultQueryManager<TEntity> {
   /**
    * True if the queries managed can return multiple results.
    */

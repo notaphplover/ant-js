@@ -6,8 +6,9 @@ import { IAntModelConfig } from '../../api/config/IAntModelConfig';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { IModelManager } from '../../persistence/primary/IModelManager';
-import { ModelManagerGenerator } from '../primary/ModelManagerGenerator';
-import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
+import { AntJsModelManagerGenerator } from '../../testapi/api/generator/AntJsModelManagerGenerator';
+import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
+import { RedisWrapper } from '../primary/RedisWrapper';
 
 export class MinimalAntModelManager<
   TEntity extends IEntity,
@@ -15,7 +16,7 @@ export class MinimalAntModelManager<
   /**
    * Model manager generator.
    */
-  protected _modelManagerGenerator: ModelManagerGenerator<TEntity>;
+  protected _modelManagerGenerator: AntJsModelManagerGenerator;
   /**
    * Secondary entity manager.
    */
@@ -31,7 +32,7 @@ export class MinimalAntModelManager<
     queriesMap: QueryMapType<TEntity, IModel>,
   ) {
     super(model, queriesMap);
-    this._modelManagerGenerator = new ModelManagerGenerator();
+    this._modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
     this._secondaryEntityManager = new SecondaryEntityManagerMock<TEntity>(model);
   }
 
@@ -57,10 +58,12 @@ export class MinimalAntModelManager<
    * @returns Model manager generated.
    */
   protected _generateModelManager(model: IModel, config: IAntModelConfig): IModelManager<TEntity> {
-    const [modelManager] = this._modelManagerGenerator.generateZeroQueriesModelManager(
-      model,
-      this._secondaryEntityManager,
-    );
-    return modelManager;
+    const [modelManager] = this._modelManagerGenerator.generateModelManager({
+      model: model,
+      secondaryOptions: {
+        manager: this._secondaryEntityManager,
+      },
+    });
+    return modelManager as IModelManager<TEntity>;
   }
 }
