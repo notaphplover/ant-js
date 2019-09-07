@@ -1,4 +1,5 @@
 import { ITest } from '../testapi/api/ITest';
+import { RedisAwaiter } from '../testapi/api/RedisAwaiter';
 import { AntTest } from './AntTest';
 import { AntManagerTest } from './api/AntManagerTest';
 import { AntModelManagerTest } from './api/AntModelManagerTest';
@@ -16,11 +17,7 @@ export class AllTest implements ITest {
   public performTests(): void {
     const redisWrapper = new RedisWrapper();
     const redis = redisWrapper.redis;
-    const beforeAllPromise: Promise<any> = redis
-      .flushall()
-      .then(
-        () => redis.script(['flush']),
-      );
+    const beforeAllPromise = new RedisAwaiter(redis).flushDataAndScripts();
 
     new AntManagerTest(beforeAllPromise).performTests();
     new AntModelManagerTest(beforeAllPromise).performTests();
