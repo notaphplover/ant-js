@@ -1,3 +1,7 @@
+# Typescript source code
+src/**/*.ts
+!src/**/*.d.ts
+
 # npm dependencies
 /node_modules
 
