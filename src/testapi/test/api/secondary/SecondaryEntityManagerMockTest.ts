@@ -18,6 +18,7 @@ export class SecondaryEntityManagerMockTest implements ITest {
       this._itMustGetTheModel();
       this._itMustGettheStore();
       this._itMustNotGetAnElementById();
+      this._itMustNotGetElementsByIdsOrderedAscNonNumberNonString();
     });
   }
 
@@ -158,6 +159,21 @@ export class SecondaryEntityManagerMockTest implements ITest {
       const store = new Array();
       const manager = new SecondaryEntityManagerMock(model, store);
       expect(await manager.getById(el0.id)).toBeNull();
+      done();
+    });
+  }
+
+  private _itMustNotGetElementsByIdsOrderedAscNonNumberNonString(): void {
+    it(this._itMustNotGetElementsByIdsOrderedAscNonNumberNonString.name, async (done) => {
+      const model = {
+        id: 'id',
+        keyGen: { prefix: '' },
+      };
+      const el0 = { id: { index: 0 } };
+      const el1 = { id: { index: 1 } };
+      const store = [ el1, el0 ];
+      const manager = new SecondaryEntityManagerMock(model, store);
+      expectAsync(manager.getByIdsOrderedAsc([el1.id as any, el0.id as any])).toBeRejected();
       done();
     });
   }

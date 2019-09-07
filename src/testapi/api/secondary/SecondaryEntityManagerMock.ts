@@ -81,15 +81,17 @@ export class SecondaryEntityManagerMock<TEntity extends IEntity>
         } else {
           if ('number' === typeof ids[0]) {
             resolve(entities.sort((a: TEntity, b: TEntity) => a[this.model.id] - b[this.model.id]));
-          } else if ('string' === typeof ids[0]) {
-            resolve(
-              entities.sort(
-                (a: TEntity, b: TEntity) =>
-                  this._compareStrings(a[this.model.id], b[this.model.id]),
-                ),
-            );
           } else {
-            throw new Error('Expected ids as number or strings');
+            if ('string' === typeof ids[0]) {
+              resolve(
+                entities.sort(
+                  (a: TEntity, b: TEntity) =>
+                    this._compareStrings(a[this.model.id], b[this.model.id]),
+                  ),
+              );
+            } else {
+              throw new Error('Expected ids as number or strings');
+            }
           }
         }
       }).catch(reject);
