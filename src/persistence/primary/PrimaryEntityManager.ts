@@ -5,9 +5,9 @@ import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 import { IRedisMiddleware } from './IRedisMiddleware';
 import { VOID_RESULT_STRING } from './LuaConstants';
-import { AntJsPersistencyOptions } from './options/AntJsPersistencyOptions';
+import { AntJsUpdateOptions } from './options/AntJsUpdateOptions';
 import { CacheMode } from './options/CacheMode';
-import { IPersistencyOptions } from './options/IPersistencyOptions';
+import { IPersistencyUpdateOptions } from './options/IPersistencyUpdateOptions';
 
 export class PrimaryEntityManager<
   TEntity extends IEntity,
@@ -71,7 +71,7 @@ export class PrimaryEntityManager<
    */
   public get(
     id: number|string,
-    options: IPersistencyOptions = new AntJsPersistencyOptions(),
+    options: IPersistencyUpdateOptions = new AntJsUpdateOptions(),
   ): Promise<TEntity> {
     return this._innerGetById(id, options);
   }
@@ -91,7 +91,7 @@ export class PrimaryEntityManager<
    */
   public mGet(
     ids: number[] | string[],
-    options: IPersistencyOptions = new AntJsPersistencyOptions(),
+    options: IPersistencyUpdateOptions = new AntJsUpdateOptions(),
   ): Promise<TEntity[]> {
     return this._innerGetByIds(ids, options);
   }
@@ -103,7 +103,7 @@ export class PrimaryEntityManager<
    */
   protected _deleteEntitiesUsingNegativeCache(
     ids: number[] | string[],
-    options: IPersistencyOptions,
+    options: IPersistencyUpdateOptions,
   ): Promise<any> {
     if (null == ids || 0 === ids.length) {
       return new Promise((resolve) => resolve());
@@ -130,7 +130,7 @@ export class PrimaryEntityManager<
    */
   protected _deleteEntityUsingNegativeCache(
     id: number|string,
-    options: IPersistencyOptions,
+    options: IPersistencyUpdateOptions,
   ): Promise<any> {
     if (CacheMode.CacheAndOverwrite === options.cacheMode) {
       const key = this._getKey(id);
@@ -162,7 +162,7 @@ export class PrimaryEntityManager<
    */
   protected async _innerGetById(
     id: number|string,
-    options: IPersistencyOptions,
+    options: IPersistencyUpdateOptions,
   ): Promise<TEntity> {
     if (null == id) {
       return null;
@@ -198,7 +198,7 @@ export class PrimaryEntityManager<
    */
   protected async _innerGetByIds(
     ids: number[]|string[],
-    options: IPersistencyOptions,
+    options: IPersistencyUpdateOptions,
   ): Promise<TEntity[]> {
     if (0 === ids.length) {
       return new Promise((resolve) => { resolve(new Array()); });
@@ -218,7 +218,7 @@ export class PrimaryEntityManager<
    */
   protected async _innerGetByDistinctIdsNotMapped(
     ids: number[]|string[],
-    options: IPersistencyOptions,
+    options: IPersistencyUpdateOptions,
   ): Promise<TEntity[]> {
     ids = Array.from(new Set<number|string>(ids)) as number[]|string[];
     const keysArray = (ids as Array<number|string>).map((id) => this._getKey(id));
@@ -275,7 +275,7 @@ export class PrimaryEntityManager<
    * @param options Cache options.
    * @returns generated script.
    */
-  protected _luaGetMultipleDeleteUsingNegativeCache(options: IPersistencyOptions): string {
+  protected _luaGetMultipleDeleteUsingNegativeCache(options: IPersistencyUpdateOptions): string {
     const keyGenerator = this._luaKeyGeneratorFromId('ARGV[i]');
     const iteratorMaxValue = options.ttl ? '#ARGV - 1' : '#ARGV';
     const updateStatement = this._luaGetUpdateStatement(
@@ -330,7 +330,7 @@ end`;
    * @returns Lua update statement.
    */
   protected _luaGetUpdateStatement(
-    options: IPersistencyOptions,
+    options: IPersistencyUpdateOptions,
     keyExpression: string,
     entityExpression: string,
     ttlExpression: string = 'ttl',
@@ -363,7 +363,7 @@ end`;
    */
   protected _updateEntities(
     entities: TEntity[],
-    options: IPersistencyOptions,
+    options: IPersistencyUpdateOptions,
   ): Promise<any> {
     if (null == entities || 0 === entities.length) {
       return new Promise<void>((resolve) => resolve());
@@ -390,7 +390,7 @@ end`;
    */
   protected _updateEntity(
     entity: TEntity,
-    options: IPersistencyOptions,
+    options: IPersistencyUpdateOptions,
   ): Promise<any> {
     if (CacheMode.NoCache === options.cacheMode) {
       return new Promise((resolve) => resolve());
@@ -426,7 +426,7 @@ end`;
   private async _innerGetByDistinctIdsNotMappedProcessMissingIds(
     missingIds: number[] | string[],
     results: TEntity[],
-    options: IPersistencyOptions,
+    options: IPersistencyUpdateOptions,
   ): Promise<void> {
     if (this._successor && missingIds.length > 0) {
       let missingData: TEntity[];
@@ -471,7 +471,7 @@ end`;
    */
   private _updateEntitiesCacheAndOverWrite(
     entities: TEntity[],
-    options: IPersistencyOptions,
+    options: IPersistencyUpdateOptions,
   ): Promise<any> {
     const idField = this.model.id;
     if (options.ttl) {
@@ -501,7 +501,7 @@ end`;
    */
   private _updateEntitiesCacheIfNotExists(
     entities: TEntity[],
-    options: IPersistencyOptions,
+    options: IPersistencyUpdateOptions,
   ): Promise<any> {
     const idField = this.model.id;
     if (null == options.ttl) {

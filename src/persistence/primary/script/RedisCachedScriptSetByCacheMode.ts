@@ -1,9 +1,9 @@
 import { CacheMode } from '../options/CacheMode';
-import { IPersistencyOptions } from '../options/IPersistencyOptions';
+import { IPersistencyUpdateOptions } from '../options/IPersistencyUpdateOptions';
 import { IRedisCachedScriptSet } from './IRedisCachedScriptSet';
 import { RedisCachedScript } from './RedisCachedScript';
 
-export class RedisCachedScriptSetByCacheMode implements IRedisCachedScriptSet<IPersistencyOptions> {
+export class RedisCachedScriptSetByCacheMode implements IRedisCachedScriptSet<IPersistencyUpdateOptions> {
   /**
    * Map of keys to redis cached scripts.
    */
@@ -12,13 +12,13 @@ export class RedisCachedScriptSetByCacheMode implements IRedisCachedScriptSet<IP
   /**
    * RedisCachedScript generator.
    */
-  protected _generator: (mode: IPersistencyOptions) => RedisCachedScript;
+  protected _generator: (mode: IPersistencyUpdateOptions) => RedisCachedScript;
 
   /**
    * Creates a new Redis cached script set by cache mode.
    * @param generator Cached script generator.
    */
-  public constructor(generator: (mode: IPersistencyOptions) => RedisCachedScript) {
+  public constructor(generator: (mode: IPersistencyUpdateOptions) => RedisCachedScript) {
     this._map = new Map();
     this._generator = generator;
   }
@@ -26,7 +26,7 @@ export class RedisCachedScriptSetByCacheMode implements IRedisCachedScriptSet<IP
   /**
    * @inheritdoc
    */
-  public eval(gArgs: IPersistencyOptions, eArgsGen: (scriptArg: string) => any[]): Promise<any> {
+  public eval(gArgs: IPersistencyUpdateOptions, eArgsGen: (scriptArg: string) => any[]): Promise<any> {
     let scripts = this._map.get(gArgs.cacheMode);
     if (undefined === scripts) {
       scripts = [null, null];
@@ -42,7 +42,7 @@ export class RedisCachedScriptSetByCacheMode implements IRedisCachedScriptSet<IP
   /**
    * @inheritdoc
    */
-  protected generateCachedScript(options: IPersistencyOptions): RedisCachedScript {
+  protected generateCachedScript(options: IPersistencyUpdateOptions): RedisCachedScript {
     return this._generator(options);
   }
 }

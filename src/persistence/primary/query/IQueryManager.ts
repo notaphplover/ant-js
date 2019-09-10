@@ -1,5 +1,5 @@
 import { IEntity } from '../../../model/IEntity';
-import { IPersistencyOptions } from '../options/IPersistencyOptions';
+import { IPersistencyUpdateOptions } from '../options/IPersistencyUpdateOptions';
 
 export interface IQueryManager<
   TEntity extends IEntity,
@@ -12,7 +12,7 @@ export interface IQueryManager<
    */
   get(
     params: any,
-    options?: IPersistencyOptions,
+    options?: IPersistencyUpdateOptions,
   ): Promise<TResult>;
 
   /**
@@ -23,6 +23,6 @@ export interface IQueryManager<
    */
   mGet(
     paramsArray: any[],
-    options?: IPersistencyOptions,
+    options?: IPersistencyUpdateOptions,
   ): Promise<TEntity[]>;
 }

@@ -1,6 +1,6 @@
 import { CacheMode } from './CacheMode';
 
-export interface IPersistencyOptions {
+export interface IPersistencyUpdateOptions {
   /**
    * Determines if the entity must be cached if not found in cache.
    */

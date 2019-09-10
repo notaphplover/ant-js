@@ -1,6 +1,6 @@
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
-import { IPersistencyOptions } from './options/IPersistencyOptions';
+import { IPersistencyUpdateOptions } from './options/IPersistencyUpdateOptions';
 
 export interface IPrimaryEntityManagerBase<TEntity extends IEntity> {
   /**
@@ -11,7 +11,7 @@ export interface IPrimaryEntityManagerBase<TEntity extends IEntity> {
    */
   get(
     id: number|string,
-    options?: IPersistencyOptions,
+    options?: IPersistencyUpdateOptions,
   ): Promise<TEntity>;
   /**
    * Gets a collection of models by its ids.
@@ -21,7 +21,7 @@ export interface IPrimaryEntityManagerBase<TEntity extends IEntity> {
    */
   mGet(
     ids: number[]| string[],
-    options?: IPersistencyOptions,
+    options?: IPersistencyUpdateOptions,
   ): Promise<TEntity[]>;
 }
 

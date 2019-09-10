@@ -8,8 +8,8 @@ import {
   SINGLE_RESULT_QUERY_CODE,
   VOID_RESULT_STRING,
 } from './LuaConstants';
-import { AntJsPersistencyOptions } from './options/AntJsPersistencyOptions';
-import { IPersistencyOptions } from './options/IPersistencyOptions';
+import { AntJsUpdateOptions } from './options/AntJsUpdateOptions';
+import { IPersistencyUpdateOptions } from './options/IPersistencyUpdateOptions';
 import { PrimaryEntityManager } from './PrimaryEntityManager';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 import { RedisCachedScript } from './script/RedisCachedScript';
@@ -142,7 +142,7 @@ export class ModelManager<
    */
   public mUpdate(
     entities: TEntity[],
-    options: IPersistencyOptions = new AntJsPersistencyOptions(),
+    options: IPersistencyUpdateOptions = new AntJsUpdateOptions(),
   ): Promise<any> {
     if (null == entities || 0 === entities.length) {
       return new Promise((resolve) => resolve());
@@ -183,7 +183,7 @@ export class ModelManager<
    */
   public update(
     entity: TEntity,
-    options: IPersistencyOptions = new AntJsPersistencyOptions(),
+    options: IPersistencyUpdateOptions = new AntJsUpdateOptions(),
   ): Promise<any> {
     return this._luaUpdateCachedQuerySet.eval(options, (scriptArg) => {
       const evalParams = [
@@ -332,7 +332,7 @@ end`;
    * @param options Cache options.
    * @returns script generated.
    */
-  private _luaSyncMUpdateGenerator(options: IPersistencyOptions): string {
+  private _luaSyncMUpdateGenerator(options: IPersistencyUpdateOptions): string {
     const ttl = 'ARGV[#ARGV]';
     const queriesNumber: string = options.ttl ? 'ARGV[#ARGV - 1]' : 'ARGV[#ARGV]';
     const entitiesCount = options.ttl ? '(#ARGV - queriesNumber) / 2 - 1' : '(#ARGV - queriesNumber - 1) / 2';
@@ -400,7 +400,7 @@ end`;
    * @param options Cache options.
    * @returns script generated.
    */
-  private _luaSyncUpdateGenerator(options: IPersistencyOptions): string {
+  private _luaSyncUpdateGenerator(options: IPersistencyUpdateOptions): string {
     const queriesNumber: string = '#KEYS / 2';
 
     const entityId = 'ARGV[1]';
