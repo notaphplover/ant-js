@@ -34,17 +34,8 @@ export class RedisCachedScriptSetByCacheMode implements IRedisCachedScriptSet<IP
     }
     const index = gArgs.ttl ? 1 : 0;
     if (null == scripts[index]) {
-      scripts[index] = this._generateScript(gArgs);
+      scripts[index] = this._generator(gArgs);
     }
     return scripts[index].eval(eArgsGen);
-  }
-
-  /**
-   * Generates an script with the given persistency options.
-   * @param options Persistency options.
-   * @returns Generated script.
-   */
-  protected _generateScript(options: IPersistencyUpdateOptions): RedisCachedScript {
-    return this._generator(options);
   }
 }
