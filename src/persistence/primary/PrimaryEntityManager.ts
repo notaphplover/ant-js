@@ -5,8 +5,8 @@ import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 import { IRedisMiddleware } from './IRedisMiddleware';
 import { VOID_RESULT_STRING } from './LuaConstants';
-import { CacheMode } from './options/CacheMode';
 import { AntJsPersistencyOptions } from './options/AntJsPersistencyOptions';
+import { CacheMode } from './options/CacheMode';
 import { IPersistencyOptions } from './options/IPersistencyOptions';
 
 export class PrimaryEntityManager<
