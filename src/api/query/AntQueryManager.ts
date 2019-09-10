@@ -28,21 +28,21 @@ export abstract class AntQueryManager<
    */
   public get(
     params: any,
-    cacheOptions?: ICacheOptions,
+    options?: ICacheOptions,
   ): Promise<TResult> {
-    return this._queryManager.get(params, cacheOptions);
+    return this._queryManager.get(params, options);
   }
 
   /**
    * Gets the result of multiple queries.
    * @param paramsArray Queries parameters.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Queries results.
    */
   public mGet(
     paramsArray: any[],
-    cacheOptions?: ICacheOptions,
+    options?: ICacheOptions,
   ): Promise<TEntity[]> {
-    return this._queryManager.mGet(paramsArray, cacheOptions);
+    return this._queryManager.mGet(paramsArray, options);
   }
 }

@@ -12,17 +12,17 @@ export interface IQueryManager<
    */
   get(
     params: any,
-    cacheOptions?: ICacheOptions,
+    options?: ICacheOptions,
   ): Promise<TResult>;
 
   /**
    * Gets the result of multiple queries.
    * @param paramsArray Queries parameters.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Queries results.
    */
   mGet(
     paramsArray: any[],
-    cacheOptions?: ICacheOptions,
+    options?: ICacheOptions,
   ): Promise<TEntity[]>;
 }

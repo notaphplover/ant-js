@@ -6,22 +6,22 @@ export interface IPrimaryEntityManagerBase<TEntity extends IEntity> {
   /**
    * Gets a model by its id.
    * @param id: Model's id.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Model found.
    */
   get(
     id: number|string,
-    cacheOptions?: ICacheOptions,
+    options?: ICacheOptions,
   ): Promise<TEntity>;
   /**
    * Gets a collection of models by its ids.
    * @param ids Model ids.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Models found.
    */
   mGet(
     ids: number[]| string[],
-    cacheOptions?: ICacheOptions,
+    options?: ICacheOptions,
   ): Promise<TEntity[]>;
 }
 

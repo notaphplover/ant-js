@@ -111,11 +111,11 @@ This is probably caused by the absence of a config instance. Ensure that config 
   /**
    * Finds an entity by its id.
    * @param id Id of the entity.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Entity found
    */
-  public get(id: string | number, cacheOptions?: ICacheOptions): Promise<TEntity> {
-    return this.modelManager.get(id, cacheOptions);
+  public get(id: string | number, options?: ICacheOptions): Promise<TEntity> {
+    return this.modelManager.get(id, options);
   }
   /**
    * Deletes multiple entities from the cache layer.
@@ -128,11 +128,11 @@ This is probably caused by the absence of a config instance. Ensure that config 
   /**
    * Finds a collection if entities by its ids.
    * @param ids Ids of the entities.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Entities found.
    */
-  public mGet(ids: number[] | string[], cacheOptions?: ICacheOptions): Promise<TEntity[]> {
-    return this.modelManager.mGet(ids, cacheOptions);
+  public mGet(ids: number[] | string[], options?: ICacheOptions): Promise<TEntity[]> {
+    return this.modelManager.mGet(ids, options);
   }
 
   /**

@@ -137,17 +137,17 @@ export class ModelManager<
   /**
    * Updates multiple entities at the cache layer.
    * @param entities Entities to be updated.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Promise of entities updated.
    */
   public mUpdate(
     entities: TEntity[],
-    cacheOptions: ICacheOptions = new CacheOptions(),
+    options: ICacheOptions = new CacheOptions(),
   ): Promise<any> {
     if (null == entities || 0 === entities.length) {
       return new Promise((resolve) => resolve());
     }
-    return this._luaMUpdateCachedQuerySet.eval(cacheOptions, (scriptArg) => {
+    return this._luaMUpdateCachedQuerySet.eval(options, (scriptArg) => {
       const evalParams = [
         scriptArg,
         this._queryManagers.length * (entities.length + 1),
@@ -168,8 +168,8 @@ export class ModelManager<
         evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
       }
       evalParams.push(this._queryManagers.length);
-      if (cacheOptions.ttl) {
-        evalParams.push(cacheOptions.ttl);
+      if (options.ttl) {
+        evalParams.push(options.ttl);
       }
       return evalParams;
     });
@@ -178,14 +178,14 @@ export class ModelManager<
   /**
    * Updates an entity at the cache layer.
    * @param entity Entity to be updated.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Promise of entity updated.
    */
   public update(
     entity: TEntity,
-    cacheOptions: ICacheOptions = new CacheOptions(),
+    options: ICacheOptions = new CacheOptions(),
   ): Promise<any> {
-    return this._luaUpdateCachedQuerySet.eval(cacheOptions, (scriptArg) => {
+    return this._luaUpdateCachedQuerySet.eval(options, (scriptArg) => {
       const evalParams = [
         scriptArg,
         2 * this._queryManagers.length,
@@ -196,8 +196,8 @@ export class ModelManager<
       }
       evalParams.push(JSON.stringify(entity[this._model.id]));
       evalParams.push(JSON.stringify(entity));
-      if (cacheOptions.ttl) {
-        evalParams.push(cacheOptions.ttl);
+      if (options.ttl) {
+        evalParams.push(options.ttl);
       }
       for (const queryManager of this._queryManagers) {
         evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
@@ -329,13 +329,13 @@ end`;
    * Generates a lua script to update multiple entities in the cache server.
    * This script also updates al the queries related to the entities.
    *
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns script generated.
    */
-  private _luaSyncMUpdateGenerator(cacheOptions: ICacheOptions): string {
+  private _luaSyncMUpdateGenerator(options: ICacheOptions): string {
     const ttl = 'ARGV[#ARGV]';
-    const queriesNumber: string = cacheOptions.ttl ? 'ARGV[#ARGV - 1]' : 'ARGV[#ARGV]';
-    const entitiesCount = cacheOptions.ttl ? '(#ARGV - queriesNumber) / 2 - 1' : '(#ARGV - queriesNumber - 1) / 2';
+    const queriesNumber: string = options.ttl ? 'ARGV[#ARGV - 1]' : 'ARGV[#ARGV]';
+    const entitiesCount = options.ttl ? '(#ARGV - queriesNumber) / 2 - 1' : '(#ARGV - queriesNumber - 1) / 2';
     const ithQCode = 'ARGV[2 * entitiesCount + i]';
     const ithReverseKeyIndex = '(entitiesCount + 1) * (i - 1) + 1';
     const ithReverseKey = 'KEYS[ithReverseKeyIndex]';
@@ -345,7 +345,7 @@ end`;
     const jthQueryKeyIndex = 'ithReverseKeyIndex + j';
     const jthQueryKey = 'KEYS[jthQueryKeyIndex]';
 
-    const updateStatement = this._luaGetUpdateStatement(cacheOptions, jthEntityKey, jthEntity, ttl);
+    const updateStatement = this._luaGetUpdateStatement(options, jthEntityKey, jthEntity, ttl);
 
     return `local queriesNumber = ${queriesNumber}
 local entitiesCount = ${entitiesCount}
@@ -397,22 +397,22 @@ end`;
    * Generates a lua script to update an entity in the cache server.
    * This script also updates al the queries related to the entity.
    *
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns script generated.
    */
-  private _luaSyncUpdateGenerator(cacheOptions: ICacheOptions): string {
+  private _luaSyncUpdateGenerator(options: ICacheOptions): string {
     const queriesNumber: string = '#KEYS / 2';
 
     const entityId = 'ARGV[1]';
     const entity = 'ARGV[2]';
     const ttl = 'ARGV[3]';
-    const ithQCode: string = cacheOptions.ttl ? 'ARGV[3 + i]' : 'ARGV[2 + i]';
+    const ithQCode: string = options.ttl ? 'ARGV[3 + i]' : 'ARGV[2 + i]';
 
     const entityKey: string = this._luaKeyGeneratorFromId(entityId);
     const reverseHashKey = 'KEYS[2 * i - 1]';
     const queryKey = 'KEYS[2 * i]';
 
-    const updateStatement = this._luaGetUpdateStatement(cacheOptions, entityKey, entity, ttl);
+    const updateStatement = this._luaGetUpdateStatement(options, entityKey, entity, ttl);
 
     return `for i=1, ${queriesNumber} do
   local qCode = ${ithQCode}

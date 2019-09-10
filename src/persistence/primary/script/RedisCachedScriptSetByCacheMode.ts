@@ -42,7 +42,7 @@ export class RedisCachedScriptSetByCacheMode implements IRedisCachedScriptSet<IC
   /**
    * @inheritdoc
    */
-  protected generateCachedScript(cacheOptions: ICacheOptions): RedisCachedScript {
-    return this._generator(cacheOptions);
+  protected generateCachedScript(options: ICacheOptions): RedisCachedScript {
+    return this._generator(options);
   }
 }
