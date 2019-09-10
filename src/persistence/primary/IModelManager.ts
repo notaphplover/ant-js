@@ -1,6 +1,6 @@
 import { IEntity } from '../../model/IEntity';
 import { IPrimaryEntityManager, IPrimaryEntityManagerBase } from './IPrimaryEntityManager';
-import { ICacheOptions } from './options/ICacheOptions';
+import { IPersistencyOptions } from './options/IPersistencyOptions';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 
 export interface IBaseModelManager<TEntity extends IEntity>
@@ -23,14 +23,14 @@ export interface IBaseModelManager<TEntity extends IEntity>
    * @param options Cache options.
    * @returns Priomise of entities updated.
    */
-  mUpdate(entities: TEntity[], options?: ICacheOptions): Promise<any>;
+  mUpdate(entities: TEntity[], options?: IPersistencyOptions): Promise<any>;
   /**
    * Updates an entity at the cache layer.
    * @param entity Entitty to update.
    * @param options Cache options.
    * @returns Promise of entity updated.
    */
-  update(entity: TEntity, options?: ICacheOptions): Promise<any>;
+  update(entity: TEntity, options?: IPersistencyOptions): Promise<any>;
 }
 
 export interface IModelManager<TEntity extends IEntity>

@@ -1,5 +1,5 @@
 import { IEntity } from '../../../model/IEntity';
-import { ICacheOptions } from '../options/ICacheOptions';
+import { IPersistencyOptions } from '../options/IPersistencyOptions';
 
 export interface IQueryManager<
   TEntity extends IEntity,
@@ -12,7 +12,7 @@ export interface IQueryManager<
    */
   get(
     params: any,
-    options?: ICacheOptions,
+    options?: IPersistencyOptions,
   ): Promise<TResult>;
 
   /**
@@ -23,6 +23,6 @@ export interface IQueryManager<
    */
   mGet(
     paramsArray: any[],
-    options?: ICacheOptions,
+    options?: IPersistencyOptions,
   ): Promise<TEntity[]>;
 }

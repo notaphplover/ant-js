@@ -1,4 +1,4 @@
-import { CacheOptions } from '../../../persistence/primary/options/CacheOptions';
+import { AntJsPersistencyOptions } from '../../../persistence/primary/options/AntJsPersistencyOptions';
 import { RedisCachedScript } from '../../../persistence/primary/script/RedisCachedScript';
 import { RedisCachedScriptSetByCacheMode } from '../../../persistence/primary/script/RedisCachedScriptSetByCacheMode';
 import { ITest } from '../../../testapi/api/ITest';
@@ -58,7 +58,7 @@ export class RedisCachedScriptSetByCacheModeTest implements ITest {
       );
 
       await cachedScriptSet.eval(
-        new CacheOptions(),
+        new AntJsPersistencyOptions(),
         (scriptArg) => [scriptArg, 0],
       );
 
@@ -83,11 +83,11 @@ export class RedisCachedScriptSetByCacheModeTest implements ITest {
       );
 
       await cachedScriptSet.eval(
-        new CacheOptions(),
+        new AntJsPersistencyOptions(),
         (scriptArg) => [scriptArg, 0],
       );
       await cachedScriptSet.eval(
-        new CacheOptions(),
+        new AntJsPersistencyOptions(),
         (scriptArg) => [scriptArg, 0],
       );
 
@@ -111,7 +111,7 @@ export class RedisCachedScriptSetByCacheModeTest implements ITest {
       );
 
       await cachedScriptSet.eval(
-        new CacheOptions(),
+        new AntJsPersistencyOptions(),
         (scriptArg) => [scriptArg, 0],
       );
 

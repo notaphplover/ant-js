@@ -1,7 +1,7 @@
 import { IEntity } from '../model/IEntity';
 import { IModel } from '../model/IModel';
 import { IModelManager } from '../persistence/primary/IModelManager';
-import { ICacheOptions } from '../persistence/primary/options/ICacheOptions';
+import { IPersistencyOptions } from '../persistence/primary/options/IPersistencyOptions';
 import {
   IPrimaryQueryManager,
 } from '../persistence/primary/query/IPrimaryQueryManager';
@@ -114,7 +114,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param options Cache options.
    * @returns Entity found
    */
-  public get(id: string | number, options?: ICacheOptions): Promise<TEntity> {
+  public get(id: string | number, options?: IPersistencyOptions): Promise<TEntity> {
     return this.modelManager.get(id, options);
   }
   /**
@@ -131,7 +131,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param options Cache options.
    * @returns Entities found.
    */
-  public mGet(ids: number[] | string[], options?: ICacheOptions): Promise<TEntity[]> {
+  public mGet(ids: number[] | string[], options?: IPersistencyOptions): Promise<TEntity[]> {
     return this.modelManager.mGet(ids, options);
   }
 
