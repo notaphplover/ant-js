@@ -13,7 +13,7 @@ import { IPersistencyUpdateOptions } from './options/IPersistencyUpdateOptions';
 import { PrimaryEntityManager } from './PrimaryEntityManager';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 import { RedisCachedScript } from './script/RedisCachedScript';
-import { RedisCachedScriptSetByCacheMode } from './script/RedisCachedScriptSetByCacheMode';
+import { UpdateEntitiesCachedScriptSet } from './script/UpdateEntitiesCachedScriptSet';
 
 export class ModelManager<
   TEntity extends IEntity,
@@ -31,11 +31,11 @@ export class ModelManager<
   /**
    * Cached script set for updating multiple entities.
    */
-  protected _luaMUpdateCachedQuerySet: RedisCachedScriptSetByCacheMode;
+  protected _luaMUpdateCachedQuerySet: UpdateEntitiesCachedScriptSet;
   /**
    * Cached script set for updating an entity.
    */
-  protected _luaUpdateCachedQuerySet: RedisCachedScriptSetByCacheMode;
+  protected _luaUpdateCachedQuerySet: UpdateEntitiesCachedScriptSet;
 
   /**
    * Query managers.
@@ -218,13 +218,13 @@ export class ModelManager<
       this._luaSyncMDeleteGenerator(),
       this._redis,
     );
-    this._luaMUpdateCachedQuerySet = new RedisCachedScriptSetByCacheMode(
+    this._luaMUpdateCachedQuerySet = new UpdateEntitiesCachedScriptSet(
       (options) => new RedisCachedScript(
         this._luaSyncMUpdateGenerator(options),
         this._redis,
       ),
     );
-    this._luaUpdateCachedQuerySet = new RedisCachedScriptSetByCacheMode(
+    this._luaUpdateCachedQuerySet = new UpdateEntitiesCachedScriptSet(
       (options) => new RedisCachedScript(
         this._luaSyncUpdateGenerator(options),
         this._redis,

@@ -3,7 +3,7 @@ import { IPersistencyUpdateOptions } from '../options/IPersistencyUpdateOptions'
 import { IRedisCachedScriptSet } from './IRedisCachedScriptSet';
 import { RedisCachedScript } from './RedisCachedScript';
 
-export class RedisCachedScriptSetByCacheMode implements IRedisCachedScriptSet<IPersistencyUpdateOptions> {
+export class UpdateEntitiesCachedScriptSet implements IRedisCachedScriptSet<IPersistencyUpdateOptions> {
   /**
    * Map of keys to redis cached scripts.
    */
