@@ -34,7 +34,7 @@ export class RedisCachedScriptSetByCacheMode implements IRedisCachedScriptSet<IP
     }
     const index = gArgs.ttl ? 1 : 0;
     if (null == scripts[index]) {
-      scripts[index] = this.generateCachedScript(gArgs);
+      scripts[index] = this._generateCachedScript(gArgs);
     }
     return scripts[index].eval(eArgsGen);
   }
@@ -42,7 +42,7 @@ export class RedisCachedScriptSetByCacheMode implements IRedisCachedScriptSet<IP
   /**
    * @inheritdoc
    */
-  protected generateCachedScript(options: IPersistencyUpdateOptions): RedisCachedScript {
+  protected _generateCachedScript(options: IPersistencyUpdateOptions): RedisCachedScript {
     return this._generator(options);
   }
 }
