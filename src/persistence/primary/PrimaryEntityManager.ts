@@ -5,8 +5,9 @@ import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 import { IRedisMiddleware } from './IRedisMiddleware';
 import { VOID_RESULT_STRING } from './LuaConstants';
-import { AntJsUpdateOptions } from './options/AntJsUpdateOptions';
+import { AntJsSearchOptions } from './options/AntJsSearchOptions';
 import { CacheMode } from './options/CacheMode';
+import { IPersistencySearchOptions } from './options/IPersistencySearchOptions';
 import { IPersistencyUpdateOptions } from './options/IPersistencyUpdateOptions';
 
 export class PrimaryEntityManager<
@@ -71,7 +72,7 @@ export class PrimaryEntityManager<
    */
   public get(
     id: number|string,
-    options: IPersistencyUpdateOptions = new AntJsUpdateOptions(),
+    options: IPersistencySearchOptions = new AntJsSearchOptions(),
   ): Promise<TEntity> {
     return this._innerGetById(id, options);
   }
@@ -91,7 +92,7 @@ export class PrimaryEntityManager<
    */
   public mGet(
     ids: number[] | string[],
-    options: IPersistencyUpdateOptions = new AntJsUpdateOptions(),
+    options: IPersistencySearchOptions = new AntJsSearchOptions(),
   ): Promise<TEntity[]> {
     return this._innerGetByIds(ids, options);
   }
@@ -103,7 +104,7 @@ export class PrimaryEntityManager<
    */
   protected _deleteEntitiesUsingNegativeCache(
     ids: number[] | string[],
-    options: IPersistencyUpdateOptions,
+    options: IPersistencySearchOptions,
   ): Promise<any> {
     if (null == ids || 0 === ids.length) {
       return new Promise((resolve) => resolve());
@@ -130,7 +131,7 @@ export class PrimaryEntityManager<
    */
   protected _deleteEntityUsingNegativeCache(
     id: number|string,
-    options: IPersistencyUpdateOptions,
+    options: IPersistencySearchOptions,
   ): Promise<any> {
     if (CacheMode.CacheAndOverwrite === options.cacheMode) {
       const key = this._getKey(id);
@@ -142,6 +143,15 @@ export class PrimaryEntityManager<
     } else {
       return new Promise((resolve) => resolve());
     }
+  }
+
+  /**
+   * Evaluates search options in order of determining if negative cache should be used.
+   * @param options Search options to evaluate.
+   * @returns True if negative cache should be used.
+   */
+  protected _evaluateUseNegativeCache(options: IPersistencySearchOptions): boolean {
+    return options.negativeCache || this._negativeEntityCache;
   }
 
   /**
@@ -162,7 +172,7 @@ export class PrimaryEntityManager<
    */
   protected async _innerGetById(
     id: number|string,
-    options: IPersistencyUpdateOptions,
+    options: IPersistencySearchOptions,
   ): Promise<TEntity> {
     if (null == id) {
       return null;
@@ -179,7 +189,7 @@ export class PrimaryEntityManager<
       return null;
     }
     return this._successor.getById(id).then((entity) => {
-      if (null == entity && this._negativeEntityCache) {
+      if (null == entity && this._evaluateUseNegativeCache(options)) {
         this._deleteEntityUsingNegativeCache(id, options);
         return null;
       } else {
@@ -198,7 +208,7 @@ export class PrimaryEntityManager<
    */
   protected async _innerGetByIds(
     ids: number[]|string[],
-    options: IPersistencyUpdateOptions,
+    options: IPersistencySearchOptions,
   ): Promise<TEntity[]> {
     if (0 === ids.length) {
       return new Promise((resolve) => { resolve(new Array()); });
@@ -218,7 +228,7 @@ export class PrimaryEntityManager<
    */
   protected async _innerGetByDistinctIdsNotMapped(
     ids: number[]|string[],
-    options: IPersistencyUpdateOptions,
+    options: IPersistencySearchOptions,
   ): Promise<TEntity[]> {
     ids = Array.from(new Set<number|string>(ids)) as number[]|string[];
     const keysArray = (ids as Array<number|string>).map((id) => this._getKey(id));
@@ -275,7 +285,7 @@ export class PrimaryEntityManager<
    * @param options Cache options.
    * @returns generated script.
    */
-  protected _luaGetMultipleDeleteUsingNegativeCache(options: IPersistencyUpdateOptions): string {
+  protected _luaGetMultipleDeleteUsingNegativeCache(options: IPersistencySearchOptions): string {
     const keyGenerator = this._luaKeyGeneratorFromId('ARGV[i]');
     const iteratorMaxValue = options.ttl ? '#ARGV - 1' : '#ARGV';
     const updateStatement = this._luaGetUpdateStatement(
@@ -356,68 +366,6 @@ end`;
   }
 
   /**
-   * Cache multiple entities.
-   * @param entities Entities to cache.
-   * @param options Cache options.
-   * @returns Promise of entities cached.
-   */
-  protected _updateEntities(
-    entities: TEntity[],
-    options: IPersistencyUpdateOptions,
-  ): Promise<any> {
-    if (null == entities || 0 === entities.length) {
-      return new Promise<void>((resolve) => resolve());
-    }
-    if (CacheMode.NoCache === options.cacheMode) {
-      return new Promise<void>((resolve) => resolve());
-    }
-
-    switch (options.cacheMode) {
-      case CacheMode.CacheIfNotExist:
-        return this._updateEntitiesCacheIfNotExists(entities, options);
-      case CacheMode.CacheAndOverwrite:
-        return this._updateEntitiesCacheAndOverWrite(entities, options);
-      default:
-        throw new Error('Unexpected cache options.');
-    }
-  }
-
-  /**
-   * Caches an entity.
-   * @param entity entity to cache.
-   * @param options Cache options.
-   * @returns Promise of redis operation ended
-   */
-  protected _updateEntity(
-    entity: TEntity,
-    options: IPersistencyUpdateOptions,
-  ): Promise<any> {
-    if (CacheMode.NoCache === options.cacheMode) {
-      return new Promise((resolve) => resolve());
-    }
-    if (null == entity) {
-      return new Promise((resolve) => resolve());
-    }
-    const key = this._getKey(entity[this.model.id]);
-    switch (options.cacheMode) {
-      case CacheMode.CacheIfNotExist:
-        if (null == options.ttl) {
-          return this._redis.set(key, JSON.stringify(entity), 'NX');
-        } else {
-          return this._redis.set(key, JSON.stringify(entity), 'PX', options.ttl, 'NX');
-        }
-      case CacheMode.CacheAndOverwrite:
-        if (null == options.ttl) {
-          return this._redis.set(key, JSON.stringify(entity));
-        } else {
-          return this._redis.set(key, JSON.stringify(entity), 'PX', options.ttl);
-        }
-      default:
-        throw new Error('Unexpected cache options.');
-    }
-  }
-
-  /**
    * Process missing ids.
    * @param missingIds Missing ids to process.
    * @param results Results array.
@@ -426,11 +374,11 @@ end`;
   private async _innerGetByDistinctIdsNotMappedProcessMissingIds(
     missingIds: number[] | string[],
     results: TEntity[],
-    options: IPersistencyUpdateOptions,
+    options: IPersistencySearchOptions,
   ): Promise<void> {
     if (this._successor && missingIds.length > 0) {
       let missingData: TEntity[];
-      if (this._negativeEntityCache) {
+      if (this._evaluateUseNegativeCache(options)) {
         missingData = await this._successor.getByIdsOrderedAsc(missingIds);
         if (missingData.length === missingIds.length) {
           this._updateEntities(missingData, options);
@@ -460,6 +408,33 @@ end`;
       for (const missingEntity of missingData) {
         results.push(missingEntity);
       }
+    }
+  }
+
+  /**
+   * Cache multiple entities.
+   * @param entities Entities to cache.
+   * @param options Cache options.
+   * @returns Promise of entities cached.
+   */
+  private _updateEntities(
+    entities: TEntity[],
+    options: IPersistencyUpdateOptions,
+  ): Promise<any> {
+    if (null == entities || 0 === entities.length) {
+      return new Promise<void>((resolve) => resolve());
+    }
+    if (CacheMode.NoCache === options.cacheMode) {
+      return new Promise<void>((resolve) => resolve());
+    }
+
+    switch (options.cacheMode) {
+      case CacheMode.CacheIfNotExist:
+        return this._updateEntitiesCacheIfNotExists(entities, options);
+      case CacheMode.CacheAndOverwrite:
+        return this._updateEntitiesCacheAndOverWrite(entities, options);
+      default:
+        throw new Error('Unexpected cache options.');
     }
   }
 
@@ -495,9 +470,10 @@ end`;
   }
 
   /**
-   *
+   * Updates entities caching the new result in the cache server if no previous cached entity is found.
    * @param entities Entities to update.
    * @param options Cache options.
+   * @returns Promise of entities cached if not exist.
    */
   private _updateEntitiesCacheIfNotExists(
     entities: TEntity[],
@@ -519,6 +495,41 @@ end`;
         ...entities.map((entity) => JSON.stringify(entity)),
         options.ttl,
       ]);
+    }
+  }
+
+  /**
+   * Caches an entity.
+   * @param entity entity to cache.
+   * @param options Cache options.
+   * @returns Promise of redis operation ended
+   */
+  private _updateEntity(
+    entity: TEntity,
+    options: IPersistencyUpdateOptions,
+  ): Promise<any> {
+    if (CacheMode.NoCache === options.cacheMode) {
+      return new Promise((resolve) => resolve());
+    }
+    if (null == entity) {
+      return new Promise((resolve) => resolve());
+    }
+    const key = this._getKey(entity[this.model.id]);
+    switch (options.cacheMode) {
+      case CacheMode.CacheIfNotExist:
+        if (null == options.ttl) {
+          return this._redis.set(key, JSON.stringify(entity), 'NX');
+        } else {
+          return this._redis.set(key, JSON.stringify(entity), 'PX', options.ttl, 'NX');
+        }
+      case CacheMode.CacheAndOverwrite:
+        if (null == options.ttl) {
+          return this._redis.set(key, JSON.stringify(entity));
+        } else {
+          return this._redis.set(key, JSON.stringify(entity), 'PX', options.ttl);
+        }
+      default:
+        throw new Error('Unexpected cache options.');
     }
   }
 }

@@ -3,6 +3,8 @@ import { IModel } from '../../model/IModel';
 import { Model } from '../../model/Model';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
 import { ModelManager } from '../../persistence/primary/ModelManager';
+import { AntJsDeleteOptions } from '../../persistence/primary/options/AntJsDeleteOptions';
+import { AntJsSearchOptions } from '../../persistence/primary/options/AntJsSearchOptions';
 import { AntJsUpdateOptions } from '../../persistence/primary/options/AntJsUpdateOptions';
 import { CacheMode } from '../../persistence/primary/options/CacheMode';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
@@ -753,7 +755,10 @@ return redis.call('get', ${luaExpression})`,
       );
       const entityFound = await primaryEntityManager.mGet(
         [entity[model.id]],
-        new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000),
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000),
+        ),
       );
 
       expect(entityFound).toEqual(new Array());
