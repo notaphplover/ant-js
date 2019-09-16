@@ -3,7 +3,7 @@ import {
   SEPARATOR_STRING,
   VOID_RESULT_STRING,
 } from '../LuaConstants';
-import { ICacheOptions } from '../options/ICacheOptions';
+import { IPersistencySearchOptions } from '../options/IPersistencySearchOptions';
 import { IMultipleResultQueryManager } from './IMultipleResultQueryManager';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
 
@@ -21,19 +21,19 @@ export class MultipleResultQueryManager<
   /**
    * Gets the result of a query.
    * @param params Query parameters.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Entities found.
    */
   public async get(
     params: any,
-    cacheOptions?: ICacheOptions,
+    options?: IPersistencySearchOptions,
   ): Promise<TEntity[]> {
     const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultsJSON = await this._redis.eval(luaScript, 1, key);
 
     if (null == resultsJSON) {
-      return this._getProcessQueryNotFound(key, params, cacheOptions);
+      return this._getProcessQueryNotFound(key, params, options);
     } else {
       if (VOID_RESULT_STRING === resultsJSON) {
         return new Array();
@@ -48,7 +48,7 @@ export class MultipleResultQueryManager<
           resultJson,
         );
       }
-      await this._getProcessMissingOptions(missingIds, finalResults, cacheOptions);
+      await this._getProcessMissingOptions(missingIds, finalResults, options);
       return finalResults;
     }
   }
@@ -56,12 +56,12 @@ export class MultipleResultQueryManager<
   /**
    * Gets the result of multiple queries.
    * @param paramsArray Queries params.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Queries results.
    */
   public async mGet(
     paramsArray: any[],
-    cacheOptions?: ICacheOptions,
+    options?: IPersistencySearchOptions,
   ): Promise<TEntity[]> {
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
@@ -109,7 +109,7 @@ export class MultipleResultQueryManager<
       missingIds.push(...(queriesMissingIds as Array<number & string>));
     }
 
-    await this._getProcessMissingOptions(missingIds, finalResults, cacheOptions);
+    await this._getProcessMissingOptions(missingIds, finalResults, options);
 
     return finalResults;
   }
@@ -118,16 +118,16 @@ export class MultipleResultQueryManager<
    * Process the missing ids and adds missing entities to the final results collection.
    * @param missingIds Missing ids collection.
    * @param finalResults Final results collection.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @param Promise of missing options processed.
    */
   private async _getProcessMissingOptions(
     missingIds: number[]|string[],
     finalResults: TEntity[],
-    cacheOptions: ICacheOptions,
+    options: IPersistencySearchOptions,
   ): Promise<void> {
     if (0 < missingIds.length) {
-      const missingEntities = await this._primaryEntityManager.mGet(missingIds, cacheOptions);
+      const missingEntities = await this._primaryEntityManager.mGet(missingIds, options);
       for (const missingEntity of missingEntities) {
         finalResults.push(missingEntity);
       }
@@ -165,13 +165,13 @@ export class MultipleResultQueryManager<
    * Process a query not found obtaining the results and caching them.
    * @param key key of the query.
    * @param params Query params.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Promise of query results.
    */
   private async _getProcessQueryNotFound(
     key: string,
     params: any,
-    cacheOptions: ICacheOptions,
+    options: IPersistencySearchOptions,
   ): Promise<TEntity[]> {
     const ids = await this._query(params);
     const idsJSON = (ids as any[]).map((id) => JSON.stringify(id));
@@ -183,7 +183,7 @@ export class MultipleResultQueryManager<
         this._reverseHashKey,
         ...idsJSON,
       ]);
-      return this._primaryEntityManager.mGet(ids, cacheOptions);
+      return this._primaryEntityManager.mGet(ids, options);
     } else {
       this._redis.eval(
         this._luaSetVoidQueryGenerator(),

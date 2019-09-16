@@ -8,12 +8,15 @@ import {
   SINGLE_RESULT_QUERY_CODE,
   VOID_RESULT_STRING,
 } from './LuaConstants';
-import { CacheOptions } from './options/CacheOptions';
-import { ICacheOptions } from './options/ICacheOptions';
+import { AntJsDeleteOptions } from './options/AntJsDeleteOptions';
+import { AntJsUpdateOptions } from './options/AntJsUpdateOptions';
+import { IPersistencyDeleteOptions } from './options/IPersistencyDeleteOptions';
+import { IPersistencyUpdateOptions } from './options/IPersistencyUpdateOptions';
 import { PrimaryEntityManager } from './PrimaryEntityManager';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
+import { DeleteEntitiesCachedScriptSet } from './script/DeleteEntitiesCachedScriptSet';
 import { RedisCachedScript } from './script/RedisCachedScript';
-import { RedisCachedScriptSetByCacheMode } from './script/RedisCachedScriptSetByCacheMode';
+import { UpdateEntitiesCachedScriptSet } from './script/UpdateEntitiesCachedScriptSet';
 
 export class ModelManager<
   TEntity extends IEntity,
@@ -23,19 +26,19 @@ export class ModelManager<
   /**
    * Cached script for deleting an entity.
    */
-  protected _luaDeleteCachedQuery: RedisCachedScript;
+  protected _luaDeleteCachedQuery: DeleteEntitiesCachedScriptSet;
   /**
    * Cached script for deleting multiple entities.
    */
-  protected _luaMDeleteCachedQuery: RedisCachedScript;
+  protected _luaMDeleteCachedQuery: DeleteEntitiesCachedScriptSet;
   /**
    * Cached script set for updating multiple entities.
    */
-  protected _luaMUpdateCachedQuerySet: RedisCachedScriptSetByCacheMode;
+  protected _luaMUpdateCachedQuerySet: UpdateEntitiesCachedScriptSet;
   /**
    * Cached script set for updating an entity.
    */
-  protected _luaUpdateCachedQuerySet: RedisCachedScriptSetByCacheMode;
+  protected _luaUpdateCachedQuerySet: UpdateEntitiesCachedScriptSet;
 
   /**
    * Query managers.
@@ -88,66 +91,80 @@ export class ModelManager<
   /**
    * Deletes an entity from the cache layer.
    * @param id id of the entity to delete.
+   * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  public delete(id: number|string): Promise<any> {
-    return this._luaDeleteCachedQuery.eval((scriptArg: string) => {
-      const evalParams = [
-        scriptArg,
-        this._queryManagers.length,
-      ];
-      for (const queryManager of this._queryManagers) {
-        evalParams.push(queryManager.reverseHashKey);
-      }
-      evalParams.push(JSON.stringify(id));
-      for (const queryManager of this._queryManagers) {
-        evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
-      }
-      return evalParams;
-    });
+  public delete(
+    id: number|string,
+    options: IPersistencyDeleteOptions = new AntJsDeleteOptions(),
+  ): Promise<any> {
+    return this._luaDeleteCachedQuery.eval(
+      options,
+      (scriptArg: string) => {
+        const evalParams = [
+          scriptArg,
+          this._queryManagers.length,
+        ];
+        for (const queryManager of this._queryManagers) {
+          evalParams.push(queryManager.reverseHashKey);
+        }
+        evalParams.push(JSON.stringify(id));
+        for (const queryManager of this._queryManagers) {
+          evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
+        }
+        return evalParams;
+      },
+    );
   }
 
   /**
    * Deletes multiple entities from the cache layer.
    * @param ids Ids of the entities to delete.
+   * @param options Delete options.
    * @returns Promise of entities deleted.
    */
-  public mDelete(ids: number[]|string[]): Promise<any> {
+  public mDelete(
+    ids: number[]|string[],
+    options: IPersistencyDeleteOptions = new AntJsDeleteOptions(),
+  ): Promise<any> {
     if (null == ids || 0 === ids.length) {
       return new Promise((resolve) => resolve());
     }
-    return this._luaMDeleteCachedQuery.eval((scriptArg) => {
-      const evalParams = [
-        scriptArg,
-        this._queryManagers.length,
-      ];
-      for (const queryManager of this._queryManagers) {
-        evalParams.push(queryManager.reverseHashKey);
-      }
-      for (const id of ids) {
-        evalParams.push(JSON.stringify(id));
-      }
-      for (const queryManager of this._queryManagers) {
-        evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
-      }
-      return evalParams;
-    });
+    return this._luaMDeleteCachedQuery.eval(
+      options,
+      (scriptArg) => {
+        const evalParams = [
+          scriptArg,
+          this._queryManagers.length,
+        ];
+        for (const queryManager of this._queryManagers) {
+          evalParams.push(queryManager.reverseHashKey);
+        }
+        for (const id of ids) {
+          evalParams.push(JSON.stringify(id));
+        }
+        for (const queryManager of this._queryManagers) {
+          evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
+        }
+        return evalParams;
+      },
+    );
   }
 
   /**
    * Updates multiple entities at the cache layer.
    * @param entities Entities to be updated.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Promise of entities updated.
    */
   public mUpdate(
     entities: TEntity[],
-    cacheOptions: ICacheOptions = new CacheOptions(),
+    options: IPersistencyUpdateOptions = new AntJsUpdateOptions(),
   ): Promise<any> {
     if (null == entities || 0 === entities.length) {
       return new Promise((resolve) => resolve());
     }
-    return this._luaMUpdateCachedQuerySet.eval(cacheOptions, (scriptArg) => {
+    return this._luaMUpdateCachedQuerySet.eval(options, (scriptArg) => {
       const evalParams = [
         scriptArg,
         this._queryManagers.length * (entities.length + 1),
@@ -168,8 +185,8 @@ export class ModelManager<
         evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
       }
       evalParams.push(this._queryManagers.length);
-      if (cacheOptions.ttl) {
-        evalParams.push(cacheOptions.ttl);
+      if (options.ttl) {
+        evalParams.push(options.ttl);
       }
       return evalParams;
     });
@@ -178,14 +195,14 @@ export class ModelManager<
   /**
    * Updates an entity at the cache layer.
    * @param entity Entity to be updated.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Promise of entity updated.
    */
   public update(
     entity: TEntity,
-    cacheOptions: ICacheOptions = new CacheOptions(),
+    options: IPersistencyUpdateOptions = new AntJsUpdateOptions(),
   ): Promise<any> {
-    return this._luaUpdateCachedQuerySet.eval(cacheOptions, (scriptArg) => {
+    return this._luaUpdateCachedQuerySet.eval(options, (scriptArg) => {
       const evalParams = [
         scriptArg,
         2 * this._queryManagers.length,
@@ -196,8 +213,8 @@ export class ModelManager<
       }
       evalParams.push(JSON.stringify(entity[this._model.id]));
       evalParams.push(JSON.stringify(entity));
-      if (cacheOptions.ttl) {
-        evalParams.push(cacheOptions.ttl);
+      if (options.ttl) {
+        evalParams.push(options.ttl);
       }
       for (const queryManager of this._queryManagers) {
         evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
@@ -210,21 +227,25 @@ export class ModelManager<
    * Initializes all the cached queries managed by the instance.
    */
   private _initializeCachedQueries(): void {
-    this._luaDeleteCachedQuery = new RedisCachedScript(
-      this._luaSyncDeleteGenerator(),
-      this._redis,
+    this._luaDeleteCachedQuery = new DeleteEntitiesCachedScriptSet(
+      (optios) => new RedisCachedScript(
+        this._luaSyncDeleteGenerator(optios),
+        this._redis,
+      ),
     );
-    this._luaMDeleteCachedQuery = new RedisCachedScript(
-      this._luaSyncMDeleteGenerator(),
-      this._redis,
+    this._luaMDeleteCachedQuery = new DeleteEntitiesCachedScriptSet(
+      (optios) => new RedisCachedScript(
+        this._luaSyncMDeleteGenerator(optios),
+        this._redis,
+      ),
     );
-    this._luaMUpdateCachedQuerySet = new RedisCachedScriptSetByCacheMode(
+    this._luaMUpdateCachedQuerySet = new UpdateEntitiesCachedScriptSet(
       (options) => new RedisCachedScript(
         this._luaSyncMUpdateGenerator(options),
         this._redis,
       ),
     );
-    this._luaUpdateCachedQuerySet = new RedisCachedScriptSetByCacheMode(
+    this._luaUpdateCachedQuerySet = new UpdateEntitiesCachedScriptSet(
       (options) => new RedisCachedScript(
         this._luaSyncUpdateGenerator(options),
         this._redis,
@@ -236,9 +257,10 @@ export class ModelManager<
    * Generates a lua script to delete an entity in the cache server.
    * This script also updates al the queries related to the entity.
    *
+   * @param options Delete options.
    * @returns script generated.
    */
-  private _luaSyncDeleteGenerator(): string {
+  private _luaSyncDeleteGenerator(options: IPersistencyDeleteOptions): string {
     const reverseHashKey: string = 'KEYS[i]';
 
     const entityId: string = 'ARGV[1]';
@@ -246,7 +268,7 @@ export class ModelManager<
     const queriesNumber: string = '#KEYS';
     const ithQCode: string = 'ARGV[1 + i]';
 
-    const deleteSentence = this._negativeEntityCache ?
+    const deleteSentence = this._evaluateUseNegativeCache(options) ?
       `redis.call('set', ${entityKey}, '${VOID_RESULT_STRING}')` :
       `redis.call('del', ${entityKey})`;
 
@@ -278,9 +300,11 @@ ${deleteSentence}`;
    * Generates a lua script to delete multiple entities in the cache server.
    * This script also updates al the queries related to the entities.
    *
+   * @param options Delete options.
+   *
    * @returns script generated.
    */
-  private _luaSyncMDeleteGenerator(): string {
+  private _luaSyncMDeleteGenerator(options: IPersistencyDeleteOptions): string {
     const queriesNumber: string = '#KEYS';
     const entitiesCount = '#ARGV - #KEYS';
     const ithQCode = 'ARGV[entitiesCount + i]';
@@ -288,7 +312,7 @@ ${deleteSentence}`;
     const jthEntityId = 'ARGV[j]';
     const jthEntityKey: string = this._luaKeyGeneratorFromId(jthEntityId);
 
-    const deleteSentence = this._negativeEntityCache ?
+    const deleteSentence = this._evaluateUseNegativeCache(options) ?
       `redis.call('set', ${jthEntityKey}, '${VOID_RESULT_STRING}')` :
       `redis.call('del', ${jthEntityKey})`;
 
@@ -329,13 +353,13 @@ end`;
    * Generates a lua script to update multiple entities in the cache server.
    * This script also updates al the queries related to the entities.
    *
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns script generated.
    */
-  private _luaSyncMUpdateGenerator(cacheOptions: ICacheOptions): string {
+  private _luaSyncMUpdateGenerator(options: IPersistencyUpdateOptions): string {
     const ttl = 'ARGV[#ARGV]';
-    const queriesNumber: string = cacheOptions.ttl ? 'ARGV[#ARGV - 1]' : 'ARGV[#ARGV]';
-    const entitiesCount = cacheOptions.ttl ? '(#ARGV - queriesNumber) / 2 - 1' : '(#ARGV - queriesNumber - 1) / 2';
+    const queriesNumber: string = options.ttl ? 'ARGV[#ARGV - 1]' : 'ARGV[#ARGV]';
+    const entitiesCount = options.ttl ? '(#ARGV - queriesNumber) / 2 - 1' : '(#ARGV - queriesNumber - 1) / 2';
     const ithQCode = 'ARGV[2 * entitiesCount + i]';
     const ithReverseKeyIndex = '(entitiesCount + 1) * (i - 1) + 1';
     const ithReverseKey = 'KEYS[ithReverseKeyIndex]';
@@ -345,7 +369,7 @@ end`;
     const jthQueryKeyIndex = 'ithReverseKeyIndex + j';
     const jthQueryKey = 'KEYS[jthQueryKeyIndex]';
 
-    const updateStatement = this._luaGetUpdateStatement(cacheOptions, jthEntityKey, jthEntity, ttl);
+    const updateStatement = this._luaGetUpdateStatement(options, jthEntityKey, jthEntity, ttl);
 
     return `local queriesNumber = ${queriesNumber}
 local entitiesCount = ${entitiesCount}
@@ -397,22 +421,22 @@ end`;
    * Generates a lua script to update an entity in the cache server.
    * This script also updates al the queries related to the entity.
    *
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns script generated.
    */
-  private _luaSyncUpdateGenerator(cacheOptions: ICacheOptions): string {
+  private _luaSyncUpdateGenerator(options: IPersistencyUpdateOptions): string {
     const queriesNumber: string = '#KEYS / 2';
 
     const entityId = 'ARGV[1]';
     const entity = 'ARGV[2]';
     const ttl = 'ARGV[3]';
-    const ithQCode: string = cacheOptions.ttl ? 'ARGV[3 + i]' : 'ARGV[2 + i]';
+    const ithQCode: string = options.ttl ? 'ARGV[3 + i]' : 'ARGV[2 + i]';
 
     const entityKey: string = this._luaKeyGeneratorFromId(entityId);
     const reverseHashKey = 'KEYS[2 * i - 1]';
     const queryKey = 'KEYS[2 * i]';
 
-    const updateStatement = this._luaGetUpdateStatement(cacheOptions, entityKey, entity, ttl);
+    const updateStatement = this._luaGetUpdateStatement(options, entityKey, entity, ttl);
 
     return `for i=1, ${queriesNumber} do
   local qCode = ${ithQCode}

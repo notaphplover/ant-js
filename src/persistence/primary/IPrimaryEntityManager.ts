@@ -1,27 +1,27 @@
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
-import { ICacheOptions } from './options/ICacheOptions';
+import { IPersistencySearchOptions } from './options/IPersistencySearchOptions';
 
 export interface IPrimaryEntityManagerBase<TEntity extends IEntity> {
   /**
    * Gets a model by its id.
    * @param id: Model's id.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Model found.
    */
   get(
     id: number|string,
-    cacheOptions?: ICacheOptions,
+    options?: IPersistencySearchOptions,
   ): Promise<TEntity>;
   /**
    * Gets a collection of models by its ids.
    * @param ids Model ids.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Models found.
    */
   mGet(
     ids: number[]| string[],
-    cacheOptions?: ICacheOptions,
+    options?: IPersistencySearchOptions,
   ): Promise<TEntity[]>;
 }
 

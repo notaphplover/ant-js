@@ -1,12 +1,12 @@
-import { CacheOptions } from '../../../persistence/primary/options/CacheOptions';
+import { AntJsUpdateOptions } from '../../../persistence/primary/options/AntJsUpdateOptions';
 import { RedisCachedScript } from '../../../persistence/primary/script/RedisCachedScript';
-import { RedisCachedScriptSetByCacheMode } from '../../../persistence/primary/script/RedisCachedScriptSetByCacheMode';
+import { UpdateEntitiesCachedScriptSet } from '../../../persistence/primary/script/UpdateEntitiesCachedScriptSet';
 import { ITest } from '../../../testapi/api/ITest';
 import { RedisWrapper } from '../RedisWrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-export class RedisCachedScriptSetByCacheModeTest implements ITest {
+export class UpdateEntitiesCachedScriptSetTest implements ITest {
 
   protected _beforeAllPromise: Promise<any>;
 
@@ -16,7 +16,7 @@ export class RedisCachedScriptSetByCacheModeTest implements ITest {
 
   public constructor(beforeAllPromise: Promise<any>) {
     this._beforeAllPromise = beforeAllPromise;
-    this._declareName = RedisCachedScriptSetByCacheModeTest.name;
+    this._declareName = UpdateEntitiesCachedScriptSetTest.name;
     this._redis = new RedisWrapper();
   }
 
@@ -35,7 +35,7 @@ export class RedisCachedScriptSetByCacheModeTest implements ITest {
       await this._beforeAllPromise;
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
-        new RedisCachedScriptSetByCacheMode(
+        new UpdateEntitiesCachedScriptSet(
           () => new RedisCachedScript('return ARGV[0]', this._redis.redis),
         );
       }).not.toThrowError();
@@ -53,12 +53,12 @@ export class RedisCachedScriptSetByCacheModeTest implements ITest {
         generator,
       ).and.callThrough();
 
-      const cachedScriptSet = new RedisCachedScriptSetByCacheMode(
+      const cachedScriptSet = new UpdateEntitiesCachedScriptSet(
         generatorSpy,
       );
 
       await cachedScriptSet.eval(
-        new CacheOptions(),
+        new AntJsUpdateOptions(),
         (scriptArg) => [scriptArg, 0],
       );
 
@@ -78,16 +78,16 @@ export class RedisCachedScriptSetByCacheModeTest implements ITest {
         generator,
       ).and.callThrough();
 
-      const cachedScriptSet = new RedisCachedScriptSetByCacheMode(
+      const cachedScriptSet = new UpdateEntitiesCachedScriptSet(
         generatorSpy,
       );
 
       await cachedScriptSet.eval(
-        new CacheOptions(),
+        new AntJsUpdateOptions(),
         (scriptArg) => [scriptArg, 0],
       );
       await cachedScriptSet.eval(
-        new CacheOptions(),
+        new AntJsUpdateOptions(),
         (scriptArg) => [scriptArg, 0],
       );
 
@@ -106,12 +106,12 @@ export class RedisCachedScriptSetByCacheModeTest implements ITest {
       spyOn(cachedScript, 'eval').and.callThrough();
 
       const generator = () => cachedScript;
-      const cachedScriptSet = new RedisCachedScriptSetByCacheMode(
+      const cachedScriptSet = new UpdateEntitiesCachedScriptSet(
         generator,
       );
 
       await cachedScriptSet.eval(
-        new CacheOptions(),
+        new AntJsUpdateOptions(),
         (scriptArg) => [scriptArg, 0],
       );
 
