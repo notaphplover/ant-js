@@ -132,7 +132,10 @@ export class PrimaryEntityManagerTest implements ITest {
 
       expect(await primaryEntityManager.get(
         entity1Modified[model.id],
-        new AntJsUpdateOptions(CacheMode.CacheIfNotExist),
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.CacheIfNotExist),
+        ),
       )).toEqual(entity1);
 
       done();
@@ -155,7 +158,10 @@ export class PrimaryEntityManagerTest implements ITest {
 
       await primaryEntityManager.mGet(
         [entity1[model.id]],
-        new AntJsUpdateOptions(CacheMode.NoCache),
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.NoCache),
+        ),
       );
       secondaryEntityManager.store.pop();
 
@@ -180,7 +186,10 @@ export class PrimaryEntityManagerTest implements ITest {
 
       await primaryEntityManager.get(
         entity1[model.id],
-        new AntJsUpdateOptions(CacheMode.NoCache),
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.NoCache),
+        ),
       );
       secondaryEntityManager.store.pop();
 
@@ -209,7 +218,10 @@ export class PrimaryEntityManagerTest implements ITest {
       try {
         await primaryEntityManager.mGet(
           [entity1[model.id]],
-          new AntJsUpdateOptions('Ohhh yeaaaahh!' as unknown as CacheMode),
+          new AntJsSearchOptions(
+            new AntJsDeleteOptions(),
+            new AntJsUpdateOptions('Ohhh yeaaaahh!' as unknown as CacheMode),
+          ),
         );
         fail();
         done();
@@ -239,7 +251,10 @@ export class PrimaryEntityManagerTest implements ITest {
       try {
         await primaryEntityManager.get(
           entity1[model.id],
-          new AntJsUpdateOptions('Ohhh yeaaaahh!' as unknown as CacheMode),
+          new AntJsSearchOptions(
+            new AntJsDeleteOptions(),
+            new AntJsUpdateOptions('Ohhh yeaaaahh!' as unknown as CacheMode),
+          ),
         );
         fail();
         done();
@@ -470,7 +485,10 @@ return redis.call('get', ${luaExpression})`,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const entityFound = await primaryEntityManager.get(
         entity[model.id],
-        new AntJsUpdateOptions(CacheMode.CacheIfNotExist),
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.CacheIfNotExist),
+        ),
       );
 
       expect(entityFound).toEqual(entity);
@@ -490,7 +508,10 @@ return redis.call('get', ${luaExpression})`,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const entityFound = await primaryEntityManager.get(
         entity[model.id],
-        new AntJsUpdateOptions(CacheMode.CacheIfNotExist, 10000),
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.CacheIfNotExist, 10000),
+        ),
       );
 
       expect(entityFound).toEqual(entity);
@@ -510,7 +531,10 @@ return redis.call('get', ${luaExpression})`,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const entityFound = await primaryEntityManager.get(
         entity[model.id],
-        new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000),
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000),
+        ),
       );
 
       expect(entityFound).toEqual(entity);
@@ -574,7 +598,10 @@ return redis.call('get', ${luaExpression})`,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
       const entityFound = await primaryEntityManager.get(
         entity[model.id],
-        new AntJsUpdateOptions(CacheMode.CacheIfNotExist),
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.CacheIfNotExist),
+        ),
       );
 
       expect(entityFound).toBeNull();
@@ -594,7 +621,10 @@ return redis.call('get', ${luaExpression})`,
       ] = this._helperGenerateBaseInstances(prefix, new Array(), true);
       const entityFound = await primaryEntityManager.get(
         entity[model.id],
-        new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000),
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000),
+        ),
       );
 
       expect(entityFound).toBeNull();
@@ -614,7 +644,10 @@ return redis.call('get', ${luaExpression})`,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
       const entityFound = await primaryEntityManager.get(
         entity[model.id],
-        new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000),
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000),
+        ),
       );
 
       expect(entityFound).toBeNull();
@@ -634,7 +667,10 @@ return redis.call('get', ${luaExpression})`,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const entityFound = await primaryEntityManager.mGet(
         [entity[model.id]],
-        new AntJsUpdateOptions(CacheMode.CacheIfNotExist),
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.CacheIfNotExist),
+        ),
       );
 
       expect(entityFound).toEqual([entity]);
@@ -654,7 +690,10 @@ return redis.call('get', ${luaExpression})`,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const entityFound = await primaryEntityManager.mGet(
         [entity[model.id]],
-        new AntJsUpdateOptions(CacheMode.CacheIfNotExist, 10000),
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.CacheIfNotExist, 10000),
+        ),
       );
 
       expect(entityFound).toEqual([entity]);
@@ -674,7 +713,10 @@ return redis.call('get', ${luaExpression})`,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
       const entityFound = await primaryEntityManager.mGet(
         [entity[model.id]],
-        new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000),
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000),
+        ),
       );
 
       expect(entityFound).toEqual([entity]);
@@ -711,9 +753,13 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
-      const entityFound = await primaryEntityManager.mGet([
-        entity[model.id],
-      ], new AntJsUpdateOptions(CacheMode.CacheIfNotExist, 10000));
+      const entityFound = await primaryEntityManager.mGet(
+        [ entity[model.id] ],
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.CacheIfNotExist, 10000),
+        ),
+      );
 
       expect(entityFound).toEqual(new Array());
       done();
@@ -730,9 +776,13 @@ return redis.call('get', ${luaExpression})`,
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, new Array());
-      const entityFound = await primaryEntityManager.mGet([
-        entity[model.id],
-      ], new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000));
+      const entityFound = await primaryEntityManager.mGet(
+        [ entity[model.id] ],
+        new AntJsSearchOptions(
+          new AntJsDeleteOptions(),
+          new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000),
+        ),
+      );
 
       expect(entityFound).toEqual(new Array());
       done();

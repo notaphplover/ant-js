@@ -1,5 +1,6 @@
 import { IEntity } from '../../model/IEntity';
 import { IPrimaryEntityManager, IPrimaryEntityManagerBase } from './IPrimaryEntityManager';
+import { IPersistencyDeleteOptions } from './options/IPersistencyDeleteOptions';
 import { IPersistencyUpdateOptions } from './options/IPersistencyUpdateOptions';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 
@@ -8,15 +9,23 @@ export interface IBaseModelManager<TEntity extends IEntity>
   /**
    * Deletes an entity from the cache layer.
    * @param id id of the entity to delete.
+   * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  delete(id: number|string): Promise<any>;
+  delete(
+    id: number|string,
+    options?: IPersistencyDeleteOptions,
+  ): Promise<any>;
   /**
    * Deletes multiple entities from the cache layer.
    * @param ids Ids of the entities to delete.
+   * @param options Delete options.
    * @returns Promise of entities deleted.
    */
-  mDelete(ids: number[]|string[]): Promise<any>;
+  mDelete(
+    ids: number[]|string[],
+    options?: IPersistencyDeleteOptions,
+  ): Promise<any>;
   /**
    * Updates multiple entities at the cache layer.
    * @param entities Entities to be updated.

@@ -1,6 +1,8 @@
 import { IEntity } from '../model/IEntity';
 import { IModel } from '../model/IModel';
 import { IModelManager } from '../persistence/primary/IModelManager';
+import { IPersistencyDeleteOptions } from '../persistence/primary/options/IPersistencyDeleteOptions';
+import { IPersistencySearchOptions } from '../persistence/primary/options/IPersistencySearchOptions';
 import { IPersistencyUpdateOptions } from '../persistence/primary/options/IPersistencyUpdateOptions';
 import {
   IPrimaryQueryManager,
@@ -103,10 +105,11 @@ This is probably caused by the absence of a config instance. Ensure that config 
   /**
    * Deletes an entity from the cache layer.
    * @param id id of the entity to delete.
+   * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  public delete(id: number|string): Promise<any> {
-    return this.modelManager.delete(id);
+  public delete(id: number|string, options?: IPersistencyDeleteOptions): Promise<any> {
+    return this.modelManager.delete(id, options);
   }
   /**
    * Finds an entity by its id.
@@ -114,16 +117,17 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param options Cache options.
    * @returns Entity found
    */
-  public get(id: string | number, options?: IPersistencyUpdateOptions): Promise<TEntity> {
+  public get(id: string | number, options?: IPersistencySearchOptions): Promise<TEntity> {
     return this.modelManager.get(id, options);
   }
   /**
    * Deletes multiple entities from the cache layer.
    * @param ids Ids of the entities to delete.
+   * @param options Delete options.
    * @returns Promise of entities deleted.
    */
-  public mDelete(ids: number[]|string[]): Promise<any> {
-    return this.modelManager.mDelete(ids);
+  public mDelete(ids: number[]|string[], options?: IPersistencyDeleteOptions): Promise<any> {
+    return this.modelManager.mDelete(ids, options);
   }
   /**
    * Finds a collection if entities by its ids.
@@ -131,10 +135,18 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param options Cache options.
    * @returns Entities found.
    */
-  public mGet(ids: number[] | string[], options?: IPersistencyUpdateOptions): Promise<TEntity[]> {
+  public mGet(ids: number[] | string[], options?: IPersistencySearchOptions): Promise<TEntity[]> {
     return this.modelManager.mGet(ids, options);
   }
-
+  /**
+   * Updates multiple entities at the cache layer.
+   * @param entities Entities to be updated.
+   * @param options Update options.
+   * @returns Priomise of entities updated.
+   */
+  public mUpdate(entities: TEntity[], options?: IPersistencyUpdateOptions): Promise<any> {
+    return this.modelManager.mUpdate(entities, options);
+  }
   /**
    * Gets a query from its alias.
    * @param alias Alias of the query.
@@ -170,20 +182,13 @@ This is probably caused by the absence of a config instance. Ensure that config 
     }
   }
   /**
-   * Updates multiple entities at the cache layer.
-   * @param entities Entities to be updated.
-   * @returns Priomise of entities updated.
-   */
-  public mUpdate(entities: TEntity[]): Promise<any> {
-    return this.modelManager.mUpdate(entities);
-  }
-  /**
    * Updates an entity at the cache layer.
    * @param entity Entitty to update.
+   * @param options Update options.
    * @returns Promise of entity updated.
    */
-  public update(entity: TEntity): Promise<any> {
-    return this.modelManager.update(entity);
+  public update(entity: TEntity, options?: IPersistencyUpdateOptions): Promise<any> {
+    return this.modelManager.update(entity, options);
   }
   /**
    * Generates a new model manager.

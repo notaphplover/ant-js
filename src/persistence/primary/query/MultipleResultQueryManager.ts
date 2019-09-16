@@ -3,7 +3,7 @@ import {
   SEPARATOR_STRING,
   VOID_RESULT_STRING,
 } from '../LuaConstants';
-import { IPersistencyUpdateOptions } from '../options/IPersistencyUpdateOptions';
+import { IPersistencySearchOptions } from '../options/IPersistencySearchOptions';
 import { IMultipleResultQueryManager } from './IMultipleResultQueryManager';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
 
@@ -26,7 +26,7 @@ export class MultipleResultQueryManager<
    */
   public async get(
     params: any,
-    options?: IPersistencyUpdateOptions,
+    options?: IPersistencySearchOptions,
   ): Promise<TEntity[]> {
     const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
@@ -61,7 +61,7 @@ export class MultipleResultQueryManager<
    */
   public async mGet(
     paramsArray: any[],
-    options?: IPersistencyUpdateOptions,
+    options?: IPersistencySearchOptions,
   ): Promise<TEntity[]> {
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
@@ -124,7 +124,7 @@ export class MultipleResultQueryManager<
   private async _getProcessMissingOptions(
     missingIds: number[]|string[],
     finalResults: TEntity[],
-    options: IPersistencyUpdateOptions,
+    options: IPersistencySearchOptions,
   ): Promise<void> {
     if (0 < missingIds.length) {
       const missingEntities = await this._primaryEntityManager.mGet(missingIds, options);
@@ -171,7 +171,7 @@ export class MultipleResultQueryManager<
   private async _getProcessQueryNotFound(
     key: string,
     params: any,
-    options: IPersistencyUpdateOptions,
+    options: IPersistencySearchOptions,
   ): Promise<TEntity[]> {
     const ids = await this._query(params);
     const idsJSON = (ids as any[]).map((id) => JSON.stringify(id));

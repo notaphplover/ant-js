@@ -7,6 +7,7 @@ import { IRedisMiddleware } from './IRedisMiddleware';
 import { VOID_RESULT_STRING } from './LuaConstants';
 import { AntJsSearchOptions } from './options/AntJsSearchOptions';
 import { CacheMode } from './options/CacheMode';
+import { IPersistencyDeleteOptions } from './options/IPersistencyDeleteOptions';
 import { IPersistencySearchOptions } from './options/IPersistencySearchOptions';
 import { IPersistencyUpdateOptions } from './options/IPersistencyUpdateOptions';
 
@@ -150,7 +151,7 @@ export class PrimaryEntityManager<
    * @param options Search options to evaluate.
    * @returns True if negative cache should be used.
    */
-  protected _evaluateUseNegativeCache(options: IPersistencySearchOptions): boolean {
+  protected _evaluateUseNegativeCache(options: IPersistencyDeleteOptions): boolean {
     return options.negativeCache || this._negativeEntityCache;
   }
 
