@@ -5,6 +5,9 @@
 /api.nyc_output
 /api-coverage
 
+/testapi.nyc_output
+/testapi-coverage
+
 # Compiled files
 /src/**/*.js
 /src/**/*.js.map

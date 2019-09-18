@@ -1,6 +1,7 @@
 import { IEntity } from '../../model/IEntity';
 import { IPrimaryEntityManager, IPrimaryEntityManagerBase } from './IPrimaryEntityManager';
-import { ICacheOptions } from './options/ICacheOptions';
+import { IPersistencyDeleteOptions } from './options/IPersistencyDeleteOptions';
+import { IPersistencyUpdateOptions } from './options/IPersistencyUpdateOptions';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 
 export interface IBaseModelManager<TEntity extends IEntity>
@@ -8,29 +9,37 @@ export interface IBaseModelManager<TEntity extends IEntity>
   /**
    * Deletes an entity from the cache layer.
    * @param id id of the entity to delete.
+   * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  delete(id: number|string): Promise<any>;
+  delete(
+    id: number|string,
+    options?: IPersistencyDeleteOptions,
+  ): Promise<any>;
   /**
    * Deletes multiple entities from the cache layer.
    * @param ids Ids of the entities to delete.
+   * @param options Delete options.
    * @returns Promise of entities deleted.
    */
-  mDelete(ids: number[]|string[]): Promise<any>;
+  mDelete(
+    ids: number[]|string[],
+    options?: IPersistencyDeleteOptions,
+  ): Promise<any>;
   /**
    * Updates multiple entities at the cache layer.
    * @param entities Entities to be updated.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Priomise of entities updated.
    */
-  mUpdate(entities: TEntity[], cacheOptions?: ICacheOptions): Promise<any>;
+  mUpdate(entities: TEntity[], options?: IPersistencyUpdateOptions): Promise<any>;
   /**
    * Updates an entity at the cache layer.
    * @param entity Entitty to update.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Promise of entity updated.
    */
-  update(entity: TEntity, cacheOptions?: ICacheOptions): Promise<any>;
+  update(entity: TEntity, options?: IPersistencyUpdateOptions): Promise<any>;
 }
 
 export interface IModelManager<TEntity extends IEntity>
@@ -40,4 +49,10 @@ export interface IModelManager<TEntity extends IEntity>
    * @param queryManager Query manager to add.
    */
   addQuery(queryManager: IPrimaryQueryManager<TEntity>): this;
+
+  /**
+   * Returns the queries managed.
+   * @returns Queries managed.
+   */
+  getQueries(): Array<IPrimaryQueryManager<TEntity>>;
 }

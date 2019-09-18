@@ -1,7 +1,7 @@
 import { IEntity } from '../../../model/IEntity';
 import { IPrimaryEntityManager } from '../IPrimaryEntityManager';
 import { IRedisMiddleware } from '../IRedisMiddleware';
-import { ICacheOptions } from '../options/ICacheOptions';
+import { IPersistencyUpdateOptions } from '../options/IPersistencyUpdateOptions';
 import {
   IBasePrimaryQueryManager,
   IPrimaryQueryManager,
@@ -122,18 +122,18 @@ export abstract class PrimaryQueryManager<
    */
   public abstract get(
     params: any,
-    cacheOptions?: ICacheOptions,
+    options?: IPersistencyUpdateOptions,
   ): Promise<TResult<TEntity, TQueryResult>>;
 
   /**
    * Gets the result of multiple queries.
    * @param paramsArray Queries parameters.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Queries results.
    */
   public abstract mGet(
     paramsArray: any[],
-    cacheOptions?: ICacheOptions,
+    options?: IPersistencyUpdateOptions,
   ): Promise<TEntity[]>;
 
   /**

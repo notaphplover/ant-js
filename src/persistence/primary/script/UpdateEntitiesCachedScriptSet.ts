@@ -1,9 +1,9 @@
 import { CacheMode } from '../options/CacheMode';
-import { ICacheOptions } from '../options/ICacheOptions';
+import { IPersistencyUpdateOptions } from '../options/IPersistencyUpdateOptions';
 import { IRedisCachedScriptSet } from './IRedisCachedScriptSet';
 import { RedisCachedScript } from './RedisCachedScript';
 
-export class RedisCachedScriptSetByCacheMode implements IRedisCachedScriptSet<ICacheOptions> {
+export class UpdateEntitiesCachedScriptSet implements IRedisCachedScriptSet<IPersistencyUpdateOptions> {
   /**
    * Map of keys to redis cached scripts.
    */
@@ -12,13 +12,13 @@ export class RedisCachedScriptSetByCacheMode implements IRedisCachedScriptSet<IC
   /**
    * RedisCachedScript generator.
    */
-  protected _generator: (mode: ICacheOptions) => RedisCachedScript;
+  protected _generator: (mode: IPersistencyUpdateOptions) => RedisCachedScript;
 
   /**
    * Creates a new Redis cached script set by cache mode.
    * @param generator Cached script generator.
    */
-  public constructor(generator: (mode: ICacheOptions) => RedisCachedScript) {
+  public constructor(generator: (mode: IPersistencyUpdateOptions) => RedisCachedScript) {
     this._map = new Map();
     this._generator = generator;
   }
@@ -26,7 +26,7 @@ export class RedisCachedScriptSetByCacheMode implements IRedisCachedScriptSet<IC
   /**
    * @inheritdoc
    */
-  public eval(gArgs: ICacheOptions, eArgsGen: (scriptArg: string) => any[]): Promise<any> {
+  public eval(gArgs: IPersistencyUpdateOptions, eArgsGen: (scriptArg: string) => any[]): Promise<any> {
     let scripts = this._map.get(gArgs.cacheMode);
     if (undefined === scripts) {
       scripts = [null, null];
@@ -34,15 +34,8 @@ export class RedisCachedScriptSetByCacheMode implements IRedisCachedScriptSet<IC
     }
     const index = gArgs.ttl ? 1 : 0;
     if (null == scripts[index]) {
-      scripts[index] = this.generateCachedScript(gArgs);
+      scripts[index] = this._generator(gArgs);
     }
     return scripts[index].eval(eArgsGen);
-  }
-
-  /**
-   * @inheritdoc
-   */
-  protected generateCachedScript(cacheOptions: ICacheOptions): RedisCachedScript {
-    return this._generator(cacheOptions);
   }
 }

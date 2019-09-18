@@ -1,7 +1,8 @@
 {
     "cache": false,
     "exclude": [
-      "src/test/**"
+      "src/test/**",
+      "src/testapi/**"
     ],
     "exclude-after-remap": false,
     "report-dir": "api-coverage",

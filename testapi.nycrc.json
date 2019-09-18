@@ -1,0 +1,14 @@
+{
+  "cache": false,
+  "exclude": [
+    "src/testapi/test/**"
+  ],
+  "exclude-after-remap": false,
+  "include": [
+    "src/testapi/**"
+  ],
+  "report-dir": "testapi-coverage",
+  "reporter": "lcov",
+  "sourceMap": true,
+  "temp-dir": "./testapi.nyc_output"
+}

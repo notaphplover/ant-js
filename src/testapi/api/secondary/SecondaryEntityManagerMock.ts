@@ -1,6 +1,6 @@
-import { IEntity } from '../../model/IEntity';
-import { IModel } from '../../model/IModel';
-import { ISecondaryEntityManager } from '../../persistence/secondary/ISecondaryEntityManager';
+import { IEntity } from '../../../model/IEntity';
+import { IModel } from '../../../model/IModel';
+import { ISecondaryEntityManager } from '../../../persistence/secondary/ISecondaryEntityManager';
 
 export class SecondaryEntityManagerMock<TEntity extends IEntity>
   implements ISecondaryEntityManager<TEntity> {
@@ -79,13 +79,42 @@ export class SecondaryEntityManagerMock<TEntity extends IEntity>
         if (0 === entities.length) {
           resolve(entities);
         } else {
-          resolve(
-            'number' === typeof ids[0] ?
-              entities.sort((a: TEntity, b: TEntity) => a[this.model.id] - b[this.model.id]) :
-              entities.sort(),
-          );
+          if ('number' === typeof ids[0]) {
+            resolve(entities.sort((a: TEntity, b: TEntity) => a[this.model.id] - b[this.model.id]));
+          } else {
+            if ('string' === typeof ids[0]) {
+              resolve(
+                entities.sort(
+                  (a: TEntity, b: TEntity) =>
+                    this._compareStrings(a[this.model.id], b[this.model.id]),
+                  ),
+              );
+            } else {
+              throw new Error('Expected ids as number or strings');
+            }
+          }
         }
       }).catch(reject);
     });
+  }
+
+  /**
+   * Compares two strings.
+   * @param a First string to be compared.
+   * @param b Second string to be compared.
+   * @returns Comparison result.
+   */
+  protected _compareStrings(a: string, b: string): number {
+    const chars = Math.min(a.length, b.length);
+    for (let i = 0; i < chars; ++i) {
+      const comp = a.charCodeAt(i) - b.charCodeAt(i);
+      if (comp !== 0) {
+        return comp;
+      }
+    }
+    if (a.length === b.length) {
+      return 0;
+    }
+    return a.length === chars ? -1 : 1;
   }
 }

@@ -1,5 +1,5 @@
 import { IEntity } from '../../../model/IEntity';
-import { ICacheOptions } from '../options/ICacheOptions';
+import { IPersistencyUpdateOptions } from '../options/IPersistencyUpdateOptions';
 
 export interface IQueryManager<
   TEntity extends IEntity,
@@ -12,17 +12,17 @@ export interface IQueryManager<
    */
   get(
     params: any,
-    cacheOptions?: ICacheOptions,
+    options?: IPersistencyUpdateOptions,
   ): Promise<TResult>;
 
   /**
    * Gets the result of multiple queries.
    * @param paramsArray Queries parameters.
-   * @param cacheOptions Cache options.
+   * @param options Cache options.
    * @returns Queries results.
    */
   mGet(
     paramsArray: any[],
-    cacheOptions?: ICacheOptions,
+    options?: IPersistencyUpdateOptions,
   ): Promise<TEntity[]>;
 }
