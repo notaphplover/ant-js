@@ -31,17 +31,17 @@
   "author": "Roberto Pintos López",
   "license": "ISC",
   "devDependencies": {
-    "@types/ioredis": "^4.0.15",
+    "@types/ioredis": "^4.0.17",
     "@types/jasmine": "^3.4.0",
-    "@types/node": "^12.7.2",
+    "@types/node": "^12.7.5",
     "coveralls": "^3.0.6",
     "jasmine": "^3.4.0",
     "lodash": "^4.17.15",
     "nyc": "^14.1.1",
-    "tslint": "^5.19.0",
-    "typescript": "^3.5.3"
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.3"
   },
   "dependencies": {
-    "ioredis": "^4.14.0"
+    "ioredis": "^4.14.1"
   }
 }
