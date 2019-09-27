@@ -1,5 +1,8 @@
+# Javascript source maps.
+src/**/*.js.map
 # Typescript source code
 src/**/*.ts
+src/**/*.ts.map
 !src/**/*.d.ts
 
 # npm dependencies
