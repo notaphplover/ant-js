@@ -160,10 +160,7 @@ export class PrimaryEntityManager<
    * @param id entity's id.
    */
   protected _getKey(id: number|string): string {
-    const keyGen = this.model.keyGen;
-    return (keyGen.prefix || '')
-      + id
-      + (keyGen.suffix || '');
+    return this.model.keyGen.prefix + id;
   }
 
   /**
@@ -264,13 +261,8 @@ export class PrimaryEntityManager<
    */
   protected _innerGetKeyGenerationLuaScriptGenerator(keyGenParams: IKeyGenParams) {
     const instructions = new Array<(alias: string) => string>();
-    if (null != keyGenParams.prefix && '' !== keyGenParams.prefix) {
-      instructions.push(() => '"' + keyGenParams.prefix + '" .. ');
-    }
+    instructions.push(() => '"' + keyGenParams.prefix + '" .. ');
     instructions.push((alias) => alias);
-    if (null != keyGenParams.suffix && '' !== keyGenParams.suffix) {
-      instructions.push(() => ' .. "' + keyGenParams.suffix + '"');
-    }
     return (alias: string) => {
       return instructions.reduce(
         (previousValue, currentValue) =>

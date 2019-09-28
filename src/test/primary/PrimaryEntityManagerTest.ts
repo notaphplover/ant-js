@@ -53,7 +53,6 @@ export class PrimaryEntityManagerTest implements ITest {
       this._itDoesNotSupportUndefinedCacheOptionAtCacheEntities();
       this._itDoesNotSupportUndefinedCacheOptionAtCacheEntity();
       this._itGeneratesALuaKeyGeneratorUsingAPrefix();
-      this._itGeneratesALuaKeyGeneratorUsingASuffix();
       this._itMustBeInitializable();
       this._itMustFindAnEntityOutsideCache();
       this._itMustFindNullIfNullIdIsProvided();
@@ -274,39 +273,6 @@ export class PrimaryEntityManagerTest implements ITest {
         model,
         primaryEntityManager,
       ] = this._helperGenerateBaseInstances(prefix, [entity]);
-      await primaryEntityManager.get(entity[model.id]);
-      const luaKey = 'key';
-      const luaExpression = primaryEntityManager.getLuaKeyGeneratorFromId()(luaKey);
-      const valueFound = await this._redis.redis.eval(
-`local ${luaKey} = ${entity.id}
-return redis.call('get', ${luaExpression})`,
-        0,
-      );
-      if (null == valueFound) {
-        fail();
-        done();
-        return;
-      }
-      const entityFound = JSON.parse(valueFound);
-      expect(entityFound).toEqual(entity);
-      done();
-    }, MAX_SAFE_TIMEOUT);
-  }
-
-  private _itGeneratesALuaKeyGeneratorUsingASuffix(): void {
-    const itsName = 'generatesALuaKeyGeneratorUsingASuffix';
-    const suffix = '/' + this._declareName + '/' + itsName;
-    it(itsName, async (done) => {
-      await this._beforeAllPromise;
-      const model = new Model('id', {suffix: suffix});
-      const entity: IEntityTest = {id: 0, field: 'sample'};
-      const secondaryEntityManager = new SecondaryEntityManagerMock(model, [entity]);
-      const primaryEntityManager = new PrimaryEntityManager(
-        model,
-        this._redis.redis,
-        true,
-        secondaryEntityManager,
-      );
       await primaryEntityManager.get(entity[model.id]);
       const luaKey = 'key';
       const luaExpression = primaryEntityManager.getLuaKeyGeneratorFromId()(luaKey);
