@@ -1,5 +1,4 @@
 import { AntManager } from '../../api/AntManager';
-import { QueryMapType } from '../../api/AntModelManager';
 import { IAntModelConfig } from '../../api/config/IAntModelConfig';
 import { IAntModelManager } from '../../api/IAntModelManager';
 import { IEntity } from '../../model/IEntity';
@@ -12,16 +11,10 @@ export class MinimalAntManager extends AntManager<
   IAntModelManager<IEntity, IAntModelConfig>
 > {
   /**
-   * Queries map.
-   */
-  protected _queriesMap: QueryMapType<IEntity, IModel>;
-
-  /**
    * Creates a new minimal ant manager.
    */
   public constructor() {
     super();
-    this._queriesMap = new Map();
   }
 
   /**
@@ -30,6 +23,6 @@ export class MinimalAntManager extends AntManager<
    * @returns model manager created.
    */
   protected _createModelManager(model: IModel) {
-    return new MinimalAntModelManager(model, this._queriesMap);
+    return new MinimalAntModelManager(model);
   }
 }
