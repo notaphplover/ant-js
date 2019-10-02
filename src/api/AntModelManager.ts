@@ -26,10 +26,8 @@ import { IAntMultipleResultQueryManager } from './query/IAntMultipleResultQueryM
 import { IAntQueryManager } from './query/IAntQueryManager';
 import { IAntSingleResultQueryManager } from './query/IAntSingleResultQueryManager';
 
-export type QueryMapType<
-  TEntity extends IEntity,
-  TModel extends IModel
-> = Map<string, [TModel, IAntQueryManager<TEntity, TEntity|TEntity[]>]>;
+export type QueryMapType<TEntity extends IEntity> =
+  Map<string, IAntQueryManager<TEntity, TEntity|TEntity[]>>;
 
 export abstract class AntModelManager<
   TEntity extends IEntity,
@@ -54,18 +52,15 @@ export abstract class AntModelManager<
   /**
    * Queries map.
    */
-  protected _queriesMap: QueryMapType<TEntity, TModel>;
+  protected _queriesMap: QueryMapType<TEntity>;
   /**
    * Creates a new queries map.
    * @param model Model to manage.
    * @param queriesMap Queries map.
    */
-  public constructor(
-    model: TModel,
-    queriesMap: QueryMapType<TEntity, TModel>,
-  ) {
+  public constructor(model: TModel) {
     this._model = model;
-    this._queriesMap = queriesMap;
+    this._queriesMap = new Map();
   }
   /**
    * Model manager
@@ -207,17 +202,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
   private _queryGetQuery<
     TResult extends TEntity|TEntity[] = TEntity|TEntity[]
   >(alias: string): IAntQueryManager<TEntity, TResult> {
-    const mapEntry = this._queriesMap.get(alias);
-    if (undefined === mapEntry) {
-      return undefined;
-    } else {
-      const [model, query] = mapEntry;
-      if (this._model === model) {
-        return query as IAntQueryManager<TEntity, TResult>;
-      } else {
-        throw new Error('The query found manages a different model than the model managed by this manager.');
-      }
-    }
+    return this._queriesMap.get(alias) as IAntQueryManager<TEntity, TResult>;
   }
   /**
    * Adds a query to the manager.
@@ -260,7 +245,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
     }
     if (null != aliasOrNothing) {
       if (undefined === this._queriesMap.get(aliasOrNothing)) {
-        this._queriesMap.set(aliasOrNothing, [this._model, query]);
+        this._queriesMap.set(aliasOrNothing, query);
       } else {
         throw new Error('There is already a query with this alias');
       }

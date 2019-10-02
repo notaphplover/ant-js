@@ -40,7 +40,6 @@ export class AntModelManagerTest implements ITest {
       this._itMustGetAndSetMultipleResultQuery();
       this._itMustGetAndSetSingleResultQuery();
       this._itMustSetAQueryWithoutAlias();
-      this._itMustNotGetQueryIfQueryOfADifferentModelAlreadyExists();
       this._itMustNotSetConfigIfConfigAlreadyExists();
       this._itMustNotSetQueryIfQueryWithTheSameAliasIsRegistered();
       this._itMustReturnUndefinedIfTheAliasDoesNotExist();
@@ -55,7 +54,7 @@ export class AntModelManagerTest implements ITest {
       const model = modelGenerator(prefix);
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
-        new MinimalAntModelManager(model, new Map());
+        new MinimalAntModelManager(model);
       }).not.toThrowError();
       done();
     }, MAX_SAFE_TIMEOUT);
@@ -66,7 +65,7 @@ export class AntModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       const model = modelGenerator(prefix);
-      const antModelManager = new MinimalAntModelManager(model, new Map());
+      const antModelManager = new MinimalAntModelManager(model);
       antModelManager.config({
         redis: this._redis.redis,
       });
@@ -126,7 +125,7 @@ export class AntModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       const model = modelGenerator(prefix);
-      const antModelManager = new MinimalAntModelManager(model, new Map());
+      const antModelManager = new MinimalAntModelManager(model);
       const config = {
         redis: this._redis.redis,
       };
@@ -142,7 +141,7 @@ export class AntModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       const model = modelGenerator(prefix);
-      const antModelManager = new MinimalAntModelManager(model, new Map());
+      const antModelManager = new MinimalAntModelManager(model);
       const config = {
         redis: this._redis.redis,
       };
@@ -171,7 +170,7 @@ export class AntModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       const model = modelGenerator(prefix);
-      const antModelManager = new MinimalAntModelManager(model, new Map());
+      const antModelManager = new MinimalAntModelManager(model);
       const config = {
         redis: this._redis.redis,
       };
@@ -201,7 +200,7 @@ export class AntModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       const model = modelGenerator(prefix);
-      const antModelManager = new MinimalAntModelManager(model, new Map());
+      const antModelManager = new MinimalAntModelManager(model);
       const config = {
         redis: this._redis.redis,
       };
@@ -225,32 +224,12 @@ export class AntModelManagerTest implements ITest {
     }, MAX_SAFE_TIMEOUT);
   }
 
-  private _itMustNotGetQueryIfQueryOfADifferentModelAlreadyExists(): void {
-    const itsName = 'mustNotGetQueryIfQueryOfADifferentModelAlreadyExists';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(itsName, async (done) => {
-      const model = modelGenerator(prefix);
-      const queriesMap = new Map();
-      const queryAlias = 'query-alias';
-      queriesMap.set(queryAlias, [{id: 'id'}, null]);
-      const antModelManager = new MinimalAntModelManager(model, queriesMap);
-      const config = {
-        redis: this._redis.redis,
-      };
-      antModelManager.config(config);
-      expect(() => {
-        antModelManager.query(queryAlias);
-      }).toThrowError();
-      done();
-    }, MAX_SAFE_TIMEOUT);
-  }
-
   private _itMustNotSetConfigIfConfigAlreadyExists(): void {
     const itsName = 'mustNotSetConfigIfConfigAlreadyExists';
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       const model = modelGenerator(prefix);
-      const antModelManager = new MinimalAntModelManager(model, new Map());
+      const antModelManager = new MinimalAntModelManager(model);
       const config = {
         redis: this._redis.redis,
       };
@@ -266,7 +245,7 @@ export class AntModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       const model = modelGenerator(prefix);
-      const antModelManager = new MinimalAntModelManager(model, new Map());
+      const antModelManager = new MinimalAntModelManager(model);
       const config = {
         redis: this._redis.redis,
       };
@@ -298,7 +277,7 @@ export class AntModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       const model = modelGenerator(prefix);
-      const antModelManager = new MinimalAntModelManager(model, new Map());
+      const antModelManager = new MinimalAntModelManager(model);
       const config = {
         redis: this._redis.redis,
       };
@@ -313,7 +292,7 @@ export class AntModelManagerTest implements ITest {
     const prefix = this._declareName + '/' + itsName + '/';
     it(itsName, async (done) => {
       const model = modelGenerator(prefix);
-      const antModelManager = new MinimalAntModelManager(model, new Map());
+      const antModelManager = new MinimalAntModelManager(model);
       const config = {
         redis: this._redis.redis,
       };
