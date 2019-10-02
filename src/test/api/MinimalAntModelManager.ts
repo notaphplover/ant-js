@@ -1,7 +1,4 @@
-import {
-  AntModelManager,
-  QueryMapType,
-} from '../../api/AntModelManager';
+import { AntModelManager } from '../../api/AntModelManager';
 import { IAntModelConfig } from '../../api/config/IAntModelConfig';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
@@ -27,11 +24,8 @@ export class MinimalAntModelManager<
    * @param model Model to manage.
    * @param queriesMap Queries map.
    */
-  public constructor(
-    model: IModel,
-    queriesMap: QueryMapType<TEntity, IModel>,
-  ) {
-    super(model, queriesMap);
+  public constructor(model: IModel) {
+    super(model);
     this._modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
     this._secondaryEntityManager = new SecondaryEntityManagerMock<TEntity>(model);
   }
