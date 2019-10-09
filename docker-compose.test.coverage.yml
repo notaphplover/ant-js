@@ -20,7 +20,7 @@ services:
     networks:
       - ant
   ant_redis:
-    image: redis:5.0.3-alpine
+    image: redis:5.0.6-alpine
     networks:
       - ant
 networks:
