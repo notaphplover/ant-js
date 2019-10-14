@@ -1,7 +1,7 @@
 import { IEntity } from '../../../model/IEntity';
 import { IPrimaryEntityManager } from '../IPrimaryEntityManager';
 import { IRedisMiddleware } from '../IRedisMiddleware';
-import { IPersistencyUpdateOptions } from '../options/IPersistencyUpdateOptions';
+import { IPersistencySearchOptions } from '../options/IPersistencySearchOptions';
 import { IBasePrimaryQueryManager, IPrimaryQueryManager } from './IPrimaryQueryManager';
 
 export type MultipleQueryResult = number[] | string[];
@@ -112,7 +112,7 @@ export abstract class PrimaryQueryManager<TEntity extends IEntity, TQueryResult 
    * @param params query params.
    * @returns query results.
    */
-  public abstract get(params: any, options?: IPersistencyUpdateOptions): Promise<TResult<TEntity, TQueryResult>>;
+  public abstract get(params: any, options?: IPersistencySearchOptions): Promise<TResult<TEntity, TQueryResult>>;
 
   /**
    * Gets the result of multiple queries.
@@ -120,7 +120,7 @@ export abstract class PrimaryQueryManager<TEntity extends IEntity, TQueryResult 
    * @param options Cache options.
    * @returns Queries results.
    */
-  public abstract mGet(paramsArray: any[], options?: IPersistencyUpdateOptions): Promise<TEntity[]>;
+  public abstract mGet(paramsArray: any[], options?: IPersistencySearchOptions): Promise<TEntity[]>;
 
   /**
    * Creates an standard mquery.

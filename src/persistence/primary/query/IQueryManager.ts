@@ -1,5 +1,5 @@
 import { IEntity } from '../../../model/IEntity';
-import { IPersistencyUpdateOptions } from '../options/IPersistencyUpdateOptions';
+import { IPersistencySearchOptions } from '../options/IPersistencySearchOptions';
 
 export interface IQueryManager<TEntity extends IEntity, TResult extends TEntity | TEntity[]> {
   /**
@@ -7,7 +7,7 @@ export interface IQueryManager<TEntity extends IEntity, TResult extends TEntity 
    * @param params query params.
    * @returns query results.
    */
-  get(params: any, options?: IPersistencyUpdateOptions): Promise<TResult>;
+  get(params: any, options?: IPersistencySearchOptions): Promise<TResult>;
 
   /**
    * Gets the result of multiple queries.
@@ -15,5 +15,5 @@ export interface IQueryManager<TEntity extends IEntity, TResult extends TEntity 
    * @param options Cache options.
    * @returns Queries results.
    */
-  mGet(paramsArray: any[], options?: IPersistencyUpdateOptions): Promise<TEntity[]>;
+  mGet(paramsArray: any[], options?: IPersistencySearchOptions): Promise<TEntity[]>;
 }
