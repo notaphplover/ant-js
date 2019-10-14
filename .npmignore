@@ -48,6 +48,10 @@ testapi.nycrc.json
 # AntJS Tests
 /src/test
 
+# Prettier config
+.prettierignore
+.prettierrc
+
 # Travis build
 .travis.yml
 

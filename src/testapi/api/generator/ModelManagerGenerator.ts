@@ -20,7 +20,7 @@ export abstract class ModelManagerGenerator<
     IModelManagerGeneratorSecodaryManagerOptions<TSecondaryManager>
   >,
   TModelManager extends IModelManager<IEntity>,
-  TSecondaryManager extends ISecondaryEntityManager<IEntity>,
+  TSecondaryManager extends ISecondaryEntityManager<IEntity>
 > {
   /**
    * Default redis middleware.
@@ -39,7 +39,9 @@ export abstract class ModelManagerGenerator<
    * Generates a model manager with query managers attached.
    * @param options Generation options.
    */
-  public generateModelManager(options: TOptions): [
+  public generateModelManager(
+    options: TOptions,
+  ): [
     TModelManager,
     TSecondaryManager,
     Map<string, ISingleResultQueryManager<IEntity>>,
@@ -66,30 +68,21 @@ export abstract class ModelManagerGenerator<
     const secondaryManager = secondaryManagerOptions.manager;
     const modelManager = this._generateModelManager(options, secondaryManager);
 
-    const singleResultQueryManagers: Map<string, ISingleResultQueryManager<IEntity>>
-      = this._generateSingleResultQueryManagers(
-          options,
-          secondaryManager,
-          modelManager,
-        );
+    const singleResultQueryManagers: Map<
+      string,
+      ISingleResultQueryManager<IEntity>
+    > = this._generateSingleResultQueryManagers(options, secondaryManager, modelManager);
 
     this._attachQueryManagers(modelManager, singleResultQueryManagers.values());
 
-    const multipleResultQueryManagers: Map<string, IMultipleResultQueryManager<IEntity>>
-      = this._generateMultipleResultQueryManagers(
-          options,
-          secondaryManager,
-          modelManager,
-        );
+    const multipleResultQueryManagers: Map<
+      string,
+      IMultipleResultQueryManager<IEntity>
+    > = this._generateMultipleResultQueryManagers(options, secondaryManager, modelManager);
 
     this._attachQueryManagers(modelManager, multipleResultQueryManagers.values());
 
-    return [
-      modelManager,
-      secondaryManager,
-      singleResultQueryManagers,
-      multipleResultQueryManagers,
-    ];
+    return [modelManager, secondaryManager, singleResultQueryManagers, multipleResultQueryManagers];
   }
 
   /**
@@ -103,10 +96,7 @@ export abstract class ModelManagerGenerator<
     entities: IEntity[],
     srQueryManagers: Map<string, ISingleResultQueryManager<IEntity>>,
     mrQueryManagers: Map<string, IMultipleResultQueryManager<IEntity>>,
-  ): [
-    Map<[IEntity, string], Promise<IEntity>>,
-    Map<[IEntity, string], Promise<IEntity[]>>,
-  ] {
+  ): [Map<[IEntity, string], Promise<IEntity>>, Map<[IEntity, string], Promise<IEntity[]>>] {
     const srqmResults: Map<[IEntity, string], Promise<IEntity>> = new Map();
     const mrqmResults: Map<[IEntity, string], Promise<IEntity[]>> = new Map();
 
@@ -156,19 +146,14 @@ export abstract class ModelManagerGenerator<
    * @param options Generation options.
    * @param secondaryManager seconday manager to be user by the model manager.
    */
-  protected abstract _generateModelManager(
-    options: TOptions,
-    secondaryManager: TSecondaryManager,
-  ): TModelManager;
+  protected abstract _generateModelManager(options: TOptions, secondaryManager: TSecondaryManager): TModelManager;
 
   /**
    * Generates a single result query manager.
    * @param options Generation options.
    * @returns Map of properties to query managers.
    */
-  protected _generateMultipleResultQueryManagers<
-    TEntity extends IEntity,
-  >(
+  protected _generateMultipleResultQueryManagers<TEntity extends IEntity>(
     options: TOptions,
     secondaryManager: TSecondaryManager,
     modelManager: TModelManager,
@@ -184,8 +169,9 @@ export abstract class ModelManagerGenerator<
       const queryKeyGen = this._buildQueryKeyGen(mrqmOptions.queryPrefix, property);
       const queryManager = new MultipleResultQueryManager(
         (params: any) =>
-          this._searchEntitiesByProperty(secondaryManager, property, params[property])
-            .then((entities) => entities.map((entity) => entity[options.model.id])),
+          this._searchEntitiesByProperty(secondaryManager, property, params[property]).then((entities) =>
+            entities.map((entity) => entity[options.model.id]),
+          ),
         modelManager,
         options.redisOptions.redis,
         mrqmOptions.reverseHashKey + property,
@@ -210,7 +196,7 @@ export abstract class ModelManagerGenerator<
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       const charactersLength = characters.length;
       for (let i = 0; i < length; ++i) {
-         result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
       }
       return result;
     };
@@ -229,9 +215,7 @@ export abstract class ModelManagerGenerator<
    * @param options Generation options.
    * @returns Map of properties to query managers.
    */
-  protected _generateSingleResultQueryManagers<
-    TEntity extends IEntity,
-  >(
+  protected _generateSingleResultQueryManagers<TEntity extends IEntity>(
     options: TOptions,
     secondaryManager: TSecondaryManager,
     modelManager: TModelManager,
@@ -247,8 +231,7 @@ export abstract class ModelManagerGenerator<
       const queryKeyGen = this._buildQueryKeyGen(srqmOptions.queryPrefix, property);
       const queryManager = new SingleResultQueryManager(
         (params: any) =>
-          this._searchEntityByProperty(secondaryManager, property, params[property])
-          .then((entity) => {
+          this._searchEntityByProperty(secondaryManager, property, params[property]).then((entity) => {
             if (null == entity) {
               return null;
             }
@@ -270,9 +253,7 @@ export abstract class ModelManagerGenerator<
   /**
    * Process a query managers generation options.
    */
-  protected _processQueryManagersGenerationOptions(
-    options: IQueriesManagerGeneratorOptions,
-  ): void {
+  protected _processQueryManagersGenerationOptions(options: IQueriesManagerGeneratorOptions): void {
     if (!options.queryPrefix) {
       options.queryPrefix = this._generateRandomKey();
     }

@@ -3,9 +3,7 @@ import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEnti
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
 import { SingleResultQueryManager } from '../../../persistence/primary/query/SingleResultQueryManager';
 
-export class SingleResultQueryByFieldManager<TEntity extends IEntity>
-  extends SingleResultQueryManager<TEntity> {
-
+export class SingleResultQueryByFieldManager<TEntity extends IEntity> extends SingleResultQueryManager<TEntity> {
   /**
    * Field to filter.
    */
@@ -26,13 +24,13 @@ export class SingleResultQueryByFieldManager<TEntity extends IEntity>
    * @param mQuery Multiple result query.
    */
   public constructor(
-    query: (params: any) => Promise<number|string>,
+    query: (params: any) => Promise<number | string>,
     primaryEntityManager: IPrimaryEntityManager<TEntity>,
     redis: IRedisMiddleware,
     reverseHashKey: string,
     field: string,
     queryPrefix: string,
-    mQuery: (paramsArray: any) => Promise<number[]|string[]> = null,
+    mQuery: (paramsArray: any) => Promise<number[] | string[]> = null,
   ) {
     /**
      * Gets a key for a certain query.

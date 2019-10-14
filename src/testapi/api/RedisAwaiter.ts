@@ -17,10 +17,6 @@ export class RedisAwaiter {
    * Flushes data and scripts from cache.
    */
   public flushDataAndScripts(): Promise<void> {
-    return this._redis
-      .flushall()
-      .then(
-        () => this._redis.script(['flush']),
-      );
+    return this._redis.flushall().then(() => this._redis.script(['flush']));
   }
 }

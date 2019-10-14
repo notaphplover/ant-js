@@ -2,14 +2,9 @@ import { IEntity } from '../../../model/IEntity';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
 import { MultipleResultQueryManager } from '../../../persistence/primary/query/MultipleResultQueryManager';
-import {
-  TMQuery,
-  TQuery,
-} from '../../../persistence/primary/query/PrimaryQueryManager';
+import { TMQuery, TQuery } from '../../../persistence/primary/query/PrimaryQueryManager';
 
-export class MultipleResultQueryByFieldManager<TEntity extends IEntity>
-  extends MultipleResultQueryManager<TEntity> {
-
+export class MultipleResultQueryByFieldManager<TEntity extends IEntity> extends MultipleResultQueryManager<TEntity> {
   /**
    * Field to filter.
    */
@@ -30,13 +25,13 @@ export class MultipleResultQueryByFieldManager<TEntity extends IEntity>
    * @param mQuery Multiple result query.
    */
   public constructor(
-    query: TQuery<number[]|string[]>,
+    query: TQuery<number[] | string[]>,
     primaryEntityManager: IPrimaryEntityManager<TEntity>,
     redis: IRedisMiddleware,
     reverseHashKey: string,
     field: string,
     queryPrefix: string,
-    mQuery: TMQuery<number[]|string[]> = null,
+    mQuery: TMQuery<number[] | string[]> = null,
   ) {
     /**
      * Gets a key for a certain query.

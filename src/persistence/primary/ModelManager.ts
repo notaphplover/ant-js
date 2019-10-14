@@ -3,11 +3,7 @@ import { IModel } from '../../model/IModel';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { IModelManager } from './IModelManager';
 import { IRedisMiddleware } from './IRedisMiddleware';
-import {
-  MULTIPLE_RESULT_QUERY_CODE,
-  SINGLE_RESULT_QUERY_CODE,
-  VOID_RESULT_STRING,
-} from './LuaConstants';
+import { MULTIPLE_RESULT_QUERY_CODE, SINGLE_RESULT_QUERY_CODE, VOID_RESULT_STRING } from './LuaConstants';
 import { AntJsDeleteOptions } from './options/AntJsDeleteOptions';
 import { AntJsUpdateOptions } from './options/AntJsUpdateOptions';
 import { IPersistencyDeleteOptions } from './options/IPersistencyDeleteOptions';
@@ -18,11 +14,9 @@ import { DeleteEntitiesCachedScriptSet } from './script/DeleteEntitiesCachedScri
 import { RedisCachedScript } from './script/RedisCachedScript';
 import { UpdateEntitiesCachedScriptSet } from './script/UpdateEntitiesCachedScriptSet';
 
-export class ModelManager<
-  TEntity extends IEntity,
-  TSecondaryManager extends ISecondaryEntityManager<TEntity>
-> extends PrimaryEntityManager<TEntity, TSecondaryManager> implements IModelManager<TEntity> {
-
+export class ModelManager<TEntity extends IEntity, TSecondaryManager extends ISecondaryEntityManager<TEntity>>
+  extends PrimaryEntityManager<TEntity, TSecondaryManager>
+  implements IModelManager<TEntity> {
   /**
    * Cached script for deleting an entity.
    */
@@ -59,12 +53,7 @@ export class ModelManager<
     negativeEntityCache: boolean,
     secondaryEntityManager?: TSecondaryManager,
   ) {
-    super(
-      model,
-      redis,
-      negativeEntityCache,
-      secondaryEntityManager,
-    );
+    super(model, redis, negativeEntityCache, secondaryEntityManager);
 
     this._initializeCachedQueries();
 
@@ -94,27 +83,18 @@ export class ModelManager<
    * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  public delete(
-    id: number|string,
-    options: IPersistencyDeleteOptions = new AntJsDeleteOptions(),
-  ): Promise<any> {
-    return this._luaDeleteCachedQuery.eval(
-      options,
-      (scriptArg: string) => {
-        const evalParams = [
-          scriptArg,
-          this._queryManagers.length,
-        ];
-        for (const queryManager of this._queryManagers) {
-          evalParams.push(queryManager.reverseHashKey);
-        }
-        evalParams.push(JSON.stringify(id));
-        for (const queryManager of this._queryManagers) {
-          evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
-        }
-        return evalParams;
-      },
-    );
+  public delete(id: number | string, options: IPersistencyDeleteOptions = new AntJsDeleteOptions()): Promise<any> {
+    return this._luaDeleteCachedQuery.eval(options, (scriptArg: string) => {
+      const evalParams = [scriptArg, this._queryManagers.length];
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.reverseHashKey);
+      }
+      evalParams.push(JSON.stringify(id));
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
+      }
+      return evalParams;
+    });
   }
 
   /**
@@ -124,31 +104,25 @@ export class ModelManager<
    * @returns Promise of entities deleted.
    */
   public mDelete(
-    ids: number[]|string[],
+    ids: number[] | string[],
     options: IPersistencyDeleteOptions = new AntJsDeleteOptions(),
   ): Promise<any> {
     if (null == ids || 0 === ids.length) {
       return new Promise((resolve) => resolve());
     }
-    return this._luaMDeleteCachedQuery.eval(
-      options,
-      (scriptArg) => {
-        const evalParams = [
-          scriptArg,
-          this._queryManagers.length,
-        ];
-        for (const queryManager of this._queryManagers) {
-          evalParams.push(queryManager.reverseHashKey);
-        }
-        for (const id of ids) {
-          evalParams.push(JSON.stringify(id));
-        }
-        for (const queryManager of this._queryManagers) {
-          evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
-        }
-        return evalParams;
-      },
-    );
+    return this._luaMDeleteCachedQuery.eval(options, (scriptArg) => {
+      const evalParams = [scriptArg, this._queryManagers.length];
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.reverseHashKey);
+      }
+      for (const id of ids) {
+        evalParams.push(JSON.stringify(id));
+      }
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
+      }
+      return evalParams;
+    });
   }
 
   /**
@@ -157,18 +131,12 @@ export class ModelManager<
    * @param options Cache options.
    * @returns Promise of entities updated.
    */
-  public mUpdate(
-    entities: TEntity[],
-    options: IPersistencyUpdateOptions = new AntJsUpdateOptions(),
-  ): Promise<any> {
+  public mUpdate(entities: TEntity[], options: IPersistencyUpdateOptions = new AntJsUpdateOptions()): Promise<any> {
     if (null == entities || 0 === entities.length) {
       return new Promise((resolve) => resolve());
     }
     return this._luaMUpdateCachedQuerySet.eval(options, (scriptArg) => {
-      const evalParams = [
-        scriptArg,
-        this._queryManagers.length * (entities.length + 1),
-      ];
+      const evalParams = [scriptArg, this._queryManagers.length * (entities.length + 1)];
       for (const queryManager of this._queryManagers) {
         evalParams.push(queryManager.reverseHashKey);
         for (const entity of entities) {
@@ -198,15 +166,9 @@ export class ModelManager<
    * @param options Cache options.
    * @returns Promise of entity updated.
    */
-  public update(
-    entity: TEntity,
-    options: IPersistencyUpdateOptions = new AntJsUpdateOptions(),
-  ): Promise<any> {
+  public update(entity: TEntity, options: IPersistencyUpdateOptions = new AntJsUpdateOptions()): Promise<any> {
     return this._luaUpdateCachedQuerySet.eval(options, (scriptArg) => {
-      const evalParams = [
-        scriptArg,
-        2 * this._queryManagers.length,
-      ];
+      const evalParams = [scriptArg, 2 * this._queryManagers.length];
       for (const queryManager of this._queryManagers) {
         evalParams.push(queryManager.reverseHashKey);
         evalParams.push(queryManager.entityKeyGen(entity));
@@ -228,28 +190,16 @@ export class ModelManager<
    */
   private _initializeCachedQueries(): void {
     this._luaDeleteCachedQuery = new DeleteEntitiesCachedScriptSet(
-      (optios) => new RedisCachedScript(
-        this._luaSyncDeleteGenerator(optios),
-        this._redis,
-      ),
+      (optios) => new RedisCachedScript(this._luaSyncDeleteGenerator(optios), this._redis),
     );
     this._luaMDeleteCachedQuery = new DeleteEntitiesCachedScriptSet(
-      (optios) => new RedisCachedScript(
-        this._luaSyncMDeleteGenerator(optios),
-        this._redis,
-      ),
+      (optios) => new RedisCachedScript(this._luaSyncMDeleteGenerator(optios), this._redis),
     );
     this._luaMUpdateCachedQuerySet = new UpdateEntitiesCachedScriptSet(
-      (options) => new RedisCachedScript(
-        this._luaSyncMUpdateGenerator(options),
-        this._redis,
-      ),
+      (options) => new RedisCachedScript(this._luaSyncMUpdateGenerator(options), this._redis),
     );
     this._luaUpdateCachedQuerySet = new UpdateEntitiesCachedScriptSet(
-      (options) => new RedisCachedScript(
-        this._luaSyncUpdateGenerator(options),
-        this._redis,
-      ),
+      (options) => new RedisCachedScript(this._luaSyncUpdateGenerator(options), this._redis),
     );
   }
 
@@ -268,9 +218,9 @@ export class ModelManager<
     const queriesNumber: string = '#KEYS';
     const ithQCode: string = 'ARGV[1 + i]';
 
-    const deleteSentence = this._evaluateUseNegativeCache(options) ?
-      `redis.call('set', ${entityKey}, '${VOID_RESULT_STRING}')` :
-      `redis.call('del', ${entityKey})`;
+    const deleteSentence = this._evaluateUseNegativeCache(options)
+      ? `redis.call('set', ${entityKey}, '${VOID_RESULT_STRING}')`
+      : `redis.call('del', ${entityKey})`;
 
     return `for i=1, ${queriesNumber} do
   local qCode = ${ithQCode}
@@ -312,9 +262,9 @@ ${deleteSentence}`;
     const jthEntityId = 'ARGV[j]';
     const jthEntityKey: string = this._luaKeyGeneratorFromId(jthEntityId);
 
-    const deleteSentence = this._evaluateUseNegativeCache(options) ?
-      `redis.call('set', ${jthEntityKey}, '${VOID_RESULT_STRING}')` :
-      `redis.call('del', ${jthEntityKey})`;
+    const deleteSentence = this._evaluateUseNegativeCache(options)
+      ? `redis.call('set', ${jthEntityKey}, '${VOID_RESULT_STRING}')`
+      : `redis.call('del', ${jthEntityKey})`;
 
     return `local entitiesCount = ${entitiesCount}
 for i=1, ${queriesNumber} do

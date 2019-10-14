@@ -16,10 +16,7 @@ export class AntJsUpdateOptions implements IPersistencyUpdateOptions {
    * @param cacheMode Cache options.
    * @param ttl TTL of the entity. A null value represents no TTL.
    */
-  public constructor(
-    cacheMode: CacheMode = CacheMode.CacheAndOverwrite,
-    ttl: number = null,
-  ) {
+  public constructor(cacheMode: CacheMode = CacheMode.CacheAndOverwrite, ttl: number = null) {
     this._cacheMode = cacheMode;
     this._ttl = ttl;
   }

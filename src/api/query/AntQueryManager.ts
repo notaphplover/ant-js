@@ -3,11 +3,8 @@ import { IPersistencySearchOptions } from '../../persistence/primary/options/IPe
 import { IQueryManager } from '../../persistence/primary/query/IQueryManager';
 import { IAntQueryManager } from './IAntQueryManager';
 
-export abstract class AntQueryManager<
-  TEntity extends IEntity,
-  TResult extends TEntity | TEntity[],
-> implements IAntQueryManager<TEntity, TResult> {
-
+export abstract class AntQueryManager<TEntity extends IEntity, TResult extends TEntity | TEntity[]>
+  implements IAntQueryManager<TEntity, TResult> {
   /**
    * Inner query manager.
    */
@@ -26,10 +23,7 @@ export abstract class AntQueryManager<
    * @param params query params.
    * @returns query results.
    */
-  public get(
-    params: any,
-    options?: IPersistencySearchOptions,
-  ): Promise<TResult> {
+  public get(params: any, options?: IPersistencySearchOptions): Promise<TResult> {
     return this._queryManager.get(params, options);
   }
 
@@ -39,10 +33,7 @@ export abstract class AntQueryManager<
    * @param options Cache options.
    * @returns Queries results.
    */
-  public mGet(
-    paramsArray: any[],
-    options?: IPersistencySearchOptions,
-  ): Promise<TEntity[]> {
+  public mGet(paramsArray: any[], options?: IPersistencySearchOptions): Promise<TEntity[]> {
     return this._queryManager.mGet(paramsArray, options);
   }
 }

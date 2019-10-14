@@ -15,7 +15,6 @@ interface IEntityTest extends IEntity {
 }
 
 export class ModelManagerGeneratorTest implements ITest {
-
   protected _describeName: string;
 
   protected _redisCleanPromise: Promise<any>;
@@ -54,12 +53,7 @@ export class ModelManagerGeneratorTest implements ITest {
       };
       const modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
       const originalSecondaryManager = new SecondaryEntityManagerMock(model);
-      const [
-        ,
-        secondaryManager,
-        ,
-        ,
-      ] = modelManagerGenerator.generateModelManager({
+      const [, secondaryManager] = modelManagerGenerator.generateModelManager({
         model: model,
         secondaryOptions: {
           manager: originalSecondaryManager,
@@ -153,71 +147,66 @@ export class ModelManagerGeneratorTest implements ITest {
     const itsName = this._itMustGenerateAMRQManagerAndSearchEntitiesByProperty.name;
     const prefix = this._describeName + '/' + itsName + '/';
 
-    it(itsName, async (done) => {
-      await this._redisCleanPromise;
+    it(
+      itsName,
+      async (done) => {
+        await this._redisCleanPromise;
 
-      const modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
+        const modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
 
-      const model: IModel = {
-        id: 'id',
-        keyGen: { prefix: prefix },
-      };
+        const model: IModel = {
+          id: 'id',
+          keyGen: { prefix: prefix },
+        };
 
-      const entity1: IEntityTest = {
-        id: 0,
-        numberField: 1,
-        strField: 'a',
-      };
-      const entity2: IEntityTest = {
-        id: 1,
-        numberField: 2,
-        strField: 'b',
-      };
+        const entity1: IEntityTest = {
+          id: 0,
+          numberField: 1,
+          strField: 'a',
+        };
+        const entity2: IEntityTest = {
+          id: 1,
+          numberField: 2,
+          strField: 'b',
+        };
 
-      const entities: IEntityTest[] = [
-        entity1,
-        entity2,
-      ];
-      const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(
-        model,
-        entities,
-      );
-      const [
-        ,
-        ,
-        singleResultQueryManagers,
-        multipleResultQueryManagers,
-      ] = modelManagerGenerator.generateModelManager({
-        model: model,
-        redisOptions: {
-          multipleResultQueryManagersOptions: {
-            properties: [ 'numberField', 'strField' ],
+        const entities: IEntityTest[] = [entity1, entity2];
+        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const [, , singleResultQueryManagers, multipleResultQueryManagers] = modelManagerGenerator.generateModelManager(
+          {
+            model: model,
+            redisOptions: {
+              multipleResultQueryManagersOptions: {
+                properties: ['numberField', 'strField'],
+              },
+              singleResultQueryManagersOptions: {
+                properties: ['numberField', 'strField'],
+              },
+              useEntityNegativeCache: true,
+            },
+            secondaryOptions: {
+              manager: secondaryEntityManager,
+            },
           },
-          singleResultQueryManagersOptions: {
-            properties: [ 'numberField', 'strField' ],
-          },
-          useEntityNegativeCache: true,
-        },
-        secondaryOptions: {
-          manager: secondaryEntityManager,
-        },
-      });
+        );
 
-      const [srqmResults, mrqmResults] = modelManagerGenerator.searchEntititiesInQueries(
-        entities,
-        singleResultQueryManagers,
-        multipleResultQueryManagers,
-      );
+        const [srqmResults, mrqmResults] = modelManagerGenerator.searchEntititiesInQueries(
+          entities,
+          singleResultQueryManagers,
+          multipleResultQueryManagers,
+        );
 
-      for (const [[entityToSearch], entityFound] of srqmResults) {
-        expect(await entityFound).toEqual(entityToSearch);
-      }
+        for (const [[entityToSearch], entityFound] of srqmResults) {
+          expect(await entityFound).toEqual(entityToSearch);
+        }
 
-      for (const [[entityToSearch], entitiesFound] of mrqmResults) {
-        expect(await entitiesFound).toEqual([entityToSearch]);
-      }
+        for (const [[entityToSearch], entitiesFound] of mrqmResults) {
+          expect(await entitiesFound).toEqual([entityToSearch]);
+        }
 
-      done();
-    }, MAX_SAFE_TIMEOUT);
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
   }
 }

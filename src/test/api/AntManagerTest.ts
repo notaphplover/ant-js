@@ -8,7 +8,7 @@ import { MinimalAntManager } from './MinimalAntManager';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-const modelGenerator = (prefix: string) => new Model('id', {prefix: prefix});
+const modelGenerator = (prefix: string) => new Model('id', { prefix: prefix });
 
 export class AntManagerTest implements ITest {
   /**
@@ -42,73 +42,93 @@ export class AntManagerTest implements ITest {
 
   private _itMustBeInitializable(): void {
     const itsName = 'mustBeInitializable';
-    it(itsName, async (done) => {
-      expect(() => {
-        // tslint:disable-next-line:no-unused-expression
-        new MinimalAntManager();
-      }).not.toThrowError();
-      done();
-    }, MAX_SAFE_TIMEOUT);
+    it(
+      itsName,
+      async (done) => {
+        expect(() => {
+          // tslint:disable-next-line:no-unused-expression
+          new MinimalAntManager();
+        }).not.toThrowError();
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
   }
 
   private _itMustGetAModelManager(): void {
     const itsName = 'mustGetAModelManager';
     const prefix = this._declareName + '/' + itsName + '/';
-    it(itsName, async (done) => {
-      const model = modelGenerator(prefix);
-      const antManager = new MinimalAntManager();
-      const config: IAntConfig<IAntModelConfig> = {
-        default: {
-          redis: this._redis.redis,
-        },
-      };
-      antManager.config(config);
-      expect(antManager.get(model) instanceof AntModelManager).toBe(true);
-      done();
-    }, MAX_SAFE_TIMEOUT);
+    it(
+      itsName,
+      async (done) => {
+        const model = modelGenerator(prefix);
+        const antManager = new MinimalAntManager();
+        const config: IAntConfig<IAntModelConfig> = {
+          default: {
+            redis: this._redis.redis,
+          },
+        };
+        antManager.config(config);
+        expect(antManager.get(model) instanceof AntModelManager).toBe(true);
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
   }
 
   private _itMustGetAModelManagerWithoutConfig(): void {
     const itsName = 'mustGetAModelManagerWithoutConfig';
     const prefix = this._declareName + '/' + itsName + '/';
-    it(itsName, async (done) => {
-      const model = modelGenerator(prefix);
-      const antManager = new MinimalAntManager();
-      const antModelManager = antManager.get(model);
-      expect(antModelManager.config()).toBeUndefined();
-      done();
-    }, MAX_SAFE_TIMEOUT);
+    it(
+      itsName,
+      async (done) => {
+        const model = modelGenerator(prefix);
+        const antManager = new MinimalAntManager();
+        const antModelManager = antManager.get(model);
+        expect(antModelManager.config()).toBeUndefined();
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
   }
 
   private _itMustGetAnExistingModelManager(): void {
     const itsName = 'mustGetAnExistingModelManager';
     const prefix = this._declareName + '/' + itsName + '/';
-    it(itsName, async (done) => {
-      const model = modelGenerator(prefix);
-      const antManager = new MinimalAntManager();
-      const config: IAntConfig<IAntModelConfig> = {
-        default: {
-          redis: this._redis.redis,
-        },
-      };
-      antManager.config(config);
-      const antModelManager = antManager.get(model);
-      expect(antManager.get(model)).toBe(antModelManager);
-      done();
-    }, MAX_SAFE_TIMEOUT);
+    it(
+      itsName,
+      async (done) => {
+        const model = modelGenerator(prefix);
+        const antManager = new MinimalAntManager();
+        const config: IAntConfig<IAntModelConfig> = {
+          default: {
+            redis: this._redis.redis,
+          },
+        };
+        antManager.config(config);
+        const antModelManager = antManager.get(model);
+        expect(antManager.get(model)).toBe(antModelManager);
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
   }
 
   private _itMustGetAndSetConfig(): void {
     const itsName = 'mustGetAndSetConfig';
-    it(itsName, async (done) => {
-      const antManager = new MinimalAntManager();
-      const config: IAntConfig<IAntModelConfig> = {
-        default: {
-          redis: this._redis.redis,
-        },
-      };
-      expect(antManager.config(config).config()).toEqual(config);
-      done();
-    }, MAX_SAFE_TIMEOUT);
+    it(
+      itsName,
+      async (done) => {
+        const antManager = new MinimalAntManager();
+        const config: IAntConfig<IAntModelConfig> = {
+          default: {
+            redis: this._redis.redis,
+          },
+        };
+        expect(antManager.config(config).config()).toEqual(config);
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
   }
 }

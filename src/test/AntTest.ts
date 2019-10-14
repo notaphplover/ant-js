@@ -3,7 +3,6 @@ import { AntManager } from '../api/AntManager';
 import { ITest } from '../testapi/api/ITest';
 
 export class AntTest implements ITest {
-
   public performTests() {
     describe('AntTest', () => {
       this._itMustExportTypes();
