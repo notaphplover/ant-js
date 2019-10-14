@@ -53,7 +53,7 @@ export class ModelManagerGeneratorTest implements ITest {
       };
       const modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
       const originalSecondaryManager = new SecondaryEntityManagerMock(model);
-      const [, secondaryManager, , ,] = modelManagerGenerator.generateModelManager({
+      const [, secondaryManager] = modelManagerGenerator.generateModelManager({
         model: model,
         secondaryOptions: {
           manager: originalSecondaryManager,
