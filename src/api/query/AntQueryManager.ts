@@ -1,5 +1,5 @@
 import { IEntity } from '../../model/IEntity';
-import { IPersistencyUpdateOptions } from '../../persistence/primary/options/IPersistencyUpdateOptions';
+import { IPersistencySearchOptions } from '../../persistence/primary/options/IPersistencySearchOptions';
 import { IQueryManager } from '../../persistence/primary/query/IQueryManager';
 import { IAntQueryManager } from './IAntQueryManager';
 
@@ -28,7 +28,7 @@ export abstract class AntQueryManager<
    */
   public get(
     params: any,
-    options?: IPersistencyUpdateOptions,
+    options?: IPersistencySearchOptions,
   ): Promise<TResult> {
     return this._queryManager.get(params, options);
   }
@@ -41,7 +41,7 @@ export abstract class AntQueryManager<
    */
   public mGet(
     paramsArray: any[],
-    options?: IPersistencyUpdateOptions,
+    options?: IPersistencySearchOptions,
   ): Promise<TEntity[]> {
     return this._queryManager.mGet(paramsArray, options);
   }
