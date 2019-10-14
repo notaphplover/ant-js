@@ -39,6 +39,7 @@
     "jasmine": "^3.5.0",
     "lodash": "^4.17.15",
     "nyc": "^14.1.1",
+    "prettier": "^1.18.2",
     "tslint": "^5.20.0",
     "typescript": "^3.6.4"
   }
