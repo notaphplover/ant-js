@@ -2,7 +2,6 @@ import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 
 export interface ISecondaryEntityManager<TEntity extends IEntity> {
-
   /**
    * Model of the manager.
    */
@@ -12,19 +11,19 @@ export interface ISecondaryEntityManager<TEntity extends IEntity> {
    * @param id: Model's id.
    * @returns Model found.
    */
-  getById(id: number|string): Promise<TEntity>;
+  getById(id: number | string): Promise<TEntity>;
 
   /**
    * Gets a collection of models by its ids.
    * @param ids Model ids.
    * @returns Models found.
    */
-  getByIds(ids: number[]| string[]): Promise<TEntity[]>;
+  getByIds(ids: number[] | string[]): Promise<TEntity[]>;
 
   /**
    * Gets a collection of models by its ids ordered by id asc.
    * @param ids Model ids.
    * @returns Models found.
    */
-  getByIdsOrderedAsc(ids: number[]| string[]): Promise<TEntity[]>;
+  getByIdsOrderedAsc(ids: number[] | string[]): Promise<TEntity[]>;
 }

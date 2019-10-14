@@ -2,9 +2,7 @@ import { IEntity } from '../../../model/IEntity';
 import { IModel } from '../../../model/IModel';
 import { ISecondaryEntityManager } from '../../../persistence/secondary/ISecondaryEntityManager';
 
-export class SecondaryEntityManagerMock<TEntity extends IEntity>
-  implements ISecondaryEntityManager<TEntity> {
-
+export class SecondaryEntityManagerMock<TEntity extends IEntity> implements ISecondaryEntityManager<TEntity> {
   /**
    * Model managed.
    */
@@ -44,12 +42,10 @@ export class SecondaryEntityManagerMock<TEntity extends IEntity>
    * @param id entity's id.
    * @returns Promise of entity found.
    */
-  public getById(id: number|string): Promise<TEntity> {
+  public getById(id: number | string): Promise<TEntity> {
     const idField = this.model.id;
     return new Promise((resolve) =>
-      resolve(this.store.find((entity) =>
-        undefined !== entity[idField] && id === entity[idField],
-      ) || null),
+      resolve(this.store.find((entity) => undefined !== entity[idField] && id === entity[idField]) || null),
     );
   }
 
@@ -58,13 +54,11 @@ export class SecondaryEntityManagerMock<TEntity extends IEntity>
    * @param ids Entities ids.
    * @returns Promise of entities found.
    */
-  public getByIds(ids: number[]| string[]): Promise<TEntity[]> {
+  public getByIds(ids: number[] | string[]): Promise<TEntity[]> {
     const idField = this.model.id;
-    const idSet = new Set<number|string>(ids);
+    const idSet = new Set<number | string>(ids);
     return new Promise((resolve) =>
-      resolve(this.store.filter((entity) =>
-        undefined !== entity[idField] && idSet.has(entity[idField])),
-      ),
+      resolve(this.store.filter((entity) => undefined !== entity[idField] && idSet.has(entity[idField]))),
     );
   }
 
@@ -73,28 +67,27 @@ export class SecondaryEntityManagerMock<TEntity extends IEntity>
    * @param ids Entities ids.
    * @returns Promise of entities found.
    */
-  public getByIdsOrderedAsc(ids: number[]| string[]): Promise<TEntity[]> {
+  public getByIdsOrderedAsc(ids: number[] | string[]): Promise<TEntity[]> {
     return new Promise<TEntity[]>((resolve, reject) => {
-      this.getByIds(ids).then((entities) => {
-        if (0 === entities.length) {
-          resolve(entities);
-        } else {
-          if ('number' === typeof ids[0]) {
-            resolve(entities.sort((a: TEntity, b: TEntity) => a[this.model.id] - b[this.model.id]));
+      this.getByIds(ids)
+        .then((entities) => {
+          if (0 === entities.length) {
+            resolve(entities);
           } else {
-            if ('string' === typeof ids[0]) {
-              resolve(
-                entities.sort(
-                  (a: TEntity, b: TEntity) =>
-                    this._compareStrings(a[this.model.id], b[this.model.id]),
-                  ),
-              );
+            if ('number' === typeof ids[0]) {
+              resolve(entities.sort((a: TEntity, b: TEntity) => a[this.model.id] - b[this.model.id]));
             } else {
-              throw new Error('Expected ids as number or strings');
+              if ('string' === typeof ids[0]) {
+                resolve(
+                  entities.sort((a: TEntity, b: TEntity) => this._compareStrings(a[this.model.id], b[this.model.id])),
+                );
+              } else {
+                throw new Error('Expected ids as number or strings');
+              }
             }
           }
-        }
-      }).catch(reject);
+        })
+        .catch(reject);
     });
   }
 

@@ -4,26 +4,21 @@ import { IPersistencySearchOptions } from '../options/IPersistencySearchOptions'
 import { ISingleResultQueryManager } from './ISingleResultQueryManager';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
 
-export class SingleResultQueryManager<
-  TEntity extends IEntity
-> extends PrimaryQueryManager<
-  TEntity,
-  number | string
-> implements ISingleResultQueryManager<TEntity> {
+export class SingleResultQueryManager<TEntity extends IEntity> extends PrimaryQueryManager<TEntity, number | string>
+  implements ISingleResultQueryManager<TEntity> {
   /**
    * True if the queries managed can return multiple results.
    */
-  public get isMultiple(): boolean { return false; }
+  public get isMultiple(): boolean {
+    return false;
+  }
 
   /**
    * Gets the result of a query.
    * @param params Query parameters.
    * @param options Cache options.
    */
-  public async get(
-    params: any,
-    options?: IPersistencySearchOptions,
-  ): Promise<TEntity> {
+  public async get(params: any, options?: IPersistencySearchOptions): Promise<TEntity> {
     const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultJson = await this._redis.eval(luaScript, 1, key);
@@ -39,9 +34,15 @@ export class SingleResultQueryManager<
       this._parseGetResult(
         key,
         resultJson,
-        (entity) => { result = entity; },
-        (id: number| string) => { result = this._primaryEntityManager.get(id, options); },
-        () => { result = null; },
+        (entity) => {
+          result = entity;
+        },
+        (id: number | string) => {
+          result = this._primaryEntityManager.get(id, options);
+        },
+        () => {
+          result = null;
+        },
       );
       return result;
     }
@@ -53,17 +54,14 @@ export class SingleResultQueryManager<
    * @param options Cache options.
    * @returns Queries results.
    */
-  public async mGet(
-    paramsArray: any[],
-    options?: IPersistencySearchOptions,
-  ): Promise<TEntity[]> {
+  public async mGet(paramsArray: any[], options?: IPersistencySearchOptions): Promise<TEntity[]> {
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
     }
     const keys = paramsArray.map((params) => this.queryKeyGen(params));
     const luaScript = this._luaMGetGenerator();
     const resultsJson = await this._redis.eval(luaScript, keys.length, keys);
-    const missingIds: number[]|string[] = new Array();
+    const missingIds: number[] | string[] = new Array();
     const finalResults = new Array();
     const missingQueriesKeys = new Array<string>();
     const missingParamsArray = new Array();
@@ -77,14 +75,18 @@ export class SingleResultQueryManager<
       this._parseGetResult(
         keys[i],
         resultJson,
-        (entity) => { finalResults.push(entity); },
-        (id: number&string) => { missingIds.push(id); },
+        (entity) => {
+          finalResults.push(entity);
+        },
+        (id: number & string) => {
+          missingIds.push(id);
+        },
         // tslint:disable-next-line:no-empty
-        () => { },
+        () => {},
       );
     }
     const idsFromMissingQueries = await this._mGetIdsAndSetToQueries(missingQueriesKeys, missingParamsArray);
-    missingIds.push(...(idsFromMissingQueries as Array<number&string>));
+    missingIds.push(...(idsFromMissingQueries as Array<number & string>));
     await this._mGetSearchMissingIds(finalResults, missingIds, options);
     return finalResults;
   }
@@ -95,18 +97,12 @@ export class SingleResultQueryManager<
    * @param params Query params.
    * @returns Id found or null
    */
-  private async _getIdAndSetToQuery(key: string, params: any): Promise<number|string> {
+  private async _getIdAndSetToQuery(key: string, params: any): Promise<number | string> {
     const id = await this._query(params);
     if (null == id) {
       this._redis.set(key, VOID_RESULT_STRING);
     } else {
-      this._redis.eval(
-        this._luaSetGenerator(),
-        2,
-        key,
-        this._reverseHashKey,
-        JSON.stringify(id),
-      );
+      this._redis.eval(this._luaSetGenerator(), 2, key, this._reverseHashKey, JSON.stringify(id));
     }
     return id;
   }
@@ -190,25 +186,13 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
    * @param keys queries cache keys to set.
    * @param paramsArray Queries params.
    */
-  private async _mGetIdsAndSetToQueries(
-    keys: string[],
-    paramsArray: any[],
-  ): Promise<Array<number|string>> {
+  private async _mGetIdsAndSetToQueries(keys: string[], paramsArray: any[]): Promise<Array<number | string>> {
     if (0 === keys.length) {
       return new Array();
     }
     const originalIds = await this._mquery(paramsArray);
-    const ids = originalIds.map(
-      (id) =>
-        null == id ? VOID_RESULT_STRING : JSON.stringify(id),
-    );
-    this._redis.eval([
-      this._luaMSetGenerator(),
-      keys.length + 1,
-      ...keys,
-      this._reverseHashKey,
-      ...ids,
-    ]);
+    const ids = originalIds.map((id) => (null == id ? VOID_RESULT_STRING : JSON.stringify(id)));
+    this._redis.eval([this._luaMSetGenerator(), keys.length + 1, ...keys, this._reverseHashKey, ...ids]);
     return originalIds.filter((id) => null != id);
   }
 
@@ -221,7 +205,7 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
    */
   private async _mGetSearchMissingIds(
     finalResults: TEntity[],
-    missingIds: number[]|string[],
+    missingIds: number[] | string[],
     options?: IPersistencySearchOptions,
   ): Promise<void> {
     if (0 < missingIds.length) {
@@ -244,7 +228,7 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
     key: string,
     resultJson: string,
     entityAction: (entity: TEntity) => void,
-    idAction: (id: number|string) => void,
+    idAction: (id: number | string) => void,
     voidAction: () => void,
   ) {
     if (VOID_RESULT_STRING === resultJson) {

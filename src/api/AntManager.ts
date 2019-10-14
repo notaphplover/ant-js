@@ -8,7 +8,7 @@ import { IAntModelManager } from './IAntModelManager';
 export abstract class AntManager<
   TConfig extends IAntModelConfig,
   TModel extends IModel,
-  TAntModelManager extends IAntModelManager<IEntity, TConfig>,
+  TAntModelManager extends IAntModelManager<IEntity, TConfig>
 > implements IAntManager<TConfig, TModel, TAntModelManager> {
   /**
    * AntJS config.
@@ -38,7 +38,7 @@ export abstract class AntManager<
    * @returns this instance.
    */
   public config(config: IAntConfig<TConfig>): this;
-  public config(config?: IAntConfig<TConfig>): IAntConfig<TConfig>|this {
+  public config(config?: IAntConfig<TConfig>): IAntConfig<TConfig> | this {
     if (undefined === config) {
       return this._config;
     } else {
@@ -70,7 +70,5 @@ export abstract class AntManager<
    * @param model Model to manage.
    * @returns model manager created.
    */
-  protected abstract _createModelManager(
-    model: TModel,
-  ): TAntModelManager;
+  protected abstract _createModelManager(model: TModel): TAntModelManager;
 }

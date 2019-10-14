@@ -14,15 +14,15 @@ export class ModelTest implements ITest {
     it('mustBeInitializable', () => {
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
-        new Model('id', {prefix: 'prefix'});
+        new Model('id', { prefix: 'prefix' });
       }).not.toThrowError();
     });
   }
 
   private _itMustStoreInitialValues(): void {
-    it ('mustStoreInitialValues', () => {
+    it('mustStoreInitialValues', () => {
       const id = 'idField';
-      const keyGenParams: IKeyGenParams = {prefix: 'prefix'};
+      const keyGenParams: IKeyGenParams = { prefix: 'prefix' };
       const customModel = new Model(id, keyGenParams);
       expect(customModel.id).toBe(id);
       expect(customModel.keyGen).toEqual(keyGenParams);

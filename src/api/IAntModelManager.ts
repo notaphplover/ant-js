@@ -1,26 +1,20 @@
 import { IEntity } from '../model/IEntity';
 import { IBaseModelManager } from '../persistence/primary/IModelManager';
-import {
-  MultipleQueryResult,
-  QueryResult,
-  SingleQueryResult,
-} from '../persistence/primary/query/PrimaryQueryManager';
+import { MultipleQueryResult, QueryResult, SingleQueryResult } from '../persistence/primary/query/PrimaryQueryManager';
 import { IAntModelConfig } from './config/IAntModelConfig';
 import { IAntQueryConfig } from './config/IAntQueryConfig';
 import { IAntMultipleResultQueryManager } from './query/IAntMultipleResultQueryManager';
 import { IAntQueryManager } from './query/IAntQueryManager';
 import { IAntSingleResultQueryManager } from './query/IAntSingleResultQueryManager';
 
-export type TAntQueryManager<TEntity, TQueryResult> =
-  TQueryResult extends MultipleQueryResult ?
-    IAntMultipleResultQueryManager<TEntity> :
-    TQueryResult extends SingleQueryResult ?
-      IAntSingleResultQueryManager<TEntity> :
-      never;
+export type TAntQueryManager<TEntity, TQueryResult> = TQueryResult extends MultipleQueryResult
+  ? IAntMultipleResultQueryManager<TEntity>
+  : TQueryResult extends SingleQueryResult
+  ? IAntSingleResultQueryManager<TEntity>
+  : never;
 
 export interface IAntModelManager<TEntity extends IEntity, TConfig extends IAntModelConfig>
   extends IBaseModelManager<TEntity> {
-
   /**
    * Gets the AntJS model config.
    * @returns AntJS model config.
@@ -36,9 +30,7 @@ export interface IAntModelManager<TEntity extends IEntity, TConfig extends IAntM
    * @param alias Alias of the query.
    * @returns Query found.
    */
-  query<TResult extends TEntity | TEntity[]>(
-    alias: string,
-  ): IAntQueryManager<TEntity, TResult>;
+  query<TResult extends TEntity | TEntity[]>(alias: string): IAntQueryManager<TEntity, TResult>;
   /**
    * Adds a query to the manager.
    * @param query Query to add.

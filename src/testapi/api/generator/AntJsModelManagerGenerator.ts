@@ -37,9 +37,7 @@ export class AntJsModelManagerGenerator extends ModelManagerGenerator<
   /**
    * @inheritdoc
    */
-  protected _generateDefaultSecondaryManager(
-    options: TModelManagerOptions,
-  ): SecondaryEntityManagerMock<IEntity> {
+  protected _generateDefaultSecondaryManager(options: TModelManagerOptions): SecondaryEntityManagerMock<IEntity> {
     return new SecondaryEntityManagerMock(options.model);
   }
 

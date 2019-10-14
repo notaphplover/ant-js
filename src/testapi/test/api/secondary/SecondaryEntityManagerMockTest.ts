@@ -3,7 +3,6 @@ import { ITest } from '../../../api/ITest';
 import { SecondaryEntityManagerMock } from '../../../api/secondary/SecondaryEntityManagerMock';
 
 export class SecondaryEntityManagerMockTest implements ITest {
-
   /**
    * Performs all the tests
    */
@@ -51,7 +50,7 @@ export class SecondaryEntityManagerMockTest implements ITest {
       };
       const el0 = { id: 0 };
       const el1 = { id: 1 };
-      const store = [ el0, el1 ];
+      const store = [el0, el1];
       const manager = new SecondaryEntityManagerMock(model, store);
       const elementsFound = await manager.getByIds([el0.id, el1.id]);
       expect(elementsFound).toContain(el0);
@@ -68,7 +67,7 @@ export class SecondaryEntityManagerMockTest implements ITest {
       };
       const el0 = { id: 0 };
       const el1 = { id: 1 };
-      const store = [ el1, el0 ];
+      const store = [el1, el0];
       const manager = new SecondaryEntityManagerMock(model, store);
       const elementsFound = await manager.getByIdsOrderedAsc([el1.id, el0.id]);
       expect(elementsFound).toEqual([el0, el1]);
@@ -84,7 +83,7 @@ export class SecondaryEntityManagerMockTest implements ITest {
       };
       const el0 = { id: 'a' };
       const el1 = { id: 'b' };
-      const store = [ el1, el0 ];
+      const store = [el1, el0];
       const manager = new SecondaryEntityManagerMock(model, store);
       const elementsFound = await manager.getByIdsOrderedAsc([el1.id, el0.id]);
       expect(elementsFound).toEqual([el0, el1]);
@@ -100,7 +99,7 @@ export class SecondaryEntityManagerMockTest implements ITest {
       };
       const el0 = { id: 0 };
       const el1 = { id: 1 };
-      const store = [ el1, el0 ];
+      const store = [el1, el0];
       const manager = new SecondaryEntityManagerMock(model, store);
       const elementsFound = await manager.getByIdsOrderedAsc(new Array());
       expect(elementsFound).toEqual(new Array());
@@ -116,7 +115,7 @@ export class SecondaryEntityManagerMockTest implements ITest {
       };
       const el0 = { id: 0 };
       const el1 = { id: 1 };
-      const store = [ el0, el1 ];
+      const store = [el0, el1];
       const manager = new SecondaryEntityManagerMock(model, store);
       expect(await manager.getById(el0.id)).toBe(el0);
       expect(await manager.getById(el1.id)).toBe(el1);
@@ -142,7 +141,7 @@ export class SecondaryEntityManagerMockTest implements ITest {
         id: 'id',
         keyGen: { prefix: '' },
       };
-      const store = [ { id: 0 } ];
+      const store = [{ id: 0 }];
       const manager = new SecondaryEntityManagerMock(model, store);
       expect(manager.store).toBe(store);
       done();
@@ -171,7 +170,7 @@ export class SecondaryEntityManagerMockTest implements ITest {
       };
       const el0 = { id: { index: 0 } };
       const el1 = { id: { index: 1 } };
-      const store = [ el1, el0 ];
+      const store = [el1, el0];
       const manager = new SecondaryEntityManagerMock(model, store);
       expectAsync(manager.getByIdsOrderedAsc([el1.id as any, el0.id as any])).toBeRejected();
       done();

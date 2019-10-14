@@ -1,22 +1,18 @@
 import { IEntity } from '../../../model/IEntity';
-import {
-  SEPARATOR_STRING,
-  VOID_RESULT_STRING,
-} from '../LuaConstants';
+import { SEPARATOR_STRING, VOID_RESULT_STRING } from '../LuaConstants';
 import { IPersistencySearchOptions } from '../options/IPersistencySearchOptions';
 import { IMultipleResultQueryManager } from './IMultipleResultQueryManager';
 import { PrimaryQueryManager } from './PrimaryQueryManager';
 
-export class MultipleResultQueryManager<
-  TEntity extends IEntity
-> extends PrimaryQueryManager<
-  TEntity,
-  number[] | string[]
-> implements IMultipleResultQueryManager<TEntity> {
+export class MultipleResultQueryManager<TEntity extends IEntity>
+  extends PrimaryQueryManager<TEntity, number[] | string[]>
+  implements IMultipleResultQueryManager<TEntity> {
   /**
    * True if the queries managed can return multiple results.
    */
-  public get isMultiple(): boolean { return true; }
+  public get isMultiple(): boolean {
+    return true;
+  }
 
   /**
    * Gets the result of a query.
@@ -24,10 +20,7 @@ export class MultipleResultQueryManager<
    * @param options Cache options.
    * @returns Entities found.
    */
-  public async get(
-    params: any,
-    options?: IPersistencySearchOptions,
-  ): Promise<TEntity[]> {
+  public async get(params: any, options?: IPersistencySearchOptions): Promise<TEntity[]> {
     const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultsJSON = await this._redis.eval(luaScript, 1, key);
@@ -38,15 +31,10 @@ export class MultipleResultQueryManager<
       if (VOID_RESULT_STRING === resultsJSON) {
         return new Array();
       }
-      const missingIds: number[]|string[] = new Array();
+      const missingIds: number[] | string[] = new Array();
       const finalResults = new Array();
       for (const resultJson of resultsJSON) {
-        this._getProcessParseableResult(
-          key,
-          finalResults,
-          missingIds,
-          resultJson,
-        );
+        this._getProcessParseableResult(key, finalResults, missingIds, resultJson);
       }
       await this._getProcessMissingOptions(missingIds, finalResults, options);
       return finalResults;
@@ -59,10 +47,7 @@ export class MultipleResultQueryManager<
    * @param options Cache options.
    * @returns Queries results.
    */
-  public async mGet(
-    paramsArray: any[],
-    options?: IPersistencySearchOptions,
-  ): Promise<TEntity[]> {
+  public async mGet(paramsArray: any[], options?: IPersistencySearchOptions): Promise<TEntity[]> {
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
     }
@@ -76,7 +61,7 @@ export class MultipleResultQueryManager<
     let currentIndex = 0;
     let resultsFound = false;
     let voidFound = false;
-    const missingIds: number[]|string[] = new Array();
+    const missingIds: number[] | string[] = new Array();
     for (const resultJson of resultsJson) {
       if (VOID_RESULT_STRING === resultJson) {
         voidFound = true;
@@ -93,19 +78,11 @@ export class MultipleResultQueryManager<
         continue;
       }
       resultsFound = true;
-      this._getProcessParseableResult(
-        keys[currentIndex],
-        finalResults,
-        missingIds,
-        resultJson,
-      );
+      this._getProcessParseableResult(keys[currentIndex], finalResults, missingIds, resultJson);
     }
 
     if (0 < missingQueriesKeys.length) {
-      const queriesMissingIds = await this._mGetProcessQueriesNotFound(
-        missingQueriesParams,
-        missingQueriesKeys,
-      );
+      const queriesMissingIds = await this._mGetProcessQueriesNotFound(missingQueriesParams, missingQueriesKeys);
       missingIds.push(...(queriesMissingIds as Array<number & string>));
     }
 
@@ -122,7 +99,7 @@ export class MultipleResultQueryManager<
    * @param Promise of missing options processed.
    */
   private async _getProcessMissingOptions(
-    missingIds: number[]|string[],
+    missingIds: number[] | string[],
     finalResults: TEntity[],
     options: IPersistencySearchOptions,
   ): Promise<void> {
@@ -145,7 +122,7 @@ export class MultipleResultQueryManager<
   private _getProcessParseableResult(
     key: string,
     finalResults: TEntity[],
-    missingIds: Array<number|string>,
+    missingIds: Array<number | string>,
     resultJson: string,
   ): void {
     const result = JSON.parse(resultJson);
@@ -176,20 +153,10 @@ export class MultipleResultQueryManager<
     const ids = await this._query(params);
     const idsJSON = (ids as any[]).map((id) => JSON.stringify(id));
     if (null != ids && ids.length > 0) {
-      this._redis.eval([
-        this._luaSetQueryGenerator(),
-        2,
-        key,
-        this._reverseHashKey,
-        ...idsJSON,
-      ]);
+      this._redis.eval([this._luaSetQueryGenerator(), 2, key, this._reverseHashKey, ...idsJSON]);
       return this._primaryEntityManager.mGet(ids, options);
     } else {
-      this._redis.eval(
-        this._luaSetVoidQueryGenerator(),
-        1,
-        key,
-      );
+      this._redis.eval(this._luaSetVoidQueryGenerator(), 1, key);
       return new Array();
     }
   }
@@ -318,23 +285,15 @@ end`;
    * @param keys Queries cache keys.
    * @returns Promise of queries processed.
    */
-  private async _mGetProcessQueriesNotFound(
-    paramsArray: any[],
-    keys: string[],
-  ): Promise<number[] | string[]> {
+  private async _mGetProcessQueriesNotFound(paramsArray: any[], keys: string[]): Promise<number[] | string[]> {
     const ids = await this._mquery(paramsArray);
-    const evalParams = [
-      this._luaMSetQueryGenerator(),
-      keys.length + 1,
-      ...keys,
-      this._reverseHashKey,
-    ];
+    const evalParams = [this._luaMSetQueryGenerator(), keys.length + 1, ...keys, this._reverseHashKey];
     const finalIds: number[] | string[] = new Array();
     for (let i = 0; i < ids.length - 1; ++i) {
-      this._mGetProcessQueriesNotFoundProcessIds(evalParams, ids[i] as Array<number&string>, finalIds);
+      this._mGetProcessQueriesNotFoundProcessIds(evalParams, ids[i] as Array<number & string>, finalIds);
       evalParams.push(SEPARATOR_STRING);
     }
-    this._mGetProcessQueriesNotFoundProcessIds(evalParams, ids[ids.length - 1] as Array<number&string>, finalIds);
+    this._mGetProcessQueriesNotFoundProcessIds(evalParams, ids[ids.length - 1] as Array<number & string>, finalIds);
 
     this._redis.eval(evalParams);
     return finalIds;
@@ -347,8 +306,8 @@ end`;
    * @param finalIds Stringified ids.
    */
   private _mGetProcessQueriesNotFoundProcessIds(
-    evalParams: Array<string|number>,
-    currentIds: Array<string&number>,
+    evalParams: Array<string | number>,
+    currentIds: Array<string & number>,
     finalIds: number[] | string[],
   ) {
     if (0 === currentIds.length) {

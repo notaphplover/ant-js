@@ -2,31 +2,23 @@ import { IEntity } from '../../../model/IEntity';
 import { IPrimaryEntityManager } from '../IPrimaryEntityManager';
 import { IRedisMiddleware } from '../IRedisMiddleware';
 import { IPersistencyUpdateOptions } from '../options/IPersistencyUpdateOptions';
-import {
-  IBasePrimaryQueryManager,
-  IPrimaryQueryManager,
-} from './IPrimaryQueryManager';
+import { IBasePrimaryQueryManager, IPrimaryQueryManager } from './IPrimaryQueryManager';
 
 export type MultipleQueryResult = number[] | string[];
 export type SingleQueryResult = number | string;
 
 export type QueryResult = MultipleQueryResult | SingleQueryResult;
-type TResult<TEntity, TQueryResult> =
-  TQueryResult extends MultipleQueryResult ?
-    TEntity[] :
-    TQueryResult extends SingleQueryResult ?
-      TEntity :
-      never;
+type TResult<TEntity, TQueryResult> = TQueryResult extends MultipleQueryResult
+  ? TEntity[]
+  : TQueryResult extends SingleQueryResult
+  ? TEntity
+  : never;
 
 export type TMQuery<TQueryResult> = (paramsArray: any[]) => Promise<TQueryResult[]>;
 export type TQuery<TQueryResult> = (params: any) => Promise<TQueryResult>;
 
-export abstract class PrimaryQueryManager<
-  TEntity extends IEntity,
-  TQueryResult extends QueryResult,
-> implements
-    IBasePrimaryQueryManager<TEntity, TResult<TEntity, TQueryResult>>,
-    IPrimaryQueryManager<TEntity> {
+export abstract class PrimaryQueryManager<TEntity extends IEntity, TQueryResult extends QueryResult>
+  implements IBasePrimaryQueryManager<TEntity, TResult<TEntity, TQueryResult>>, IPrimaryQueryManager<TEntity> {
   /**
    * Entity key generator.
    */
@@ -120,10 +112,7 @@ export abstract class PrimaryQueryManager<
    * @param params query params.
    * @returns query results.
    */
-  public abstract get(
-    params: any,
-    options?: IPersistencyUpdateOptions,
-  ): Promise<TResult<TEntity, TQueryResult>>;
+  public abstract get(params: any, options?: IPersistencyUpdateOptions): Promise<TResult<TEntity, TQueryResult>>;
 
   /**
    * Gets the result of multiple queries.
@@ -131,10 +120,7 @@ export abstract class PrimaryQueryManager<
    * @param options Cache options.
    * @returns Queries results.
    */
-  public abstract mGet(
-    paramsArray: any[],
-    options?: IPersistencyUpdateOptions,
-  ): Promise<TEntity[]>;
+  public abstract mGet(paramsArray: any[], options?: IPersistencyUpdateOptions): Promise<TEntity[]>;
 
   /**
    * Creates an standard mquery.

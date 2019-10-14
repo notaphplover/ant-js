@@ -9,27 +9,20 @@ export interface IPrimaryEntityManagerBase<TEntity extends IEntity> {
    * @param options Cache options.
    * @returns Model found.
    */
-  get(
-    id: number|string,
-    options?: IPersistencySearchOptions,
-  ): Promise<TEntity>;
+  get(id: number | string, options?: IPersistencySearchOptions): Promise<TEntity>;
   /**
    * Gets a collection of models by its ids.
    * @param ids Model ids.
    * @param options Cache options.
    * @returns Models found.
    */
-  mGet(
-    ids: number[]| string[],
-    options?: IPersistencySearchOptions,
-  ): Promise<TEntity[]>;
+  mGet(ids: number[] | string[], options?: IPersistencySearchOptions): Promise<TEntity[]>;
 }
 
 /**
  * Represents a manager able to obtain entities by ids.
  */
-export interface IPrimaryEntityManager<TEntity extends IEntity>
-  extends IPrimaryEntityManagerBase<TEntity> {
+export interface IPrimaryEntityManager<TEntity extends IEntity> extends IPrimaryEntityManagerBase<TEntity> {
   /**
    * Model of the manager.
    */
