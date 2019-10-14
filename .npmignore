@@ -49,6 +49,7 @@ testapi.nycrc.json
 /src/test
 
 # Prettier config
+.prettierignore
 .prettierrc
 
 # Travis build
