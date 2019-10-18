@@ -4,39 +4,27 @@ import { IModelManager } from '../persistence/primary/IModelManager';
 import { IPersistencyDeleteOptions } from '../persistence/primary/options/IPersistencyDeleteOptions';
 import { IPersistencySearchOptions } from '../persistence/primary/options/IPersistencySearchOptions';
 import { IPersistencyUpdateOptions } from '../persistence/primary/options/IPersistencyUpdateOptions';
-import {
-  IPrimaryQueryManager,
-} from '../persistence/primary/query/IPrimaryQueryManager';
+import { IPrimaryQueryManager } from '../persistence/primary/query/IPrimaryQueryManager';
 import { MultipleResultQueryManager } from '../persistence/primary/query/MultipleResultQueryManager';
-import {
-  QueryResult,
-  TMQuery,
-  TQuery,
-} from '../persistence/primary/query/PrimaryQueryManager';
+import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/PrimaryQueryManager';
 import { SingleResultQueryManager } from '../persistence/primary/query/SingleResultQueryManager';
 import { IAntModelConfig } from './config/IAntModelConfig';
 import { IAntQueryConfig } from './config/IAntQueryConfig';
-import {
-  IAntModelManager,
-  TAntQueryManager,
-} from './IAntModelManager';
+import { IAntModelManager, TAntQueryManager } from './IAntModelManager';
 import { AntMultipleResultQueryManager } from './query/AntMultipleResultQueryManager';
 import { AntSingleResultQueryManager } from './query/AntSingleResultQueryManager';
 import { IAntMultipleResultQueryManager } from './query/IAntMultipleResultQueryManager';
 import { IAntQueryManager } from './query/IAntQueryManager';
 import { IAntSingleResultQueryManager } from './query/IAntSingleResultQueryManager';
 
-export type QueryMapType<TEntity extends IEntity> =
-  Map<string, IAntQueryManager<TEntity, TEntity|TEntity[]>>;
+export type QueryMapType<TEntity extends IEntity> = Map<string, IAntQueryManager<TEntity, TEntity | TEntity[]>>;
 
 export abstract class AntModelManager<
   TEntity extends IEntity,
   TConfig extends IAntModelConfig,
   TModel extends IModel,
-  TModelManager extends IModelManager<TEntity>,
->
-  implements IAntModelManager<TEntity, TConfig> {
-
+  TModelManager extends IModelManager<TEntity>
+> implements IAntModelManager<TEntity, TConfig> {
   /**
    * AntJS model config.
    */
@@ -68,7 +56,7 @@ export abstract class AntModelManager<
   protected get modelManager(): TModelManager {
     if (!this._modelManager) {
       throw new Error(
-`The current action could not be performed because the model manager is not ready.
+        `The current action could not be performed because the model manager is not ready.
 This is probably caused by the absence of a config instance. Ensure that config is set.`,
       );
     }
@@ -85,12 +73,12 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @returns this instance.
    */
   public config(config: TConfig): this;
-  public config(config?: TConfig): TConfig|this {
+  public config(config?: TConfig): TConfig | this {
     if (undefined === config) {
       return this._config;
     } else {
       if (this._config) {
-        throw new Error('The model manager already has a configuration. It\'s not possible to change it.');
+        throw new Error("The model manager already has a configuration. It's not possible to change it.");
       }
       this._config = config;
       this._modelManager = this._generateModelManager(this._model, this._config);
@@ -103,7 +91,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  public delete(id: number|string, options?: IPersistencyDeleteOptions): Promise<any> {
+  public delete(id: number | string, options?: IPersistencyDeleteOptions): Promise<any> {
     return this.modelManager.delete(id, options);
   }
   /**
@@ -121,7 +109,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param options Delete options.
    * @returns Promise of entities deleted.
    */
-  public mDelete(ids: number[]|string[], options?: IPersistencyDeleteOptions): Promise<any> {
+  public mDelete(ids: number[] | string[], options?: IPersistencyDeleteOptions): Promise<any> {
     return this.modelManager.mDelete(ids, options);
   }
   /**
@@ -147,9 +135,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param alias Alias of the query.
    * @returns Query found.
    */
-  public query<TResult extends TEntity | TEntity[]>(
-    alias: string,
-  ): IAntQueryManager<TEntity, TResult>;
+  public query<TResult extends TEntity | TEntity[]>(alias: string): IAntQueryManager<TEntity, TResult>;
   /**
    * Adds a query to the manager.
    * @param queryConfig query manager config to add.
@@ -167,7 +153,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @returns Query found r this instance.
    */
   public query<TResult extends QueryResult & (TEntity | TEntity[])>(
-    queryOrAlias: IAntQueryConfig<TEntity, TResult>|string,
+    queryOrAlias: IAntQueryConfig<TEntity, TResult> | string,
     aliasOrNothing?: string,
   ): IAntQueryManager<TEntity, TResult> | TAntQueryManager<TEntity, TResult> {
     if ('string' === typeof queryOrAlias) {
@@ -190,18 +176,15 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param model Model of the manager.
    * @param config Manager config.
    */
-  protected abstract _generateModelManager(
-    model: TModel,
-    config: TConfig,
-  ): TModelManager;
+  protected abstract _generateModelManager(model: TModel, config: TConfig): TModelManager;
   /**
    * Gets a query by its alias.
    * @param alias Alias of the query.
    * @returns Query found.
    */
-  private _queryGetQuery<
-    TResult extends TEntity|TEntity[] = TEntity|TEntity[]
-  >(alias: string): IAntQueryManager<TEntity, TResult> {
+  private _queryGetQuery<TResult extends TEntity | TEntity[] = TEntity | TEntity[]>(
+    alias: string,
+  ): IAntQueryManager<TEntity, TResult> {
     return this._queriesMap.get(alias) as IAntQueryManager<TEntity, TResult>;
   }
   /**
@@ -226,9 +209,9 @@ This is probably caused by the absence of a config instance. Ensure that config 
         queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number[] | string[]>,
       );
-      query = new AntMultipleResultQueryManager<TEntity>(
-        innerQueryManager as MultipleResultQueryManager<TEntity>,
-      ) as IAntMultipleResultQueryManager<TEntity> as TAntQueryManager<TEntity, TResult>;
+      query = (new AntMultipleResultQueryManager<TEntity>(innerQueryManager as MultipleResultQueryManager<
+        TEntity
+      >) as IAntMultipleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
     } else {
       innerQueryManager = new SingleResultQueryManager<TEntity>(
         queryConfig.query as TQuery<number | string>,
@@ -239,9 +222,9 @@ This is probably caused by the absence of a config instance. Ensure that config 
         queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number | string>,
       );
-      query = new AntSingleResultQueryManager<TEntity>(
-        innerQueryManager as SingleResultQueryManager<TEntity>,
-      ) as IAntSingleResultQueryManager<TEntity> as TAntQueryManager<TEntity, TResult>;
+      query = (new AntSingleResultQueryManager<TEntity>(innerQueryManager as SingleResultQueryManager<
+        TEntity
+      >) as IAntSingleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
     }
     if (null != aliasOrNothing) {
       if (undefined === this._queriesMap.get(aliasOrNothing)) {

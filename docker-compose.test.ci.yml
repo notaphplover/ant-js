@@ -2,7 +2,7 @@ version: '3'
 services:
   ant_lib:
     build: .
-    command: ["npm", "run", "build-and-test-and-coverage"]
+    command: ["npm", "run", "ci"]
     environment:
       NODE_DEBUG_PORT_INNER: ${NODE_DEBUG_PORT_INNER}
       NODE_DEBUG_PORT_OUTER: ${NODE_DEBUG_PORT_OUTER}
@@ -20,7 +20,7 @@ services:
     networks:
       - ant
   ant_redis:
-    image: redis:5.0.3-alpine
+    image: redis:5.0.6-alpine
     networks:
       - ant
 networks:

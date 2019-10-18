@@ -1,10 +1,8 @@
 import { IEntity } from '../../../model/IEntity';
 import { IQueryManager } from './IQueryManager';
 
-export interface IBasePrimaryQueryManager<
-  TEntity extends IEntity,
-  TResult extends TEntity | TEntity[],
-> extends IQueryManager<TEntity, TResult> {
+export interface IBasePrimaryQueryManager<TEntity extends IEntity, TResult extends TEntity | TEntity[]>
+  extends IQueryManager<TEntity, TResult> {
   /**
    * True if the queries managed can return multiple results.
    */

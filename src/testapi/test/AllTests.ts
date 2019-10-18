@@ -5,7 +5,6 @@ import { ModelManagerGeneratorTest } from './api/generator/ModelManagerGenerator
 import { SecondaryEntityManagerMockTest } from './api/secondary/SecondaryEntityManagerMockTest';
 
 export class AllTest implements ITest {
-
   public performTests(): void {
     const redisWrapper = new RedisWrapper();
     const redis = redisWrapper.redis;

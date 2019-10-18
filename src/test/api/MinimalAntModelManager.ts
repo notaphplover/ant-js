@@ -7,9 +7,12 @@ import { AntJsModelManagerGenerator } from '../../testapi/api/generator/AntJsMod
 import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from '../primary/RedisWrapper';
 
-export class MinimalAntModelManager<
-  TEntity extends IEntity,
-> extends AntModelManager<TEntity, IAntModelConfig, IModel, IModelManager<TEntity>> {
+export class MinimalAntModelManager<TEntity extends IEntity> extends AntModelManager<
+  TEntity,
+  IAntModelConfig,
+  IModel,
+  IModelManager<TEntity>
+> {
   /**
    * Model manager generator.
    */

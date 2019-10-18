@@ -4,10 +4,9 @@ import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware'
 import { MultipleResultQueryManager } from '../../../persistence/primary/query/MultipleResultQueryManager';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/SecondaryEntityManagerMock';
 
-export type NamedEntityAlternative = {id: string, name: string } & IEntity;
+export type NamedEntityAlternative = { id: string; name: string } & IEntity;
 
-export class NamesStartingByLetterAlternative
-  extends MultipleResultQueryManager<NamedEntityAlternative> {
+export class NamesStartingByLetterAlternative extends MultipleResultQueryManager<NamedEntityAlternative> {
   /**
    * Query prefix.
    */
@@ -41,11 +40,11 @@ export class NamesStartingByLetterAlternative
     };
     super(
       (params: any) =>
-        new Promise((resolve) => resolve(
-          secondaryModelManagerMock.store
-            .filter(
-              (entity) => entity.name.startsWith(params.name[0]),
-            ).map((entity) => entity.id),
+        new Promise((resolve) =>
+          resolve(
+            secondaryModelManagerMock.store
+              .filter((entity) => entity.name.startsWith(params.name[0]))
+              .map((entity) => entity.id),
           ),
         ),
       primaryEntityManager,

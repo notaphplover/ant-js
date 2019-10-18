@@ -5,11 +5,7 @@ import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { MinimalAntModelManager } from './MinimalAntModelManager';
 
-export class MinimalAntManager extends AntManager<
-  IAntModelConfig,
-  IModel,
-  IAntModelManager<IEntity, IAntModelConfig>
-> {
+export class MinimalAntManager extends AntManager<IAntModelConfig, IModel, IAntModelManager<IEntity, IAntModelConfig>> {
   /**
    * Creates a new minimal ant manager.
    */

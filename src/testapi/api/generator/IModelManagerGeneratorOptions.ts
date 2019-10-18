@@ -7,9 +7,7 @@ import { IModelManagerGeneratorSecodaryManagerOptions } from './IModelManagerGen
 export interface IModelManagerGeneratorOptions<
   TModel extends IModel,
   TRedisOptions extends IModelManagerGeneratorRedisOptions,
-  TSecondaryOptions extends IModelManagerGeneratorSecodaryManagerOptions<
-    ISecondaryEntityManager<IEntity>
-  >,
+  TSecondaryOptions extends IModelManagerGeneratorSecodaryManagerOptions<ISecondaryEntityManager<IEntity>>
 > {
   /**
    * Model to manage.

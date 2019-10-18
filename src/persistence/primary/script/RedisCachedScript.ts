@@ -28,7 +28,10 @@ export class RedisCachedScript {
   public constructor(lua: string, redis: IRedisMiddleware) {
     this._redis = redis;
     this._lua = lua;
-    this._sha = crypto.createHash('sha1').update(lua).digest('hex');
+    this._sha = crypto
+      .createHash('sha1')
+      .update(lua)
+      .digest('hex');
   }
 
   /**
@@ -36,16 +39,12 @@ export class RedisCachedScript {
    * @param args Script args ([number of keys, ...KEYS, ...ARGV]).
    */
   public eval(argsGen: (scriptArg: string) => any[]): Promise<any> {
-    return (
-      this
-        ._redis
-        .evalsha(argsGen(this._sha)) as Promise<any>
-      ).catch((err) => {
-        // See https://redis.io/commands/eval
-        if (err.toString().indexOf('NOSCRIPT') === -1) {
-            throw err;
-        }
-        return this._redis.eval(argsGen(this._lua));
-      });
+    return (this._redis.evalsha(argsGen(this._sha)) as Promise<any>).catch((err) => {
+      // See https://redis.io/commands/eval
+      if (err.toString().indexOf('NOSCRIPT') === -1) {
+        throw err;
+      }
+      return this._redis.eval(argsGen(this._lua));
+    });
   }
 }
