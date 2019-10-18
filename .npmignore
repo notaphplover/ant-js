@@ -13,7 +13,7 @@ src.tsconfig.commonjs.json
 
 # npm docker builds
 docker-compose.test.yml
-docker-compose.test.coverage.yml
+docker-compose.test.ci.yml
 docker-compose.test.debug.yml
 Dockerfile
 .dockerignore
