@@ -13,11 +13,11 @@ import { ApiModelConfig } from './config/api-model-config';
 import { ApiQueryConfig } from './config/api-query-config';
 import { AntMultipleResultQueryManager } from './query/AntMultipleResultQueryManager';
 import { AntSingleResultQueryManager } from './query/AntSingleResultQueryManager';
+import { ApiQueryManager } from './query/api-query-manager';
 import { IAntMultipleResultQueryManager } from './query/IAntMultipleResultQueryManager';
-import { IAntQueryManager } from './query/IAntQueryManager';
 import { IAntSingleResultQueryManager } from './query/IAntSingleResultQueryManager';
 
-export type QueryMapType<TEntity extends IEntity> = Map<string, IAntQueryManager<TEntity, TEntity | TEntity[]>>;
+export type QueryMapType<TEntity extends IEntity> = Map<string, ApiQueryManager<TEntity, TEntity | TEntity[]>>;
 
 export abstract class AntModelManager<
   TEntity extends IEntity,
@@ -135,7 +135,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param alias Alias of the query.
    * @returns Query found.
    */
-  public query<TResult extends TEntity | TEntity[]>(alias: string): IAntQueryManager<TEntity, TResult>;
+  public query<TResult extends TEntity | TEntity[]>(alias: string): ApiQueryManager<TEntity, TResult>;
   /**
    * Adds a query to the manager.
    * @param queryConfig query manager config to add.
@@ -155,7 +155,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
   public query<TResult extends QueryResult & (TEntity | TEntity[])>(
     queryOrAlias: ApiQueryConfig<TEntity, TResult> | string,
     aliasOrNothing?: string,
-  ): IAntQueryManager<TEntity, TResult> | TAntQueryManager<TEntity, TResult> {
+  ): ApiQueryManager<TEntity, TResult> | TAntQueryManager<TEntity, TResult> {
     if ('string' === typeof queryOrAlias) {
       return this._queryGetQuery<TResult>(queryOrAlias);
     } else {
@@ -184,8 +184,8 @@ This is probably caused by the absence of a config instance. Ensure that config 
    */
   private _queryGetQuery<TResult extends TEntity | TEntity[] = TEntity | TEntity[]>(
     alias: string,
-  ): IAntQueryManager<TEntity, TResult> {
-    return this._queriesMap.get(alias) as IAntQueryManager<TEntity, TResult>;
+  ): ApiQueryManager<TEntity, TResult> {
+    return this._queriesMap.get(alias) as ApiQueryManager<TEntity, TResult>;
   }
   /**
    * Adds a query to the manager.

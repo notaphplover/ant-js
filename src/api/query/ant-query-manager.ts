@@ -1,10 +1,10 @@
 import { IEntity } from '../../model/IEntity';
 import { IPersistencySearchOptions } from '../../persistence/primary/options/IPersistencySearchOptions';
 import { IQueryManager } from '../../persistence/primary/query/IQueryManager';
-import { IAntQueryManager } from './IAntQueryManager';
+import { ApiQueryManager } from './api-query-manager';
 
 export abstract class AntQueryManager<TEntity extends IEntity, TResult extends TEntity | TEntity[]>
-  implements IAntQueryManager<TEntity, TResult> {
+  implements ApiQueryManager<TEntity, TResult> {
   /**
    * Inner query manager.
    */

@@ -1,4 +1,4 @@
 import { IEntity } from '../../model/IEntity';
-import { IAntQueryManager } from './IAntQueryManager';
+import { ApiQueryManager } from './api-query-manager';
 
-export interface IAntMultipleResultQueryManager<TEntity extends IEntity> extends IAntQueryManager<TEntity, TEntity[]> {}
+export interface IAntMultipleResultQueryManager<TEntity extends IEntity> extends ApiQueryManager<TEntity, TEntity[]> {}

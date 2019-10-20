@@ -1,4 +1,4 @@
-import { AntQueryManager } from '../../../api/query/AntQueryManager';
+import { AntQueryManager } from '../../../api/query/ant-query-manager';
 import { IEntity } from '../../../model/IEntity';
 
 export class MinimalAntQueryManager<

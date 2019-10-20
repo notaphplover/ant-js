@@ -1,6 +1,6 @@
 import { IEntity } from '../../model/IEntity';
 import { IQueryManager } from '../../persistence/primary/query/IQueryManager';
-import { AntQueryManager } from './AntQueryManager';
+import { AntQueryManager } from './ant-query-manager';
 import { IAntSingleResultQueryManager } from './IAntSingleResultQueryManager';
 
 export class AntSingleResultQueryManager<TEntity extends IEntity> extends AntQueryManager<TEntity, TEntity>

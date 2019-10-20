@@ -3,8 +3,8 @@ import { IBaseModelManager } from '../persistence/primary/IModelManager';
 import { MultipleQueryResult, QueryResult, SingleQueryResult } from '../persistence/primary/query/PrimaryQueryManager';
 import { ApiModelConfig } from './config/api-model-config';
 import { ApiQueryConfig } from './config/api-query-config';
+import { ApiQueryManager } from './query/api-query-manager';
 import { IAntMultipleResultQueryManager } from './query/IAntMultipleResultQueryManager';
-import { IAntQueryManager } from './query/IAntQueryManager';
 import { IAntSingleResultQueryManager } from './query/IAntSingleResultQueryManager';
 
 export type TAntQueryManager<TEntity, TQueryResult> = TQueryResult extends MultipleQueryResult
@@ -30,7 +30,7 @@ export interface ApiModelManager<TEntity extends IEntity, TConfig extends ApiMod
    * @param alias Alias of the query.
    * @returns Query found.
    */
-  query<TResult extends TEntity | TEntity[]>(alias: string): IAntQueryManager<TEntity, TResult>;
+  query<TResult extends TEntity | TEntity[]>(alias: string): ApiQueryManager<TEntity, TResult>;
   /**
    * Adds a query to the manager.
    * @param query Query to add.

@@ -1,4 +1,4 @@
-import { IAntQueryManager } from '../../../api/query/IAntQueryManager';
+import { ApiQueryManager } from '../../../api/query/api-query-manager';
 import { IEntity } from '../../../model/IEntity';
 import { Model } from '../../../model/Model';
 import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
@@ -78,7 +78,7 @@ export class AntQueryManagerTest implements ITest {
           prefix + 'query-by-field/',
         );
         const antQueryManager = new MinimalAntQueryManager(queryManager);
-        const methodsToTest = ['get', 'mGet'] as Array<keyof IAntQueryManager<any, any>>;
+        const methodsToTest = ['get', 'mGet'] as Array<keyof ApiQueryManager<any, any>>;
 
         for (const methodToTest of methodsToTest) {
           spyOn(queryManager, methodToTest).and.returnValue(methodToTest as any);
