@@ -1,4 +1,4 @@
-import { IKeyGenParams } from './IKeyGenParams';
+import { KeyGenParams } from './key-gen-params';
 import { Model } from './model';
 
 export class AntModel implements Model {
@@ -10,14 +10,14 @@ export class AntModel implements Model {
   /**
    * Key generation config
    */
-  protected _keyGen: IKeyGenParams;
+  protected _keyGen: KeyGenParams;
 
   /**
    * Constructor.
    * @param id Model's id.
    * @param keyGen Key generation config.
    */
-  public constructor(id: string, keyGen: IKeyGenParams) {
+  public constructor(id: string, keyGen: KeyGenParams) {
     this._id = id;
     this._keyGen = keyGen;
   }
@@ -33,7 +33,7 @@ export class AntModel implements Model {
    * Key generation config.
    * @returns Key generation config.
    */
-  public get keyGen(): IKeyGenParams {
+  public get keyGen(): KeyGenParams {
     return this._keyGen;
   }
 }

@@ -1,4 +1,4 @@
-import { IKeyGenParams } from './IKeyGenParams';
+import { KeyGenParams } from './key-gen-params';
 
 /**
  * Represents a model.
@@ -12,5 +12,5 @@ export interface Model {
   /**
    * Key generation config.
    */
-  keyGen: IKeyGenParams;
+  keyGen: KeyGenParams;
 }

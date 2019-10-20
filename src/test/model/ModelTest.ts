@@ -1,5 +1,5 @@
 import { AntModel } from '../../model/ant-model';
-import { IKeyGenParams } from '../../model/IKeyGenParams';
+import { KeyGenParams } from '../../model/key-gen-params';
 import { ITest } from '../../testapi/api/ITest';
 
 export class ModelTest implements ITest {
@@ -22,7 +22,7 @@ export class ModelTest implements ITest {
   private _itMustStoreInitialValues(): void {
     it('mustStoreInitialValues', () => {
       const id = 'idField';
-      const keyGenParams: IKeyGenParams = { prefix: 'prefix' };
+      const keyGenParams: KeyGenParams = { prefix: 'prefix' };
       const customModel = new AntModel(id, keyGenParams);
       expect(customModel.id).toBe(id);
       expect(customModel.keyGen).toEqual(keyGenParams);

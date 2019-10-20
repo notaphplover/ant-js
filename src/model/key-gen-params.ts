@@ -1,4 +1,4 @@
-export interface IKeyGenParams {
+export interface KeyGenParams {
   /**
    * Key prefix.
    */

@@ -1,5 +1,5 @@
 import { IEntity } from '../../model/IEntity';
-import { IKeyGenParams } from '../../model/IKeyGenParams';
+import { KeyGenParams } from '../../model/key-gen-params';
 import { Model } from '../../model/model';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
@@ -238,7 +238,7 @@ export class PrimaryEntityManager<TEntity extends IEntity, TSecondaryManager ext
    * Creates a function that creates a lua script to create an entity key from an id.
    * @param keyGenParams Key generation params.
    */
-  protected _innerGetKeyGenerationLuaScriptGenerator(keyGenParams: IKeyGenParams) {
+  protected _innerGetKeyGenerationLuaScriptGenerator(keyGenParams: KeyGenParams) {
     const instructions = new Array<(alias: string) => string>();
     instructions.push(() => '"' + keyGenParams.prefix + '" .. ');
     instructions.push((alias) => alias);
