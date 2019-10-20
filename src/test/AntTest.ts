@@ -1,5 +1,5 @@
 import * as AntJs from '../ant';
-import { AntManager } from '../api/AntManager';
+import { AntManager } from '../api/ant-manager';
 import { ITest } from '../testapi/api/ITest';
 
 export class AntTest implements ITest {
