@@ -1,4 +1,4 @@
-import { IEntity } from '../../model/IEntity';
+import { Entity } from '../../model/entity';
 import { ApiQueryManager } from './api-query-manager';
 
-export interface ApiSingleResultQueryManager<TEntity extends IEntity> extends ApiQueryManager<TEntity, TEntity> {}
+export interface ApiSingleResultQueryManager<TEntity extends Entity> extends ApiQueryManager<TEntity, TEntity> {}

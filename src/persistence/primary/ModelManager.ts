@@ -1,4 +1,4 @@
-import { IEntity } from '../../model/IEntity';
+import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { IModelManager } from './IModelManager';
@@ -14,7 +14,7 @@ import { DeleteEntitiesCachedScriptSet } from './script/DeleteEntitiesCachedScri
 import { RedisCachedScript } from './script/RedisCachedScript';
 import { UpdateEntitiesCachedScriptSet } from './script/UpdateEntitiesCachedScriptSet';
 
-export class ModelManager<TEntity extends IEntity, TSecondaryManager extends ISecondaryEntityManager<TEntity>>
+export class ModelManager<TEntity extends Entity, TSecondaryManager extends ISecondaryEntityManager<TEntity>>
   extends PrimaryEntityManager<TEntity, TSecondaryManager>
   implements IModelManager<TEntity> {
   /**

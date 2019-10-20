@@ -1,7 +1,7 @@
-import { IEntity } from '../../../model/IEntity';
+import { Entity } from '../../../model/entity';
 import { QueryManager } from './query-manager';
 
-export interface IBasePrimaryQueryManager<TEntity extends IEntity, TResult extends TEntity | TEntity[]>
+export interface IBasePrimaryQueryManager<TEntity extends Entity, TResult extends TEntity | TEntity[]>
   extends QueryManager<TEntity, TResult> {
   /**
    * True if the queries managed can return multiple results.
@@ -21,5 +21,5 @@ export interface IBasePrimaryQueryManager<TEntity extends IEntity, TResult exten
   reverseHashKey: string;
 }
 
-export interface IPrimaryQueryManager<TEntity extends IEntity>
+export interface IPrimaryQueryManager<TEntity extends Entity>
   extends IBasePrimaryQueryManager<TEntity, TEntity | TEntity[]> {}

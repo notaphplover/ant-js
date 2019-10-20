@@ -1,4 +1,4 @@
-import { IEntity } from '../../../model/IEntity';
+import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
 import { IModelManager } from '../../../persistence/primary/IModelManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
@@ -19,8 +19,8 @@ export abstract class ModelManagerGenerator<
     IModelManagerGeneratorRedisOptions,
     IModelManagerGeneratorSecodaryManagerOptions<TSecondaryManager>
   >,
-  TModelManager extends IModelManager<IEntity>,
-  TSecondaryManager extends ISecondaryEntityManager<IEntity>
+  TModelManager extends IModelManager<Entity>,
+  TSecondaryManager extends ISecondaryEntityManager<Entity>
 > {
   /**
    * Default redis middleware.
@@ -44,8 +44,8 @@ export abstract class ModelManagerGenerator<
   ): [
     TModelManager,
     TSecondaryManager,
-    Map<string, ISingleResultQueryManager<IEntity>>,
-    Map<string, IMultipleResultQueryManager<IEntity>>,
+    Map<string, ISingleResultQueryManager<Entity>>,
+    Map<string, IMultipleResultQueryManager<Entity>>,
   ] {
     if (!options.redisOptions) {
       options.redisOptions = {};
@@ -70,14 +70,14 @@ export abstract class ModelManagerGenerator<
 
     const singleResultQueryManagers: Map<
       string,
-      ISingleResultQueryManager<IEntity>
+      ISingleResultQueryManager<Entity>
     > = this._generateSingleResultQueryManagers(options, secondaryManager, modelManager);
 
     this._attachQueryManagers(modelManager, singleResultQueryManagers.values());
 
     const multipleResultQueryManagers: Map<
       string,
-      IMultipleResultQueryManager<IEntity>
+      IMultipleResultQueryManager<Entity>
     > = this._generateMultipleResultQueryManagers(options, secondaryManager, modelManager);
 
     this._attachQueryManagers(modelManager, multipleResultQueryManagers.values());
@@ -93,12 +93,12 @@ export abstract class ModelManagerGenerator<
    * @returns Promises of results obtained from the query managers.
    */
   public searchEntititiesInQueries(
-    entities: IEntity[],
-    srQueryManagers: Map<string, ISingleResultQueryManager<IEntity>>,
-    mrQueryManagers: Map<string, IMultipleResultQueryManager<IEntity>>,
-  ): [Map<[IEntity, string], Promise<IEntity>>, Map<[IEntity, string], Promise<IEntity[]>>] {
-    const srqmResults: Map<[IEntity, string], Promise<IEntity>> = new Map();
-    const mrqmResults: Map<[IEntity, string], Promise<IEntity[]>> = new Map();
+    entities: Entity[],
+    srQueryManagers: Map<string, ISingleResultQueryManager<Entity>>,
+    mrQueryManagers: Map<string, IMultipleResultQueryManager<Entity>>,
+  ): [Map<[Entity, string], Promise<Entity>>, Map<[Entity, string], Promise<Entity[]>>] {
+    const srqmResults: Map<[Entity, string], Promise<Entity>> = new Map();
+    const mrqmResults: Map<[Entity, string], Promise<Entity[]>> = new Map();
 
     for (const [property, manager] of srQueryManagers) {
       for (const entity of entities) {
@@ -121,8 +121,8 @@ export abstract class ModelManagerGenerator<
    * @param queries Queries to be attached.
    */
   protected _attachQueryManagers(
-    modelManager: IModelManager<IEntity>,
-    queries: Iterable<IPrimaryQueryManager<IEntity>>,
+    modelManager: IModelManager<Entity>,
+    queries: Iterable<IPrimaryQueryManager<Entity>>,
   ): void {
     for (const query of queries) {
       modelManager.addQuery(query);
@@ -153,7 +153,7 @@ export abstract class ModelManagerGenerator<
    * @param options Generation options.
    * @returns Map of properties to query managers.
    */
-  protected _generateMultipleResultQueryManagers<TEntity extends IEntity>(
+  protected _generateMultipleResultQueryManagers<TEntity extends Entity>(
     options: TOptions,
     secondaryManager: TSecondaryManager,
     modelManager: TModelManager,
@@ -215,7 +215,7 @@ export abstract class ModelManagerGenerator<
    * @param options Generation options.
    * @returns Map of properties to query managers.
    */
-  protected _generateSingleResultQueryManagers<TEntity extends IEntity>(
+  protected _generateSingleResultQueryManagers<TEntity extends Entity>(
     options: TOptions,
     secondaryManager: TSecondaryManager,
     modelManager: TModelManager,
@@ -269,7 +269,7 @@ export abstract class ModelManagerGenerator<
    * @param value Value to match.
    * @returns Entities found.
    */
-  protected abstract _searchEntitiesByProperty<TEntity extends IEntity>(
+  protected abstract _searchEntitiesByProperty<TEntity extends Entity>(
     secondaryManager: TSecondaryManager,
     property: string,
     value: any,
@@ -282,7 +282,7 @@ export abstract class ModelManagerGenerator<
    * @param value Value to match.
    * @returns Entity found.
    */
-  protected abstract _searchEntityByProperty<TEntity extends IEntity>(
+  protected abstract _searchEntityByProperty<TEntity extends Entity>(
     secondaryManager: TSecondaryManager,
     property: string,
     value: any,

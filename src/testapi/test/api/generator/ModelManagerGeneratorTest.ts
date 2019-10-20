@@ -1,4 +1,4 @@
-import { IEntity } from '../../../../model/IEntity';
+import { Entity } from '../../../../model/entity';
 import { Model } from '../../../../model/model';
 import { ModelManager } from '../../../../persistence/primary/ModelManager';
 import { RedisWrapper } from '../../../../test/primary/RedisWrapper';
@@ -8,7 +8,7 @@ import { SecondaryEntityManagerMock } from '../../../api/secondary/SecondaryEnti
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-interface IEntityTest extends IEntity {
+interface IEntityTest extends Entity {
   id: number;
   numberField: number;
   strField: string;

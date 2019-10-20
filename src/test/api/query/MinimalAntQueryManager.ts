@@ -1,7 +1,7 @@
 import { AntQueryManager } from '../../../api/query/ant-query-manager';
-import { IEntity } from '../../../model/IEntity';
+import { Entity } from '../../../model/entity';
 
 export class MinimalAntQueryManager<
-  TEntity extends IEntity,
+  TEntity extends Entity,
   TResult extends TEntity | TEntity[]
 > extends AntQueryManager<TEntity, TResult> {}

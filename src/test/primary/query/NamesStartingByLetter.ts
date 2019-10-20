@@ -1,10 +1,10 @@
-import { IEntity } from '../../../model/IEntity';
+import { Entity } from '../../../model/entity';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
 import { MultipleResultQueryManager } from '../../../persistence/primary/query/MultipleResultQueryManager';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/SecondaryEntityManagerMock';
 
-export type NamedEntity = { id: number; name: string } & IEntity;
+export type NamedEntity = { id: number; name: string } & Entity;
 
 export class NamesStartingByLetter extends MultipleResultQueryManager<NamedEntity> {
   /**

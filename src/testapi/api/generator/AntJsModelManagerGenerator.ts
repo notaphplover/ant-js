@@ -1,4 +1,4 @@
-import { IEntity } from '../../../model/IEntity';
+import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
 import { IModelManager } from '../../../persistence/primary/IModelManager';
 import { ModelManager } from '../../../persistence/primary/ModelManager';
@@ -11,21 +11,21 @@ import { ModelManagerGenerator } from './ModelManagerGenerator';
 type TModelManagerOptions = IModelManagerGeneratorOptions<
   Model,
   IModelManagerGeneratorRedisOptions,
-  IModelManagerGeneratorSecodaryManagerOptions<SecondaryEntityManagerMock<IEntity>>
+  IModelManagerGeneratorSecodaryManagerOptions<SecondaryEntityManagerMock<Entity>>
 >;
 
 export class AntJsModelManagerGenerator extends ModelManagerGenerator<
   TModelManagerOptions,
-  IModelManager<IEntity>,
-  SecondaryEntityManagerMock<IEntity>
+  IModelManager<Entity>,
+  SecondaryEntityManagerMock<Entity>
 > {
   /**
    * @inheritdoc
    */
   protected _generateModelManager(
     options: TModelManagerOptions,
-    secondaryManager: SecondaryEntityManagerMock<IEntity>,
-  ): IModelManager<IEntity> {
+    secondaryManager: SecondaryEntityManagerMock<Entity>,
+  ): IModelManager<Entity> {
     return new ModelManager(
       options.model,
       options.redisOptions.redis,
@@ -37,15 +37,15 @@ export class AntJsModelManagerGenerator extends ModelManagerGenerator<
   /**
    * @inheritdoc
    */
-  protected _generateDefaultSecondaryManager(options: TModelManagerOptions): SecondaryEntityManagerMock<IEntity> {
+  protected _generateDefaultSecondaryManager(options: TModelManagerOptions): SecondaryEntityManagerMock<Entity> {
     return new SecondaryEntityManagerMock(options.model);
   }
 
   /**
    * @inheritdoc
    */
-  protected _searchEntitiesByProperty<TEntity extends IEntity>(
-    secondaryManager: SecondaryEntityManagerMock<IEntity>,
+  protected _searchEntitiesByProperty<TEntity extends Entity>(
+    secondaryManager: SecondaryEntityManagerMock<Entity>,
     property: string,
     value: any,
   ): Promise<TEntity[]> {
@@ -61,8 +61,8 @@ export class AntJsModelManagerGenerator extends ModelManagerGenerator<
   /**
    * @inheritdoc
    */
-  protected _searchEntityByProperty<TEntity extends IEntity>(
-    secondaryManager: SecondaryEntityManagerMock<IEntity>,
+  protected _searchEntityByProperty<TEntity extends Entity>(
+    secondaryManager: SecondaryEntityManagerMock<Entity>,
     property: string,
     value: any,
   ): Promise<TEntity> {

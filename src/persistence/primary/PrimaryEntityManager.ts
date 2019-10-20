@@ -1,4 +1,4 @@
-import { IEntity } from '../../model/IEntity';
+import { Entity } from '../../model/entity';
 import { KeyGenParams } from '../../model/key-gen-params';
 import { Model } from '../../model/model';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
@@ -11,7 +11,7 @@ import { IPersistencyDeleteOptions } from './options/IPersistencyDeleteOptions';
 import { IPersistencySearchOptions } from './options/IPersistencySearchOptions';
 import { IPersistencyUpdateOptions } from './options/IPersistencyUpdateOptions';
 
-export class PrimaryEntityManager<TEntity extends IEntity, TSecondaryManager extends ISecondaryEntityManager<TEntity>>
+export class PrimaryEntityManager<TEntity extends Entity, TSecondaryManager extends ISecondaryEntityManager<TEntity>>
   implements IPrimaryEntityManager<TEntity> {
   /**
    * Lua expression generator.

@@ -1,5 +1,5 @@
-import { IEntity } from '../../model/IEntity';
+import { Entity } from '../../model/entity';
 import { QueryManager } from '../../persistence/primary/query/query-manager';
 
-export interface ApiQueryManager<TEntity extends IEntity, TResult extends TEntity | TEntity[]>
+export interface ApiQueryManager<TEntity extends Entity, TResult extends TEntity | TEntity[]>
   extends QueryManager<TEntity, TResult> {}

@@ -1,10 +1,10 @@
-import { IEntity } from '../../../model/IEntity';
+import { Entity } from '../../../model/entity';
 import { SEPARATOR_STRING, VOID_RESULT_STRING } from '../LuaConstants';
 import { IPersistencySearchOptions } from '../options/IPersistencySearchOptions';
 import { IMultipleResultQueryManager } from './IMultipleResultQueryManager';
 import { PrimaryQueryManager } from './primary-query-manager';
 
-export class MultipleResultQueryManager<TEntity extends IEntity>
+export class MultipleResultQueryManager<TEntity extends Entity>
   extends PrimaryQueryManager<TEntity, number[] | string[]>
   implements IMultipleResultQueryManager<TEntity> {
   /**

@@ -1,10 +1,10 @@
-import { IEntity } from '../../../model/IEntity';
+import { Entity } from '../../../model/entity';
 import { VOID_RESULT_STRING } from '../LuaConstants';
 import { IPersistencySearchOptions } from '../options/IPersistencySearchOptions';
 import { ISingleResultQueryManager } from './ISingleResultQueryManager';
 import { PrimaryQueryManager } from './primary-query-manager';
 
-export class SingleResultQueryManager<TEntity extends IEntity> extends PrimaryQueryManager<TEntity, number | string>
+export class SingleResultQueryManager<TEntity extends Entity> extends PrimaryQueryManager<TEntity, number | string>
   implements ISingleResultQueryManager<TEntity> {
   /**
    * True if the queries managed can return multiple results.

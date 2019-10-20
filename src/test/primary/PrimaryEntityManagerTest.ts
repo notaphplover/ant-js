@@ -1,5 +1,5 @@
 import { AntModel } from '../../model/ant-model';
-import { IEntity } from '../../model/IEntity';
+import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
 import { ModelManager } from '../../persistence/primary/ModelManager';
@@ -15,12 +15,12 @@ import { RedisWrapper } from './RedisWrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-type IEntityTest = IEntity & {
+type IEntityTest = Entity & {
   id: number;
   field: string;
 };
 
-type IEntityTestString = IEntity & {
+type IEntityTestString = Entity & {
   id: string;
   field: string;
 };

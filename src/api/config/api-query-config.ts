@@ -1,7 +1,7 @@
-import { IEntity } from '../../model/IEntity';
+import { Entity } from '../../model/entity';
 import { QueryResult, TMQuery, TQuery } from '../../persistence/primary/query/primary-query-manager';
 
-export interface ApiQueryConfig<TEntity extends IEntity, TQueryResult extends QueryResult> {
+export interface ApiQueryConfig<TEntity extends Entity, TQueryResult extends QueryResult> {
   /**
    * True if the query returns an array of results instead of a single result.
    */

@@ -1,9 +1,9 @@
-import { IEntity } from '../../../model/IEntity';
+import { Entity } from '../../../model/entity';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
 import { SingleResultQueryManager } from '../../../persistence/primary/query/SingleResultQueryManager';
 
-export class SingleResultQueryByFieldManager<TEntity extends IEntity> extends SingleResultQueryManager<TEntity> {
+export class SingleResultQueryByFieldManager<TEntity extends Entity> extends SingleResultQueryManager<TEntity> {
   /**
    * Field to filter.
    */

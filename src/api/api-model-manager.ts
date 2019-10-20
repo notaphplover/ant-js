@@ -1,4 +1,4 @@
-import { IEntity } from '../model/IEntity';
+import { Entity } from '../model/entity';
 import { IBaseModelManager } from '../persistence/primary/IModelManager';
 import { MultipleQueryResult, QueryResult, SingleQueryResult } from '../persistence/primary/query/primary-query-manager';
 import { ApiModelConfig } from './config/api-model-config';
@@ -13,7 +13,7 @@ export type TAntQueryManager<TEntity, TQueryResult> = TQueryResult extends Multi
   ? ApiSingleResultQueryManager<TEntity>
   : never;
 
-export interface ApiModelManager<TEntity extends IEntity, TConfig extends ApiModelConfig>
+export interface ApiModelManager<TEntity extends Entity, TConfig extends ApiModelConfig>
   extends IBaseModelManager<TEntity> {
   /**
    * Gets the AntJS model config.

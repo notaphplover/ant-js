@@ -1,7 +1,7 @@
-import { IEntity } from '../../../model/IEntity';
+import { Entity } from '../../../model/entity';
 import { IPersistencySearchOptions } from '../options/IPersistencySearchOptions';
 
-export interface QueryManager<TEntity extends IEntity, TResult extends TEntity | TEntity[]> {
+export interface QueryManager<TEntity extends Entity, TResult extends TEntity | TEntity[]> {
   /**
    * Gets a query result.
    * @param params query params.

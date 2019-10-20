@@ -1,10 +1,10 @@
-import { IEntity } from '../../../model/IEntity';
+import { Entity } from '../../../model/entity';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
 import { MultipleResultQueryManager } from '../../../persistence/primary/query/MultipleResultQueryManager';
 import { TMQuery, TQuery } from '../../../persistence/primary/query/primary-query-manager';
 
-export class MultipleResultQueryByFieldManager<TEntity extends IEntity> extends MultipleResultQueryManager<TEntity> {
+export class MultipleResultQueryByFieldManager<TEntity extends Entity> extends MultipleResultQueryManager<TEntity> {
   /**
    * Field to filter.
    */

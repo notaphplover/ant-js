@@ -1,7 +1,7 @@
-import { IEntity } from '../../model/IEntity';
+import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 
-export interface ISecondaryEntityManager<TEntity extends IEntity> {
+export interface ISecondaryEntityManager<TEntity extends Entity> {
   /**
    * Model of the manager.
    */

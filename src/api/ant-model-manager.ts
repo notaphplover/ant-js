@@ -1,4 +1,4 @@
-import { IEntity } from '../model/IEntity';
+import { Entity } from '../model/entity';
 import { Model } from '../model/model';
 import { IModelManager } from '../persistence/primary/IModelManager';
 import { IPersistencyDeleteOptions } from '../persistence/primary/options/IPersistencyDeleteOptions';
@@ -17,10 +17,10 @@ import { ApiMultipleResultQueryManager } from './query/api-multiple-result-query
 import { ApiQueryManager } from './query/api-query-manager';
 import { ApiSingleResultQueryManager } from './query/api-single-result-query-manager';
 
-export type QueryMapType<TEntity extends IEntity> = Map<string, ApiQueryManager<TEntity, TEntity | TEntity[]>>;
+export type QueryMapType<TEntity extends Entity> = Map<string, ApiQueryManager<TEntity, TEntity | TEntity[]>>;
 
 export abstract class AntModelManager<
-  TEntity extends IEntity,
+  TEntity extends Entity,
   TConfig extends ApiModelConfig,
   TModel extends Model,
   TModelManager extends IModelManager<TEntity>

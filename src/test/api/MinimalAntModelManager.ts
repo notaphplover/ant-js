@@ -1,13 +1,13 @@
 import { AntModelManager } from '../../api/ant-model-manager';
 import { ApiModelConfig } from '../../api/config/api-model-config';
-import { IEntity } from '../../model/IEntity';
+import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 import { IModelManager } from '../../persistence/primary/IModelManager';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/AntJsModelManagerGenerator';
 import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from '../primary/RedisWrapper';
 
-export class MinimalAntModelManager<TEntity extends IEntity> extends AntModelManager<
+export class MinimalAntModelManager<TEntity extends Entity> extends AntModelManager<
   TEntity,
   ApiModelConfig,
   Model,

@@ -1,10 +1,10 @@
-import { IEntity } from '../../model/IEntity';
+import { Entity } from '../../model/entity';
 import { IPrimaryEntityManager, IPrimaryEntityManagerBase } from './IPrimaryEntityManager';
 import { IPersistencyDeleteOptions } from './options/IPersistencyDeleteOptions';
 import { IPersistencyUpdateOptions } from './options/IPersistencyUpdateOptions';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 
-export interface IBaseModelManager<TEntity extends IEntity> extends IPrimaryEntityManagerBase<TEntity> {
+export interface IBaseModelManager<TEntity extends Entity> extends IPrimaryEntityManagerBase<TEntity> {
   /**
    * Deletes an entity from the cache layer.
    * @param id id of the entity to delete.
@@ -35,7 +35,7 @@ export interface IBaseModelManager<TEntity extends IEntity> extends IPrimaryEnti
   update(entity: TEntity, options?: IPersistencyUpdateOptions): Promise<any>;
 }
 
-export interface IModelManager<TEntity extends IEntity>
+export interface IModelManager<TEntity extends Entity>
   extends IBaseModelManager<TEntity>,
     IPrimaryEntityManager<TEntity> {
   /**

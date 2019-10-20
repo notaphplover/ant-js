@@ -1,6 +1,6 @@
 import { AntQueryManager } from '../../api/query/ant-query-manager';
 import { AntModel } from '../../model/ant-model';
-import { IEntity } from '../../model/IEntity';
+import { Entity } from '../../model/entity';
 import { IModelManager } from '../../persistence/primary/IModelManager';
 import { ITest } from '../../testapi/api/ITest';
 import { RedisWrapper } from '../primary/RedisWrapper';
@@ -10,7 +10,7 @@ const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
 const modelGenerator = (prefix: string) => new AntModel('id', { prefix: prefix });
 
-type EntityTest = { id: number } & IEntity;
+type EntityTest = { id: number } & Entity;
 
 export class AntModelManagerTest implements ITest {
   /**

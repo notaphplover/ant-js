@@ -1,5 +1,5 @@
 import { AntModel } from '../../../model/ant-model';
-import { IEntity } from '../../../model/IEntity';
+import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { ModelManager } from '../../../persistence/primary/ModelManager';
@@ -61,7 +61,7 @@ export class SingleResultQueryManagerTest implements ITest {
   private _helperGenerateBaseInstances(
     prefix: string,
     entities: Array<
-      IEntity & {
+      Entity & {
         id: number;
         field: string;
       }
@@ -69,13 +69,13 @@ export class SingleResultQueryManagerTest implements ITest {
   ): [
     Model,
     IPrimaryEntityManager<
-      IEntity & {
+      Entity & {
         id: number;
         field: string;
       }
     >,
     SecondaryEntityManagerMock<
-      IEntity & {
+      Entity & {
         id: number;
         field: string;
       }
@@ -83,12 +83,12 @@ export class SingleResultQueryManagerTest implements ITest {
   ] {
     const model = new AntModel('id', { prefix: prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<
-      IEntity & {
+      Entity & {
         id: number;
         field: string;
       }
     >(model, entities);
-    type TestModel = IEntity & {
+    type TestModel = Entity & {
       id: number;
       field: string;
     };
@@ -133,7 +133,7 @@ export class SingleResultQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntity & {
+        const entity1: Entity & {
           id: number;
           field: string;
         } = { id: 1, field: 'sample-1' };
@@ -170,7 +170,7 @@ export class SingleResultQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntity & {
+        const entity1: Entity & {
           id: number;
           field: string;
         } = { id: 1, field: 'sample-1' };
@@ -212,12 +212,12 @@ export class SingleResultQueryManagerTest implements ITest {
       async (done) => {
         await this._beforeAllPromise;
         const model = new AntModel('id', { prefix: prefix });
-        const entity1: IEntity & {
+        const entity1: Entity & {
           id: string;
           field: string;
         } = { id: '1', field: 'sample-1' };
         const secondaryEntityManager = new SecondaryEntityManagerMock<
-          IEntity & {
+          Entity & {
             id: string;
             field: string;
           }
@@ -257,11 +257,11 @@ export class SingleResultQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntity & {
+        const entity1: Entity & {
           id: number;
           field: string;
         } = { id: 1, field: 'sample-1' };
-        const entity2: IEntity & {
+        const entity2: Entity & {
           id: number;
           field: string;
         } = { id: 2, field: 'sample-2' };
@@ -317,7 +317,7 @@ export class SingleResultQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntity & {
+        const entity1: Entity & {
           id: number;
           field: string;
         } = { id: 1, field: 'sample-1' };
@@ -354,7 +354,7 @@ export class SingleResultQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntity & {
+        const entity1: Entity & {
           id: number;
           field: string;
         } = { id: 1, field: 'sample-1' };
@@ -396,12 +396,12 @@ export class SingleResultQueryManagerTest implements ITest {
       async (done) => {
         await this._beforeAllPromise;
         const model = new AntModel('id', { prefix: prefix });
-        const entity1: IEntity & {
+        const entity1: Entity & {
           id: string;
           field: string;
         } = { id: '1', field: 'sample-1' };
         const secondaryEntityManager = new SecondaryEntityManagerMock<
-          IEntity & {
+          Entity & {
             id: string;
             field: string;
           }
@@ -441,11 +441,11 @@ export class SingleResultQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntity & {
+        const entity1: Entity & {
           id: number;
           field: string;
         } = { id: 1, field: 'sample-1' };
-        const entity2: IEntity & {
+        const entity2: Entity & {
           id: number;
           field: string;
         } = { id: 2, field: 'sample-2' };
@@ -485,7 +485,7 @@ export class SingleResultQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntity & {
+        const entity1: Entity & {
           id: number;
           field: string;
         } = { id: 1, field: 'sample-1' };
@@ -522,7 +522,7 @@ export class SingleResultQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntity & {
+        const entity1: Entity & {
           id: number;
           field: string;
         } = { id: 1, field: 'sample-1' };
@@ -590,7 +590,7 @@ export class SingleResultQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntity & {
+        const entity1: Entity & {
           id: number;
           field: string;
         } = { id: 1, field: 'sample-1' };
@@ -626,7 +626,7 @@ export class SingleResultQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntity & {
+        const entity1: Entity & {
           id: number;
           field: string;
         } = { id: 1, field: 'sample-1' };
@@ -663,7 +663,7 @@ export class SingleResultQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntity & {
+        const entity1: Entity & {
           id: number;
           field: string;
         } = { id: 1, field: 'sample-1' };
@@ -699,7 +699,7 @@ export class SingleResultQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntity & {
+        const entity1: Entity & {
           id: number;
           field: string;
         } = { id: 1, field: 'sample-1' };

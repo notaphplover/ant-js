@@ -1,4 +1,4 @@
-import { IEntity } from '../../../model/IEntity';
+import { Entity } from '../../../model/entity';
 import { IPrimaryEntityManager } from '../IPrimaryEntityManager';
 import { IRedisMiddleware } from '../IRedisMiddleware';
 import { IPersistencySearchOptions } from '../options/IPersistencySearchOptions';
@@ -17,7 +17,7 @@ type TResult<TEntity, TQueryResult> = TQueryResult extends MultipleQueryResult
 export type TMQuery<TQueryResult> = (paramsArray: any[]) => Promise<TQueryResult[]>;
 export type TQuery<TQueryResult> = (params: any) => Promise<TQueryResult>;
 
-export abstract class PrimaryQueryManager<TEntity extends IEntity, TQueryResult extends QueryResult>
+export abstract class PrimaryQueryManager<TEntity extends Entity, TQueryResult extends QueryResult>
   implements IBasePrimaryQueryManager<TEntity, TResult<TEntity, TQueryResult>>, IPrimaryQueryManager<TEntity> {
   /**
    * Entity key generator.
