@@ -13,9 +13,9 @@ import { ApiModelConfig } from './config/api-model-config';
 import { ApiQueryConfig } from './config/api-query-config';
 import { AntMultipleResultQueryManager } from './query/ant-multiple-result-query-manager';
 import { AntSingleResultQueryManager } from './query/ant-single-result-query-manager';
+import { ApiMultipleResultQueryManager } from './query/api-multiple-result-query-manager';
 import { ApiQueryManager } from './query/api-query-manager';
-import { IAntMultipleResultQueryManager } from './query/IAntMultipleResultQueryManager';
-import { IAntSingleResultQueryManager } from './query/IAntSingleResultQueryManager';
+import { ApiSingleResultQueryManager } from './query/api-single-result-query-manager';
 
 export type QueryMapType<TEntity extends IEntity> = Map<string, ApiQueryManager<TEntity, TEntity | TEntity[]>>;
 
@@ -211,7 +211,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
       );
       query = (new AntMultipleResultQueryManager<TEntity>(innerQueryManager as MultipleResultQueryManager<
         TEntity
-      >) as IAntMultipleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
+      >) as ApiMultipleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
     } else {
       innerQueryManager = new SingleResultQueryManager<TEntity>(
         queryConfig.query as TQuery<number | string>,
@@ -224,7 +224,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
       );
       query = (new AntSingleResultQueryManager<TEntity>(innerQueryManager as SingleResultQueryManager<
         TEntity
-      >) as IAntSingleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
+      >) as ApiSingleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
     }
     if (null != aliasOrNothing) {
       if (undefined === this._queriesMap.get(aliasOrNothing)) {

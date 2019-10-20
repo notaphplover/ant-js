@@ -3,14 +3,14 @@ import { IBaseModelManager } from '../persistence/primary/IModelManager';
 import { MultipleQueryResult, QueryResult, SingleQueryResult } from '../persistence/primary/query/primary-query-manager';
 import { ApiModelConfig } from './config/api-model-config';
 import { ApiQueryConfig } from './config/api-query-config';
+import { ApiMultipleResultQueryManager } from './query/api-multiple-result-query-manager';
 import { ApiQueryManager } from './query/api-query-manager';
-import { IAntMultipleResultQueryManager } from './query/IAntMultipleResultQueryManager';
-import { IAntSingleResultQueryManager } from './query/IAntSingleResultQueryManager';
+import { ApiSingleResultQueryManager } from './query/api-single-result-query-manager';
 
 export type TAntQueryManager<TEntity, TQueryResult> = TQueryResult extends MultipleQueryResult
-  ? IAntMultipleResultQueryManager<TEntity>
+  ? ApiMultipleResultQueryManager<TEntity>
   : TQueryResult extends SingleQueryResult
-  ? IAntSingleResultQueryManager<TEntity>
+  ? ApiSingleResultQueryManager<TEntity>
   : never;
 
 export interface ApiModelManager<TEntity extends IEntity, TConfig extends ApiModelConfig>
