@@ -1,6 +1,6 @@
 import { IRedisMiddleware } from '../../persistence/primary/IRedisMiddleware';
 
-export interface IAntModelConfig {
+export interface ApiModelConfig {
   /**
    * True to perform a negative entity cache strategy.
    */

@@ -1,5 +1,5 @@
 import { AntModelManager } from '../../api/ant-model-manager';
-import { IAntModelConfig } from '../../api/config/IAntModelConfig';
+import { ApiModelConfig } from '../../api/config/api-model-config';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { IModelManager } from '../../persistence/primary/IModelManager';
@@ -9,7 +9,7 @@ import { RedisWrapper } from '../primary/RedisWrapper';
 
 export class MinimalAntModelManager<TEntity extends IEntity> extends AntModelManager<
   TEntity,
-  IAntModelConfig,
+  ApiModelConfig,
   IModel,
   IModelManager<TEntity>
 > {
@@ -54,7 +54,7 @@ export class MinimalAntModelManager<TEntity extends IEntity> extends AntModelMan
    * @param config AntJS model config.
    * @returns Model manager generated.
    */
-  protected _generateModelManager(model: IModel, config: IAntModelConfig): IModelManager<TEntity> {
+  protected _generateModelManager(model: IModel, config: ApiModelConfig): IModelManager<TEntity> {
     const [modelManager] = this._modelManagerGenerator.generateModelManager({
       model: model,
       secondaryOptions: {

@@ -1,6 +1,6 @@
 import { AntModelManager } from '../../api/ant-model-manager';
-import { IAntConfig } from '../../api/config/IAntConfig';
-import { IAntModelConfig } from '../../api/config/IAntModelConfig';
+import { ApiGeneralConfig } from '../../api/config/api-general-config';
+import { ApiModelConfig } from '../../api/config/api-model-config';
 import { Model } from '../../model/Model';
 import { ITest } from '../../testapi/api/ITest';
 import { RedisWrapper } from '../primary/RedisWrapper';
@@ -63,7 +63,7 @@ export class AntManagerTest implements ITest {
       async (done) => {
         const model = modelGenerator(prefix);
         const antManager = new MinimalAntManager();
-        const config: IAntConfig<IAntModelConfig> = {
+        const config: ApiGeneralConfig<ApiModelConfig> = {
           default: {
             redis: this._redis.redis,
           },
@@ -100,7 +100,7 @@ export class AntManagerTest implements ITest {
       async (done) => {
         const model = modelGenerator(prefix);
         const antManager = new MinimalAntManager();
-        const config: IAntConfig<IAntModelConfig> = {
+        const config: ApiGeneralConfig<ApiModelConfig> = {
           default: {
             redis: this._redis.redis,
           },
@@ -120,7 +120,7 @@ export class AntManagerTest implements ITest {
       itsName,
       async (done) => {
         const antManager = new MinimalAntManager();
-        const config: IAntConfig<IAntModelConfig> = {
+        const config: ApiGeneralConfig<ApiModelConfig> = {
           default: {
             redis: this._redis.redis,
           },

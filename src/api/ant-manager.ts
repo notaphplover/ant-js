@@ -2,18 +2,18 @@ import { IEntity } from '../model/IEntity';
 import { IModel } from '../model/IModel';
 import { ApiGeneralManager } from './api-general-manager';
 import { ApiModelManager } from './api-model-manager';
-import { IAntConfig } from './config/IAntConfig';
-import { IAntModelConfig } from './config/IAntModelConfig';
+import { ApiGeneralConfig } from './config/api-general-config';
+import { ApiModelConfig } from './config/api-model-config';
 
 export abstract class AntManager<
-  TConfig extends IAntModelConfig,
+  TConfig extends ApiModelConfig,
   TModel extends IModel,
   TAntModelManager extends ApiModelManager<IEntity, TConfig>
 > implements ApiGeneralManager<TConfig, TModel, TAntModelManager> {
   /**
    * AntJS config.
    */
-  protected _config: IAntConfig<TConfig>;
+  protected _config: ApiGeneralConfig<TConfig>;
 
   /**
    * Map of managers by model.
@@ -31,14 +31,14 @@ export abstract class AntManager<
    * Gets the current AntJS config.
    * @returns Current AntJS config.
    */
-  public config(): IAntConfig<TConfig>;
+  public config(): ApiGeneralConfig<TConfig>;
   /**
    * Sets the current AntJS config.
    * @param config new AntJS config.
    * @returns this instance.
    */
-  public config(config: IAntConfig<TConfig>): this;
-  public config(config?: IAntConfig<TConfig>): IAntConfig<TConfig> | this {
+  public config(config: ApiGeneralConfig<TConfig>): this;
+  public config(config?: ApiGeneralConfig<TConfig>): ApiGeneralConfig<TConfig> | this {
     if (undefined === config) {
       return this._config;
     } else {

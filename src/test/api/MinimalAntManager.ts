@@ -1,11 +1,11 @@
 import { AntManager } from '../../api/ant-manager';
 import { ApiModelManager } from '../../api/api-model-manager';
-import { IAntModelConfig } from '../../api/config/IAntModelConfig';
+import { ApiModelConfig } from '../../api/config/api-model-config';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
 import { MinimalAntModelManager } from './MinimalAntModelManager';
 
-export class MinimalAntManager extends AntManager<IAntModelConfig, IModel, ApiModelManager<IEntity, IAntModelConfig>> {
+export class MinimalAntManager extends AntManager<ApiModelConfig, IModel, ApiModelManager<IEntity, ApiModelConfig>> {
   /**
    * Creates a new minimal ant manager.
    */

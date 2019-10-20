@@ -9,7 +9,7 @@ import { MultipleResultQueryManager } from '../persistence/primary/query/Multipl
 import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/PrimaryQueryManager';
 import { SingleResultQueryManager } from '../persistence/primary/query/SingleResultQueryManager';
 import { ApiModelManager, TAntQueryManager } from './api-model-manager';
-import { IAntModelConfig } from './config/IAntModelConfig';
+import { ApiModelConfig } from './config/api-model-config';
 import { IAntQueryConfig } from './config/IAntQueryConfig';
 import { AntMultipleResultQueryManager } from './query/AntMultipleResultQueryManager';
 import { AntSingleResultQueryManager } from './query/AntSingleResultQueryManager';
@@ -21,7 +21,7 @@ export type QueryMapType<TEntity extends IEntity> = Map<string, IAntQueryManager
 
 export abstract class AntModelManager<
   TEntity extends IEntity,
-  TConfig extends IAntModelConfig,
+  TConfig extends ApiModelConfig,
   TModel extends IModel,
   TModelManager extends IModelManager<TEntity>
 > implements ApiModelManager<TEntity, TConfig> {
