@@ -1,14 +1,14 @@
 import { AntModelManager } from '../../api/ant-model-manager';
 import { ApiGeneralConfig } from '../../api/config/api-general-config';
 import { ApiModelConfig } from '../../api/config/api-model-config';
-import { Model } from '../../model/Model';
+import { AntModel } from '../../model/ant-model';
 import { ITest } from '../../testapi/api/ITest';
 import { RedisWrapper } from '../primary/RedisWrapper';
 import { MinimalAntManager } from './MinimalAntManager';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-const modelGenerator = (prefix: string) => new Model('id', { prefix: prefix });
+const modelGenerator = (prefix: string) => new AntModel('id', { prefix: prefix });
 
 export class AntManagerTest implements ITest {
   /**

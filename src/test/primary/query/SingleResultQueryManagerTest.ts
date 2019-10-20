@@ -1,6 +1,6 @@
+import { AntModel } from '../../../model/ant-model';
 import { IEntity } from '../../../model/IEntity';
 import { IModel } from '../../../model/IModel';
-import { Model } from '../../../model/Model';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { ModelManager } from '../../../persistence/primary/ModelManager';
 import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
@@ -81,7 +81,7 @@ export class SingleResultQueryManagerTest implements ITest {
       }
     >,
   ] {
-    const model = new Model('id', { prefix: prefix });
+    const model = new AntModel('id', { prefix: prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<
       IEntity & {
         id: number;
@@ -211,7 +211,7 @@ export class SingleResultQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const model = new Model('id', { prefix: prefix });
+        const model = new AntModel('id', { prefix: prefix });
         const entity1: IEntity & {
           id: string;
           field: string;
@@ -395,7 +395,7 @@ export class SingleResultQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const model = new Model('id', { prefix: prefix });
+        const model = new AntModel('id', { prefix: prefix });
         const entity1: IEntity & {
           id: string;
           field: string;

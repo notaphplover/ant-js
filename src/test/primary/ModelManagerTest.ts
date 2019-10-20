@@ -1,6 +1,6 @@
+import { AntModel } from '../../model/ant-model';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
-import { Model } from '../../model/Model';
 import { IModelManager } from '../../persistence/primary/IModelManager';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
 import { AntJsUpdateOptions } from '../../persistence/primary/options/AntJsUpdateOptions';
@@ -22,7 +22,7 @@ interface IEntityTest extends IEntity {
   strField: string;
 }
 const modelTestProperties = ['id', 'numberField', 'strField'];
-const modelTestGenerator = (prefix: string) => new Model('id', { prefix: prefix });
+const modelTestGenerator = (prefix: string) => new AntModel('id', { prefix: prefix });
 
 export class ModelManagerTest implements ITest {
   /**

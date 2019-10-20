@@ -1,6 +1,6 @@
+import { AntModel } from '../../model/ant-model';
 import { IEntity } from '../../model/IEntity';
 import { IModel } from '../../model/IModel';
-import { Model } from '../../model/Model';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
 import { ModelManager } from '../../persistence/primary/ModelManager';
 import { AntJsDeleteOptions } from '../../persistence/primary/options/AntJsDeleteOptions';
@@ -91,7 +91,7 @@ export class PrimaryEntityManagerTest implements ITest {
     entities: IEntityTest[],
     useNegativeCache: boolean = true,
   ): [IModel, IPrimaryEntityManager<IEntityTest>, SecondaryEntityManagerMock<IEntityTest>] {
-    const model = new Model('id', { prefix: prefix });
+    const model = new AntModel('id', { prefix: prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
     const primaryEntityManager = new PrimaryEntityManager<IEntityTest, ISecondaryEntityManager<IEntityTest>>(
       model,
@@ -292,7 +292,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const model = new Model('id', { prefix: prefix });
+        const model = new AntModel('id', { prefix: prefix });
         const secondaryEntityManager = new SecondaryEntityManagerMock<{ id: string }>(model);
         expect(() => {
           // tslint:disable-next-line:no-unused-expression
@@ -386,7 +386,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const model = new Model('id', { prefix: prefix });
+        const model = new AntModel('id', { prefix: prefix });
         const primaryEntityManager = new PrimaryEntityManager(model, this._redis.redis, null);
         const idToSearch = 3;
 
@@ -730,7 +730,7 @@ return redis.call('get', ${luaExpression})`,
       async (done) => {
         await this._beforeAllPromise;
         const entity: IEntityTestString = { id: 'id0', field: 'sample' };
-        const model = new Model('id', { prefix: prefix });
+        const model = new AntModel('id', { prefix: prefix });
         const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTestString>(model, new Array());
         const primaryEntityManager = new PrimaryEntityManager(model, this._redis.redis, true, secondaryEntityManager);
         const entityFound = await primaryEntityManager.mGet(
