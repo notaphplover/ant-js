@@ -4,7 +4,7 @@ import { IAntConfig } from './config/IAntConfig';
 import { IAntModelConfig } from './config/IAntModelConfig';
 import { IAntModelManager } from './IAntModelManager';
 
-export interface IAntManager<
+export interface GeneralApiManager<
   TConfig extends IAntModelConfig,
   TModel extends IModel,
   TAntModelManager extends IAntModelManager<IEntity, TConfig>

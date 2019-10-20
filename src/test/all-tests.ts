@@ -1,6 +1,6 @@
 import { ITest } from '../testapi/api/ITest';
 import { RedisAwaiter } from '../testapi/api/RedisAwaiter';
-import { AntTest } from './AntTest';
+import { AntTest } from './ant-test';
 import { AntManagerTest } from './api/AntManagerTest';
 import { AntModelManagerTest } from './api/AntModelManagerTest';
 import { AntQueryManagerTest } from './api/query/AntQueryManagerTest';

@@ -2,14 +2,14 @@ import { IEntity } from '../model/IEntity';
 import { IModel } from '../model/IModel';
 import { IAntConfig } from './config/IAntConfig';
 import { IAntModelConfig } from './config/IAntModelConfig';
-import { IAntManager } from './IAntManager';
+import { GeneralApiManager } from './general-api-manager';
 import { IAntModelManager } from './IAntModelManager';
 
 export abstract class AntManager<
   TConfig extends IAntModelConfig,
   TModel extends IModel,
   TAntModelManager extends IAntModelManager<IEntity, TConfig>
-> implements IAntManager<TConfig, TModel, TAntModelManager> {
+> implements GeneralApiManager<TConfig, TModel, TAntModelManager> {
   /**
    * AntJS config.
    */
