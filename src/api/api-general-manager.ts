@@ -1,13 +1,13 @@
 import { IEntity } from '../model/IEntity';
 import { IModel } from '../model/IModel';
+import { ApiModelManager } from './api-model-manager';
 import { IAntConfig } from './config/IAntConfig';
 import { IAntModelConfig } from './config/IAntModelConfig';
-import { IAntModelManager } from './IAntModelManager';
 
-export interface GeneralApiManager<
+export interface ApiGeneralManager<
   TConfig extends IAntModelConfig,
   TModel extends IModel,
-  TAntModelManager extends IAntModelManager<IEntity, TConfig>
+  TAntModelManager extends ApiModelManager<IEntity, TConfig>
 > {
   /**
    * Gets the AntJS config.

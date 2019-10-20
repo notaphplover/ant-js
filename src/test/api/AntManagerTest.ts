@@ -1,4 +1,4 @@
-import { AntModelManager } from '../../api/AntModelManager';
+import { AntModelManager } from '../../api/ant-model-manager';
 import { IAntConfig } from '../../api/config/IAntConfig';
 import { IAntModelConfig } from '../../api/config/IAntModelConfig';
 import { Model } from '../../model/Model';

@@ -13,7 +13,7 @@ export type TAntQueryManager<TEntity, TQueryResult> = TQueryResult extends Multi
   ? IAntSingleResultQueryManager<TEntity>
   : never;
 
-export interface IAntModelManager<TEntity extends IEntity, TConfig extends IAntModelConfig>
+export interface ApiModelManager<TEntity extends IEntity, TConfig extends IAntModelConfig>
   extends IBaseModelManager<TEntity> {
   /**
    * Gets the AntJS model config.

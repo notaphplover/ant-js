@@ -8,9 +8,9 @@ import { IPrimaryQueryManager } from '../persistence/primary/query/IPrimaryQuery
 import { MultipleResultQueryManager } from '../persistence/primary/query/MultipleResultQueryManager';
 import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/PrimaryQueryManager';
 import { SingleResultQueryManager } from '../persistence/primary/query/SingleResultQueryManager';
+import { ApiModelManager, TAntQueryManager } from './api-model-manager';
 import { IAntModelConfig } from './config/IAntModelConfig';
 import { IAntQueryConfig } from './config/IAntQueryConfig';
-import { IAntModelManager, TAntQueryManager } from './IAntModelManager';
 import { AntMultipleResultQueryManager } from './query/AntMultipleResultQueryManager';
 import { AntSingleResultQueryManager } from './query/AntSingleResultQueryManager';
 import { IAntMultipleResultQueryManager } from './query/IAntMultipleResultQueryManager';
@@ -24,7 +24,7 @@ export abstract class AntModelManager<
   TConfig extends IAntModelConfig,
   TModel extends IModel,
   TModelManager extends IModelManager<TEntity>
-> implements IAntModelManager<TEntity, TConfig> {
+> implements ApiModelManager<TEntity, TConfig> {
   /**
    * AntJS model config.
    */
