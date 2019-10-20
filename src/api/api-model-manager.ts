@@ -2,7 +2,7 @@ import { IEntity } from '../model/IEntity';
 import { IBaseModelManager } from '../persistence/primary/IModelManager';
 import { MultipleQueryResult, QueryResult, SingleQueryResult } from '../persistence/primary/query/PrimaryQueryManager';
 import { ApiModelConfig } from './config/api-model-config';
-import { IAntQueryConfig } from './config/IAntQueryConfig';
+import { ApiQueryConfig } from './config/api-query-config';
 import { IAntMultipleResultQueryManager } from './query/IAntMultipleResultQueryManager';
 import { IAntQueryManager } from './query/IAntQueryManager';
 import { IAntSingleResultQueryManager } from './query/IAntSingleResultQueryManager';
@@ -38,7 +38,7 @@ export interface ApiModelManager<TEntity extends IEntity, TConfig extends ApiMod
    * @returns This instance.
    */
   query<TQueryResult extends QueryResult>(
-    queryConfig: IAntQueryConfig<TEntity, TQueryResult>,
+    queryConfig: ApiQueryConfig<TEntity, TQueryResult>,
     aliasOrNothing?: string,
   ): TAntQueryManager<TEntity, TQueryResult>;
 }

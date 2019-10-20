@@ -10,7 +10,7 @@ import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/Prima
 import { SingleResultQueryManager } from '../persistence/primary/query/SingleResultQueryManager';
 import { ApiModelManager, TAntQueryManager } from './api-model-manager';
 import { ApiModelConfig } from './config/api-model-config';
-import { IAntQueryConfig } from './config/IAntQueryConfig';
+import { ApiQueryConfig } from './config/api-query-config';
 import { AntMultipleResultQueryManager } from './query/AntMultipleResultQueryManager';
 import { AntSingleResultQueryManager } from './query/AntSingleResultQueryManager';
 import { IAntMultipleResultQueryManager } from './query/IAntMultipleResultQueryManager';
@@ -143,7 +143,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @returns Query manager generated from the config.
    */
   public query<TQueryResult extends QueryResult>(
-    queryConfig: IAntQueryConfig<TEntity, TQueryResult>,
+    queryConfig: ApiQueryConfig<TEntity, TQueryResult>,
     aliasOrNothing?: string,
   ): TAntQueryManager<TEntity, TQueryResult>;
   /**
@@ -153,7 +153,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @returns Query found r this instance.
    */
   public query<TResult extends QueryResult & (TEntity | TEntity[])>(
-    queryOrAlias: IAntQueryConfig<TEntity, TResult> | string,
+    queryOrAlias: ApiQueryConfig<TEntity, TResult> | string,
     aliasOrNothing?: string,
   ): IAntQueryManager<TEntity, TResult> | TAntQueryManager<TEntity, TResult> {
     if ('string' === typeof queryOrAlias) {
@@ -194,7 +194,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @returns This instance
    */
   private _querySetQuery<TResult extends QueryResult>(
-    queryConfig: IAntQueryConfig<TEntity, TResult>,
+    queryConfig: ApiQueryConfig<TEntity, TResult>,
     aliasOrNothing?: string,
   ): TAntQueryManager<TEntity, TResult> {
     let query: TAntQueryManager<TEntity, TResult>;
