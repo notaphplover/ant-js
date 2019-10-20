@@ -1,5 +1,5 @@
 import { IEntity } from '../../../model/IEntity';
-import { IModel } from '../../../model/IModel';
+import { Model } from '../../../model/model';
 import { IModelManager } from '../../../persistence/primary/IModelManager';
 import { ModelManager } from '../../../persistence/primary/ModelManager';
 import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
@@ -9,7 +9,7 @@ import { IModelManagerGeneratorSecodaryManagerOptions } from './IModelManagerGen
 import { ModelManagerGenerator } from './ModelManagerGenerator';
 
 type TModelManagerOptions = IModelManagerGeneratorOptions<
-  IModel,
+  Model,
   IModelManagerGeneratorRedisOptions,
   IModelManagerGeneratorSecodaryManagerOptions<SecondaryEntityManagerMock<IEntity>>
 >;

@@ -1,6 +1,6 @@
 import { AntModel } from '../../model/ant-model';
 import { IEntity } from '../../model/IEntity';
-import { IModel } from '../../model/IModel';
+import { Model } from '../../model/model';
 import { IModelManager } from '../../persistence/primary/IModelManager';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
 import { AntJsUpdateOptions } from '../../persistence/primary/options/AntJsUpdateOptions';
@@ -96,7 +96,7 @@ export class ModelManagerTest implements ITest {
    */
   private async _helperSearchEntity(
     entity: IEntityTest,
-    model: IModel,
+    model: Model,
     primaryEntityManager: IPrimaryEntityManager<IEntityTest>,
     queriesMap: Map<string, IPrimaryQueryManager<IEntityTest>>,
   ): Promise<[IEntityTest, IEntityTest[]]> {

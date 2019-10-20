@@ -4,7 +4,7 @@ import { IKeyGenParams } from './IKeyGenParams';
  * Represents a model.
  * Models are the minimal unit of data.
  */
-export interface IModel {
+export interface Model {
   /**
    * Model's id field.
    */

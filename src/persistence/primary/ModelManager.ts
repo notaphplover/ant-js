@@ -1,5 +1,5 @@
 import { IEntity } from '../../model/IEntity';
-import { IModel } from '../../model/IModel';
+import { Model } from '../../model/model';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { IModelManager } from './IModelManager';
 import { IRedisMiddleware } from './IRedisMiddleware';
@@ -48,7 +48,7 @@ export class ModelManager<TEntity extends IEntity, TSecondaryManager extends ISe
    * @param queryManagers Query managers.
    */
   public constructor(
-    model: IModel,
+    model: Model,
     redis: IRedisMiddleware,
     negativeEntityCache: boolean,
     secondaryEntityManager?: TSecondaryManager,

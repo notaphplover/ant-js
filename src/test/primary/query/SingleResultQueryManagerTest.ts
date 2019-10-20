@@ -1,6 +1,6 @@
 import { AntModel } from '../../../model/ant-model';
 import { IEntity } from '../../../model/IEntity';
-import { IModel } from '../../../model/IModel';
+import { Model } from '../../../model/model';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { ModelManager } from '../../../persistence/primary/ModelManager';
 import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
@@ -67,7 +67,7 @@ export class SingleResultQueryManagerTest implements ITest {
       }
     >,
   ): [
-    IModel,
+    Model,
     IPrimaryEntityManager<
       IEntity & {
         id: number;

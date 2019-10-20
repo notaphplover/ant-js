@@ -1,5 +1,5 @@
 import { AntModel } from '../../../model/ant-model';
-import { IModel } from '../../../model/IModel';
+import { Model } from '../../../model/model';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { ModelManager } from '../../../persistence/primary/ModelManager';
 import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
@@ -60,7 +60,7 @@ export class MultipleResultQueryManagerTest implements ITest {
   private _helperGenerateBaseInstances(
     prefix: string,
     entities: NamedEntity[],
-  ): [IModel, IPrimaryEntityManager<NamedEntity>, SecondaryEntityManagerMock<NamedEntity>] {
+  ): [Model, IPrimaryEntityManager<NamedEntity>, SecondaryEntityManagerMock<NamedEntity>] {
     const model = new AntModel('id', { prefix: prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntity>(model, entities);
     const primaryEntityManager = new PrimaryEntityManager<NamedEntity, ISecondaryEntityManager<NamedEntity>>(

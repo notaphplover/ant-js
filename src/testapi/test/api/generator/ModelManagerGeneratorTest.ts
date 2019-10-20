@@ -1,5 +1,5 @@
 import { IEntity } from '../../../../model/IEntity';
-import { IModel } from '../../../../model/IModel';
+import { Model } from '../../../../model/model';
 import { ModelManager } from '../../../../persistence/primary/ModelManager';
 import { RedisWrapper } from '../../../../test/primary/RedisWrapper';
 import { AntJsModelManagerGenerator } from '../../../api/generator/AntJsModelManagerGenerator';
@@ -47,7 +47,7 @@ export class ModelManagerGeneratorTest implements ITest {
 
   private _itMustGenerateAModelManagerWithCustomSecondaryModelManager(): void {
     it(this._itMustGenerateAModelManagerWithCustomSecondaryModelManager.name, async (done) => {
-      const model: IModel = {
+      const model: Model = {
         id: 'id',
         keyGen: { prefix: 'random_prefix' },
       };
@@ -66,7 +66,7 @@ export class ModelManagerGeneratorTest implements ITest {
 
   private _itMustGenerateAModelManagerWithMultipleResultQueries(): void {
     it(this._itMustGenerateAModelManagerWithMultipleResultQueries.name, async (done) => {
-      const model: IModel = {
+      const model: Model = {
         id: 'id',
         keyGen: { prefix: 'random_prefix' },
       };
@@ -94,7 +94,7 @@ export class ModelManagerGeneratorTest implements ITest {
 
   private _itMustGenerateAModelManagerWithNoQueriesAndASecondaryModelManager(): void {
     it(this._itMustGenerateAModelManagerWithNoQueriesAndASecondaryModelManager.name, async (done) => {
-      const model: IModel = {
+      const model: Model = {
         id: 'id',
         keyGen: { prefix: 'random_prefix' },
       };
@@ -117,7 +117,7 @@ export class ModelManagerGeneratorTest implements ITest {
 
   private _itMustGenerateAModelManagerWithSingleResultQueries(): void {
     it(this._itMustGenerateAModelManagerWithSingleResultQueries.name, async (done) => {
-      const model: IModel = {
+      const model: Model = {
         id: 'id',
         keyGen: { prefix: 'random_prefix' },
       };
@@ -154,7 +154,7 @@ export class ModelManagerGeneratorTest implements ITest {
 
         const modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
 
-        const model: IModel = {
+        const model: Model = {
           id: 'id',
           keyGen: { prefix: prefix },
         };

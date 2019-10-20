@@ -1,7 +1,7 @@
 import { IKeyGenParams } from './IKeyGenParams';
-import { IModel } from './IModel';
+import { Model } from './model';
 
-export class AntModel implements IModel {
+export class AntModel implements Model {
   /**
    * Model's id.
    */

@@ -1,5 +1,5 @@
 import { IEntity } from '../../../model/IEntity';
-import { IModel } from '../../../model/IModel';
+import { Model } from '../../../model/model';
 import { IModelManager } from '../../../persistence/primary/IModelManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
 import { IMultipleResultQueryManager } from '../../../persistence/primary/query/IMultipleResultQueryManager';
@@ -15,7 +15,7 @@ import { IQueriesManagerGeneratorOptions } from './IQueriesManagerGeneratorOptio
 
 export abstract class ModelManagerGenerator<
   TOptions extends IModelManagerGeneratorOptions<
-    IModel,
+    Model,
     IModelManagerGeneratorRedisOptions,
     IModelManagerGeneratorSecodaryManagerOptions<TSecondaryManager>
   >,

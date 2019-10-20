@@ -1,6 +1,6 @@
 import { IEntity } from '../../model/IEntity';
 import { IKeyGenParams } from '../../model/IKeyGenParams';
-import { IModel } from '../../model/IModel';
+import { Model } from '../../model/model';
 import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 import { IRedisMiddleware } from './IRedisMiddleware';
@@ -20,7 +20,7 @@ export class PrimaryEntityManager<TEntity extends IEntity, TSecondaryManager ext
   /**
    * Model managed.
    */
-  protected _model: IModel;
+  protected _model: Model;
   /**
    * True to use negative entity cache.
    */
@@ -43,7 +43,7 @@ export class PrimaryEntityManager<TEntity extends IEntity, TSecondaryManager ext
    * @param negativeEntityCache True to use negative entity cache.
    */
   public constructor(
-    model: IModel,
+    model: Model,
     redis: IRedisMiddleware,
     negativeEntityCache: boolean,
     successor?: TSecondaryManager,
@@ -59,7 +59,7 @@ export class PrimaryEntityManager<TEntity extends IEntity, TSecondaryManager ext
   /**
    * Model managed.
    */
-  public get model(): IModel {
+  public get model(): Model {
     return this._model;
   }
 

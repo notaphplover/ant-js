@@ -1,11 +1,11 @@
 import { IEntity } from '../../model/IEntity';
-import { IModel } from '../../model/IModel';
+import { Model } from '../../model/model';
 
 export interface ISecondaryEntityManager<TEntity extends IEntity> {
   /**
    * Model of the manager.
    */
-  model: IModel;
+  model: Model;
   /**
    * Gets a model by its id.
    * @param id: Model's id.

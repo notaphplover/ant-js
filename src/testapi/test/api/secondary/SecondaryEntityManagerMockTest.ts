@@ -1,4 +1,3 @@
-import { IModel } from '../../../../model/IModel';
 import { ITest } from '../../../api/ITest';
 import { SecondaryEntityManagerMock } from '../../../api/secondary/SecondaryEntityManagerMock';
 

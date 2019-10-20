@@ -1,11 +1,11 @@
 import { IEntity } from '../../../model/IEntity';
-import { IModel } from '../../../model/IModel';
+import { Model } from '../../../model/model';
 import { ISecondaryEntityManager } from '../../../persistence/secondary/ISecondaryEntityManager';
 import { IModelManagerGeneratorRedisOptions } from './IModelManagerGeneratorRedisOptions';
 import { IModelManagerGeneratorSecodaryManagerOptions } from './IModelManagerGeneratorSecodaryManagerOptions';
 
 export interface IModelManagerGeneratorOptions<
-  TModel extends IModel,
+  TModel extends Model,
   TRedisOptions extends IModelManagerGeneratorRedisOptions,
   TSecondaryOptions extends IModelManagerGeneratorSecodaryManagerOptions<ISecondaryEntityManager<IEntity>>
 > {

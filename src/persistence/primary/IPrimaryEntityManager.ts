@@ -1,5 +1,5 @@
 import { IEntity } from '../../model/IEntity';
-import { IModel } from '../../model/IModel';
+import { Model } from '../../model/model';
 import { IPersistencySearchOptions } from './options/IPersistencySearchOptions';
 
 export interface IPrimaryEntityManagerBase<TEntity extends IEntity> {
@@ -26,7 +26,7 @@ export interface IPrimaryEntityManager<TEntity extends IEntity> extends IPrimary
   /**
    * Model of the manager.
    */
-  model: IModel;
+  model: Model;
 
   /**
    * Gets the lua key generator from id.

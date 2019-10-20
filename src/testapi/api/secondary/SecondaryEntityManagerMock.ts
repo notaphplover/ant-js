@@ -1,12 +1,12 @@
 import { IEntity } from '../../../model/IEntity';
-import { IModel } from '../../../model/IModel';
+import { Model } from '../../../model/model';
 import { ISecondaryEntityManager } from '../../../persistence/secondary/ISecondaryEntityManager';
 
 export class SecondaryEntityManagerMock<TEntity extends IEntity> implements ISecondaryEntityManager<TEntity> {
   /**
    * Model managed.
    */
-  protected _model: IModel;
+  protected _model: Model;
 
   /**
    * Entities set.
@@ -18,7 +18,7 @@ export class SecondaryEntityManagerMock<TEntity extends IEntity> implements ISec
    * @param model Model of the manager.
    * @param store Inital entities.
    */
-  public constructor(model: IModel, store: TEntity[] = new Array()) {
+  public constructor(model: Model, store: TEntity[] = new Array()) {
     this._model = model;
     this._store = store;
   }
@@ -26,7 +26,7 @@ export class SecondaryEntityManagerMock<TEntity extends IEntity> implements ISec
   /**
    * Model managed.
    */
-  public get model(): IModel {
+  public get model(): Model {
     return this._model;
   }
 

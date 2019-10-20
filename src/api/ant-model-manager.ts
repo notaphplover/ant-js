@@ -1,5 +1,5 @@
 import { IEntity } from '../model/IEntity';
-import { IModel } from '../model/IModel';
+import { Model } from '../model/model';
 import { IModelManager } from '../persistence/primary/IModelManager';
 import { IPersistencyDeleteOptions } from '../persistence/primary/options/IPersistencyDeleteOptions';
 import { IPersistencySearchOptions } from '../persistence/primary/options/IPersistencySearchOptions';
@@ -22,7 +22,7 @@ export type QueryMapType<TEntity extends IEntity> = Map<string, ApiQueryManager<
 export abstract class AntModelManager<
   TEntity extends IEntity,
   TConfig extends ApiModelConfig,
-  TModel extends IModel,
+  TModel extends Model,
   TModelManager extends IModelManager<TEntity>
 > implements ApiModelManager<TEntity, TConfig> {
   /**
