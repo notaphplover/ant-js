@@ -2,7 +2,7 @@ import { IEntity } from '../../../model/IEntity';
 import { VOID_RESULT_STRING } from '../LuaConstants';
 import { IPersistencySearchOptions } from '../options/IPersistencySearchOptions';
 import { ISingleResultQueryManager } from './ISingleResultQueryManager';
-import { PrimaryQueryManager } from './PrimaryQueryManager';
+import { PrimaryQueryManager } from './primary-query-manager';
 
 export class SingleResultQueryManager<TEntity extends IEntity> extends PrimaryQueryManager<TEntity, number | string>
   implements ISingleResultQueryManager<TEntity> {

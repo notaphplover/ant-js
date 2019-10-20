@@ -6,7 +6,7 @@ import { IPersistencySearchOptions } from '../persistence/primary/options/IPersi
 import { IPersistencyUpdateOptions } from '../persistence/primary/options/IPersistencyUpdateOptions';
 import { IPrimaryQueryManager } from '../persistence/primary/query/IPrimaryQueryManager';
 import { MultipleResultQueryManager } from '../persistence/primary/query/MultipleResultQueryManager';
-import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/PrimaryQueryManager';
+import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/primary-query-manager';
 import { SingleResultQueryManager } from '../persistence/primary/query/SingleResultQueryManager';
 import { ApiModelManager, TAntQueryManager } from './api-model-manager';
 import { ApiModelConfig } from './config/api-model-config';

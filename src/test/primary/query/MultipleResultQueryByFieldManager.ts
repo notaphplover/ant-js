@@ -2,7 +2,7 @@ import { IEntity } from '../../../model/IEntity';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
 import { MultipleResultQueryManager } from '../../../persistence/primary/query/MultipleResultQueryManager';
-import { TMQuery, TQuery } from '../../../persistence/primary/query/PrimaryQueryManager';
+import { TMQuery, TQuery } from '../../../persistence/primary/query/primary-query-manager';
 
 export class MultipleResultQueryByFieldManager<TEntity extends IEntity> extends MultipleResultQueryManager<TEntity> {
   /**
