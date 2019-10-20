@@ -1,6 +1,6 @@
 import { IEntity } from '../../model/IEntity';
 import { IPersistencySearchOptions } from '../../persistence/primary/options/IPersistencySearchOptions';
-import { IQueryManager } from '../../persistence/primary/query/IQueryManager';
+import { QueryManager } from '../../persistence/primary/query/query-manager';
 import { ApiQueryManager } from './api-query-manager';
 
 export abstract class AntQueryManager<TEntity extends IEntity, TResult extends TEntity | TEntity[]>
@@ -8,13 +8,13 @@ export abstract class AntQueryManager<TEntity extends IEntity, TResult extends T
   /**
    * Inner query manager.
    */
-  protected _queryManager: IQueryManager<TEntity, TResult>;
+  protected _queryManager: QueryManager<TEntity, TResult>;
 
   /**
    * Creates a new Ant Query Manager.
    * @param queryManager Inner query manager.
    */
-  public constructor(queryManager: IQueryManager<TEntity, TResult>) {
+  public constructor(queryManager: QueryManager<TEntity, TResult>) {
     this._queryManager = queryManager;
   }
 

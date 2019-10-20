@@ -1,5 +1,5 @@
 import { IEntity } from '../../model/IEntity';
-import { IQueryManager } from '../../persistence/primary/query/IQueryManager';
+import { QueryManager } from '../../persistence/primary/query/query-manager';
 import { AntQueryManager } from './ant-query-manager';
 import { IAntMultipleResultQueryManager } from './IAntMultipleResultQueryManager';
 
@@ -9,7 +9,7 @@ export class AntMultipleResultQueryManager<TEntity extends IEntity> extends AntQ
    * Creates a new Ant single result query manager.
    * @param queryManager Inner query manager.
    */
-  public constructor(queryManager: IQueryManager<TEntity, TEntity[]>) {
+  public constructor(queryManager: QueryManager<TEntity, TEntity[]>) {
     super(queryManager);
   }
 }
