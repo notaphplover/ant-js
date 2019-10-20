@@ -4,7 +4,7 @@ import { Model } from '../../../model/model';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { ModelManager } from '../../../persistence/primary/ModelManager';
 import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
-import { ISecondaryEntityManager } from '../../../persistence/secondary/ISecondaryEntityManager';
+import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { ITest } from '../../../testapi/api/ITest';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from '../RedisWrapper';
@@ -92,7 +92,7 @@ export class SingleResultQueryManagerTest implements ITest {
       id: number;
       field: string;
     };
-    const primaryEntityManager = new PrimaryEntityManager<TestModel, ISecondaryEntityManager<TestModel>>(
+    const primaryEntityManager = new PrimaryEntityManager<TestModel, SecondaryEntityManager<TestModel>>(
       model,
       this._redis.redis,
       true,

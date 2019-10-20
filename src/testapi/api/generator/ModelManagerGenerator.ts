@@ -7,7 +7,7 @@ import { IPrimaryQueryManager } from '../../../persistence/primary/query/IPrimar
 import { ISingleResultQueryManager } from '../../../persistence/primary/query/ISingleResultQueryManager';
 import { MultipleResultQueryManager } from '../../../persistence/primary/query/MultipleResultQueryManager';
 import { SingleResultQueryManager } from '../../../persistence/primary/query/SingleResultQueryManager';
-import { ISecondaryEntityManager } from '../../../persistence/secondary/ISecondaryEntityManager';
+import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { IModelManagerGeneratorOptions } from './IModelManagerGeneratorOptions';
 import { IModelManagerGeneratorRedisOptions } from './IModelManagerGeneratorRedisOptions';
 import { IModelManagerGeneratorSecodaryManagerOptions } from './IModelManagerGeneratorSecodaryManagerOptions';
@@ -20,7 +20,7 @@ export abstract class ModelManagerGenerator<
     IModelManagerGeneratorSecodaryManagerOptions<TSecondaryManager>
   >,
   TModelManager extends IModelManager<Entity>,
-  TSecondaryManager extends ISecondaryEntityManager<Entity>
+  TSecondaryManager extends SecondaryEntityManager<Entity>
 > {
   /**
    * Default redis middleware.

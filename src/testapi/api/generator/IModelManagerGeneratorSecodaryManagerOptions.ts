@@ -1,8 +1,8 @@
 import { Entity } from '../../../model/entity';
-import { ISecondaryEntityManager } from '../../../persistence/secondary/ISecondaryEntityManager';
+import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 
 export interface IModelManagerGeneratorSecodaryManagerOptions<
-  TSecondaryManager extends ISecondaryEntityManager<Entity>
+  TSecondaryManager extends SecondaryEntityManager<Entity>
 > {
   /**
    * Secondary entity manager to be used.

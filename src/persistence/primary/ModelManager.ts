@@ -1,6 +1,6 @@
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
-import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
+import { SecondaryEntityManager } from '../secondary/secondary-entity-manager';
 import { IModelManager } from './IModelManager';
 import { IRedisMiddleware } from './IRedisMiddleware';
 import { MULTIPLE_RESULT_QUERY_CODE, SINGLE_RESULT_QUERY_CODE, VOID_RESULT_STRING } from './LuaConstants';
@@ -14,7 +14,7 @@ import { DeleteEntitiesCachedScriptSet } from './script/DeleteEntitiesCachedScri
 import { RedisCachedScript } from './script/RedisCachedScript';
 import { UpdateEntitiesCachedScriptSet } from './script/UpdateEntitiesCachedScriptSet';
 
-export class ModelManager<TEntity extends Entity, TSecondaryManager extends ISecondaryEntityManager<TEntity>>
+export class ModelManager<TEntity extends Entity, TSecondaryManager extends SecondaryEntityManager<TEntity>>
   extends PrimaryEntityManager<TEntity, TSecondaryManager>
   implements IModelManager<TEntity> {
   /**

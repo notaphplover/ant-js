@@ -3,7 +3,7 @@ import { Model } from '../../../model/model';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { ModelManager } from '../../../persistence/primary/ModelManager';
 import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
-import { ISecondaryEntityManager } from '../../../persistence/secondary/ISecondaryEntityManager';
+import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { ITest } from '../../../testapi/api/ITest';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from '../RedisWrapper';
@@ -63,7 +63,7 @@ export class MultipleResultQueryManagerTest implements ITest {
   ): [Model, IPrimaryEntityManager<NamedEntity>, SecondaryEntityManagerMock<NamedEntity>] {
     const model = new AntModel('id', { prefix: prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntity>(model, entities);
-    const primaryEntityManager = new PrimaryEntityManager<NamedEntity, ISecondaryEntityManager<NamedEntity>>(
+    const primaryEntityManager = new PrimaryEntityManager<NamedEntity, SecondaryEntityManager<NamedEntity>>(
       model,
       this._redis.redis,
       true,
@@ -233,7 +233,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntityAlternative>(model, [entity1]);
         const primaryEntityManager = new PrimaryEntityManager<
           NamedEntityAlternative,
-          ISecondaryEntityManager<NamedEntityAlternative>
+          SecondaryEntityManager<NamedEntityAlternative>
         >(model, this._redis.redis, true, secondaryEntityManager);
         const modelManager = new ModelManager(model, this._redis.redis, false, secondaryEntityManager);
         const queryManager = new NamesStartingByLetterAlternative(

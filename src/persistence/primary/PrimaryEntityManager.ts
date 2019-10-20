@@ -1,7 +1,7 @@
 import { Entity } from '../../model/entity';
 import { KeyGenParams } from '../../model/key-gen-params';
 import { Model } from '../../model/model';
-import { ISecondaryEntityManager } from '../secondary/ISecondaryEntityManager';
+import { SecondaryEntityManager } from '../secondary/secondary-entity-manager';
 import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 import { IRedisMiddleware } from './IRedisMiddleware';
 import { VOID_RESULT_STRING } from './LuaConstants';
@@ -11,7 +11,7 @@ import { IPersistencyDeleteOptions } from './options/IPersistencyDeleteOptions';
 import { IPersistencySearchOptions } from './options/IPersistencySearchOptions';
 import { IPersistencyUpdateOptions } from './options/IPersistencyUpdateOptions';
 
-export class PrimaryEntityManager<TEntity extends Entity, TSecondaryManager extends ISecondaryEntityManager<TEntity>>
+export class PrimaryEntityManager<TEntity extends Entity, TSecondaryManager extends SecondaryEntityManager<TEntity>>
   implements IPrimaryEntityManager<TEntity> {
   /**
    * Lua expression generator.

@@ -1,8 +1,8 @@
 import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
-import { ISecondaryEntityManager } from '../../../persistence/secondary/ISecondaryEntityManager';
+import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 
-export class SecondaryEntityManagerMock<TEntity extends Entity> implements ISecondaryEntityManager<TEntity> {
+export class SecondaryEntityManagerMock<TEntity extends Entity> implements SecondaryEntityManager<TEntity> {
   /**
    * Model managed.
    */

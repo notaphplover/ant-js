@@ -8,7 +8,7 @@ import { AntJsSearchOptions } from '../../persistence/primary/options/AntJsSearc
 import { AntJsUpdateOptions } from '../../persistence/primary/options/AntJsUpdateOptions';
 import { CacheMode } from '../../persistence/primary/options/CacheMode';
 import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
-import { ISecondaryEntityManager } from '../../persistence/secondary/ISecondaryEntityManager';
+import { SecondaryEntityManager } from '../../persistence/secondary/secondary-entity-manager';
 import { ITest } from '../../testapi/api/ITest';
 import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from './RedisWrapper';
@@ -93,7 +93,7 @@ export class PrimaryEntityManagerTest implements ITest {
   ): [Model, IPrimaryEntityManager<IEntityTest>, SecondaryEntityManagerMock<IEntityTest>] {
     const model = new AntModel('id', { prefix: prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
-    const primaryEntityManager = new PrimaryEntityManager<IEntityTest, ISecondaryEntityManager<IEntityTest>>(
+    const primaryEntityManager = new PrimaryEntityManager<IEntityTest, SecondaryEntityManager<IEntityTest>>(
       model,
       this._redis.redis,
       useNegativeCache,
