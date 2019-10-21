@@ -3,9 +3,9 @@ import { Model } from '../../../model/model';
 import { IModelManager } from '../../../persistence/primary/IModelManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
 import { IMultipleResultQueryManager } from '../../../persistence/primary/query/IMultipleResultQueryManager';
-import { IPrimaryQueryManager } from '../../../persistence/primary/query/IPrimaryQueryManager';
 import { ISingleResultQueryManager } from '../../../persistence/primary/query/ISingleResultQueryManager';
 import { MultipleResultQueryManager } from '../../../persistence/primary/query/MultipleResultQueryManager';
+import { PrimaryQueryManager } from '../../../persistence/primary/query/primary-query-manager';
 import { SingleResultQueryManager } from '../../../persistence/primary/query/SingleResultQueryManager';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { IModelManagerGeneratorOptions } from './IModelManagerGeneratorOptions';
@@ -122,7 +122,7 @@ export abstract class ModelManagerGenerator<
    */
   protected _attachQueryManagers(
     modelManager: IModelManager<Entity>,
-    queries: Iterable<IPrimaryQueryManager<Entity>>,
+    queries: Iterable<PrimaryQueryManager<Entity>>,
   ): void {
     for (const query of queries) {
       modelManager.addQuery(query);

@@ -1,5 +1,5 @@
 import { Entity } from '../../model/entity';
-import { QueryResult, TMQuery, TQuery } from '../../persistence/primary/query/primary-query-manager';
+import { QueryResult, TMQuery, TQuery } from '../../persistence/primary/query/ant-primary-query-manager';
 
 export interface ApiQueryConfig<TEntity extends Entity, TQueryResult extends QueryResult> {
   /**

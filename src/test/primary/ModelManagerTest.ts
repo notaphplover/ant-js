@@ -5,8 +5,8 @@ import { IModelManager } from '../../persistence/primary/IModelManager';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
 import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-update-options';
 import { CacheMode } from '../../persistence/primary/options/cache-mode';
-import { IPrimaryQueryManager } from '../../persistence/primary/query/IPrimaryQueryManager';
 import { ISingleResultQueryManager } from '../../persistence/primary/query/ISingleResultQueryManager';
+import { PrimaryQueryManager } from '../../persistence/primary/query/primary-query-manager';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/AntJsModelManagerGenerator';
 import { ITest } from '../../testapi/api/ITest';
 import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
@@ -98,7 +98,7 @@ export class ModelManagerTest implements ITest {
     entity: IEntityTest,
     model: Model,
     primaryEntityManager: IPrimaryEntityManager<IEntityTest>,
-    queriesMap: Map<string, IPrimaryQueryManager<IEntityTest>>,
+    queriesMap: Map<string, PrimaryQueryManager<IEntityTest>>,
   ): Promise<[IEntityTest, IEntityTest[]]> {
     const searchEntityByPrimaryEntityManager = await primaryEntityManager.get(entity[model.id]);
     const searchEntityByQueryManager = new Array();

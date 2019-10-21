@@ -4,9 +4,9 @@ import { IModelManager } from '../persistence/primary/IModelManager';
 import { PersistencyDeleteOptions } from '../persistence/primary/options/persistency-delete-options';
 import { PersistencySearchOptions } from '../persistence/primary/options/persistency-search-options';
 import { PersistencyUpdateOptions } from '../persistence/primary/options/persistency-update-options';
-import { IPrimaryQueryManager } from '../persistence/primary/query/IPrimaryQueryManager';
+import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/ant-primary-query-manager';
 import { MultipleResultQueryManager } from '../persistence/primary/query/MultipleResultQueryManager';
-import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/primary-query-manager';
+import { PrimaryQueryManager } from '../persistence/primary/query/primary-query-manager';
 import { SingleResultQueryManager } from '../persistence/primary/query/SingleResultQueryManager';
 import { ApiModelManager, TAntQueryManager } from './api-model-manager';
 import { ApiModelConfig } from './config/api-model-config';
@@ -198,7 +198,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
     aliasOrNothing?: string,
   ): TAntQueryManager<TEntity, TResult> {
     let query: TAntQueryManager<TEntity, TResult>;
-    let innerQueryManager: IPrimaryQueryManager<TEntity>;
+    let innerQueryManager: PrimaryQueryManager<TEntity>;
     if (queryConfig.isMultiple) {
       innerQueryManager = new MultipleResultQueryManager<TEntity>(
         queryConfig.query as TQuery<number[] | string[]>,

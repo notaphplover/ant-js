@@ -1,5 +1,5 @@
 import { Entity } from '../../../model/entity';
-import { IBasePrimaryQueryManager } from './IPrimaryQueryManager';
+import { BasePrimaryQueryManager } from './primary-query-manager';
 
 export interface IMultipleResultQueryManager<TEntity extends Entity>
-  extends IBasePrimaryQueryManager<TEntity, TEntity[]> {}
+  extends BasePrimaryQueryManager<TEntity, TEntity[]> {}

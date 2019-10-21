@@ -9,7 +9,7 @@ import { AntJsUpdateOptions } from './options/antjs-update-options';
 import { PersistencyDeleteOptions } from './options/persistency-delete-options';
 import { PersistencyUpdateOptions } from './options/persistency-update-options';
 import { PrimaryEntityManager } from './PrimaryEntityManager';
-import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
+import { PrimaryQueryManager } from './query/primary-query-manager';
 import { DeleteEntitiesCachedScriptSet } from './script/DeleteEntitiesCachedScriptSet';
 import { RedisCachedScript } from './script/RedisCachedScript';
 import { UpdateEntitiesCachedScriptSet } from './script/UpdateEntitiesCachedScriptSet';
@@ -37,7 +37,7 @@ export class ModelManager<TEntity extends Entity, TSecondaryManager extends Seco
   /**
    * Query managers.
    */
-  protected _queryManagers: Array<IPrimaryQueryManager<TEntity>>;
+  protected _queryManagers: Array<PrimaryQueryManager<TEntity>>;
 
   /**
    * Creates a new model manager.
@@ -64,7 +64,7 @@ export class ModelManager<TEntity extends Entity, TSecondaryManager extends Seco
    * Adds a query manager to the model manager.
    * @param queryManager Query manager to add.
    */
-  public addQuery(queryManager: IPrimaryQueryManager<TEntity>): this {
+  public addQuery(queryManager: PrimaryQueryManager<TEntity>): this {
     this._queryManagers.push(queryManager);
     return this;
   }
@@ -73,7 +73,7 @@ export class ModelManager<TEntity extends Entity, TSecondaryManager extends Seco
    * Returns the queries managed.
    * @returns Queries managed.
    */
-  public getQueries(): Array<IPrimaryQueryManager<TEntity>> {
+  public getQueries(): Array<PrimaryQueryManager<TEntity>> {
     return Object.assign(new Array(), this._queryManagers);
   }
 

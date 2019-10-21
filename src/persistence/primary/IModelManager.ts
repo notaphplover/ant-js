@@ -2,7 +2,7 @@ import { Entity } from '../../model/entity';
 import { IPrimaryEntityManager, IPrimaryEntityManagerBase } from './IPrimaryEntityManager';
 import { PersistencyDeleteOptions } from './options/persistency-delete-options';
 import { PersistencyUpdateOptions } from './options/persistency-update-options';
-import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
+import { PrimaryQueryManager } from './query/primary-query-manager';
 
 export interface IBaseModelManager<TEntity extends Entity> extends IPrimaryEntityManagerBase<TEntity> {
   /**
@@ -42,11 +42,11 @@ export interface IModelManager<TEntity extends Entity>
    * Adds a query manager to the model manager.
    * @param queryManager Query manager to add.
    */
-  addQuery(queryManager: IPrimaryQueryManager<TEntity>): this;
+  addQuery(queryManager: PrimaryQueryManager<TEntity>): this;
 
   /**
    * Returns the queries managed.
    * @returns Queries managed.
    */
-  getQueries(): Array<IPrimaryQueryManager<TEntity>>;
+  getQueries(): Array<PrimaryQueryManager<TEntity>>;
 }

@@ -1,4 +1,4 @@
 import { Entity } from '../../../model/entity';
-import { IBasePrimaryQueryManager } from './IPrimaryQueryManager';
+import { BasePrimaryQueryManager } from './primary-query-manager';
 
-export interface ISingleResultQueryManager<TEntity extends Entity> extends IBasePrimaryQueryManager<TEntity, TEntity> {}
+export interface ISingleResultQueryManager<TEntity extends Entity> extends BasePrimaryQueryManager<TEntity, TEntity> {}

@@ -1,11 +1,11 @@
 import { Entity } from '../../../model/entity';
 import { SEPARATOR_STRING, VOID_RESULT_STRING } from '../LuaConstants';
 import { PersistencySearchOptions } from '../options/persistency-search-options';
+import { AntPrimaryQueryManager } from './ant-primary-query-manager';
 import { IMultipleResultQueryManager } from './IMultipleResultQueryManager';
-import { PrimaryQueryManager } from './primary-query-manager';
 
 export class MultipleResultQueryManager<TEntity extends Entity>
-  extends PrimaryQueryManager<TEntity, number[] | string[]>
+  extends AntPrimaryQueryManager<TEntity, number[] | string[]>
   implements IMultipleResultQueryManager<TEntity> {
   /**
    * True if the queries managed can return multiple results.
