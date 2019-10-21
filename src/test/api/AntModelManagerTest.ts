@@ -1,7 +1,7 @@
 import { AntQueryManager } from '../../api/query/ant-query-manager';
 import { AntModel } from '../../model/ant-model';
 import { Entity } from '../../model/entity';
-import { IModelManager } from '../../persistence/primary/IModelManager';
+import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
 import { ITest } from '../../testapi/api/ITest';
 import { RedisWrapper } from '../primary/RedisWrapper';
 import { MinimalAntModelManager } from './MinimalAntModelManager';
@@ -78,7 +78,7 @@ export class AntModelManagerTest implements ITest {
         const modelManager = antModelManager.modelManager;
 
         const methodsToTest = ['delete', 'get', 'mDelete', 'mGet', 'mUpdate', 'update'] as Array<
-          keyof IModelManager<any>
+          keyof PrimaryModelManager<any>
         >;
 
         for (const methodToTest of methodsToTest) {

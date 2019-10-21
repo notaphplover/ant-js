@@ -2,7 +2,7 @@ import { AntModel } from '../../../model/ant-model';
 import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
 import { AntPrimaryEntityManager } from '../../../persistence/primary/ant-primary-entity-manager';
-import { ModelManager } from '../../../persistence/primary/ModelManager';
+import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
 import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { ITest } from '../../../testapi/api/ITest';
@@ -177,7 +177,7 @@ export class SingleResultQueryManagerTest implements ITest {
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
         ]);
-        const modelManager = new ModelManager(model, this._redis.redis, false, secondaryEntityManager);
+        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
         const query = async (params: any) => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
@@ -228,7 +228,7 @@ export class SingleResultQueryManagerTest implements ITest {
           true,
           secondaryEntityManager,
         );
-        const modelManager = new ModelManager(model, this._redis.redis, false, secondaryEntityManager);
+        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
         const query = async (params: any) => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
@@ -366,7 +366,7 @@ export class SingleResultQueryManagerTest implements ITest {
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
         ]);
-        const modelManager = new ModelManager(model, this._redis.redis, false, secondaryEntityManager);
+        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
         const query = async (params: any) => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
@@ -417,7 +417,7 @@ export class SingleResultQueryManagerTest implements ITest {
           true,
           secondaryEntityManager,
         );
-        const modelManager = new ModelManager(model, this._redis.redis, false, secondaryEntityManager);
+        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
         const query = async (params: any) => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
@@ -716,7 +716,7 @@ export class SingleResultQueryManagerTest implements ITest {
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
         ]);
-        const modelManager = new ModelManager(model, this._redis.redis, true, secondaryEntityManager);
+        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
         modelManager.delete(entity1[model.id]);
         const query = async (params: any) => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);

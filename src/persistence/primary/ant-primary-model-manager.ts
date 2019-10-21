@@ -2,21 +2,21 @@ import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 import { SecondaryEntityManager } from '../secondary/secondary-entity-manager';
 import { AntPrimaryEntityManager } from './ant-primary-entity-manager';
-import { IModelManager } from './IModelManager';
-import { IRedisMiddleware } from './IRedisMiddleware';
 import { MULTIPLE_RESULT_QUERY_CODE, SINGLE_RESULT_QUERY_CODE, VOID_RESULT_STRING } from './lua-constants';
 import { AntJsDeleteOptions } from './options/antjs-delete-options';
 import { AntJsUpdateOptions } from './options/antjs-update-options';
 import { PersistencyDeleteOptions } from './options/persistency-delete-options';
 import { PersistencyUpdateOptions } from './options/persistency-update-options';
+import { PrimaryModelManager } from './primary-model-manager';
 import { PrimaryQueryManager } from './query/primary-query-manager';
+import { RedisMiddleware } from './redis-middleware';
 import { DeleteEntitiesCachedScriptSet } from './script/delete-entities-cached-script-set';
 import { RedisCachedScript } from './script/redis-cached-script';
 import { UpdateEntitiesCachedScriptSet } from './script/update-entities-cached-script-set';
 
-export class ModelManager<TEntity extends Entity, TSecondaryManager extends SecondaryEntityManager<TEntity>>
+export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager extends SecondaryEntityManager<TEntity>>
   extends AntPrimaryEntityManager<TEntity, TSecondaryManager>
-  implements IModelManager<TEntity> {
+  implements PrimaryModelManager<TEntity> {
   /**
    * Cached script for deleting an entity.
    */
@@ -49,7 +49,7 @@ export class ModelManager<TEntity extends Entity, TSecondaryManager extends Seco
    */
   public constructor(
     model: Model,
-    redis: IRedisMiddleware,
+    redis: RedisMiddleware,
     negativeEntityCache: boolean,
     secondaryEntityManager?: TSecondaryManager,
   ) {

@@ -1,7 +1,7 @@
 import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
-import { IModelManager } from '../../../persistence/primary/IModelManager';
-import { ModelManager } from '../../../persistence/primary/ModelManager';
+import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
+import { PrimaryModelManager } from '../../../persistence/primary/primary-model-manager';
 import { SecondaryEntityManagerMock } from '../secondary/SecondaryEntityManagerMock';
 import { IModelManagerGeneratorOptions } from './IModelManagerGeneratorOptions';
 import { IModelManagerGeneratorRedisOptions } from './IModelManagerGeneratorRedisOptions';
@@ -16,7 +16,7 @@ type TModelManagerOptions = IModelManagerGeneratorOptions<
 
 export class AntJsModelManagerGenerator extends ModelManagerGenerator<
   TModelManagerOptions,
-  IModelManager<Entity>,
+  PrimaryModelManager<Entity>,
   SecondaryEntityManagerMock<Entity>
 > {
   /**
@@ -25,8 +25,8 @@ export class AntJsModelManagerGenerator extends ModelManagerGenerator<
   protected _generateModelManager(
     options: TModelManagerOptions,
     secondaryManager: SecondaryEntityManagerMock<Entity>,
-  ): IModelManager<Entity> {
-    return new ModelManager(
+  ): PrimaryModelManager<Entity> {
+    return new AntPrimaryModelManager(
       options.model,
       options.redisOptions.redis,
       options.redisOptions.useEntityNegativeCache || true,

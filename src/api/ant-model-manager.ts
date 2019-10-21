@@ -1,9 +1,9 @@
 import { Entity } from '../model/entity';
 import { Model } from '../model/model';
-import { IModelManager } from '../persistence/primary/IModelManager';
 import { PersistencyDeleteOptions } from '../persistence/primary/options/persistency-delete-options';
 import { PersistencySearchOptions } from '../persistence/primary/options/persistency-search-options';
 import { PersistencyUpdateOptions } from '../persistence/primary/options/persistency-update-options';
+import { PrimaryModelManager } from '../persistence/primary/primary-model-manager';
 import { AntMultipleResultPrimaryQueryManager } from '../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/ant-primary-query-manager';
 import { AntSingleResultPrimaryQueryManager } from '../persistence/primary/query/ant-single-result-primary-query-manager';
@@ -23,7 +23,7 @@ export abstract class AntModelManager<
   TEntity extends Entity,
   TConfig extends ApiModelConfig,
   TModel extends Model,
-  TModelManager extends IModelManager<TEntity>
+  TModelManager extends PrimaryModelManager<TEntity>
 > implements ApiModelManager<TEntity, TConfig> {
   /**
    * AntJS model config.

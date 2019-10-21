@@ -2,7 +2,6 @@ import { Entity } from '../../model/entity';
 import { KeyGenParams } from '../../model/key-gen-params';
 import { Model } from '../../model/model';
 import { SecondaryEntityManager } from '../secondary/secondary-entity-manager';
-import { IRedisMiddleware } from './IRedisMiddleware';
 import { VOID_RESULT_STRING } from './lua-constants';
 import { AntJsSearchOptions } from './options/antjs-search-options';
 import { CacheMode } from './options/cache-mode';
@@ -10,6 +9,7 @@ import { PersistencyDeleteOptions } from './options/persistency-delete-options';
 import { PersistencySearchOptions } from './options/persistency-search-options';
 import { PersistencyUpdateOptions } from './options/persistency-update-options';
 import { PrimaryEntityManager } from './primary-entity-manager';
+import { RedisMiddleware } from './redis-middleware';
 
 export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager extends SecondaryEntityManager<TEntity>>
   implements PrimaryEntityManager<TEntity> {
@@ -28,7 +28,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
   /**
    * Redis connection.
    */
-  protected _redis: IRedisMiddleware;
+  protected _redis: RedisMiddleware;
   /**
    * Secondary model manager of the model.
    */
@@ -44,7 +44,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
    */
   public constructor(
     model: Model,
-    redis: IRedisMiddleware,
+    redis: RedisMiddleware,
     negativeEntityCache: boolean,
     successor?: TSecondaryManager,
   ) {

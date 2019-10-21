@@ -1,7 +1,7 @@
 import { Entity } from '../../../model/entity';
-import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
 import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
+import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/SecondaryEntityManagerMock';
 
 export type NamedEntityAlternative = { id: string; name: string } & Entity;
@@ -22,7 +22,7 @@ export class NamesStartingByLetterAlternative extends AntMultipleResultPrimaryQu
   public constructor(
     primaryEntityManager: PrimaryEntityManager<NamedEntityAlternative>,
     secondaryModelManagerMock: SecondaryEntityManagerMock<NamedEntityAlternative>,
-    redis: IRedisMiddleware,
+    redis: RedisMiddleware,
     reverseHashKey: string,
     prefix: string,
   ) {

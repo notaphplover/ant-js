@@ -1,10 +1,10 @@
 import { AntModel } from '../../model/ant-model';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
-import { IModelManager } from '../../persistence/primary/IModelManager';
 import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-update-options';
 import { CacheMode } from '../../persistence/primary/options/cache-mode';
 import { PrimaryEntityManager } from '../../persistence/primary/primary-entity-manager';
+import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
 import { PrimaryQueryManager } from '../../persistence/primary/query/primary-query-manager';
 import { SingleResultPrimaryQueryManager } from '../../persistence/primary/query/single-result-primary-query-manager';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/AntJsModelManagerGenerator';
@@ -146,7 +146,7 @@ export class ModelManagerTest implements ITest {
               );
               resolve(entity ? entity[model.id] : null);
             }),
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           this._redis.redis,
           prefix + 'reverse/strField/',
           'strField',
@@ -227,13 +227,13 @@ export class ModelManagerTest implements ITest {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
@@ -293,13 +293,13 @@ export class ModelManagerTest implements ITest {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
@@ -363,19 +363,19 @@ export class ModelManagerTest implements ITest {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity3ByPrimaryEntityManager, searchEntity3ByQueryManager] = await this._helperSearchEntity(
           entity3,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
@@ -443,19 +443,19 @@ export class ModelManagerTest implements ITest {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity3ByPrimaryEntityManager, searchEntity3ByQueryManager] = await this._helperSearchEntity(
           entity3,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
@@ -511,7 +511,7 @@ export class ModelManagerTest implements ITest {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
@@ -628,7 +628,7 @@ export class ModelManagerTest implements ITest {
               );
               resolve(entity ? entity[model.id] : null);
             }),
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           this._redis.redis,
           prefix + 'reverse/strField/',
           'strField',
@@ -685,7 +685,7 @@ export class ModelManagerTest implements ITest {
               const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
               resolve(entities.map((entity) => entity.id));
             }),
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -746,7 +746,7 @@ export class ModelManagerTest implements ITest {
               const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
               resolve(entities.map((entity) => entity.id));
             }),
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -813,7 +813,7 @@ export class ModelManagerTest implements ITest {
               const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
               resolve(entities.map((entity) => entity.id));
             }),
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -895,7 +895,7 @@ export class ModelManagerTest implements ITest {
               const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
               resolve(entities.map((entity) => entity.id));
             }),
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -964,7 +964,7 @@ export class ModelManagerTest implements ITest {
               const entity = secondaryEntityManager.store.find((entity) => params.strField === entity.strField);
               resolve(entity ? entity.id : null);
             }),
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1019,7 +1019,7 @@ export class ModelManagerTest implements ITest {
               const entity = secondaryEntityManager.store.find((entity) => params.strField === entity.strField);
               resolve(entity ? entity.id : null);
             }),
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1079,7 +1079,7 @@ export class ModelManagerTest implements ITest {
               const entity = secondaryEntityManager.store.find((entity) => params.strField === entity.strField);
               resolve(entity ? entity.id : null);
             }),
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1145,7 +1145,7 @@ export class ModelManagerTest implements ITest {
               const entity = secondaryEntityManager.store.find((entity) => params.strField === entity.strField);
               resolve(entity ? entity.id : null);
             }),
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1213,13 +1213,13 @@ export class ModelManagerTest implements ITest {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1After,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
@@ -1449,13 +1449,13 @@ export class ModelManagerTest implements ITest {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1After,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
@@ -1517,13 +1517,13 @@ export class ModelManagerTest implements ITest {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1After,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
@@ -1620,13 +1620,13 @@ export class ModelManagerTest implements ITest {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1After,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
@@ -1678,7 +1678,7 @@ export class ModelManagerTest implements ITest {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await await this._helperSearchEntity(
           entity1,
           model,
-          modelManager as IModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<IEntityTest>,
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 

@@ -2,7 +2,7 @@ import { AntModel } from '../../model/ant-model';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 import { AntPrimaryEntityManager } from '../../persistence/primary/ant-primary-entity-manager';
-import { ModelManager } from '../../persistence/primary/ModelManager';
+import { AntPrimaryModelManager } from '../../persistence/primary/ant-primary-model-manager';
 import { AntJsDeleteOptions } from '../../persistence/primary/options/antjs-delete-options';
 import { AntJsSearchOptions } from '../../persistence/primary/options/antjs-search-options';
 import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-update-options';
@@ -507,7 +507,7 @@ return redis.call('get', ${luaExpression})`,
           [entity],
           true,
         );
-        const modelManager = new ModelManager(model, this._redis.redis, true, secondaryEntityManager);
+        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
         await modelManager.delete(entity.id);
         const entityFound = await primaryEntityManager.get(entity[model.id]);
 
@@ -763,7 +763,7 @@ return redis.call('get', ${luaExpression})`,
           entity,
           entity2,
         ]);
-        const modelManager = new ModelManager(model, this._redis.redis, true, secondaryEntityManager);
+        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
         await modelManager.delete(entity.id);
         const entityFound = await primaryEntityManager.mGet([entity[model.id], entity2[model.id]]);
 

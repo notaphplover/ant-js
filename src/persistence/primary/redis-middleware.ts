@@ -1,4 +1,4 @@
-export interface IRedisMiddleware {
+export interface RedisMiddleware {
   /**
    * Evaluates an sript.
    * @param args Script arguments.

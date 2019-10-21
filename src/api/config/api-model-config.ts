@@ -1,4 +1,4 @@
-import { IRedisMiddleware } from '../../persistence/primary/IRedisMiddleware';
+import { RedisMiddleware } from '../../persistence/primary/redis-middleware';
 
 export interface ApiModelConfig {
   /**
@@ -8,5 +8,5 @@ export interface ApiModelConfig {
   /**
    * Redis connection.
    */
-  redis: IRedisMiddleware;
+  redis: RedisMiddleware;
 }

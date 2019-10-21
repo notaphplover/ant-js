@@ -1,4 +1,4 @@
-import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
+import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
 import { IQueriesManagerGeneratorOptions } from './IQueriesManagerGeneratorOptions';
 
 export interface IModelManagerGeneratorRedisOptions {
@@ -9,7 +9,7 @@ export interface IModelManagerGeneratorRedisOptions {
   /**
    * Redis middleware.
    */
-  redis?: IRedisMiddleware;
+  redis?: RedisMiddleware;
   /**
    * Single result query managers options.
    */

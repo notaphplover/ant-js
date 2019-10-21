@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import { IRedisMiddleware } from '../IRedisMiddleware';
+import { RedisMiddleware } from '../redis-middleware';
 
 /**
  * Redis cached script manager. Inspirated in the code of the ioredis library:
@@ -14,7 +14,7 @@ export class RedisCachedScript {
   /**
    * Redis manager.
    */
-  protected _redis: IRedisMiddleware;
+  protected _redis: RedisMiddleware;
   /**
    * SHA1 string of the lua script in order to use EVALSHA.
    */
@@ -25,7 +25,7 @@ export class RedisCachedScript {
    * @param lua Lua script.
    * @param redis Redis manager.
    */
-  public constructor(lua: string, redis: IRedisMiddleware) {
+  public constructor(lua: string, redis: RedisMiddleware) {
     this._redis = redis;
     this._lua = lua;
     this._sha = crypto

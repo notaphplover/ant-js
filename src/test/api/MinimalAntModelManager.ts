@@ -2,7 +2,7 @@ import { AntModelManager } from '../../api/ant-model-manager';
 import { ApiModelConfig } from '../../api/config/api-model-config';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
-import { IModelManager } from '../../persistence/primary/IModelManager';
+import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/AntJsModelManagerGenerator';
 import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from '../primary/RedisWrapper';
@@ -11,7 +11,7 @@ export class MinimalAntModelManager<TEntity extends Entity> extends AntModelMana
   TEntity,
   ApiModelConfig,
   Model,
-  IModelManager<TEntity>
+  PrimaryModelManager<TEntity>
 > {
   /**
    * Model manager generator.
@@ -37,7 +37,7 @@ export class MinimalAntModelManager<TEntity extends Entity> extends AntModelMana
    * Model manager.
    * @returns Model manager.
    */
-  public get modelManager(): IModelManager<TEntity> {
+  public get modelManager(): PrimaryModelManager<TEntity> {
     return super.modelManager;
   }
   /**
@@ -54,13 +54,13 @@ export class MinimalAntModelManager<TEntity extends Entity> extends AntModelMana
    * @param config AntJS model config.
    * @returns Model manager generated.
    */
-  protected _generateModelManager(model: Model, config: ApiModelConfig): IModelManager<TEntity> {
+  protected _generateModelManager(model: Model, config: ApiModelConfig): PrimaryModelManager<TEntity> {
     const [modelManager] = this._modelManagerGenerator.generateModelManager({
       model: model,
       secondaryOptions: {
         manager: this._secondaryEntityManager,
       },
     });
-    return modelManager as IModelManager<TEntity>;
+    return modelManager as PrimaryModelManager<TEntity>;
   }
 }

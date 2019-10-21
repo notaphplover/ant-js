@@ -1,7 +1,7 @@
 import { AntModel } from '../../../model/ant-model';
 import { Model } from '../../../model/model';
 import { AntPrimaryEntityManager } from '../../../persistence/primary/ant-primary-entity-manager';
-import { ModelManager } from '../../../persistence/primary/ModelManager';
+import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
 import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { ITest } from '../../../testapi/api/ITest';
@@ -203,7 +203,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
         ]);
-        const modelManager = new ModelManager(model, this._redis.redis, false, secondaryEntityManager);
+        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
         const queryManager = new NamesStartingByLetter(
           primaryEntityManager,
           secondaryEntityManager,
@@ -235,7 +235,7 @@ export class MultipleResultQueryManagerTest implements ITest {
           NamedEntityAlternative,
           SecondaryEntityManager<NamedEntityAlternative>
         >(model, this._redis.redis, true, secondaryEntityManager);
-        const modelManager = new ModelManager(model, this._redis.redis, false, secondaryEntityManager);
+        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
         const queryManager = new NamesStartingByLetterAlternative(
           primaryEntityManager,
           secondaryEntityManager,
@@ -462,7 +462,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
         ]);
-        const modelManager = new ModelManager(model, this._redis.redis, true, secondaryEntityManager);
+        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
         const queryManager = new NamesStartingByLetter(
           primaryEntityManager,
           secondaryEntityManager,

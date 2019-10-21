@@ -1,6 +1,6 @@
 import { Entity } from '../../../../model/entity';
 import { Model } from '../../../../model/model';
-import { ModelManager } from '../../../../persistence/primary/ModelManager';
+import { AntPrimaryModelManager } from '../../../../persistence/primary/ant-primary-model-manager';
 import { RedisWrapper } from '../../../../test/primary/RedisWrapper';
 import { AntJsModelManagerGenerator } from '../../../api/generator/AntJsModelManagerGenerator';
 import { ITest } from '../../../api/ITest';
@@ -85,7 +85,7 @@ export class ModelManagerGeneratorTest implements ITest {
           },
         },
       });
-      expect(modelManager instanceof ModelManager).toBe(true);
+      expect(modelManager instanceof AntPrimaryModelManager).toBe(true);
       expect(singleResultQueryManagers).toEqual(new Map());
       expect(multipleResultQueryManagers.size).toBe(properties.length);
       done();
@@ -107,7 +107,7 @@ export class ModelManagerGeneratorTest implements ITest {
       ] = modelManagerGenerator.generateModelManager({
         model: model,
       });
-      expect(modelManager instanceof ModelManager).toBe(true);
+      expect(modelManager instanceof AntPrimaryModelManager).toBe(true);
       expect(secondaryManager instanceof SecondaryEntityManagerMock).toBe(true);
       expect(singleResultQueryManagers).toEqual(new Map());
       expect(multipleResultQueryManagers).toEqual(new Map());
@@ -136,7 +136,7 @@ export class ModelManagerGeneratorTest implements ITest {
           },
         },
       });
-      expect(modelManager instanceof ModelManager).toBe(true);
+      expect(modelManager instanceof AntPrimaryModelManager).toBe(true);
       expect(singleResultQueryManagers.size).toBe(properties.length);
       expect(multipleResultQueryManagers).toEqual(new Map());
       done();

@@ -1,5 +1,5 @@
 import { Entity } from '../model/entity';
-import { IBaseModelManager } from '../persistence/primary/IModelManager';
+import { BasePrimaryModelManager } from '../persistence/primary/primary-model-manager';
 import {
   MultipleQueryResult,
   QueryResult,
@@ -18,7 +18,7 @@ export type TAntQueryManager<TEntity, TQueryResult> = TQueryResult extends Multi
   : never;
 
 export interface ApiModelManager<TEntity extends Entity, TConfig extends ApiModelConfig>
-  extends IBaseModelManager<TEntity> {
+  extends BasePrimaryModelManager<TEntity> {
   /**
    * Gets the AntJS model config.
    * @returns AntJS model config.
