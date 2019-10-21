@@ -4,9 +4,9 @@ import { Entity } from '../../../model/entity';
 import { AntPrimaryEntityManager } from '../../../persistence/primary/ant-primary-entity-manager';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { ITest } from '../../../testapi/api/ITest';
-import { SingleResultQueryByFieldManager } from '../../primary/query/SingleResultQueryByFieldManager';
+import { SingleResultQueryByFieldManager } from '../../primary/query/single-result-query-by-field-manager';
 import { RedisWrapper } from '../../primary/RedisWrapper';
-import { MinimalAntQueryManager } from './MinimalAntQueryManager';
+import { MinimalAntQueryManager } from './minimal-ant-query-manager';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 

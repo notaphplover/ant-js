@@ -8,7 +8,7 @@ import { SecondaryEntityManager } from '../../../persistence/secondary/secondary
 import { ITest } from '../../../testapi/api/ITest';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from '../RedisWrapper';
-import { SingleResultQueryByFieldManager } from './SingleResultQueryByFieldManager';
+import { SingleResultQueryByFieldManager } from './single-result-query-by-field-manager';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 

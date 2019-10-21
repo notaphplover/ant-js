@@ -3,7 +3,7 @@ import { ApiModelManager } from '../../api/api-model-manager';
 import { ApiModelConfig } from '../../api/config/api-model-config';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
-import { MinimalAntModelManager } from './MinimalAntModelManager';
+import { MinimalAntModelManager } from './minimal-ant-model-manager';
 
 export class MinimalAntManager extends AntManager<ApiModelConfig, Model, ApiModelManager<Entity, ApiModelConfig>> {
   /**

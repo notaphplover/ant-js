@@ -1,17 +1,17 @@
 import { ITest } from '../testapi/api/ITest';
 import { RedisAwaiter } from '../testapi/api/RedisAwaiter';
 import { AntTest } from './ant-test';
-import { AntManagerTest } from './api/AntManagerTest';
-import { AntModelManagerTest } from './api/AntModelManagerTest';
-import { AntQueryManagerTest } from './api/query/AntQueryManagerTest';
-import { ModelTest } from './model/ModelTest';
-import { ModelManagerTest } from './primary/ModelManagerTest';
-import { PrimaryEntityManagerTest } from './primary/PrimaryEntityManagerTest';
-import { MultipleResultQueryManagerTest } from './primary/query/MultipleResultQueryManagerTest';
-import { SingleResultQueryManagerTest } from './primary/query/SingleResultQueryManagerTest';
+import { AntManagerTest } from './api/ant-manager-test';
+import { AntModelManagerTest } from './api/ant-model-manager-test';
+import { AntQueryManagerTest } from './api/query/ant-query-manager-test';
+import { ModelTest } from './model/model-test';
+import { ModelManagerTest } from './primary/model-manager-test';
+import { PrimaryEntityManagerTest } from './primary/primary-entity-manager-test';
+import { MultipleResultQueryManagerTest } from './primary/query/multiple-result-query-manager-test';
+import { SingleResultQueryManagerTest } from './primary/query/single-result-query-manager-test';
 import { RedisWrapper } from './primary/RedisWrapper';
-import { RedisCachedScriptTest } from './primary/script/RedisCachedScriptTest';
-import { UpdateEntitiesCachedScriptSetTest } from './primary/script/UpdateEntitiesCachedScriptSetTest';
+import { RedisCachedScriptTest } from './primary/script/redis-cached-script-test';
+import { UpdateEntitiesCachedScriptSetTest } from './primary/script/update-entities-cached-script-set-test';
 
 export class AllTest implements ITest {
   public performTests(): void {

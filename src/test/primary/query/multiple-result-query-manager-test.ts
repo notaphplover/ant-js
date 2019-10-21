@@ -7,8 +7,8 @@ import { SecondaryEntityManager } from '../../../persistence/secondary/secondary
 import { ITest } from '../../../testapi/api/ITest';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/SecondaryEntityManagerMock';
 import { RedisWrapper } from '../RedisWrapper';
-import { NamedEntity, NamesStartingByLetter } from './NamesStartingByLetter';
-import { NamedEntityAlternative, NamesStartingByLetterAlternative } from './NamesStartingByLetterAlternative';
+import { NamedEntity, NamesStartingByLetter } from './names-starting-by-letter';
+import { NamedEntityAlternative, NamesStartingByLetterAlternative } from './names-starting-by-letter-alternative';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
