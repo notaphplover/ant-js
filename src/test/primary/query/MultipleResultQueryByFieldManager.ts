@@ -4,8 +4,9 @@ import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware'
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { TMQuery, TQuery } from '../../../persistence/primary/query/ant-primary-query-manager';
 
-export class MultipleResultQueryByFieldManager<TEntity extends Entity>
-  extends AntMultipleResultPrimaryQueryManager<TEntity> {
+export class MultipleResultQueryByFieldManager<TEntity extends Entity> extends AntMultipleResultPrimaryQueryManager<
+  TEntity
+> {
   /**
    * Field to filter.
    */

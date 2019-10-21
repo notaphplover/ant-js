@@ -1,6 +1,6 @@
 import { AntJsUpdateOptions } from '../../../persistence/primary/options/antjs-update-options';
-import { RedisCachedScript } from '../../../persistence/primary/script/RedisCachedScript';
-import { UpdateEntitiesCachedScriptSet } from '../../../persistence/primary/script/UpdateEntitiesCachedScriptSet';
+import { RedisCachedScript } from '../../../persistence/primary/script/redis-cached-script';
+import { UpdateEntitiesCachedScriptSet } from '../../../persistence/primary/script/update-entities-cached-script-set';
 import { ITest } from '../../../testapi/api/ITest';
 import { RedisWrapper } from '../RedisWrapper';
 

@@ -3,8 +3,9 @@ import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEnti
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
 import { AntSingleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-single-result-primary-query-manager';
 
-export class SingleResultQueryByFieldManager<TEntity extends Entity>
-  extends AntSingleResultPrimaryQueryManager<TEntity> {
+export class SingleResultQueryByFieldManager<TEntity extends Entity> extends AntSingleResultPrimaryQueryManager<
+  TEntity
+> {
   /**
    * Field to filter.
    */

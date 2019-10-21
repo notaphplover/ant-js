@@ -10,9 +10,9 @@ import { PersistencyDeleteOptions } from './options/persistency-delete-options';
 import { PersistencyUpdateOptions } from './options/persistency-update-options';
 import { PrimaryEntityManager } from './PrimaryEntityManager';
 import { PrimaryQueryManager } from './query/primary-query-manager';
-import { DeleteEntitiesCachedScriptSet } from './script/DeleteEntitiesCachedScriptSet';
-import { RedisCachedScript } from './script/RedisCachedScript';
-import { UpdateEntitiesCachedScriptSet } from './script/UpdateEntitiesCachedScriptSet';
+import { DeleteEntitiesCachedScriptSet } from './script/delete-entities-cached-script-set';
+import { RedisCachedScript } from './script/redis-cached-script';
+import { UpdateEntitiesCachedScriptSet } from './script/update-entities-cached-script-set';
 
 export class ModelManager<TEntity extends Entity, TSecondaryManager extends SecondaryEntityManager<TEntity>>
   extends PrimaryEntityManager<TEntity, TSecondaryManager>

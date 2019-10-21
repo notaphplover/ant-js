@@ -1,4 +1,4 @@
-import { RedisCachedScript } from '../../../persistence/primary/script/RedisCachedScript';
+import { RedisCachedScript } from '../../../persistence/primary/script/redis-cached-script';
 import { ITest } from '../../../testapi/api/ITest';
 import { RedisWrapper } from '../RedisWrapper';
 import { MinimalRedisCachedScript } from './MinimalRedisCachedScript';

@@ -1,4 +1,4 @@
-import { RedisCachedScript } from '../../../persistence/primary/script/RedisCachedScript';
+import { RedisCachedScript } from '../../../persistence/primary/script/redis-cached-script';
 
 export class MinimalRedisCachedScript extends RedisCachedScript {
   /**
