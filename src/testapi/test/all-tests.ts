@@ -1,4 +1,4 @@
-import { RedisWrapper } from '../../test/primary/RedisWrapper';
+import { RedisWrapper } from '../../test/primary/redis-wrapper';
 import { ITest } from '../api/ITest';
 import { RedisAwaiter } from '../api/RedisAwaiter';
 import { ModelManagerGeneratorTest } from './api/generator/ModelManagerGeneratorTest';

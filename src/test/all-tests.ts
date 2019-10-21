@@ -9,7 +9,7 @@ import { ModelManagerTest } from './primary/model-manager-test';
 import { PrimaryEntityManagerTest } from './primary/primary-entity-manager-test';
 import { MultipleResultQueryManagerTest } from './primary/query/multiple-result-query-manager-test';
 import { SingleResultQueryManagerTest } from './primary/query/single-result-query-manager-test';
-import { RedisWrapper } from './primary/RedisWrapper';
+import { RedisWrapper } from './primary/redis-wrapper';
 import { RedisCachedScriptTest } from './primary/script/redis-cached-script-test';
 import { UpdateEntitiesCachedScriptSetTest } from './primary/script/update-entities-cached-script-set-test';
 

@@ -3,7 +3,7 @@ import { AntModel } from '../../model/ant-model';
 import { Entity } from '../../model/entity';
 import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
 import { ITest } from '../../testapi/api/ITest';
-import { RedisWrapper } from '../primary/RedisWrapper';
+import { RedisWrapper } from '../primary/redis-wrapper';
 import { MinimalAntModelManager } from './minimal-ant-model-manager';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;

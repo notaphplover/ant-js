@@ -3,7 +3,7 @@ import { ApiGeneralConfig } from '../../api/config/api-general-config';
 import { ApiModelConfig } from '../../api/config/api-model-config';
 import { AntModel } from '../../model/ant-model';
 import { ITest } from '../../testapi/api/ITest';
-import { RedisWrapper } from '../primary/RedisWrapper';
+import { RedisWrapper } from '../primary/redis-wrapper';
 import { MinimalAntManager } from './minimal-ant-manager';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;

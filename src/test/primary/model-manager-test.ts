@@ -12,7 +12,7 @@ import { ITest } from '../../testapi/api/ITest';
 import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
 import { MultipleResultQueryByFieldManager } from './query/multiple-result-query-by-field-manager';
 import { SingleResultQueryByFieldManager } from './query/single-result-query-by-field-manager';
-import { RedisWrapper } from './RedisWrapper';
+import { RedisWrapper } from './redis-wrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 

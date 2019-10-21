@@ -5,7 +5,7 @@ import { Model } from '../../model/model';
 import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/AntJsModelManagerGenerator';
 import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
-import { RedisWrapper } from '../primary/RedisWrapper';
+import { RedisWrapper } from '../primary/redis-wrapper';
 
 export class MinimalAntModelManager<TEntity extends Entity> extends AntModelManager<
   TEntity,

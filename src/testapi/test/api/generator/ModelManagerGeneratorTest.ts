@@ -1,7 +1,7 @@
 import { Entity } from '../../../../model/entity';
 import { Model } from '../../../../model/model';
 import { AntPrimaryModelManager } from '../../../../persistence/primary/ant-primary-model-manager';
-import { RedisWrapper } from '../../../../test/primary/RedisWrapper';
+import { RedisWrapper } from '../../../../test/primary/redis-wrapper';
 import { AntJsModelManagerGenerator } from '../../../api/generator/AntJsModelManagerGenerator';
 import { ITest } from '../../../api/ITest';
 import { SecondaryEntityManagerMock } from '../../../api/secondary/SecondaryEntityManagerMock';
