@@ -5,8 +5,8 @@ import { IModelManager } from '../../persistence/primary/IModelManager';
 import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
 import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-update-options';
 import { CacheMode } from '../../persistence/primary/options/cache-mode';
-import { ISingleResultQueryManager } from '../../persistence/primary/query/ISingleResultQueryManager';
 import { PrimaryQueryManager } from '../../persistence/primary/query/primary-query-manager';
+import { SingleResultPrimaryQueryManager } from '../../persistence/primary/query/single-result-primary-query-manager';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/AntJsModelManagerGenerator';
 import { ITest } from '../../testapi/api/ITest';
 import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
@@ -228,13 +228,13 @@ export class ModelManagerTest implements ITest {
           entity1,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toBeNull();
@@ -294,13 +294,13 @@ export class ModelManagerTest implements ITest {
           entity1,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toBeNull();
@@ -364,19 +364,19 @@ export class ModelManagerTest implements ITest {
           entity1,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity3ByPrimaryEntityManager, searchEntity3ByQueryManager] = await this._helperSearchEntity(
           entity3,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toBeNull();
@@ -444,19 +444,19 @@ export class ModelManagerTest implements ITest {
           entity1,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity3ByPrimaryEntityManager, searchEntity3ByQueryManager] = await this._helperSearchEntity(
           entity3,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toBeNull();
@@ -512,7 +512,7 @@ export class ModelManagerTest implements ITest {
           entity1,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1);
@@ -1214,13 +1214,13 @@ export class ModelManagerTest implements ITest {
           entity1After,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1After);
@@ -1450,13 +1450,13 @@ export class ModelManagerTest implements ITest {
           entity1After,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1After);
@@ -1518,13 +1518,13 @@ export class ModelManagerTest implements ITest {
           entity1After,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1After);
@@ -1621,13 +1621,13 @@ export class ModelManagerTest implements ITest {
           entity1After,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1After);
@@ -1679,7 +1679,7 @@ export class ModelManagerTest implements ITest {
           entity1,
           model,
           modelManager as IModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, ISingleResultQueryManager<IEntityTest>>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1);

@@ -1,10 +1,11 @@
 import { Entity } from '../../../model/entity';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
+import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { TMQuery, TQuery } from '../../../persistence/primary/query/ant-primary-query-manager';
-import { MultipleResultQueryManager } from '../../../persistence/primary/query/MultipleResultQueryManager';
 
-export class MultipleResultQueryByFieldManager<TEntity extends Entity> extends MultipleResultQueryManager<TEntity> {
+export class MultipleResultQueryByFieldManager<TEntity extends Entity>
+  extends AntMultipleResultPrimaryQueryManager<TEntity> {
   /**
    * Field to filter.
    */

@@ -1,9 +1,10 @@
 import { Entity } from '../../../model/entity';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
-import { SingleResultQueryManager } from '../../../persistence/primary/query/SingleResultQueryManager';
+import { AntSingleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-single-result-primary-query-manager';
 
-export class SingleResultQueryByFieldManager<TEntity extends Entity> extends SingleResultQueryManager<TEntity> {
+export class SingleResultQueryByFieldManager<TEntity extends Entity>
+  extends AntSingleResultPrimaryQueryManager<TEntity> {
   /**
    * Field to filter.
    */

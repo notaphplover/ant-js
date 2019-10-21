@@ -2,11 +2,11 @@ import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
 import { IModelManager } from '../../../persistence/primary/IModelManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
-import { IMultipleResultQueryManager } from '../../../persistence/primary/query/IMultipleResultQueryManager';
-import { ISingleResultQueryManager } from '../../../persistence/primary/query/ISingleResultQueryManager';
-import { MultipleResultQueryManager } from '../../../persistence/primary/query/MultipleResultQueryManager';
+import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
+import { AntSingleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-single-result-primary-query-manager';
+import { MultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/multiple-result-primary-query-manager';
 import { PrimaryQueryManager } from '../../../persistence/primary/query/primary-query-manager';
-import { SingleResultQueryManager } from '../../../persistence/primary/query/SingleResultQueryManager';
+import { SingleResultPrimaryQueryManager } from '../../../persistence/primary/query/single-result-primary-query-manager';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { IModelManagerGeneratorOptions } from './IModelManagerGeneratorOptions';
 import { IModelManagerGeneratorRedisOptions } from './IModelManagerGeneratorRedisOptions';
@@ -44,8 +44,8 @@ export abstract class ModelManagerGenerator<
   ): [
     TModelManager,
     TSecondaryManager,
-    Map<string, ISingleResultQueryManager<Entity>>,
-    Map<string, IMultipleResultQueryManager<Entity>>,
+    Map<string, SingleResultPrimaryQueryManager<Entity>>,
+    Map<string, MultipleResultPrimaryQueryManager<Entity>>,
   ] {
     if (!options.redisOptions) {
       options.redisOptions = {};
@@ -70,14 +70,14 @@ export abstract class ModelManagerGenerator<
 
     const singleResultQueryManagers: Map<
       string,
-      ISingleResultQueryManager<Entity>
+      SingleResultPrimaryQueryManager<Entity>
     > = this._generateSingleResultQueryManagers(options, secondaryManager, modelManager);
 
     this._attachQueryManagers(modelManager, singleResultQueryManagers.values());
 
     const multipleResultQueryManagers: Map<
       string,
-      IMultipleResultQueryManager<Entity>
+      MultipleResultPrimaryQueryManager<Entity>
     > = this._generateMultipleResultQueryManagers(options, secondaryManager, modelManager);
 
     this._attachQueryManagers(modelManager, multipleResultQueryManagers.values());
@@ -94,8 +94,8 @@ export abstract class ModelManagerGenerator<
    */
   public searchEntititiesInQueries(
     entities: Entity[],
-    srQueryManagers: Map<string, ISingleResultQueryManager<Entity>>,
-    mrQueryManagers: Map<string, IMultipleResultQueryManager<Entity>>,
+    srQueryManagers: Map<string, SingleResultPrimaryQueryManager<Entity>>,
+    mrQueryManagers: Map<string, MultipleResultPrimaryQueryManager<Entity>>,
   ): [Map<[Entity, string], Promise<Entity>>, Map<[Entity, string], Promise<Entity[]>>] {
     const srqmResults: Map<[Entity, string], Promise<Entity>> = new Map();
     const mrqmResults: Map<[Entity, string], Promise<Entity[]>> = new Map();
@@ -157,8 +157,8 @@ export abstract class ModelManagerGenerator<
     options: TOptions,
     secondaryManager: TSecondaryManager,
     modelManager: TModelManager,
-  ): Map<string, IMultipleResultQueryManager<TEntity>> {
-    const queryManagersMap = new Map<string, IMultipleResultQueryManager<TEntity>>();
+  ): Map<string, MultipleResultPrimaryQueryManager<TEntity>> {
+    const queryManagersMap = new Map<string, MultipleResultPrimaryQueryManager<TEntity>>();
     const mrqmOptions = options.redisOptions.multipleResultQueryManagersOptions;
     if (!mrqmOptions) {
       return queryManagersMap;
@@ -167,7 +167,7 @@ export abstract class ModelManagerGenerator<
 
     for (const property of mrqmOptions.properties) {
       const queryKeyGen = this._buildQueryKeyGen(mrqmOptions.queryPrefix, property);
-      const queryManager = new MultipleResultQueryManager(
+      const queryManager = new AntMultipleResultPrimaryQueryManager(
         (params: any) =>
           this._searchEntitiesByProperty(secondaryManager, property, params[property]).then((entities) =>
             entities.map((entity) => entity[options.model.id]),
@@ -219,8 +219,8 @@ export abstract class ModelManagerGenerator<
     options: TOptions,
     secondaryManager: TSecondaryManager,
     modelManager: TModelManager,
-  ): Map<string, ISingleResultQueryManager<TEntity>> {
-    const queryManagersMap = new Map<string, ISingleResultQueryManager<TEntity>>();
+  ): Map<string, SingleResultPrimaryQueryManager<TEntity>> {
+    const queryManagersMap = new Map<string, SingleResultPrimaryQueryManager<TEntity>>();
     const srqmOptions = options.redisOptions.singleResultQueryManagersOptions;
     if (!srqmOptions) {
       return queryManagersMap;
@@ -229,7 +229,7 @@ export abstract class ModelManagerGenerator<
 
     for (const property of srqmOptions.properties) {
       const queryKeyGen = this._buildQueryKeyGen(srqmOptions.queryPrefix, property);
-      const queryManager = new SingleResultQueryManager(
+      const queryManager = new AntSingleResultPrimaryQueryManager(
         (params: any) =>
           this._searchEntityByProperty(secondaryManager, property, params[property]).then((entity) => {
             if (null == entity) {

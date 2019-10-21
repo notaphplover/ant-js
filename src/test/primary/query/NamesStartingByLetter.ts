@@ -1,12 +1,12 @@
 import { Entity } from '../../../model/entity';
 import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
-import { MultipleResultQueryManager } from '../../../persistence/primary/query/MultipleResultQueryManager';
+import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/SecondaryEntityManagerMock';
 
 export type NamedEntity = { id: number; name: string } & Entity;
 
-export class NamesStartingByLetter extends MultipleResultQueryManager<NamedEntity> {
+export class NamesStartingByLetter extends AntMultipleResultPrimaryQueryManager<NamedEntity> {
   /**
    * Query prefix.
    */

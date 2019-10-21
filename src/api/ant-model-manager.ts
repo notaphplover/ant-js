@@ -4,10 +4,10 @@ import { IModelManager } from '../persistence/primary/IModelManager';
 import { PersistencyDeleteOptions } from '../persistence/primary/options/persistency-delete-options';
 import { PersistencySearchOptions } from '../persistence/primary/options/persistency-search-options';
 import { PersistencyUpdateOptions } from '../persistence/primary/options/persistency-update-options';
+import { AntMultipleResultPrimaryQueryManager } from '../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/ant-primary-query-manager';
-import { MultipleResultQueryManager } from '../persistence/primary/query/MultipleResultQueryManager';
+import { AntSingleResultPrimaryQueryManager } from '../persistence/primary/query/ant-single-result-primary-query-manager';
 import { PrimaryQueryManager } from '../persistence/primary/query/primary-query-manager';
-import { SingleResultQueryManager } from '../persistence/primary/query/SingleResultQueryManager';
 import { ApiModelManager, TAntQueryManager } from './api-model-manager';
 import { ApiModelConfig } from './config/api-model-config';
 import { ApiQueryConfig } from './config/api-query-config';
@@ -200,7 +200,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
     let query: TAntQueryManager<TEntity, TResult>;
     let innerQueryManager: PrimaryQueryManager<TEntity>;
     if (queryConfig.isMultiple) {
-      innerQueryManager = new MultipleResultQueryManager<TEntity>(
+      innerQueryManager = new AntMultipleResultPrimaryQueryManager<TEntity>(
         queryConfig.query as TQuery<number[] | string[]>,
         this.modelManager,
         this._config.redis,
@@ -209,11 +209,11 @@ This is probably caused by the absence of a config instance. Ensure that config 
         queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number[] | string[]>,
       );
-      query = (new AntMultipleResultQueryManager<TEntity>(innerQueryManager as MultipleResultQueryManager<
+      query = (new AntMultipleResultQueryManager<TEntity>(innerQueryManager as AntMultipleResultPrimaryQueryManager<
         TEntity
       >) as ApiMultipleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
     } else {
-      innerQueryManager = new SingleResultQueryManager<TEntity>(
+      innerQueryManager = new AntSingleResultPrimaryQueryManager<TEntity>(
         queryConfig.query as TQuery<number | string>,
         this.modelManager,
         this._config.redis,
@@ -222,7 +222,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
         queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number | string>,
       );
-      query = (new AntSingleResultQueryManager<TEntity>(innerQueryManager as SingleResultQueryManager<
+      query = (new AntSingleResultQueryManager<TEntity>(innerQueryManager as AntSingleResultPrimaryQueryManager<
         TEntity
       >) as ApiSingleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
     }
