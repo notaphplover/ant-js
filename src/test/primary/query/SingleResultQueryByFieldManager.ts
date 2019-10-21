@@ -1,6 +1,6 @@
 import { Entity } from '../../../model/entity';
-import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
+import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { AntSingleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-single-result-primary-query-manager';
 
 export class SingleResultQueryByFieldManager<TEntity extends Entity> extends AntSingleResultPrimaryQueryManager<
@@ -27,7 +27,7 @@ export class SingleResultQueryByFieldManager<TEntity extends Entity> extends Ant
    */
   public constructor(
     query: (params: any) => Promise<number | string>,
-    primaryEntityManager: IPrimaryEntityManager<TEntity>,
+    primaryEntityManager: PrimaryEntityManager<TEntity>,
     redis: IRedisMiddleware,
     reverseHashKey: string,
     field: string,

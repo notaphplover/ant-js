@@ -1,5 +1,5 @@
 import { Entity } from '../../../model/entity';
-import { SEPARATOR_STRING, VOID_RESULT_STRING } from '../LuaConstants';
+import { SEPARATOR_STRING, VOID_RESULT_STRING } from '../lua-constants';
 import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { AntPrimaryQueryManager } from './ant-primary-query-manager';
 import { MultipleResultPrimaryQueryManager } from './multiple-result-primary-query-manager';

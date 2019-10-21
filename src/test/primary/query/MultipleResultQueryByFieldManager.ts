@@ -1,6 +1,6 @@
 import { Entity } from '../../../model/entity';
-import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
+import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { TMQuery, TQuery } from '../../../persistence/primary/query/ant-primary-query-manager';
 
@@ -28,7 +28,7 @@ export class MultipleResultQueryByFieldManager<TEntity extends Entity> extends A
    */
   public constructor(
     query: TQuery<number[] | string[]>,
-    primaryEntityManager: IPrimaryEntityManager<TEntity>,
+    primaryEntityManager: PrimaryEntityManager<TEntity>,
     redis: IRedisMiddleware,
     reverseHashKey: string,
     field: string,

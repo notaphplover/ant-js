@@ -1,5 +1,5 @@
 import { Entity } from '../../../model/entity';
-import { VOID_RESULT_STRING } from '../LuaConstants';
+import { VOID_RESULT_STRING } from '../lua-constants';
 import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { AntPrimaryQueryManager } from './ant-primary-query-manager';
 import { SingleResultPrimaryQueryManager } from './single-result-primary-query-manager';

@@ -1,13 +1,13 @@
 import { AntModel } from '../../model/ant-model';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
-import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
+import { AntPrimaryEntityManager } from '../../persistence/primary/ant-primary-entity-manager';
 import { ModelManager } from '../../persistence/primary/ModelManager';
 import { AntJsDeleteOptions } from '../../persistence/primary/options/antjs-delete-options';
 import { AntJsSearchOptions } from '../../persistence/primary/options/antjs-search-options';
 import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-update-options';
 import { CacheMode } from '../../persistence/primary/options/cache-mode';
-import { PrimaryEntityManager } from '../../persistence/primary/PrimaryEntityManager';
+import { PrimaryEntityManager } from '../../persistence/primary/primary-entity-manager';
 import { SecondaryEntityManager } from '../../persistence/secondary/secondary-entity-manager';
 import { ITest } from '../../testapi/api/ITest';
 import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
@@ -90,10 +90,10 @@ export class PrimaryEntityManagerTest implements ITest {
     prefix: string,
     entities: IEntityTest[],
     useNegativeCache: boolean = true,
-  ): [Model, IPrimaryEntityManager<IEntityTest>, SecondaryEntityManagerMock<IEntityTest>] {
+  ): [Model, PrimaryEntityManager<IEntityTest>, SecondaryEntityManagerMock<IEntityTest>] {
     const model = new AntModel('id', { prefix: prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
-    const primaryEntityManager = new PrimaryEntityManager<IEntityTest, SecondaryEntityManager<IEntityTest>>(
+    const primaryEntityManager = new AntPrimaryEntityManager<IEntityTest, SecondaryEntityManager<IEntityTest>>(
       model,
       this._redis.redis,
       useNegativeCache,
@@ -296,7 +296,7 @@ return redis.call('get', ${luaExpression})`,
         const secondaryEntityManager = new SecondaryEntityManagerMock<{ id: string }>(model);
         expect(() => {
           // tslint:disable-next-line:no-unused-expression
-          new PrimaryEntityManager(model, this._redis.redis, true, secondaryEntityManager);
+          new AntPrimaryEntityManager(model, this._redis.redis, true, secondaryEntityManager);
         }).not.toThrowError();
         done();
       },
@@ -387,7 +387,7 @@ return redis.call('get', ${luaExpression})`,
       async (done) => {
         await this._beforeAllPromise;
         const model = new AntModel('id', { prefix: prefix });
-        const primaryEntityManager = new PrimaryEntityManager(model, this._redis.redis, null);
+        const primaryEntityManager = new AntPrimaryEntityManager(model, this._redis.redis, null);
         const idToSearch = 3;
 
         expect(await primaryEntityManager.get(idToSearch)).toBeNull();
@@ -732,7 +732,12 @@ return redis.call('get', ${luaExpression})`,
         const entity: IEntityTestString = { id: 'id0', field: 'sample' };
         const model = new AntModel('id', { prefix: prefix });
         const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTestString>(model, new Array());
-        const primaryEntityManager = new PrimaryEntityManager(model, this._redis.redis, true, secondaryEntityManager);
+        const primaryEntityManager = new AntPrimaryEntityManager(
+          model,
+          this._redis.redis,
+          true,
+          secondaryEntityManager,
+        );
         const entityFound = await primaryEntityManager.mGet(
           [entity[model.id]],
           new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000)),

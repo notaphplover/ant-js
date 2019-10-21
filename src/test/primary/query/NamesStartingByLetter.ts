@@ -1,6 +1,6 @@
 import { Entity } from '../../../model/entity';
-import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
 import { IRedisMiddleware } from '../../../persistence/primary/IRedisMiddleware';
+import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/SecondaryEntityManagerMock';
 
@@ -20,7 +20,7 @@ export class NamesStartingByLetter extends AntMultipleResultPrimaryQueryManager<
    * @param prefix Query prefix.
    */
   public constructor(
-    primaryEntityManager: IPrimaryEntityManager<NamedEntity>,
+    primaryEntityManager: PrimaryEntityManager<NamedEntity>,
     secondaryModelManagerMock: SecondaryEntityManagerMock<NamedEntity>,
     redis: IRedisMiddleware,
     reverseHashKey: string,

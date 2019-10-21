@@ -2,17 +2,17 @@ import { Entity } from '../../model/entity';
 import { KeyGenParams } from '../../model/key-gen-params';
 import { Model } from '../../model/model';
 import { SecondaryEntityManager } from '../secondary/secondary-entity-manager';
-import { IPrimaryEntityManager } from './IPrimaryEntityManager';
 import { IRedisMiddleware } from './IRedisMiddleware';
-import { VOID_RESULT_STRING } from './LuaConstants';
+import { VOID_RESULT_STRING } from './lua-constants';
 import { AntJsSearchOptions } from './options/antjs-search-options';
 import { CacheMode } from './options/cache-mode';
 import { PersistencyDeleteOptions } from './options/persistency-delete-options';
 import { PersistencySearchOptions } from './options/persistency-search-options';
 import { PersistencyUpdateOptions } from './options/persistency-update-options';
+import { PrimaryEntityManager } from './primary-entity-manager';
 
-export class PrimaryEntityManager<TEntity extends Entity, TSecondaryManager extends SecondaryEntityManager<TEntity>>
-  implements IPrimaryEntityManager<TEntity> {
+export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager extends SecondaryEntityManager<TEntity>>
+  implements PrimaryEntityManager<TEntity> {
   /**
    * Lua expression generator.
    */

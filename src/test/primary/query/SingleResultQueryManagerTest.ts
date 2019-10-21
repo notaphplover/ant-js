@@ -1,9 +1,9 @@
 import { AntModel } from '../../../model/ant-model';
 import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
-import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
+import { AntPrimaryEntityManager } from '../../../persistence/primary/ant-primary-entity-manager';
 import { ModelManager } from '../../../persistence/primary/ModelManager';
-import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
+import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { ITest } from '../../../testapi/api/ITest';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/SecondaryEntityManagerMock';
@@ -68,7 +68,7 @@ export class SingleResultQueryManagerTest implements ITest {
     >,
   ): [
     Model,
-    IPrimaryEntityManager<
+    PrimaryEntityManager<
       Entity & {
         id: number;
         field: string;
@@ -92,7 +92,7 @@ export class SingleResultQueryManagerTest implements ITest {
       id: number;
       field: string;
     };
-    const primaryEntityManager = new PrimaryEntityManager<TestModel, SecondaryEntityManager<TestModel>>(
+    const primaryEntityManager = new AntPrimaryEntityManager<TestModel, SecondaryEntityManager<TestModel>>(
       model,
       this._redis.redis,
       true,
@@ -222,7 +222,12 @@ export class SingleResultQueryManagerTest implements ITest {
             field: string;
           }
         >(model, [entity1]);
-        const primaryEntityManager = new PrimaryEntityManager(model, this._redis.redis, true, secondaryEntityManager);
+        const primaryEntityManager = new AntPrimaryEntityManager(
+          model,
+          this._redis.redis,
+          true,
+          secondaryEntityManager,
+        );
         const modelManager = new ModelManager(model, this._redis.redis, false, secondaryEntityManager);
         const query = async (params: any) => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
@@ -406,7 +411,12 @@ export class SingleResultQueryManagerTest implements ITest {
             field: string;
           }
         >(model, [entity1]);
-        const primaryEntityManager = new PrimaryEntityManager(model, this._redis.redis, true, secondaryEntityManager);
+        const primaryEntityManager = new AntPrimaryEntityManager(
+          model,
+          this._redis.redis,
+          true,
+          secondaryEntityManager,
+        );
         const modelManager = new ModelManager(model, this._redis.redis, false, secondaryEntityManager);
         const query = async (params: any) => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);

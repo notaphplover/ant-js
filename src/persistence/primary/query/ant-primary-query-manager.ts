@@ -1,7 +1,7 @@
 import { Entity } from '../../../model/entity';
-import { IPrimaryEntityManager } from '../IPrimaryEntityManager';
 import { IRedisMiddleware } from '../IRedisMiddleware';
 import { PersistencySearchOptions } from '../options/persistency-search-options';
+import { PrimaryEntityManager } from '../primary-entity-manager';
 import { BasePrimaryQueryManager, PrimaryQueryManager } from './primary-query-manager';
 
 export type MultipleQueryResult = number[] | string[];
@@ -34,7 +34,7 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
   /**
    * Primary entity manager.
    */
-  protected _primaryEntityManager: IPrimaryEntityManager<TEntity>;
+  protected _primaryEntityManager: PrimaryEntityManager<TEntity>;
   /**
    * Query to obtain ids.
    */
@@ -63,7 +63,7 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
    */
   public constructor(
     query: TQuery<TQueryResult>,
-    primaryEntityManager: IPrimaryEntityManager<TEntity>,
+    primaryEntityManager: PrimaryEntityManager<TEntity>,
     redis: IRedisMiddleware,
     reverseHashKey: string,
     queryKeyGen: (params: any) => string,

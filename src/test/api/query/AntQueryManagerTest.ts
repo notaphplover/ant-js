@@ -1,7 +1,7 @@
 import { ApiQueryManager } from '../../../api/query/api-query-manager';
 import { AntModel } from '../../../model/ant-model';
 import { Entity } from '../../../model/entity';
-import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
+import { AntPrimaryEntityManager } from '../../../persistence/primary/ant-primary-entity-manager';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { ITest } from '../../../testapi/api/ITest';
 import { SingleResultQueryByFieldManager } from '../../primary/query/SingleResultQueryByFieldManager';
@@ -64,7 +64,7 @@ export class AntQueryManagerTest implements ITest {
       itsName,
       async (done) => {
         const model = modelGenerator(prefix);
-        const primaryEntityManager = new PrimaryEntityManager<EntityTest, SecondaryEntityManager<EntityTest>>(
+        const primaryEntityManager = new AntPrimaryEntityManager<EntityTest, SecondaryEntityManager<EntityTest>>(
           model,
           this._redis.redis,
           null,

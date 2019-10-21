@@ -2,7 +2,7 @@ import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 import { PersistencySearchOptions } from './options/persistency-search-options';
 
-export interface IPrimaryEntityManagerBase<TEntity extends Entity> {
+export interface PrimaryEntityManagerBase<TEntity extends Entity> {
   /**
    * Gets a model by its id.
    * @param id: Model's id.
@@ -22,7 +22,7 @@ export interface IPrimaryEntityManagerBase<TEntity extends Entity> {
 /**
  * Represents a manager able to obtain entities by ids.
  */
-export interface IPrimaryEntityManager<TEntity extends Entity> extends IPrimaryEntityManagerBase<TEntity> {
+export interface PrimaryEntityManager<TEntity extends Entity> extends PrimaryEntityManagerBase<TEntity> {
   /**
    * Model of the manager.
    */

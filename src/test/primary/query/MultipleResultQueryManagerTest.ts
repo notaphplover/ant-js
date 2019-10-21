@@ -1,8 +1,8 @@
 import { AntModel } from '../../../model/ant-model';
 import { Model } from '../../../model/model';
-import { IPrimaryEntityManager } from '../../../persistence/primary/IPrimaryEntityManager';
+import { AntPrimaryEntityManager } from '../../../persistence/primary/ant-primary-entity-manager';
 import { ModelManager } from '../../../persistence/primary/ModelManager';
-import { PrimaryEntityManager } from '../../../persistence/primary/PrimaryEntityManager';
+import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { ITest } from '../../../testapi/api/ITest';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/SecondaryEntityManagerMock';
@@ -60,10 +60,10 @@ export class MultipleResultQueryManagerTest implements ITest {
   private _helperGenerateBaseInstances(
     prefix: string,
     entities: NamedEntity[],
-  ): [Model, IPrimaryEntityManager<NamedEntity>, SecondaryEntityManagerMock<NamedEntity>] {
+  ): [Model, PrimaryEntityManager<NamedEntity>, SecondaryEntityManagerMock<NamedEntity>] {
     const model = new AntModel('id', { prefix: prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntity>(model, entities);
-    const primaryEntityManager = new PrimaryEntityManager<NamedEntity, SecondaryEntityManager<NamedEntity>>(
+    const primaryEntityManager = new AntPrimaryEntityManager<NamedEntity, SecondaryEntityManager<NamedEntity>>(
       model,
       this._redis.redis,
       true,
@@ -231,7 +231,7 @@ export class MultipleResultQueryManagerTest implements ITest {
         const model = new AntModel('id', { prefix: prefix });
         const entity1: NamedEntityAlternative = { id: '1', name: 'Pepe' };
         const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntityAlternative>(model, [entity1]);
-        const primaryEntityManager = new PrimaryEntityManager<
+        const primaryEntityManager = new AntPrimaryEntityManager<
           NamedEntityAlternative,
           SecondaryEntityManager<NamedEntityAlternative>
         >(model, this._redis.redis, true, secondaryEntityManager);

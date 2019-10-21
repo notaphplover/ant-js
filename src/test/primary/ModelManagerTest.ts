@@ -2,9 +2,9 @@ import { AntModel } from '../../model/ant-model';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 import { IModelManager } from '../../persistence/primary/IModelManager';
-import { IPrimaryEntityManager } from '../../persistence/primary/IPrimaryEntityManager';
 import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-update-options';
 import { CacheMode } from '../../persistence/primary/options/cache-mode';
+import { PrimaryEntityManager } from '../../persistence/primary/primary-entity-manager';
 import { PrimaryQueryManager } from '../../persistence/primary/query/primary-query-manager';
 import { SingleResultPrimaryQueryManager } from '../../persistence/primary/query/single-result-primary-query-manager';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/AntJsModelManagerGenerator';
@@ -97,7 +97,7 @@ export class ModelManagerTest implements ITest {
   private async _helperSearchEntity(
     entity: IEntityTest,
     model: Model,
-    primaryEntityManager: IPrimaryEntityManager<IEntityTest>,
+    primaryEntityManager: PrimaryEntityManager<IEntityTest>,
     queriesMap: Map<string, PrimaryQueryManager<IEntityTest>>,
   ): Promise<[IEntityTest, IEntityTest[]]> {
     const searchEntityByPrimaryEntityManager = await primaryEntityManager.get(entity[model.id]);
