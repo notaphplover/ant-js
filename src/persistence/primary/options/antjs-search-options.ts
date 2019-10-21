@@ -1,6 +1,6 @@
-import { AntJsDeleteOptions } from './AntJsDeleteOptions';
-import { AntJsUpdateOptions } from './AntJsUpdateOptions';
-import { CacheMode } from './CacheMode';
+import { AntJsDeleteOptions } from './antjs-delete-options';
+import { AntJsUpdateOptions } from './antjs-update-options';
+import { CacheMode } from './cache-mode';
 import { PersistencySearchOptions } from './persistency-search-options';
 
 export class AntJsSearchOptions implements PersistencySearchOptions {

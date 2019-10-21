@@ -1,4 +1,4 @@
-import { CacheMode } from '../options/CacheMode';
+import { CacheMode } from '../options/cache-mode';
 import { PersistencyUpdateOptions } from '../options/persistency-update-options';
 import { IRedisCachedScriptSet } from './IRedisCachedScriptSet';
 import { RedisCachedScript } from './RedisCachedScript';

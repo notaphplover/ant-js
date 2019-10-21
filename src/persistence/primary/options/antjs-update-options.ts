@@ -1,4 +1,4 @@
-import { CacheMode } from './CacheMode';
+import { CacheMode } from './cache-mode';
 import { PersistencyUpdateOptions } from './persistency-update-options';
 
 export class AntJsUpdateOptions implements PersistencyUpdateOptions {

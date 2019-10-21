@@ -1,4 +1,4 @@
-import { CacheMode } from './CacheMode';
+import { CacheMode } from './cache-mode';
 
 export interface PersistencyUpdateOptions {
   /**
