@@ -1,6 +1,10 @@
 import { Entity } from '../model/entity';
 import { IBaseModelManager } from '../persistence/primary/IModelManager';
-import { MultipleQueryResult, QueryResult, SingleQueryResult } from '../persistence/primary/query/primary-query-manager';
+import {
+  MultipleQueryResult,
+  QueryResult,
+  SingleQueryResult,
+} from '../persistence/primary/query/primary-query-manager';
 import { ApiModelConfig } from './config/api-model-config';
 import { ApiQueryConfig } from './config/api-query-config';
 import { ApiMultipleResultQueryManager } from './query/api-multiple-result-query-manager';

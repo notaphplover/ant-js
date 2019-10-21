@@ -1,9 +1,9 @@
 import { AntJsDeleteOptions } from './AntJsDeleteOptions';
 import { AntJsUpdateOptions } from './AntJsUpdateOptions';
 import { CacheMode } from './CacheMode';
-import { IPersistencySearchOptions } from './IPersistencySearchOptions';
+import { PersistencySearchOptions } from './persistency-search-options';
 
-export class AntJsSearchOptions implements IPersistencySearchOptions {
+export class AntJsSearchOptions implements PersistencySearchOptions {
   /**
    * True if negative cache must be used.
    */

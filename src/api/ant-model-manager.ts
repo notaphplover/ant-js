@@ -1,9 +1,9 @@
 import { Entity } from '../model/entity';
 import { Model } from '../model/model';
 import { IModelManager } from '../persistence/primary/IModelManager';
-import { IPersistencyDeleteOptions } from '../persistence/primary/options/IPersistencyDeleteOptions';
-import { IPersistencySearchOptions } from '../persistence/primary/options/IPersistencySearchOptions';
-import { IPersistencyUpdateOptions } from '../persistence/primary/options/IPersistencyUpdateOptions';
+import { PersistencyDeleteOptions } from '../persistence/primary/options/persistency-delete-options';
+import { PersistencySearchOptions } from '../persistence/primary/options/persistency-search-options';
+import { PersistencyUpdateOptions } from '../persistence/primary/options/persistency-update-options';
 import { IPrimaryQueryManager } from '../persistence/primary/query/IPrimaryQueryManager';
 import { MultipleResultQueryManager } from '../persistence/primary/query/MultipleResultQueryManager';
 import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/primary-query-manager';
@@ -91,7 +91,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  public delete(id: number | string, options?: IPersistencyDeleteOptions): Promise<any> {
+  public delete(id: number | string, options?: PersistencyDeleteOptions): Promise<any> {
     return this.modelManager.delete(id, options);
   }
   /**
@@ -100,7 +100,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param options Cache options.
    * @returns Entity found
    */
-  public get(id: string | number, options?: IPersistencySearchOptions): Promise<TEntity> {
+  public get(id: string | number, options?: PersistencySearchOptions): Promise<TEntity> {
     return this.modelManager.get(id, options);
   }
   /**
@@ -109,7 +109,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param options Delete options.
    * @returns Promise of entities deleted.
    */
-  public mDelete(ids: number[] | string[], options?: IPersistencyDeleteOptions): Promise<any> {
+  public mDelete(ids: number[] | string[], options?: PersistencyDeleteOptions): Promise<any> {
     return this.modelManager.mDelete(ids, options);
   }
   /**
@@ -118,7 +118,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param options Cache options.
    * @returns Entities found.
    */
-  public mGet(ids: number[] | string[], options?: IPersistencySearchOptions): Promise<TEntity[]> {
+  public mGet(ids: number[] | string[], options?: PersistencySearchOptions): Promise<TEntity[]> {
     return this.modelManager.mGet(ids, options);
   }
   /**
@@ -127,7 +127,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param options Update options.
    * @returns Priomise of entities updated.
    */
-  public mUpdate(entities: TEntity[], options?: IPersistencyUpdateOptions): Promise<any> {
+  public mUpdate(entities: TEntity[], options?: PersistencyUpdateOptions): Promise<any> {
     return this.modelManager.mUpdate(entities, options);
   }
   /**
@@ -168,7 +168,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
    * @param options Update options.
    * @returns Promise of entity updated.
    */
-  public update(entity: TEntity, options?: IPersistencyUpdateOptions): Promise<any> {
+  public update(entity: TEntity, options?: PersistencyUpdateOptions): Promise<any> {
     return this.modelManager.update(entity, options);
   }
   /**

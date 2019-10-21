@@ -1,5 +1,5 @@
 import { Entity } from '../../model/entity';
-import { IPersistencySearchOptions } from '../../persistence/primary/options/IPersistencySearchOptions';
+import { PersistencySearchOptions } from '../../persistence/primary/options/persistency-search-options';
 import { QueryManager } from '../../persistence/primary/query/query-manager';
 import { ApiQueryManager } from './api-query-manager';
 
@@ -23,7 +23,7 @@ export abstract class AntQueryManager<TEntity extends Entity, TResult extends TE
    * @param params query params.
    * @returns query results.
    */
-  public get(params: any, options?: IPersistencySearchOptions): Promise<TResult> {
+  public get(params: any, options?: PersistencySearchOptions): Promise<TResult> {
     return this._queryManager.get(params, options);
   }
 
@@ -33,7 +33,7 @@ export abstract class AntQueryManager<TEntity extends Entity, TResult extends TE
    * @param options Cache options.
    * @returns Queries results.
    */
-  public mGet(paramsArray: any[], options?: IPersistencySearchOptions): Promise<TEntity[]> {
+  public mGet(paramsArray: any[], options?: PersistencySearchOptions): Promise<TEntity[]> {
     return this._queryManager.mGet(paramsArray, options);
   }
 }

@@ -1,6 +1,6 @@
 import { Entity } from '../../../model/entity';
 import { SEPARATOR_STRING, VOID_RESULT_STRING } from '../LuaConstants';
-import { IPersistencySearchOptions } from '../options/IPersistencySearchOptions';
+import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { IMultipleResultQueryManager } from './IMultipleResultQueryManager';
 import { PrimaryQueryManager } from './primary-query-manager';
 
@@ -20,7 +20,7 @@ export class MultipleResultQueryManager<TEntity extends Entity>
    * @param options Cache options.
    * @returns Entities found.
    */
-  public async get(params: any, options?: IPersistencySearchOptions): Promise<TEntity[]> {
+  public async get(params: any, options?: PersistencySearchOptions): Promise<TEntity[]> {
     const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultsJSON = await this._redis.eval(luaScript, 1, key);
@@ -47,7 +47,7 @@ export class MultipleResultQueryManager<TEntity extends Entity>
    * @param options Cache options.
    * @returns Queries results.
    */
-  public async mGet(paramsArray: any[], options?: IPersistencySearchOptions): Promise<TEntity[]> {
+  public async mGet(paramsArray: any[], options?: PersistencySearchOptions): Promise<TEntity[]> {
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
     }
@@ -101,7 +101,7 @@ export class MultipleResultQueryManager<TEntity extends Entity>
   private async _getProcessMissingOptions(
     missingIds: number[] | string[],
     finalResults: TEntity[],
-    options: IPersistencySearchOptions,
+    options: PersistencySearchOptions,
   ): Promise<void> {
     if (0 < missingIds.length) {
       const missingEntities = await this._primaryEntityManager.mGet(missingIds, options);
@@ -148,7 +148,7 @@ export class MultipleResultQueryManager<TEntity extends Entity>
   private async _getProcessQueryNotFound(
     key: string,
     params: any,
-    options: IPersistencySearchOptions,
+    options: PersistencySearchOptions,
   ): Promise<TEntity[]> {
     const ids = await this._query(params);
     const idsJSON = (ids as any[]).map((id) => JSON.stringify(id));

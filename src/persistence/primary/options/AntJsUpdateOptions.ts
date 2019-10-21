@@ -1,7 +1,7 @@
 import { CacheMode } from './CacheMode';
-import { IPersistencyUpdateOptions } from './IPersistencyUpdateOptions';
+import { PersistencyUpdateOptions } from './persistency-update-options';
 
-export class AntJsUpdateOptions implements IPersistencyUpdateOptions {
+export class AntJsUpdateOptions implements PersistencyUpdateOptions {
   /**
    * Cache options.
    */

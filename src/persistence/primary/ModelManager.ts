@@ -6,8 +6,8 @@ import { IRedisMiddleware } from './IRedisMiddleware';
 import { MULTIPLE_RESULT_QUERY_CODE, SINGLE_RESULT_QUERY_CODE, VOID_RESULT_STRING } from './LuaConstants';
 import { AntJsDeleteOptions } from './options/AntJsDeleteOptions';
 import { AntJsUpdateOptions } from './options/AntJsUpdateOptions';
-import { IPersistencyDeleteOptions } from './options/IPersistencyDeleteOptions';
-import { IPersistencyUpdateOptions } from './options/IPersistencyUpdateOptions';
+import { PersistencyDeleteOptions } from './options/persistency-delete-options';
+import { PersistencyUpdateOptions } from './options/persistency-update-options';
 import { PrimaryEntityManager } from './PrimaryEntityManager';
 import { IPrimaryQueryManager } from './query/IPrimaryQueryManager';
 import { DeleteEntitiesCachedScriptSet } from './script/DeleteEntitiesCachedScriptSet';
@@ -83,7 +83,7 @@ export class ModelManager<TEntity extends Entity, TSecondaryManager extends Seco
    * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  public delete(id: number | string, options: IPersistencyDeleteOptions = new AntJsDeleteOptions()): Promise<any> {
+  public delete(id: number | string, options: PersistencyDeleteOptions = new AntJsDeleteOptions()): Promise<any> {
     return this._luaDeleteCachedQuery.eval(options, (scriptArg: string) => {
       const evalParams = [scriptArg, this._queryManagers.length];
       for (const queryManager of this._queryManagers) {
@@ -103,10 +103,7 @@ export class ModelManager<TEntity extends Entity, TSecondaryManager extends Seco
    * @param options Delete options.
    * @returns Promise of entities deleted.
    */
-  public mDelete(
-    ids: number[] | string[],
-    options: IPersistencyDeleteOptions = new AntJsDeleteOptions(),
-  ): Promise<any> {
+  public mDelete(ids: number[] | string[], options: PersistencyDeleteOptions = new AntJsDeleteOptions()): Promise<any> {
     if (null == ids || 0 === ids.length) {
       return new Promise((resolve) => resolve());
     }
@@ -131,7 +128,7 @@ export class ModelManager<TEntity extends Entity, TSecondaryManager extends Seco
    * @param options Cache options.
    * @returns Promise of entities updated.
    */
-  public mUpdate(entities: TEntity[], options: IPersistencyUpdateOptions = new AntJsUpdateOptions()): Promise<any> {
+  public mUpdate(entities: TEntity[], options: PersistencyUpdateOptions = new AntJsUpdateOptions()): Promise<any> {
     if (null == entities || 0 === entities.length) {
       return new Promise((resolve) => resolve());
     }
@@ -166,7 +163,7 @@ export class ModelManager<TEntity extends Entity, TSecondaryManager extends Seco
    * @param options Cache options.
    * @returns Promise of entity updated.
    */
-  public update(entity: TEntity, options: IPersistencyUpdateOptions = new AntJsUpdateOptions()): Promise<any> {
+  public update(entity: TEntity, options: PersistencyUpdateOptions = new AntJsUpdateOptions()): Promise<any> {
     return this._luaUpdateCachedQuerySet.eval(options, (scriptArg) => {
       const evalParams = [scriptArg, 2 * this._queryManagers.length];
       for (const queryManager of this._queryManagers) {
@@ -210,7 +207,7 @@ export class ModelManager<TEntity extends Entity, TSecondaryManager extends Seco
    * @param options Delete options.
    * @returns script generated.
    */
-  private _luaSyncDeleteGenerator(options: IPersistencyDeleteOptions): string {
+  private _luaSyncDeleteGenerator(options: PersistencyDeleteOptions): string {
     const reverseHashKey: string = 'KEYS[i]';
 
     const entityId: string = 'ARGV[1]';
@@ -254,7 +251,7 @@ ${deleteSentence}`;
    *
    * @returns script generated.
    */
-  private _luaSyncMDeleteGenerator(options: IPersistencyDeleteOptions): string {
+  private _luaSyncMDeleteGenerator(options: PersistencyDeleteOptions): string {
     const queriesNumber: string = '#KEYS';
     const entitiesCount = '#ARGV - #KEYS';
     const ithQCode = 'ARGV[entitiesCount + i]';
@@ -306,7 +303,7 @@ end`;
    * @param options Cache options.
    * @returns script generated.
    */
-  private _luaSyncMUpdateGenerator(options: IPersistencyUpdateOptions): string {
+  private _luaSyncMUpdateGenerator(options: PersistencyUpdateOptions): string {
     const ttl = 'ARGV[#ARGV]';
     const queriesNumber: string = options.ttl ? 'ARGV[#ARGV - 1]' : 'ARGV[#ARGV]';
     const entitiesCount = options.ttl ? '(#ARGV - queriesNumber) / 2 - 1' : '(#ARGV - queriesNumber - 1) / 2';
@@ -374,7 +371,7 @@ end`;
    * @param options Cache options.
    * @returns script generated.
    */
-  private _luaSyncUpdateGenerator(options: IPersistencyUpdateOptions): string {
+  private _luaSyncUpdateGenerator(options: PersistencyUpdateOptions): string {
     const queriesNumber: string = '#KEYS / 2';
 
     const entityId = 'ARGV[1]';

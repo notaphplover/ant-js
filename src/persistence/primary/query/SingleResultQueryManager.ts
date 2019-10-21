@@ -1,6 +1,6 @@
 import { Entity } from '../../../model/entity';
 import { VOID_RESULT_STRING } from '../LuaConstants';
-import { IPersistencySearchOptions } from '../options/IPersistencySearchOptions';
+import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { ISingleResultQueryManager } from './ISingleResultQueryManager';
 import { PrimaryQueryManager } from './primary-query-manager';
 
@@ -18,7 +18,7 @@ export class SingleResultQueryManager<TEntity extends Entity> extends PrimaryQue
    * @param params Query parameters.
    * @param options Cache options.
    */
-  public async get(params: any, options?: IPersistencySearchOptions): Promise<TEntity> {
+  public async get(params: any, options?: PersistencySearchOptions): Promise<TEntity> {
     const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultJson = await this._redis.eval(luaScript, 1, key);
@@ -54,7 +54,7 @@ export class SingleResultQueryManager<TEntity extends Entity> extends PrimaryQue
    * @param options Cache options.
    * @returns Queries results.
    */
-  public async mGet(paramsArray: any[], options?: IPersistencySearchOptions): Promise<TEntity[]> {
+  public async mGet(paramsArray: any[], options?: PersistencySearchOptions): Promise<TEntity[]> {
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
     }
@@ -206,7 +206,7 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
   private async _mGetSearchMissingIds(
     finalResults: TEntity[],
     missingIds: number[] | string[],
-    options?: IPersistencySearchOptions,
+    options?: PersistencySearchOptions,
   ): Promise<void> {
     if (0 < missingIds.length) {
       const missingEntities = await this._primaryEntityManager.mGet(missingIds, options);

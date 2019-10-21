@@ -1,9 +1,9 @@
 import { CacheMode } from '../options/CacheMode';
-import { IPersistencyUpdateOptions } from '../options/IPersistencyUpdateOptions';
+import { PersistencyUpdateOptions } from '../options/persistency-update-options';
 import { IRedisCachedScriptSet } from './IRedisCachedScriptSet';
 import { RedisCachedScript } from './RedisCachedScript';
 
-export class UpdateEntitiesCachedScriptSet implements IRedisCachedScriptSet<IPersistencyUpdateOptions> {
+export class UpdateEntitiesCachedScriptSet implements IRedisCachedScriptSet<PersistencyUpdateOptions> {
   /**
    * Map of keys to redis cached scripts.
    */
@@ -12,13 +12,13 @@ export class UpdateEntitiesCachedScriptSet implements IRedisCachedScriptSet<IPer
   /**
    * RedisCachedScript generator.
    */
-  protected _generator: (mode: IPersistencyUpdateOptions) => RedisCachedScript;
+  protected _generator: (mode: PersistencyUpdateOptions) => RedisCachedScript;
 
   /**
    * Creates a new Redis cached script set by cache mode.
    * @param generator Cached script generator.
    */
-  public constructor(generator: (mode: IPersistencyUpdateOptions) => RedisCachedScript) {
+  public constructor(generator: (mode: PersistencyUpdateOptions) => RedisCachedScript) {
     this._map = new Map();
     this._generator = generator;
   }
@@ -26,7 +26,7 @@ export class UpdateEntitiesCachedScriptSet implements IRedisCachedScriptSet<IPer
   /**
    * @inheritdoc
    */
-  public eval(gArgs: IPersistencyUpdateOptions, eArgsGen: (scriptArg: string) => any[]): Promise<any> {
+  public eval(gArgs: PersistencyUpdateOptions, eArgsGen: (scriptArg: string) => any[]): Promise<any> {
     let scripts = this._map.get(gArgs.cacheMode);
     if (undefined === scripts) {
       scripts = [null, null];

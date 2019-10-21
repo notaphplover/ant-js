@@ -1,8 +1,8 @@
-import { IPersistencyDeleteOptions } from '../options/IPersistencyDeleteOptions';
+import { PersistencyDeleteOptions } from '../options/persistency-delete-options';
 import { IRedisCachedScriptSet } from './IRedisCachedScriptSet';
 import { RedisCachedScript } from './RedisCachedScript';
 
-export class DeleteEntitiesCachedScriptSet implements IRedisCachedScriptSet<IPersistencyDeleteOptions> {
+export class DeleteEntitiesCachedScriptSet implements IRedisCachedScriptSet<PersistencyDeleteOptions> {
   /**
    * Map of keys to redis cached scripts.
    */
@@ -11,13 +11,13 @@ export class DeleteEntitiesCachedScriptSet implements IRedisCachedScriptSet<IPer
   /**
    * RedisCachedScript generator.
    */
-  protected _generator: (mode: IPersistencyDeleteOptions) => RedisCachedScript;
+  protected _generator: (mode: PersistencyDeleteOptions) => RedisCachedScript;
 
   /**
    * Creates a new Redis cached script set by cache mode.
    * @param generator Cached script generator.
    */
-  public constructor(generator: (mode: IPersistencyDeleteOptions) => RedisCachedScript) {
+  public constructor(generator: (mode: PersistencyDeleteOptions) => RedisCachedScript) {
     this._scripts = [null, null];
     this._generator = generator;
   }
@@ -25,7 +25,7 @@ export class DeleteEntitiesCachedScriptSet implements IRedisCachedScriptSet<IPer
   /**
    * @inheritdoc
    */
-  public eval(gArgs: IPersistencyDeleteOptions, eArgsGen: (scriptArg: string) => any[]): Promise<any> {
+  public eval(gArgs: PersistencyDeleteOptions, eArgsGen: (scriptArg: string) => any[]): Promise<any> {
     const index = gArgs.negativeCache ? 1 : 0;
     if (null == this._scripts[index]) {
       this._scripts[index] = this._generator(gArgs);

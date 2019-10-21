@@ -1,6 +1,6 @@
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
-import { IPersistencySearchOptions } from './options/IPersistencySearchOptions';
+import { PersistencySearchOptions } from './options/persistency-search-options';
 
 export interface IPrimaryEntityManagerBase<TEntity extends Entity> {
   /**
@@ -9,14 +9,14 @@ export interface IPrimaryEntityManagerBase<TEntity extends Entity> {
    * @param options Cache options.
    * @returns Model found.
    */
-  get(id: number | string, options?: IPersistencySearchOptions): Promise<TEntity>;
+  get(id: number | string, options?: PersistencySearchOptions): Promise<TEntity>;
   /**
    * Gets a collection of models by its ids.
    * @param ids Model ids.
    * @param options Cache options.
    * @returns Models found.
    */
-  mGet(ids: number[] | string[], options?: IPersistencySearchOptions): Promise<TEntity[]>;
+  mGet(ids: number[] | string[], options?: PersistencySearchOptions): Promise<TEntity[]>;
 }
 
 /**

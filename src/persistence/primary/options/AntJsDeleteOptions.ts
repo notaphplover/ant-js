@@ -1,6 +1,6 @@
-import { IPersistencyDeleteOptions } from './IPersistencyDeleteOptions';
+import { PersistencyDeleteOptions } from './persistency-delete-options';
 
-export class AntJsDeleteOptions implements IPersistencyDeleteOptions {
+export class AntJsDeleteOptions implements PersistencyDeleteOptions {
   /**
    * True to use negative cache.
    */
