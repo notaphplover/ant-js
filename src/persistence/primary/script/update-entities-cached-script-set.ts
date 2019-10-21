@@ -1,9 +1,9 @@
 import { CacheMode } from '../options/cache-mode';
 import { PersistencyUpdateOptions } from '../options/persistency-update-options';
-import { IRedisCachedScriptSet } from './IRedisCachedScriptSet';
 import { RedisCachedScript } from './redis-cached-script';
+import { RedisCachedScriptSet } from './redis-cached-script-set';
 
-export class UpdateEntitiesCachedScriptSet implements IRedisCachedScriptSet<PersistencyUpdateOptions> {
+export class UpdateEntitiesCachedScriptSet implements RedisCachedScriptSet<PersistencyUpdateOptions> {
   /**
    * Map of keys to redis cached scripts.
    */

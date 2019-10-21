@@ -1,8 +1,8 @@
 import { PersistencyDeleteOptions } from '../options/persistency-delete-options';
-import { IRedisCachedScriptSet } from './IRedisCachedScriptSet';
 import { RedisCachedScript } from './redis-cached-script';
+import { RedisCachedScriptSet } from './redis-cached-script-set';
 
-export class DeleteEntitiesCachedScriptSet implements IRedisCachedScriptSet<PersistencyDeleteOptions> {
+export class DeleteEntitiesCachedScriptSet implements RedisCachedScriptSet<PersistencyDeleteOptions> {
   /**
    * Map of keys to redis cached scripts.
    */

@@ -1,4 +1,4 @@
-export interface IRedisCachedScriptSet<TParams> {
+export interface RedisCachedScriptSet<TParams> {
   /**
    * Evaluates a script based on a generation params.
    * @param gArgs Generation args.
