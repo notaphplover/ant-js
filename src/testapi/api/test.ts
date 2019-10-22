@@ -1,7 +1,7 @@
 /**
  * Represents a Test Module
  */
-export interface ITest {
+export interface Test {
   /**
    * Method to request the execution of all the tests.
    */

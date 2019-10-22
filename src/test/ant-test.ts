@@ -1,8 +1,8 @@
 import * as AntJs from '../ant';
 import { AntManager } from '../api/ant-manager';
-import { ITest } from '../testapi/api/ITest';
+import { Test } from '../testapi/api/test';
 
-export class AntTest implements ITest {
+export class AntTest implements Test {
   public performTests() {
     describe('AntTest', () => {
       this._itMustExportTypes();

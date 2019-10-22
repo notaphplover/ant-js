@@ -3,8 +3,8 @@ import { ApiModelConfig } from '../../api/config/api-model-config';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
-import { AntJsModelManagerGenerator } from '../../testapi/api/generator/AntJsModelManagerGenerator';
-import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
+import { AntJsModelManagerGenerator } from '../../testapi/api/generator/antjs-model-manager-generator';
+import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondary-entity-manager-mock';
 import { RedisWrapper } from '../primary/redis-wrapper';
 
 export class MinimalAntModelManager<TEntity extends Entity> extends AntModelManager<

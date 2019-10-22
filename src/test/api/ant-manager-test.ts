@@ -2,7 +2,7 @@ import { AntModelManager } from '../../api/ant-model-manager';
 import { ApiGeneralConfig } from '../../api/config/api-general-config';
 import { ApiModelConfig } from '../../api/config/api-model-config';
 import { AntModel } from '../../model/ant-model';
-import { ITest } from '../../testapi/api/ITest';
+import { Test } from '../../testapi/api/test';
 import { RedisWrapper } from '../primary/redis-wrapper';
 import { MinimalAntManager } from './minimal-ant-manager';
 
@@ -10,7 +10,7 @@ const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
 const modelGenerator = (prefix: string) => new AntModel('id', { prefix: prefix });
 
-export class AntManagerTest implements ITest {
+export class AntManagerTest implements Test {
   /**
    * Before all task performed promise.
    */

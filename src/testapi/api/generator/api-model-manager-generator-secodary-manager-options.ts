@@ -1,7 +1,7 @@
 import { Entity } from '../../../model/entity';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 
-export interface IModelManagerGeneratorSecodaryManagerOptions<
+export interface ApiModelManagerGeneratorSecodaryManagerOptions<
   TSecondaryManager extends SecondaryEntityManager<Entity>
 > {
   /**

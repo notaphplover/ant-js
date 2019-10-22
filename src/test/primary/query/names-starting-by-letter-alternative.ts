@@ -2,7 +2,7 @@ import { Entity } from '../../../model/entity';
 import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
-import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/SecondaryEntityManagerMock';
+import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/secondary-entity-manager-mock';
 
 export type NamedEntityAlternative = { id: string; name: string } & Entity;
 

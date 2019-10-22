@@ -9,8 +9,8 @@ import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-upda
 import { CacheMode } from '../../persistence/primary/options/cache-mode';
 import { PrimaryEntityManager } from '../../persistence/primary/primary-entity-manager';
 import { SecondaryEntityManager } from '../../persistence/secondary/secondary-entity-manager';
-import { ITest } from '../../testapi/api/ITest';
-import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
+import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondary-entity-manager-mock';
+import { Test } from '../../testapi/api/test';
 import { RedisWrapper } from './redis-wrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
@@ -25,7 +25,7 @@ type IEntityTestString = Entity & {
   field: string;
 };
 
-export class PrimaryEntityManagerTest implements ITest {
+export class PrimaryEntityManagerTest implements Test {
   /**
    * Before all task performed promise.
    */

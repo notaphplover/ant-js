@@ -2,7 +2,7 @@ import { AntQueryManager } from '../../api/query/ant-query-manager';
 import { AntModel } from '../../model/ant-model';
 import { Entity } from '../../model/entity';
 import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
-import { ITest } from '../../testapi/api/ITest';
+import { Test } from '../../testapi/api/test';
 import { RedisWrapper } from '../primary/redis-wrapper';
 import { MinimalAntModelManager } from './minimal-ant-model-manager';
 
@@ -12,7 +12,7 @@ const modelGenerator = (prefix: string) => new AntModel('id', { prefix: prefix }
 
 type EntityTest = { id: number } & Entity;
 
-export class AntModelManagerTest implements ITest {
+export class AntModelManagerTest implements Test {
   /**
    * Before all task performed promise.
    */

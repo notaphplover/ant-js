@@ -1,12 +1,12 @@
 import { AntJsUpdateOptions } from '../../../persistence/primary/options/antjs-update-options';
 import { RedisCachedScript } from '../../../persistence/primary/script/redis-cached-script';
 import { UpdateEntitiesCachedScriptSet } from '../../../persistence/primary/script/update-entities-cached-script-set';
-import { ITest } from '../../../testapi/api/ITest';
+import { Test } from '../../../testapi/api/test';
 import { RedisWrapper } from '../redis-wrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-export class UpdateEntitiesCachedScriptSetTest implements ITest {
+export class UpdateEntitiesCachedScriptSetTest implements Test {
   protected _beforeAllPromise: Promise<any>;
 
   protected _declareName: string;

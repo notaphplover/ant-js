@@ -1,11 +1,11 @@
 import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
-import { IQueriesManagerGeneratorOptions } from './IQueriesManagerGeneratorOptions';
+import { ApiQueriesManagerGeneratorOptions } from './api-queries-manager-generator-options';
 
-export interface IModelManagerGeneratorRedisOptions {
+export interface ApiModelManagerGeneratorRedisOptions {
   /**
    * Multipe result query managers options.
    */
-  multipleResultQueryManagersOptions?: IQueriesManagerGeneratorOptions;
+  multipleResultQueryManagersOptions?: ApiQueriesManagerGeneratorOptions;
   /**
    * Redis middleware.
    */
@@ -13,7 +13,7 @@ export interface IModelManagerGeneratorRedisOptions {
   /**
    * Single result query managers options.
    */
-  singleResultQueryManagersOptions?: IQueriesManagerGeneratorOptions;
+  singleResultQueryManagersOptions?: ApiQueriesManagerGeneratorOptions;
   /**
    * Determines if the model manager generated will use negative cache.
    */

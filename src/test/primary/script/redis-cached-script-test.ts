@@ -1,11 +1,11 @@
 import { RedisCachedScript } from '../../../persistence/primary/script/redis-cached-script';
-import { ITest } from '../../../testapi/api/ITest';
+import { Test } from '../../../testapi/api/test';
 import { RedisWrapper } from '../redis-wrapper';
 import { MinimalRedisCachedScript } from './minimal-redis-cached-script';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-export class RedisCachedScriptTest implements ITest {
+export class RedisCachedScriptTest implements Test {
   /**
    * Before all task performed promise.
    */

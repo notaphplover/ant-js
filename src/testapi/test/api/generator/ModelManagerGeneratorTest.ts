@@ -2,9 +2,9 @@ import { Entity } from '../../../../model/entity';
 import { Model } from '../../../../model/model';
 import { AntPrimaryModelManager } from '../../../../persistence/primary/ant-primary-model-manager';
 import { RedisWrapper } from '../../../../test/primary/redis-wrapper';
-import { AntJsModelManagerGenerator } from '../../../api/generator/AntJsModelManagerGenerator';
-import { ITest } from '../../../api/ITest';
-import { SecondaryEntityManagerMock } from '../../../api/secondary/SecondaryEntityManagerMock';
+import { AntJsModelManagerGenerator } from '../../../api/generator/antjs-model-manager-generator';
+import { SecondaryEntityManagerMock } from '../../../api/secondary/secondary-entity-manager-mock';
+import { Test } from '../../../api/test';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
@@ -14,7 +14,7 @@ interface IEntityTest extends Entity {
   strField: string;
 }
 
-export class ModelManagerGeneratorTest implements ITest {
+export class ModelManagerGeneratorTest implements Test {
   protected _describeName: string;
 
   protected _redisCleanPromise: Promise<any>;

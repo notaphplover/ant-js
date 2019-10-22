@@ -1,7 +1,7 @@
-import { ITest } from '../../../api/ITest';
-import { SecondaryEntityManagerMock } from '../../../api/secondary/SecondaryEntityManagerMock';
+import { SecondaryEntityManagerMock } from '../../../api/secondary/secondary-entity-manager-mock';
+import { Test } from '../../../api/test';
 
-export class SecondaryEntityManagerMockTest implements ITest {
+export class SecondaryEntityManagerMockTest implements Test {
   /**
    * Performs all the tests
    */

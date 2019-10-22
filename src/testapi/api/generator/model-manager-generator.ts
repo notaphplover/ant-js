@@ -8,16 +8,16 @@ import { PrimaryQueryManager } from '../../../persistence/primary/query/primary-
 import { SingleResultPrimaryQueryManager } from '../../../persistence/primary/query/single-result-primary-query-manager';
 import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
-import { IModelManagerGeneratorOptions } from './IModelManagerGeneratorOptions';
-import { IModelManagerGeneratorRedisOptions } from './IModelManagerGeneratorRedisOptions';
-import { IModelManagerGeneratorSecodaryManagerOptions } from './IModelManagerGeneratorSecodaryManagerOptions';
-import { IQueriesManagerGeneratorOptions } from './IQueriesManagerGeneratorOptions';
+import { ApiModelManagerGeneratorOptions } from './api-model-manager-generator-options';
+import { ApiModelManagerGeneratorRedisOptions } from './api-model-manager-generator-redis-options';
+import { ApiModelManagerGeneratorSecodaryManagerOptions } from './api-model-manager-generator-secodary-manager-options';
+import { ApiQueriesManagerGeneratorOptions } from './api-queries-manager-generator-options';
 
 export abstract class ModelManagerGenerator<
-  TOptions extends IModelManagerGeneratorOptions<
+  TOptions extends ApiModelManagerGeneratorOptions<
     Model,
-    IModelManagerGeneratorRedisOptions,
-    IModelManagerGeneratorSecodaryManagerOptions<TSecondaryManager>
+    ApiModelManagerGeneratorRedisOptions,
+    ApiModelManagerGeneratorSecodaryManagerOptions<TSecondaryManager>
   >,
   TModelManager extends PrimaryModelManager<Entity>,
   TSecondaryManager extends SecondaryEntityManager<Entity>
@@ -253,7 +253,7 @@ export abstract class ModelManagerGenerator<
   /**
    * Process a query managers generation options.
    */
-  protected _processQueryManagersGenerationOptions(options: IQueriesManagerGeneratorOptions): void {
+  protected _processQueryManagersGenerationOptions(options: ApiQueriesManagerGeneratorOptions): void {
     if (!options.queryPrefix) {
       options.queryPrefix = this._generateRandomKey();
     }

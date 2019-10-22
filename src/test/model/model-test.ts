@@ -1,8 +1,8 @@
 import { AntModel } from '../../model/ant-model';
 import { KeyGenParams } from '../../model/key-gen-params';
-import { ITest } from '../../testapi/api/ITest';
+import { Test } from '../../testapi/api/test';
 
-export class ModelTest implements ITest {
+export class ModelTest implements Test {
   public performTests(): void {
     describe('ModelTest', () => {
       this._itMustBeInitializable();

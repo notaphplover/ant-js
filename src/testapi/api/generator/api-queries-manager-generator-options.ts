@@ -1,4 +1,4 @@
-export interface IQueriesManagerGeneratorOptions {
+export interface ApiQueriesManagerGeneratorOptions {
   /**
    * Properties to be handled by a query manager.
    */

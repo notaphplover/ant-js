@@ -1,5 +1,5 @@
-import { ITest } from '../testapi/api/ITest';
 import { RedisAwaiter } from '../testapi/api/RedisAwaiter';
+import { Test } from '../testapi/api/test';
 import { AntTest } from './ant-test';
 import { AntManagerTest } from './api/ant-manager-test';
 import { AntModelManagerTest } from './api/ant-model-manager-test';
@@ -13,7 +13,7 @@ import { RedisWrapper } from './primary/redis-wrapper';
 import { RedisCachedScriptTest } from './primary/script/redis-cached-script-test';
 import { UpdateEntitiesCachedScriptSetTest } from './primary/script/update-entities-cached-script-set-test';
 
-export class AllTest implements ITest {
+export class AllTest implements Test {
   public performTests(): void {
     const redisWrapper = new RedisWrapper();
     const redis = redisWrapper.redis;

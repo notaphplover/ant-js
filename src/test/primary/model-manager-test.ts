@@ -7,9 +7,9 @@ import { PrimaryEntityManager } from '../../persistence/primary/primary-entity-m
 import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
 import { PrimaryQueryManager } from '../../persistence/primary/query/primary-query-manager';
 import { SingleResultPrimaryQueryManager } from '../../persistence/primary/query/single-result-primary-query-manager';
-import { AntJsModelManagerGenerator } from '../../testapi/api/generator/AntJsModelManagerGenerator';
-import { ITest } from '../../testapi/api/ITest';
-import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/SecondaryEntityManagerMock';
+import { AntJsModelManagerGenerator } from '../../testapi/api/generator/antjs-model-manager-generator';
+import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondary-entity-manager-mock';
+import { Test } from '../../testapi/api/test';
 import { MultipleResultQueryByFieldManager } from './query/multiple-result-query-by-field-manager';
 import { SingleResultQueryByFieldManager } from './query/single-result-query-by-field-manager';
 import { RedisWrapper } from './redis-wrapper';
@@ -24,7 +24,7 @@ interface IEntityTest extends Entity {
 const modelTestProperties = ['id', 'numberField', 'strField'];
 const modelTestGenerator = (prefix: string) => new AntModel('id', { prefix: prefix });
 
-export class ModelManagerTest implements ITest {
+export class ModelManagerTest implements Test {
   /**
    * Before all task performed promise.
    */
