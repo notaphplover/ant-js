@@ -8,7 +8,7 @@ import { Test } from '../../../api/test';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-interface IEntityTest extends Entity {
+interface EntityTest extends Entity {
   id: number;
   numberField: number;
   strField: string;
@@ -159,19 +159,19 @@ export class ModelManagerGeneratorTest implements Test {
           keyGen: { prefix: prefix },
         };
 
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
 
-        const entities: IEntityTest[] = [entity1, entity2];
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const entities: EntityTest[] = [entity1, entity2];
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [, , singleResultQueryManagers, multipleResultQueryManagers] = modelManagerGenerator.generateModelManager(
           {
             model: model,

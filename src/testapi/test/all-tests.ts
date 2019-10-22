@@ -1,8 +1,8 @@
 import { RedisWrapper } from '../../test/primary/redis-wrapper';
 import { RedisAwaiter } from '../api/RedisAwaiter';
 import { Test } from '../api/test';
-import { ModelManagerGeneratorTest } from './api/generator/ModelManagerGeneratorTest';
-import { SecondaryEntityManagerMockTest } from './api/secondary/SecondaryEntityManagerMockTest';
+import { ModelManagerGeneratorTest } from './api/generator/model-manager-generator-test';
+import { SecondaryEntityManagerMockTest } from './api/secondary/secondary-entity-manager-mock-test';
 
 export class AllTest implements Test {
   public performTests(): void {

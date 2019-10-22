@@ -15,7 +15,7 @@ import { RedisWrapper } from './redis-wrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-type IEntityTest = Entity & {
+type EntityTest = Entity & {
   id: number;
   field: string;
 };
@@ -88,12 +88,12 @@ export class PrimaryEntityManagerTest implements Test {
    */
   private _helperGenerateBaseInstances(
     prefix: string,
-    entities: IEntityTest[],
+    entities: EntityTest[],
     useNegativeCache: boolean = true,
-  ): [Model, PrimaryEntityManager<IEntityTest>, SecondaryEntityManagerMock<IEntityTest>] {
+  ): [Model, PrimaryEntityManager<EntityTest>, SecondaryEntityManagerMock<EntityTest>] {
     const model = new AntModel('id', { prefix: prefix });
-    const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
-    const primaryEntityManager = new AntPrimaryEntityManager<IEntityTest, SecondaryEntityManager<IEntityTest>>(
+    const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
+    const primaryEntityManager = new AntPrimaryEntityManager<EntityTest, SecondaryEntityManager<EntityTest>>(
       model,
       this._redis.redis,
       useNegativeCache,
@@ -110,8 +110,8 @@ export class PrimaryEntityManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
 
-        const entity1: IEntityTest = { id: 1, field: 'sample-1' };
-        const entity1Modified: IEntityTest = { id: 1, field: 'sample-modified' };
+        const entity1: EntityTest = { id: 1, field: 'sample-1' };
+        const entity1Modified: EntityTest = { id: 1, field: 'sample-modified' };
 
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
@@ -141,7 +141,7 @@ export class PrimaryEntityManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
 
-        const entity1: IEntityTest = { id: 1, field: 'sample-1' };
+        const entity1: EntityTest = { id: 1, field: 'sample-1' };
 
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
@@ -168,7 +168,7 @@ export class PrimaryEntityManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
 
-        const entity1: IEntityTest = { id: 1, field: 'sample-1' };
+        const entity1: EntityTest = { id: 1, field: 'sample-1' };
 
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
@@ -195,7 +195,7 @@ export class PrimaryEntityManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
 
-        const entity1: IEntityTest = { id: 1, field: 'sample-1' };
+        const entity1: EntityTest = { id: 1, field: 'sample-1' };
 
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
 
@@ -229,7 +229,7 @@ export class PrimaryEntityManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
 
-        const entity1: IEntityTest = { id: 1, field: 'sample-1' };
+        const entity1: EntityTest = { id: 1, field: 'sample-1' };
 
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
 
@@ -262,7 +262,7 @@ export class PrimaryEntityManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
         await primaryEntityManager.get(entity[model.id]);
         const luaKey = 'key';
@@ -311,7 +311,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
         const entityFound = await primaryEntityManager.get(entity[model.id]);
 
@@ -329,9 +329,9 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = { id: 1, field: 'sample-1' };
-        const entity2: IEntityTest = { id: 2, field: 'sample-2' };
-        const unexistingEntity: IEntityTest = { id: 3, field: 'sample-3' };
+        const entity1: EntityTest = { id: 1, field: 'sample-1' };
+        const entity2: EntityTest = { id: 2, field: 'sample-2' };
+        const unexistingEntity: EntityTest = { id: 3, field: 'sample-3' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1, entity2], false);
 
         const entitiesFound = await primaryEntityManager.mGet([
@@ -356,10 +356,10 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = { id: 2, field: 'sample-2' };
-        const entity2: IEntityTest = { id: 3, field: 'sample-3' };
-        const unexistingEntity1: IEntityTest = { id: 1, field: 'sample-1' };
-        const unexistingEntity4: IEntityTest = { id: 4, field: 'sample-4' };
+        const entity1: EntityTest = { id: 2, field: 'sample-2' };
+        const entity2: EntityTest = { id: 3, field: 'sample-3' };
+        const unexistingEntity1: EntityTest = { id: 1, field: 'sample-1' };
+        const unexistingEntity4: EntityTest = { id: 4, field: 'sample-4' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
 
         const entitiesFound = await primaryEntityManager.mGet([
@@ -438,7 +438,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
         const entityFound = await primaryEntityManager.get(
           entity[model.id],
@@ -459,7 +459,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
         const entityFound = await primaryEntityManager.get(
           entity[model.id],
@@ -480,7 +480,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
         const entityFound = await primaryEntityManager.get(
           entity[model.id],
@@ -501,7 +501,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(
           prefix,
           [entity],
@@ -525,7 +525,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         const entityFound = await primaryEntityManager.get(entity[model.id]);
 
@@ -543,7 +543,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         const entityFound = await primaryEntityManager.get(
           entity[model.id],
@@ -564,7 +564,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array(), true);
         const entityFound = await primaryEntityManager.get(
           entity[model.id],
@@ -585,7 +585,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         const entityFound = await primaryEntityManager.get(
           entity[model.id],
@@ -606,7 +606,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
         const entityFound = await primaryEntityManager.mGet(
           [entity[model.id]],
@@ -627,7 +627,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
         const entityFound = await primaryEntityManager.mGet(
           [entity[model.id]],
@@ -648,7 +648,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
         const entityFound = await primaryEntityManager.mGet(
           [entity[model.id]],
@@ -669,7 +669,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         const entityFound = await primaryEntityManager.mGet([entity[model.id]]);
 
@@ -687,7 +687,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         const entityFound = await primaryEntityManager.mGet(
           [entity[model.id]],
@@ -708,7 +708,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         const entityFound = await primaryEntityManager.mGet(
           [entity[model.id]],
@@ -757,8 +757,8 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity: IEntityTest = { id: 0, field: 'sample' };
-        const entity2: IEntityTest = { id: 1, field: 'sample-2' };
+        const entity: EntityTest = { id: 0, field: 'sample' };
+        const entity2: EntityTest = { id: 1, field: 'sample-2' };
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity,
           entity2,

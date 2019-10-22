@@ -16,7 +16,7 @@ import { RedisWrapper } from './redis-wrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-interface IEntityTest extends Entity {
+interface EntityTest extends Entity {
   id: number;
   numberField: number;
   strField: string;
@@ -95,11 +95,11 @@ export class ModelManagerTest implements Test {
    * @returns Promise of entities found by the primary and the query managers.
    */
   private async _helperSearchEntity(
-    entity: IEntityTest,
+    entity: EntityTest,
     model: Model,
-    primaryEntityManager: PrimaryEntityManager<IEntityTest>,
-    queriesMap: Map<string, PrimaryQueryManager<IEntityTest>>,
-  ): Promise<[IEntityTest, IEntityTest[]]> {
+    primaryEntityManager: PrimaryEntityManager<EntityTest>,
+    queriesMap: Map<string, PrimaryQueryManager<EntityTest>>,
+  ): Promise<[EntityTest, EntityTest[]]> {
     const searchEntityByPrimaryEntityManager = await primaryEntityManager.get(entity[model.id]);
     const searchEntityByQueryManager = new Array();
     for (const [property, query] of queriesMap) {
@@ -118,19 +118,19 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entities: IEntityTest[] = [entity1, entity2];
+        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           secondaryOptions: {
@@ -138,15 +138,15 @@ export class ModelManagerTest implements Test {
           },
         });
 
-        const singleResultQueryManager = new SingleResultQueryByFieldManager<IEntityTest>(
+        const singleResultQueryManager = new SingleResultQueryByFieldManager<EntityTest>(
           (params: any) =>
             new Promise((resolve) => {
               const entity = secondaryEntityManager.store.find(
-                (value: IEntityTest) => value.strField === params.strField,
+                (value: EntityTest) => value.strField === params.strField,
               );
               resolve(entity ? entity[model.id] : null);
             }),
-          modelManager as PrimaryModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/strField/',
           'strField',
@@ -193,19 +193,19 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entities: IEntityTest[] = [entity1, entity2];
+        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager, , queryManagersByProperty] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -227,14 +227,14 @@ export class ModelManagerTest implements Test {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toBeNull();
@@ -258,19 +258,19 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entities: IEntityTest[] = [entity1, entity2];
+        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
 
         const [modelManager, , queryManagersByProperty] = this._modelManagerGenerator.generateModelManager({
           model: model,
@@ -293,14 +293,14 @@ export class ModelManagerTest implements Test {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toBeNull();
@@ -324,24 +324,24 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entity3: IEntityTest = {
+        const entity3: EntityTest = {
           id: 2,
           numberField: 3,
           strField: 'c',
         };
-        const entities: IEntityTest[] = [entity1, entity2, entity3];
+        const entities: EntityTest[] = [entity1, entity2, entity3];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager, , queryManagersByProperty] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -363,20 +363,20 @@ export class ModelManagerTest implements Test {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
         const [searchEntity3ByPrimaryEntityManager, searchEntity3ByQueryManager] = await this._helperSearchEntity(
           entity3,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toBeNull();
@@ -404,24 +404,24 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entity3: IEntityTest = {
+        const entity3: EntityTest = {
           id: 2,
           numberField: 3,
           strField: 'c',
         };
-        const entities: IEntityTest[] = [entity1, entity2, entity3];
+        const entities: EntityTest[] = [entity1, entity2, entity3];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager, , queryManagersByProperty] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -443,20 +443,20 @@ export class ModelManagerTest implements Test {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
         const [searchEntity3ByPrimaryEntityManager, searchEntity3ByQueryManager] = await this._helperSearchEntity(
           entity3,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toBeNull();
@@ -484,14 +484,14 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entities: IEntityTest[] = [entity1];
+        const entities: EntityTest[] = [entity1];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager, , queryManagersByProperty] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -511,8 +511,8 @@ export class ModelManagerTest implements Test {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1);
@@ -532,19 +532,19 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entities: IEntityTest[] = [entity1, entity2];
+        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -569,19 +569,19 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entities: IEntityTest[] = [entity1, entity2];
+        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -609,7 +609,7 @@ export class ModelManagerTest implements Test {
         await this._beforeAllPromise;
 
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -620,15 +620,15 @@ export class ModelManagerTest implements Test {
           },
         });
 
-        const singleResultQueryManager = new SingleResultQueryByFieldManager<IEntityTest>(
+        const singleResultQueryManager = new SingleResultQueryByFieldManager<EntityTest>(
           (params: any) =>
             new Promise((resolve) => {
               const entity = secondaryEntityManager.store.find(
-                (value: IEntityTest) => value.strField === params.strField,
+                (value: EntityTest) => value.strField === params.strField,
               );
               resolve(entity ? entity[model.id] : null);
             }),
-          modelManager as PrimaryModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/strField/',
           'strField',
@@ -652,24 +652,24 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'a',
         };
-        const entity3: IEntityTest = {
+        const entity3: EntityTest = {
           id: 2,
           numberField: 3,
           strField: 'b',
         };
-        const entities: IEntityTest[] = [entity1, entity2, entity3];
+        const entities: EntityTest[] = [entity1, entity2, entity3];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -685,7 +685,7 @@ export class ModelManagerTest implements Test {
               const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
               resolve(entities.map((entity) => entity.id));
             }),
-          modelManager as PrimaryModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -713,24 +713,24 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'a',
         };
-        const entity3: IEntityTest = {
+        const entity3: EntityTest = {
           id: 2,
           numberField: 3,
           strField: 'b',
         };
-        const entities: IEntityTest[] = [entity1, entity2, entity3];
+        const entities: EntityTest[] = [entity1, entity2, entity3];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -746,7 +746,7 @@ export class ModelManagerTest implements Test {
               const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
               resolve(entities.map((entity) => entity.id));
             }),
-          modelManager as PrimaryModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -775,29 +775,29 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity1After: IEntityTest = {
+        const entity1After: EntityTest = {
           id: 0,
           numberField: 4,
           strField: 'b',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'a',
         };
-        const entity3: IEntityTest = {
+        const entity3: EntityTest = {
           id: 2,
           numberField: 3,
           strField: 'b',
         };
-        const entities: IEntityTest[] = [entity1, entity2, entity3];
+        const entities: EntityTest[] = [entity1, entity2, entity3];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -813,7 +813,7 @@ export class ModelManagerTest implements Test {
               const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
               resolve(entities.map((entity) => entity.id));
             }),
-          modelManager as PrimaryModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -852,34 +852,34 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity1After: IEntityTest = {
+        const entity1After: EntityTest = {
           id: 0,
           numberField: 4,
           strField: 'b',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'a',
         };
-        const entity3: IEntityTest = {
+        const entity3: EntityTest = {
           id: 2,
           numberField: 3,
           strField: 'b',
         };
-        const entity3After: IEntityTest = {
+        const entity3After: EntityTest = {
           id: 2,
           numberField: 4,
           strField: 'c',
         };
-        const entities: IEntityTest[] = [entity1, entity2, entity3];
+        const entities: EntityTest[] = [entity1, entity2, entity3];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -895,7 +895,7 @@ export class ModelManagerTest implements Test {
               const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
               resolve(entities.map((entity) => entity.id));
             }),
-          modelManager as PrimaryModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -936,19 +936,19 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entities: IEntityTest[] = [entity1, entity2];
+        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -964,7 +964,7 @@ export class ModelManagerTest implements Test {
               const entity = secondaryEntityManager.store.find((entity) => params.strField === entity.strField);
               resolve(entity ? entity.id : null);
             }),
-          modelManager as PrimaryModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -991,19 +991,19 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entities: IEntityTest[] = [entity1, entity2];
+        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -1019,7 +1019,7 @@ export class ModelManagerTest implements Test {
               const entity = secondaryEntityManager.store.find((entity) => params.strField === entity.strField);
               resolve(entity ? entity.id : null);
             }),
-          modelManager as PrimaryModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1046,24 +1046,24 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity1After: IEntityTest = {
+        const entity1After: EntityTest = {
           id: 0,
           numberField: 3,
           strField: 'c',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entities: IEntityTest[] = [entity1, entity2];
+        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -1079,7 +1079,7 @@ export class ModelManagerTest implements Test {
               const entity = secondaryEntityManager.store.find((entity) => params.strField === entity.strField);
               resolve(entity ? entity.id : null);
             }),
-          modelManager as PrimaryModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1107,29 +1107,29 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity1After: IEntityTest = {
+        const entity1After: EntityTest = {
           id: 0,
           numberField: 3,
           strField: 'c',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entity2After: IEntityTest = {
+        const entity2After: EntityTest = {
           id: 1,
           numberField: 4,
           strField: 'd',
         };
-        const entities: IEntityTest[] = [entity1, entity2];
+        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -1145,7 +1145,7 @@ export class ModelManagerTest implements Test {
               const entity = secondaryEntityManager.store.find((entity) => params.strField === entity.strField);
               resolve(entity ? entity.id : null);
             }),
-          modelManager as PrimaryModelManager<IEntityTest>,
+          modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1175,24 +1175,24 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entity1After: IEntityTest = {
+        const entity1After: EntityTest = {
           id: 0,
           numberField: 11,
           strField: 'aa',
         };
-        const entities: IEntityTest[] = [entity1, entity2];
+        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager, , queryManagersByProperty] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -1213,14 +1213,14 @@ export class ModelManagerTest implements Test {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1After,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1After);
@@ -1245,14 +1245,14 @@ export class ModelManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
 
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
 
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, [entity1]);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [entity1]);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -1280,14 +1280,14 @@ export class ModelManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
 
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
 
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, [entity1]);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [entity1]);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -1315,25 +1315,25 @@ export class ModelManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
 
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
 
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entity2After: IEntityTest = {
+        const entity2After: EntityTest = {
           id: 1,
           numberField: 3,
           strField: 'bAfter',
         };
 
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, [entity1, entity2]);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [entity1, entity2]);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -1364,25 +1364,25 @@ export class ModelManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
 
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
 
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entity2After: IEntityTest = {
+        const entity2After: EntityTest = {
           id: 1,
           numberField: 3,
           strField: 'bAfter',
         };
 
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, [entity1, entity2]);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [entity1, entity2]);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -1412,24 +1412,24 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entity1After: IEntityTest = {
+        const entity1After: EntityTest = {
           id: 0,
           numberField: 11,
           strField: 'aa',
         };
-        const entities: IEntityTest[] = [entity1, entity2];
+        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager, , queryManagersByProperty] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -1449,14 +1449,14 @@ export class ModelManagerTest implements Test {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1After,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1After);
@@ -1480,24 +1480,24 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entity1After: IEntityTest = {
+        const entity1After: EntityTest = {
           id: 0,
           numberField: 11,
           strField: 'aa',
         };
-        const entities: IEntityTest[] = [entity1, entity2];
+        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager, , queryManagersByProperty] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -1517,14 +1517,14 @@ export class ModelManagerTest implements Test {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1After,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1After);
@@ -1549,14 +1549,14 @@ export class ModelManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
 
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
 
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, [entity1]);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [entity1]);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -1583,24 +1583,24 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entity2: IEntityTest = {
+        const entity2: EntityTest = {
           id: 1,
           numberField: 2,
           strField: 'b',
         };
-        const entity1After: IEntityTest = {
+        const entity1After: EntityTest = {
           id: 0,
           numberField: 11,
           strField: 'aa',
         };
-        const entities: IEntityTest[] = [entity1, entity2];
+        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager, , queryManagersByProperty] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -1620,14 +1620,14 @@ export class ModelManagerTest implements Test {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1After,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
         const [searchEntity2ByPrimaryEntityManager, searchEntity2ByQueryManager] = await this._helperSearchEntity(
           entity2,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1After);
@@ -1651,14 +1651,14 @@ export class ModelManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: IEntityTest = {
+        const entity1: EntityTest = {
           id: 0,
           numberField: 1,
           strField: 'a',
         };
-        const entities: IEntityTest[] = [entity1];
+        const entities: EntityTest[] = [entity1];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTest>(model, entities);
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager, , queryManagersByProperty] = this._modelManagerGenerator.generateModelManager({
           model: model,
           redisOptions: {
@@ -1678,8 +1678,8 @@ export class ModelManagerTest implements Test {
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await await this._helperSearchEntity(
           entity1,
           model,
-          modelManager as PrimaryModelManager<IEntityTest>,
-          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<IEntityTest>>,
+          modelManager as PrimaryModelManager<EntityTest>,
+          queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
 
         expect(searchEntity1ByPrimaryEntityManager).toEqual(entity1);
