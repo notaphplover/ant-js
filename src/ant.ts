@@ -1,3 +1,3 @@
-import { AntManager } from './api/AntManager';
+import { AntManager } from './api/ant-manager';
 
 export { AntManager };
