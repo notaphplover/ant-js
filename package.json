@@ -1,7 +1,7 @@
 {
   "name": "@antjs/ant-js",
-  "version": "1.0.0-beta.9",
-  "description": "Generic query manager.",
+  "version": "1.0.0-beta.10",
+  "description": "Scalable query manager for redis.",
   "main": "src/ant.js",
   "scripts": {
     "build": "./node_modules/typescript/bin/tsc --build src.tsconfig.commonjs.json",
@@ -17,7 +17,7 @@
     "publish-npm-beta": " npm run clear-js && npm run test && npm publish --access public --tag beta",
     "report-coverage": "cat ./api-coverage/lcov.info | coveralls",
     "test": "npm run test-docker",
-    "test-coverage": "npm run test-docker-coverage",
+    "test-ci": "npm run ci-docker",
     "test-debug": "npm run test-docker-debug",
     "test-debug-only": "node --inspect-brk=0.0.0.0:${NODE_DEBUG_PORT_INNER} ./node_modules/jasmine/bin/jasmine.js ./src/test/main.test.js",
     "test-docker": "docker-compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from ant_lib",
@@ -31,7 +31,7 @@
     "url": "git+https://github.com/notaphplover/ant-js.git"
   },
   "author": "Roberto Pintos López",
-  "license": "ISC",
+  "license": "See the \"LICENSE\" file of the project",
   "devDependencies": {
     "@types/ioredis": "^4.0.18",
     "@types/jasmine": "^3.4.4",
