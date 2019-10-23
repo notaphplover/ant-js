@@ -17,7 +17,7 @@
     "publish-npm-beta": " npm run clear-js && npm run test && npm publish --access public --tag beta",
     "report-coverage": "cat ./api-coverage/lcov.info | coveralls",
     "test": "npm run test-docker",
-    "test-coverage": "npm run test-docker-coverage",
+    "test-ci": "npm run ci-docker",
     "test-debug": "npm run test-docker-debug",
     "test-debug-only": "node --inspect-brk=0.0.0.0:${NODE_DEBUG_PORT_INNER} ./node_modules/jasmine/bin/jasmine.js ./src/test/main.test.js",
     "test-docker": "docker-compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from ant_lib",
