@@ -6,9 +6,9 @@ import { BasePrimaryQueryManager, PrimaryQueryManager } from './primary-query-ma
 
 export type MultipleQueryResult = number[] | string[];
 export type SingleQueryResult = number | string;
-
 export type QueryResult = MultipleQueryResult | SingleQueryResult;
-type TResult<TEntity, TQueryResult> = TQueryResult extends MultipleQueryResult
+
+type TResult<TEntity extends Entity, TQueryResult extends QueryResult> = TQueryResult extends MultipleQueryResult
   ? TEntity[]
   : TQueryResult extends SingleQueryResult
   ? TEntity
