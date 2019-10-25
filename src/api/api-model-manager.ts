@@ -8,7 +8,6 @@ import {
 import { ApiModelConfig } from './config/api-model-config';
 import { ApiQueryConfig } from './config/api-query-config';
 import { ApiMultipleResultQueryManager } from './query/api-multiple-result-query-manager';
-import { ApiQueryManager } from './query/api-query-manager';
 import { ApiSingleResultQueryManager } from './query/api-single-result-query-manager';
 
 export type TAntQueryManager<TEntity, TQueryResult> = TQueryResult extends MultipleQueryResult
@@ -30,19 +29,11 @@ export interface ApiModelManager<TEntity extends Entity, TConfig extends ApiMode
    */
   config(config: TConfig): this;
   /**
-   * Gets a query from its alias.
-   * @param alias Alias of the query.
-   * @returns Query found.
-   */
-  query<TResult extends TEntity | TEntity[]>(alias: string): ApiQueryManager<TEntity, TResult>;
-  /**
    * Adds a query to the manager.
    * @param query Query to add.
-   * @param aliasOrNothing Alias of the query.
    * @returns This instance.
    */
   query<TQueryResult extends QueryResult>(
     queryConfig: ApiQueryConfig<TEntity, TQueryResult>,
-    aliasOrNothing?: string,
   ): TAntQueryManager<TEntity, TQueryResult>;
 }

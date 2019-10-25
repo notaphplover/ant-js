@@ -41,8 +41,6 @@ export class AntModelManagerTest implements Test {
       this._itMustGetAndSetSingleResultQuery();
       this._itMustSetAQueryWithoutAlias();
       this._itMustNotSetConfigIfConfigAlreadyExists();
-      this._itMustNotSetQueryIfQueryWithTheSameAliasIsRegistered();
-      this._itMustReturnUndefinedIfTheAliasDoesNotExist();
       this._itMustThrowAnErrorIfConfigIsNotSet();
     });
   }
@@ -162,9 +160,9 @@ export class AntModelManagerTest implements Test {
           queryKeyGen: (params: any) => prefix + 'query/' + params.field,
           reverseHashKey: prefix + 'query/reverse',
         };
-        const queryAlias = 'query-alias';
-        const queryManager = antModelManager.query(queryConfig, queryAlias);
-        expect(antModelManager.query(queryAlias)).toBe(queryManager);
+        const queryManager = antModelManager.query(queryConfig);
+        expect(queryManager.get instanceof Function).toBe(true);
+        expect(queryManager.mGet instanceof Function).toBe(true);
         done();
       },
       MAX_SAFE_TIMEOUT,
@@ -196,9 +194,10 @@ export class AntModelManagerTest implements Test {
           queryKeyGen: (params: any) => prefix + 'query/' + params.field,
           reverseHashKey: prefix + 'query/reverse',
         };
-        const queryAlias = 'query-alias';
-        const queryManager = antModelManager.query(queryConfig, queryAlias);
-        expect(antModelManager.query(queryAlias)).toBe(queryManager);
+
+        const queryManager = antModelManager.query(queryConfig);
+        expect(queryManager.get instanceof Function).toBe(true);
+        expect(queryManager.mGet instanceof Function).toBe(true);
         done();
       },
       MAX_SAFE_TIMEOUT,
@@ -254,61 +253,6 @@ export class AntModelManagerTest implements Test {
         expect(() => {
           antModelManager.config(config);
         }).toThrowError();
-        done();
-      },
-      MAX_SAFE_TIMEOUT,
-    );
-  }
-
-  private _itMustNotSetQueryIfQueryWithTheSameAliasIsRegistered(): void {
-    const itsName = 'mustNotSetQueryIfQueryWithTheSameAliasIsRegistered';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(
-      itsName,
-      async (done) => {
-        const model = modelGenerator(prefix);
-        const antModelManager = new MinimalAntModelManager(model);
-        const config = {
-          redis: this._redis.redis,
-        };
-        antModelManager.config(config);
-
-        const queryConfig = {
-          isMultiple: false,
-          query: (params: any) =>
-            new Promise<number>((resolve) => {
-              const entity = (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>).find(
-                (entity) => params.field === entity.field,
-              );
-              resolve(entity ? entity.id : null);
-            }),
-          queryKeyGen: (params: any) => prefix + 'query/' + params.field,
-          reverseHashKey: prefix + 'query/reverse',
-        };
-        const queryAlias = 'query-alias';
-        antModelManager.query(queryConfig, queryAlias);
-        expect(() => {
-          antModelManager.query(queryConfig, queryAlias);
-        }).toThrowError();
-        done();
-      },
-      MAX_SAFE_TIMEOUT,
-    );
-  }
-
-  private _itMustReturnUndefinedIfTheAliasDoesNotExist(): void {
-    const itsName = 'mustReturnUndefinedIfTheAliasDoesNotExist';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(
-      itsName,
-      async (done) => {
-        const model = modelGenerator(prefix);
-        const antModelManager = new MinimalAntModelManager(model);
-        const config = {
-          redis: this._redis.redis,
-        };
-        antModelManager.config(config);
-        expect(antModelManager.query('unexisting-alias')).toBeUndefined();
         done();
       },
       MAX_SAFE_TIMEOUT,
