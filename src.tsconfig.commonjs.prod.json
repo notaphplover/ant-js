@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": false,
+    "sourceMap": false
+  },
+  "extends": "./src.tsconfig.commonjs.json"
+}
