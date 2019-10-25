@@ -1,15 +1,16 @@
 # Javascript source maps.
-src/**/*.js.map
+build/**/*.js.map
 # Typescript source code
-src/**/*.ts
-src/**/*.ts.map
-!src/**/*.d.ts
+/src
+build/**/*.ts.map
 
 # npm dependencies
 /node_modules
 
 # npm build
 src.tsconfig.commonjs.json
+src.tsconfig.commonjs.dev.json
+src.tsconfig.commonjs.prod.json
 
 # npm docker builds
 docker-compose.test.yml
