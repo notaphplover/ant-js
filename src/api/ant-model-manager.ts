@@ -38,17 +38,12 @@ export abstract class AntModelManager<
    */
   protected _modelManager: TModelManager;
   /**
-   * Queries map.
-   */
-  protected _queriesMap: QueryMapType<TEntity>;
-  /**
    * Creates a new queries map.
    * @param model Model to manage.
    * @param queriesMap Queries map.
    */
   public constructor(model: TModel) {
     this._model = model;
-    this._queriesMap = new Map();
   }
   /**
    * Model manager
@@ -130,37 +125,16 @@ This is probably caused by the absence of a config instance. Ensure that config 
   public mUpdate(entities: TEntity[], options?: PersistencyUpdateOptions): Promise<any> {
     return this.modelManager.mUpdate(entities, options);
   }
-  /**
-   * Gets a query from its alias.
-   * @param alias Alias of the query.
-   * @returns Query found.
-   */
-  public query<TResult extends TEntity | TEntity[]>(alias: string): ApiQueryManager<TEntity, TResult>;
+
   /**
    * Adds a query to the manager.
-   * @param queryConfig query manager config to add.
-   * @param aliasOrNothing Alias of the query.
-   * @returns Query manager generated from the config.
+   * @param query Query to add.
+   * @returns This instance.
    */
-  public query<TQueryResult extends QueryResult>(
-    queryConfig: ApiQueryConfig<TEntity, TQueryResult>,
-    aliasOrNothing?: string,
-  ): TAntQueryManager<TEntity, TQueryResult>;
-  /**
-   * Adds or obtains a query.
-   * @param queryOrAlias Query to manage or alias of the query to obtain.
-   * @param aliasOrNothing Alias of the query to manage.
-   * @returns Query found r this instance.
-   */
-  public query<TResult extends QueryResult & (TEntity | TEntity[])>(
-    queryOrAlias: ApiQueryConfig<TEntity, TResult> | string,
-    aliasOrNothing?: string,
-  ): ApiQueryManager<TEntity, TResult> | TAntQueryManager<TEntity, TResult> {
-    if ('string' === typeof queryOrAlias) {
-      return this._queryGetQuery<TResult>(queryOrAlias);
-    } else {
-      return this._querySetQuery(queryOrAlias, aliasOrNothing);
-    }
+  public query<TResult extends QueryResult>(
+    queryConfig: ApiQueryConfig<TEntity, TResult>,
+  ): TAntQueryManager<TEntity, TResult> {
+    return this._querySetQuery(queryConfig);
   }
   /**
    * Updates an entity at the cache layer.
@@ -178,24 +152,12 @@ This is probably caused by the absence of a config instance. Ensure that config 
    */
   protected abstract _generateModelManager(model: TModel, config: TConfig): TModelManager;
   /**
-   * Gets a query by its alias.
-   * @param alias Alias of the query.
-   * @returns Query found.
-   */
-  private _queryGetQuery<TResult extends TEntity | TEntity[] = TEntity | TEntity[]>(
-    alias: string,
-  ): ApiQueryManager<TEntity, TResult> {
-    return this._queriesMap.get(alias) as ApiQueryManager<TEntity, TResult>;
-  }
-  /**
    * Adds a query to the manager.
    * @param query Query to set.
-   * @param aliasOrNothing Alias of the query.
    * @returns This instance
    */
   private _querySetQuery<TResult extends QueryResult>(
     queryConfig: ApiQueryConfig<TEntity, TResult>,
-    aliasOrNothing?: string,
   ): TAntQueryManager<TEntity, TResult> {
     let query: TAntQueryManager<TEntity, TResult>;
     let innerQueryManager: PrimaryQueryManager<TEntity>;
@@ -226,13 +188,7 @@ This is probably caused by the absence of a config instance. Ensure that config 
         TEntity
       >) as ApiSingleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
     }
-    if (null != aliasOrNothing) {
-      if (undefined === this._queriesMap.get(aliasOrNothing)) {
-        this._queriesMap.set(aliasOrNothing, query);
-      } else {
-        throw new Error('There is already a query with this alias');
-      }
-    }
+
     this.modelManager.addQuery(innerQueryManager);
     return query;
   }
