@@ -1,6 +1,6 @@
 {
   "name": "@antjs/ant-js",
-  "version": "1.0.0-beta.10",
+  "version": "1.0.0-beta.11",
   "description": "Scalable query manager for redis.",
   "main": "src/ant.js",
   "scripts": {
