@@ -2,7 +2,7 @@
   "name": "@antjs/ant-js",
   "version": "1.0.0-beta.12",
   "description": "Scalable query manager for redis.",
-  "main": "src/ant.js",
+  "main": "build/ant.js",
   "scripts": {
     "build": "tsc --build src.tsconfig.commonjs.dev.json",
     "build-prod": "rm -rf ./build && tsc --build src.tsconfig.commonjs.prod.json",

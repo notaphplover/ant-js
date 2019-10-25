@@ -1,8 +1,9 @@
-# Javascript source maps.
+# Source maps.
 build/**/*.js.map
+build/**/*.ts.map
+
 # Typescript source code
 /src
-build/**/*.ts.map
 
 # npm dependencies
 /node_modules
@@ -49,9 +50,6 @@ api.nycrc.json
 testapi.nycrc.json
 /testapi.nyc_output
 /testapi-coverage
-
-# AntJS Tests
-/src/test
 
 # Prettier config
 .prettierignore
