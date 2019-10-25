@@ -18,7 +18,7 @@ async function getFiles(dir) {
   return Array.prototype.concat(...files);
 }
 
-const folderToClear = __dirname + '/../src';
+const folderToClear = __dirname + '/../build';
 const fileExtensions = [
   '.js',
   '.js.map',
