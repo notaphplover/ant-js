@@ -51,6 +51,9 @@ testapi.nycrc.json
 /testapi.nyc_output
 /testapi-coverage
 
+# AntJS Tests
+/build/test
+
 # Prettier config
 .prettierignore
 .prettierrc
