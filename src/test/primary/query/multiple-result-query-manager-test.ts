@@ -35,6 +35,7 @@ export class MultipleResultQueryManagerTest implements Test {
   public performTests(): void {
     describe(this._declareName, () => {
       this._itMustBeInitializable();
+      this._itMustInvokePrimaryToEntityAtGetOnQueryCacheHit();
       this._itMustPerformACachedSearchWithCachedEntities();
       this._itMustPerformACachedSearchWithLotsOfCachedEntities();
       this._itMustPerformACachedSearchWithLotsOfCachedAndUncachedEntities();
@@ -90,6 +91,50 @@ export class MultipleResultQueryManagerTest implements Test {
             prefix + 'names-starting-with/',
           );
         }).not.toThrowError();
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustInvokePrimaryToEntityAtGetOnQueryCacheHit(): void {
+    const itsName = 'mustInvokePrimaryToEntityAtGetOnQueryCacheHit';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        const fakeInitialEntity: NamedEntity = {
+          goBig: 'or go home',
+        } as unknown as NamedEntity;
+        const model: Model<NamedEntity> = {
+          entityToPrimary: (entity) => entity,
+          id: 'id',
+          keyGen: { prefix: prefix },
+          primaryToEntity: () => fakeInitialEntity,
+        };
+        const initialEntity: NamedEntity = {
+          id: 0,
+          name: 'sample-name',
+        };
+        const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntity>(model, [initialEntity]);
+        const primaryEntityManager = new AntPrimaryEntityManager<NamedEntity, SecondaryEntityManager<NamedEntity>>(
+          model,
+          this._redis.redis,
+          true,
+          secondaryEntityManager,
+        );
+        const entitiesStartingWithLetterQuery = new NamesStartingByLetter(
+          primaryEntityManager,
+          secondaryEntityManager,
+          this._redis.redis,
+          prefix + 'reverse/',
+          prefix + 'names-starting-with/',
+        );
+        // A cache miss should happen
+        await entitiesStartingWithLetterQuery.get(initialEntity);
+        // A cache hit should happen.
+        const [entityFound] = await entitiesStartingWithLetterQuery.get(initialEntity);
+        expect(entityFound).toEqual(fakeInitialEntity);
         done();
       },
       MAX_SAFE_TIMEOUT,

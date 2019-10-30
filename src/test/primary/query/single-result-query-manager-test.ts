@@ -40,6 +40,7 @@ export class SingleResultQueryManagerTest implements Test {
   public performTests(): void {
     describe(this._declareName, () => {
       this._itMustBeInitializable();
+      this._itMustInvokePrimaryToEntityAtGetOnQueryCacheHit();
       this._itMustPerformACachedSearchWithCachedEntities();
       this._itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsNumber();
       this._itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsString();
@@ -97,6 +98,62 @@ export class SingleResultQueryManagerTest implements Test {
             prefix + 'query-by-field/',
           );
         }).not.toThrowError();
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustInvokePrimaryToEntityAtGetOnQueryCacheHit(): void {
+    const itsName = 'mustInvokePrimaryToEntityAtGetOnQueryCacheHit';
+    const prefix = this._declareName + '/' + itsName + '/';
+
+    it(
+      itsName,
+      async (done) => {
+        const fakeInitialEntity: EntityTestStr = {
+          putYourFaith: 'in the light',
+        } as unknown as EntityTestStr;
+
+        const model: Model<EntityTestStr> = {
+          entityToPrimary: (entity) => entity,
+          id: 'id',
+          keyGen: { prefix: prefix },
+          primaryToEntity: () => fakeInitialEntity,
+        };
+        const initialEntity: EntityTestStr = {
+          field: 'sample-field',
+          id: 0,
+        };
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTestStr>(model, [initialEntity]);
+        const primaryEntityManager = new AntPrimaryEntityManager<EntityTestStr, SecondaryEntityManager<EntityTestStr>>(
+          model,
+          this._redis.redis,
+          true,
+          secondaryEntityManager,
+        );
+        const query = async (params: any) => {
+          const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
+          if (null == entityFound) {
+            return null;
+          } else {
+            return entityFound.id;
+          }
+        };
+        const queryManager = new SingleResultQueryByFieldManager(
+          query,
+          primaryEntityManager,
+          this._redis.redis,
+          prefix + 'reverse/',
+          'field',
+          prefix + 'query-by-field/',
+        );
+
+        // A cache miss should happen
+        await queryManager.get({ field: initialEntity.field });
+        // A cache hit should happen.
+        const entityFound = await queryManager.get({ field: initialEntity.field });
+        expect(entityFound).toEqual(fakeInitialEntity);
         done();
       },
       MAX_SAFE_TIMEOUT,
