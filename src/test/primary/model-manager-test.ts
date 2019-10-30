@@ -65,6 +65,7 @@ export class ModelManagerTest implements Test {
       this._itMustGetAnEntity();
       this._itMustGetMultipleEntities();
       this._itMustGetQueriesManaged();
+      this._itMustInvokeEntityToPrimaryOnUpdate();
       this._itMustSyncAMRQWhenDeletingAnEntity();
       this._itMustSyncAMRQWhenDeletingMultipleEntities();
       this._itMustSyncAMRQWhenUpdatingAnEntity();
@@ -475,6 +476,45 @@ export class ModelManagerTest implements Test {
       },
       MAX_SAFE_TIMEOUT,
     );
+  }
+
+  private _itMustInvokeEntityToPrimaryOnUpdate(): void {
+    const itsName = 'mustInvokeEntityToPrimaryOnUpdate';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(itsName, async (done) => {
+      const fakeInitialEntity: any = {
+        carpe: 'diem',
+      };
+      const model: Model<EntityTest> = {
+        entityToPrimary: () => fakeInitialEntity,
+        id: 'id',
+        keyGen: { prefix: prefix },
+        primaryToEntity: (primary) => primary,
+      };
+      const initialEntity: EntityTest = {
+        id: 0,
+        numberField: 1,
+        strField: '2',
+      };
+      const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [initialEntity]);
+      const [modelManager] = this._modelManagerGenerator.generateModelManager({
+        model: model,
+        redisOptions: {
+          useEntityNegativeCache: true,
+        },
+        secondaryOptions: {
+          manager: secondaryEntityManager,
+        },
+      });
+
+      // The entity should be written at cache now.
+      await modelManager.update(initialEntity);
+      // This should be a cache hit.
+      const entityFound = await modelManager.get(initialEntity.id);
+
+      expect(entityFound).toEqual(fakeInitialEntity);
+      done();
+    }, MAX_SAFE_TIMEOUT);
   }
 
   private _itMustDeleteZeroEntities(): void {
