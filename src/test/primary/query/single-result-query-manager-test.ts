@@ -111,9 +111,9 @@ export class SingleResultQueryManagerTest implements Test {
     it(
       itsName,
       async (done) => {
-        const fakeInitialEntity: EntityTestStr = {
+        const fakeInitialEntity: EntityTestStr = ({
           putYourFaith: 'in the light',
-        } as unknown as EntityTestStr;
+        } as unknown) as EntityTestStr;
 
         const model: Model<EntityTestStr> = {
           entityToPrimary: (entity) => entity,

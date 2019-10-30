@@ -103,9 +103,9 @@ export class MultipleResultQueryManagerTest implements Test {
     it(
       itsName,
       async (done) => {
-        const fakeInitialEntity: NamedEntity = {
+        const fakeInitialEntity: NamedEntity = ({
           goBig: 'or go home',
-        } as unknown as NamedEntity;
+        } as unknown) as NamedEntity;
         const model: Model<NamedEntity> = {
           entityToPrimary: (entity) => entity,
           id: 'id',
