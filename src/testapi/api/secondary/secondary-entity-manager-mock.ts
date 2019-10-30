@@ -6,7 +6,7 @@ export class SecondaryEntityManagerMock<TEntity extends Entity> implements Secon
   /**
    * Model managed.
    */
-  protected _model: Model;
+  protected _model: Model<TEntity>;
 
   /**
    * Entities set.
@@ -18,7 +18,7 @@ export class SecondaryEntityManagerMock<TEntity extends Entity> implements Secon
    * @param model Model of the manager.
    * @param store Inital entities.
    */
-  public constructor(model: Model, store: TEntity[] = new Array()) {
+  public constructor(model: Model<TEntity>, store: TEntity[] = new Array()) {
     this._model = model;
     this._store = store;
   }
@@ -26,7 +26,7 @@ export class SecondaryEntityManagerMock<TEntity extends Entity> implements Secon
   /**
    * Model managed.
    */
-  public get model(): Model {
+  public get model(): Model<TEntity> {
     return this._model;
   }
 

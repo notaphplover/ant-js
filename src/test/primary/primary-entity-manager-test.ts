@@ -11,6 +11,7 @@ import { PrimaryEntityManager } from '../../persistence/primary/primary-entity-m
 import { SecondaryEntityManager } from '../../persistence/secondary/secondary-entity-manager';
 import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondary-entity-manager-mock';
 import { Test } from '../../testapi/api/test';
+import { PrimaryEntityManagerForTest } from './primary-entity-manager-for-test';
 import { RedisWrapper } from './redis-wrapper';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
@@ -53,6 +54,10 @@ export class PrimaryEntityManagerTest implements Test {
       this._itDoesNotSupportUndefinedCacheOptionAtCacheEntities();
       this._itDoesNotSupportUndefinedCacheOptionAtCacheEntity();
       this._itGeneratesALuaKeyGeneratorUsingAPrefix();
+      this._itInvokesEntityToPrimaryAtGet();
+      this._itInvokesEntityToPrimaryAtMGet();
+      this._itInvokesPrimaryToEntityAtGet();
+      this._itInvokesPrimaryToEntityAtMGet();
       this._itMustBeInitializable();
       this._itMustFindAnEntityOutsideCache();
       this._itMustFindNullIfNullIdIsProvided();
@@ -90,8 +95,8 @@ export class PrimaryEntityManagerTest implements Test {
     prefix: string,
     entities: EntityTest[],
     useNegativeCache: boolean = true,
-  ): [Model, PrimaryEntityManager<EntityTest>, SecondaryEntityManagerMock<EntityTest>] {
-    const model = new AntModel('id', { prefix: prefix });
+  ): [Model<EntityTest>, PrimaryEntityManager<EntityTest>, SecondaryEntityManagerMock<EntityTest>] {
+    const model = new AntModel<EntityTest>('id', { prefix: prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
     const primaryEntityManager = new AntPrimaryEntityManager<EntityTest, SecondaryEntityManager<EntityTest>>(
       model,
@@ -277,8 +282,145 @@ return redis.call('get', ${luaExpression})`,
           done();
           return;
         }
-        const entityFound = JSON.parse(valueFound);
+        const entityFound = model.primaryToEntity(JSON.parse(valueFound));
         expect(entityFound).toEqual(entity);
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itInvokesEntityToPrimaryAtGet(): void {
+    const itsName = 'invokesEntityToPrimaryAtGet';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        const primarySample = { less: 'is more' };
+        const model: Model<EntityTest> = {
+          entityToPrimary: () => primarySample,
+          id: 'id',
+          keyGen: { prefix: prefix },
+          primaryToEntity: (primary) => primary,
+        };
+
+        const entitySample: EntityTest = { id: 0, field: 'less is more' };
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [entitySample]);
+
+        const primaryEntityManager = new PrimaryEntityManagerForTest<EntityTest, SecondaryEntityManager<EntityTest>>(
+          model,
+          this._redis.redis,
+          false,
+          secondaryEntityManager,
+        );
+
+        await primaryEntityManager.get(entitySample.id);
+        const redisEntry = await this._redis.redis.get(primaryEntityManager.getKey(entitySample.id));
+        const parsedRedisEntry = JSON.parse(redisEntry);
+        expect(parsedRedisEntry).toEqual((primarySample as unknown) as EntityTest);
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itInvokesEntityToPrimaryAtMGet(): void {
+    const itsName = 'invokesEntityToPrimaryAtMGet';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        const primarySample = { less: 'is more' };
+        const model: Model<EntityTest> = {
+          entityToPrimary: () => primarySample,
+          id: 'id',
+          keyGen: { prefix: prefix },
+          primaryToEntity: (primary) => primary,
+        };
+
+        const entitySample: EntityTest = { id: 0, field: 'less is more' };
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [entitySample]);
+
+        const primaryEntityManager = new PrimaryEntityManagerForTest<EntityTest, SecondaryEntityManager<EntityTest>>(
+          model,
+          this._redis.redis,
+          false,
+          secondaryEntityManager,
+        );
+
+        await primaryEntityManager.mGet([entitySample.id]);
+        const redisEntry = await this._redis.redis.get(primaryEntityManager.getKey(entitySample.id));
+        const parsedRedisEntry = JSON.parse(redisEntry);
+        expect(parsedRedisEntry).toEqual((primarySample as unknown) as EntityTest);
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itInvokesPrimaryToEntityAtGet(): void {
+    const itsName = 'invokesPrimaryToEntityAtGet';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        const fakeEntitySample = { less: 'is more' };
+        const model: Model<EntityTest> = {
+          entityToPrimary: (primary) => primary,
+          id: 'id',
+          keyGen: { prefix: prefix },
+          primaryToEntity: () => (fakeEntitySample as unknown) as EntityTest,
+        };
+
+        const entitySample: EntityTest = { id: 0, field: 'less is more' };
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [entitySample]);
+
+        const primaryEntityManager = new AntPrimaryEntityManager<EntityTest, SecondaryEntityManager<EntityTest>>(
+          model,
+          this._redis.redis,
+          false,
+          secondaryEntityManager,
+        );
+
+        // Write to cache
+        await primaryEntityManager.get(entitySample.id);
+        // Read from cache. Now we should achieve a cache hit with the transformed entity
+        const entityFound = await primaryEntityManager.get(entitySample.id);
+        expect(entityFound).toEqual((fakeEntitySample as unknown) as EntityTest);
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itInvokesPrimaryToEntityAtMGet(): void {
+    const itsName = 'invokesPrimaryToEntityAtMGet';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        const fakeEntitySample = { less: 'is more' };
+        const model: Model<EntityTest> = {
+          entityToPrimary: (primary) => primary,
+          id: 'id',
+          keyGen: { prefix: prefix },
+          primaryToEntity: () => (fakeEntitySample as unknown) as EntityTest,
+        };
+
+        const entitySample: EntityTest = { id: 0, field: 'less is more' };
+        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [entitySample]);
+
+        const primaryEntityManager = new AntPrimaryEntityManager<EntityTest, SecondaryEntityManager<EntityTest>>(
+          model,
+          this._redis.redis,
+          false,
+          secondaryEntityManager,
+        );
+        // Write to cache
+        await primaryEntityManager.mGet([entitySample.id]);
+        // Read from cache. Now we should achieve a cache hit with the transformed entity
+        const entityFound = await primaryEntityManager.mGet([entitySample.id]);
+        expect(entityFound).toEqual([(fakeEntitySample as unknown) as EntityTest]);
         done();
       },
       MAX_SAFE_TIMEOUT,
@@ -292,7 +434,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const model = new AntModel('id', { prefix: prefix });
+        const model = new AntModel<{ id: string }>('id', { prefix: prefix });
         const secondaryEntityManager = new SecondaryEntityManagerMock<{ id: string }>(model);
         expect(() => {
           // tslint:disable-next-line:no-unused-expression
@@ -730,7 +872,7 @@ return redis.call('get', ${luaExpression})`,
       async (done) => {
         await this._beforeAllPromise;
         const entity: IEntityTestString = { id: 'id0', field: 'sample' };
-        const model = new AntModel('id', { prefix: prefix });
+        const model = new AntModel<IEntityTestString>('id', { prefix: prefix });
         const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTestString>(model, new Array());
         const primaryEntityManager = new AntPrimaryEntityManager(
           model,

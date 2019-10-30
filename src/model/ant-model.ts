@@ -1,7 +1,8 @@
+import { Entity } from './entity';
 import { KeyGenParams } from './key-gen-params';
 import { Model } from './model';
 
-export class AntModel implements Model {
+export class AntModel<TEntity extends Entity> implements Model<TEntity> {
   /**
    * Model's id.
    */
@@ -23,6 +24,13 @@ export class AntModel implements Model {
   }
 
   /**
+   * @inheritdoc
+   */
+  public entityToPrimary(entity: TEntity): any {
+    return entity;
+  }
+
+  /**
    * Model's id.
    * @returns Model's id.
    */
@@ -35,5 +43,12 @@ export class AntModel implements Model {
    */
   public get keyGen(): KeyGenParams {
     return this._keyGen;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public primaryToEntity(entity: any): TEntity {
+    return entity;
   }
 }

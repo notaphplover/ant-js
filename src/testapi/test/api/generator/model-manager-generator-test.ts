@@ -1,3 +1,4 @@
+import { AntModel } from '../../../../model/ant-model';
 import { Entity } from '../../../../model/entity';
 import { Model } from '../../../../model/model';
 import { AntPrimaryModelManager } from '../../../../persistence/primary/ant-primary-model-manager';
@@ -47,10 +48,7 @@ export class ModelManagerGeneratorTest implements Test {
 
   private _itMustGenerateAModelManagerWithCustomSecondaryModelManager(): void {
     it(this._itMustGenerateAModelManagerWithCustomSecondaryModelManager.name, async (done) => {
-      const model: Model = {
-        id: 'id',
-        keyGen: { prefix: 'random_prefix' },
-      };
+      const model: Model<Entity> = new AntModel('id', { prefix: 'random_prefix' });
       const modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
       const originalSecondaryManager = new SecondaryEntityManagerMock(model);
       const [, secondaryManager] = modelManagerGenerator.generateModelManager({
@@ -66,10 +64,7 @@ export class ModelManagerGeneratorTest implements Test {
 
   private _itMustGenerateAModelManagerWithMultipleResultQueries(): void {
     it(this._itMustGenerateAModelManagerWithMultipleResultQueries.name, async (done) => {
-      const model: Model = {
-        id: 'id',
-        keyGen: { prefix: 'random_prefix' },
-      };
+      const model: Model<Entity> = new AntModel('id', { prefix: 'random_prefix' });
       const modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
       const properties = ['pm1', 'pm2'];
       const [
@@ -94,10 +89,7 @@ export class ModelManagerGeneratorTest implements Test {
 
   private _itMustGenerateAModelManagerWithNoQueriesAndASecondaryModelManager(): void {
     it(this._itMustGenerateAModelManagerWithNoQueriesAndASecondaryModelManager.name, async (done) => {
-      const model: Model = {
-        id: 'id',
-        keyGen: { prefix: 'random_prefix' },
-      };
+      const model: Model<Entity> = new AntModel('id', { prefix: 'random_prefix' });
       const modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
       const [
         modelManager,
@@ -117,10 +109,7 @@ export class ModelManagerGeneratorTest implements Test {
 
   private _itMustGenerateAModelManagerWithSingleResultQueries(): void {
     it(this._itMustGenerateAModelManagerWithSingleResultQueries.name, async (done) => {
-      const model: Model = {
-        id: 'id',
-        keyGen: { prefix: 'random_prefix' },
-      };
+      const model: Model<Entity> = new AntModel('id', { prefix: 'random_prefix' });
       const modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
       const properties = ['ps1', 'ps2'];
       const [
@@ -153,11 +142,7 @@ export class ModelManagerGeneratorTest implements Test {
         await this._redisCleanPromise;
 
         const modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
-
-        const model: Model = {
-          id: 'id',
-          keyGen: { prefix: prefix },
-        };
+        const model: Model<EntityTest> = new AntModel('id', { prefix: 'random_prefix' });
 
         const entity1: EntityTest = {
           id: 0,

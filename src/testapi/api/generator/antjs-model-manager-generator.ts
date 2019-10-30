@@ -9,7 +9,7 @@ import { ApiModelManagerGeneratorSecodaryManagerOptions } from './api-model-mana
 import { ModelManagerGenerator } from './model-manager-generator';
 
 type TModelManagerOptions = ApiModelManagerGeneratorOptions<
-  Model,
+  Model<Entity>,
   ApiModelManagerGeneratorRedisOptions,
   ApiModelManagerGeneratorSecodaryManagerOptions<SecondaryEntityManagerMock<Entity>>
 >;

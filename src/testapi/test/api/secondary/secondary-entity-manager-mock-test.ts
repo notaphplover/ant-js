@@ -1,3 +1,4 @@
+import { AntModel } from '../../../../model/ant-model';
 import { SecondaryEntityManagerMock } from '../../../api/secondary/secondary-entity-manager-mock';
 import { Test } from '../../../api/test';
 
@@ -24,18 +25,9 @@ export class SecondaryEntityManagerMockTest implements Test {
     it(this._itMustBeInitializable.name, async (done) => {
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
-        new SecondaryEntityManagerMock({
-          id: 'id',
-          keyGen: { prefix: '' },
-        });
+        new SecondaryEntityManagerMock(new AntModel('id', { prefix: '' }));
         // tslint:disable-next-line:no-unused-expression
-        new SecondaryEntityManagerMock(
-          {
-            id: 'id',
-            keyGen: { prefix: '' },
-          },
-          new Array(),
-        );
+        new SecondaryEntityManagerMock(new AntModel('id', { prefix: '' }), new Array());
       }).not.toThrowError();
       done();
     });
@@ -43,10 +35,7 @@ export class SecondaryEntityManagerMockTest implements Test {
 
   private _itMustGetElementsByIds(): void {
     it(this._itMustGetElementsByIds.name, async (done) => {
-      const model = {
-        id: 'id',
-        keyGen: { prefix: '' },
-      };
+      const model = new AntModel('id', { prefix: '' });
       const el0 = { id: 0 };
       const el1 = { id: 1 };
       const store = [el0, el1];
@@ -60,10 +49,7 @@ export class SecondaryEntityManagerMockTest implements Test {
 
   private _itMustGetElementsByIdsOrderedAscNumber(): void {
     it(this._itMustGetElementsByIdsOrderedAscNumber.name, async (done) => {
-      const model = {
-        id: 'id',
-        keyGen: { prefix: '' },
-      };
+      const model = new AntModel('id', { prefix: '' });
       const el0 = { id: 0 };
       const el1 = { id: 1 };
       const store = [el1, el0];
@@ -76,10 +62,7 @@ export class SecondaryEntityManagerMockTest implements Test {
 
   private _itMustGetElementsByIdsOrderedAscNonNumber(): void {
     it(this._itMustGetElementsByIdsOrderedAscNonNumber.name, async (done) => {
-      const model = {
-        id: 'id',
-        keyGen: { prefix: '' },
-      };
+      const model = new AntModel('id', { prefix: '' });
       const el0 = { id: 'a' };
       const el1 = { id: 'b' };
       const store = [el1, el0];
@@ -92,10 +75,7 @@ export class SecondaryEntityManagerMockTest implements Test {
 
   private _itMustGetElementsByIdsOrderedAscZeroEntities(): void {
     it(this._itMustGetElementsByIdsOrderedAscZeroEntities.name, async (done) => {
-      const model = {
-        id: 'id',
-        keyGen: { prefix: '' },
-      };
+      const model = new AntModel('id', { prefix: '' });
       const el0 = { id: 0 };
       const el1 = { id: 1 };
       const store = [el1, el0];
@@ -108,10 +88,7 @@ export class SecondaryEntityManagerMockTest implements Test {
 
   private _itMustGetAnElementById(): void {
     it(this._itMustGetAnElementById.name, async (done) => {
-      const model = {
-        id: 'id',
-        keyGen: { prefix: '' },
-      };
+      const model = new AntModel('id', { prefix: '' });
       const el0 = { id: 0 };
       const el1 = { id: 1 };
       const store = [el0, el1];
@@ -124,10 +101,7 @@ export class SecondaryEntityManagerMockTest implements Test {
 
   private _itMustGetTheModel(): void {
     it(this._itMustGetTheModel.name, async (done) => {
-      const model = {
-        id: 'id',
-        keyGen: { prefix: '' },
-      };
+      const model = new AntModel('id', { prefix: '' });
       const manager = new SecondaryEntityManagerMock(model);
       expect(manager.model).toBe(model);
       done();
@@ -136,10 +110,7 @@ export class SecondaryEntityManagerMockTest implements Test {
 
   private _itMustGettheStore(): void {
     it(this._itMustGettheStore.name, async (done) => {
-      const model = {
-        id: 'id',
-        keyGen: { prefix: '' },
-      };
+      const model = new AntModel('id', { prefix: '' });
       const store = [{ id: 0 }];
       const manager = new SecondaryEntityManagerMock(model, store);
       expect(manager.store).toBe(store);
@@ -149,10 +120,7 @@ export class SecondaryEntityManagerMockTest implements Test {
 
   private _itMustNotGetAnElementById(): void {
     it(this._itMustNotGetAnElementById.name, async (done) => {
-      const model = {
-        id: 'id',
-        keyGen: { prefix: '' },
-      };
+      const model = new AntModel('id', { prefix: '' });
       const el0 = { id: 0 };
       const store = new Array();
       const manager = new SecondaryEntityManagerMock(model, store);
@@ -163,10 +131,7 @@ export class SecondaryEntityManagerMockTest implements Test {
 
   private _itMustNotGetElementsByIdsOrderedAscNonNumberNonString(): void {
     it(this._itMustNotGetElementsByIdsOrderedAscNonNumberNonString.name, async (done) => {
-      const model = {
-        id: 'id',
-        keyGen: { prefix: '' },
-      };
+      const model = new AntModel('id', { prefix: '' });
       const el0 = { id: { index: 0 } };
       const el1 = { id: { index: 1 } };
       const store = [el1, el0];
