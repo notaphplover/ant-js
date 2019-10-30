@@ -15,7 +15,7 @@ import { ApiQueriesManagerGeneratorOptions } from './api-queries-manager-generat
 
 export abstract class ModelManagerGenerator<
   TOptions extends ApiModelManagerGeneratorOptions<
-    Model,
+    Model<Entity>,
     ApiModelManagerGeneratorRedisOptions,
     ApiModelManagerGeneratorSecodaryManagerOptions<TSecondaryManager>
   >,

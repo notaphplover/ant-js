@@ -1,16 +1,17 @@
-import { KeyGenParams } from './key-gen-params';
+import { BaseModel } from './base-model';
+import { Entity } from './entity';
 
 /**
  * Represents a model.
  * Models are the minimal unit of data.
  */
-export interface Model {
+export interface Model<TEntity extends Entity> extends BaseModel {
   /**
-   * Model's id field.
+   * Entity to primary algorithm
    */
-  id: string;
+  entityToPrimary: (entity: TEntity) => any;
   /**
-   * Key generation config.
+   * Primary to entity algorithm.
    */
-  keyGen: KeyGenParams;
+  primaryToEntity: (primary: any) => TEntity;
 }

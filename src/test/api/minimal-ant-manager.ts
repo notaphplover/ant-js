@@ -1,11 +1,12 @@
 import { AntManager } from '../../api/ant-manager';
+import { ApiModel } from '../../api/api-model';
 import { ApiModelManager } from '../../api/api-model-manager';
 import { ApiModelConfig } from '../../api/config/api-model-config';
+import { AntModel } from '../../model/ant-model';
 import { Entity } from '../../model/entity';
-import { Model } from '../../model/model';
 import { MinimalAntModelManager } from './minimal-ant-model-manager';
 
-export class MinimalAntManager extends AntManager<ApiModelConfig, Model, ApiModelManager<Entity, ApiModelConfig>> {
+export class MinimalAntManager extends AntManager<ApiModelConfig, ApiModel, ApiModelManager<Entity, ApiModelConfig>> {
   /**
    * Creates a new minimal ant manager.
    */
@@ -15,10 +16,10 @@ export class MinimalAntManager extends AntManager<ApiModelConfig, Model, ApiMode
 
   /**
    * Creates a model manager.
-   * @param model Model to manage.
+   * @param apiModel Model to manage.
    * @returns model manager created.
    */
-  protected _createModelManager(model: Model) {
-    return new MinimalAntModelManager(model);
+  protected _createModelManager(apiModel: ApiModel) {
+    return new MinimalAntModelManager(new AntModel(apiModel.id, apiModel.keyGen));
   }
 }

@@ -22,7 +22,7 @@ export type QueryMapType<TEntity extends Entity> = Map<string, ApiQueryManager<T
 export abstract class AntModelManager<
   TEntity extends Entity,
   TConfig extends ApiModelConfig,
-  TModel extends Model,
+  TModel extends Model<TEntity>,
   TModelManager extends PrimaryModelManager<TEntity>
 > implements ApiModelManager<TEntity, TConfig> {
   /**

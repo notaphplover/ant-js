@@ -5,7 +5,7 @@ export interface SecondaryEntityManager<TEntity extends Entity> {
   /**
    * Model of the manager.
    */
-  model: Model;
+  model: Model<TEntity>;
   /**
    * Gets a model by its id.
    * @param id: Model's id.

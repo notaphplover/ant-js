@@ -128,7 +128,7 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
     const result = JSON.parse(resultJson);
     const resultType = typeof result;
     if ('object' === resultType) {
-      finalResults.push(result);
+      finalResults.push(this._primaryEntityManager.model.primaryToEntity(result));
       return;
     }
     if ('number' === resultType || 'string' === resultType) {

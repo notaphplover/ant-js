@@ -1,6 +1,7 @@
 import { ApiQueryManager } from '../../../api/query/api-query-manager';
 import { AntModel } from '../../../model/ant-model';
 import { Entity } from '../../../model/entity';
+import { Model } from '../../../model/model';
 import { AntPrimaryEntityManager } from '../../../persistence/primary/ant-primary-entity-manager';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { Test } from '../../../testapi/api/test';
@@ -10,9 +11,9 @@ import { MinimalAntQueryManager } from './minimal-ant-query-manager';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-const modelGenerator = (prefix: string) => new AntModel('id', { prefix: prefix });
-
 type EntityTest = { id: number } & Entity;
+
+const modelGenerator = (prefix: string) => new AntModel<EntityTest>('id', { prefix: prefix });
 
 export class AntQueryManagerTest implements Test {
   /**
@@ -63,7 +64,7 @@ export class AntQueryManagerTest implements Test {
     it(
       itsName,
       async (done) => {
-        const model = modelGenerator(prefix);
+        const model: Model<EntityTest> = modelGenerator(prefix);
         const primaryEntityManager = new AntPrimaryEntityManager<EntityTest, SecondaryEntityManager<EntityTest>>(
           model,
           this._redis.redis,

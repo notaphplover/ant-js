@@ -239,7 +239,7 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
     const result = JSON.parse(resultJson);
     const resultType = typeof result;
     if ('object' === resultType) {
-      entityAction(result);
+      entityAction(this._primaryEntityManager.model.primaryToEntity(result));
       return;
     }
     if ('number' === resultType || 'string' === resultType) {

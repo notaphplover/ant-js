@@ -1,13 +1,13 @@
 import { Entity } from '../model/entity';
-import { Model } from '../model/model';
 import { ApiGeneralManager } from './api-general-manager';
+import { ApiModel } from './api-model';
 import { ApiModelManager } from './api-model-manager';
 import { ApiGeneralConfig } from './config/api-general-config';
 import { ApiModelConfig } from './config/api-model-config';
 
 export abstract class AntManager<
   TConfig extends ApiModelConfig,
-  TModel extends Model,
+  TModel extends ApiModel,
   TAntModelManager extends ApiModelManager<Entity, TConfig>
 > implements ApiGeneralManager<TConfig, TModel, TAntModelManager> {
   /**
@@ -18,7 +18,7 @@ export abstract class AntManager<
   /**
    * Map of managers by model.
    */
-  protected _managersByModel: Map<Model, TAntModelManager>;
+  protected _managersByModel: Map<TModel, TAntModelManager>;
 
   /**
    * Creates a new AntJS manager.
