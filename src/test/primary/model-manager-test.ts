@@ -22,7 +22,7 @@ interface EntityTest extends Entity {
   strField: string;
 }
 const modelTestProperties = ['id', 'numberField', 'strField'];
-const modelTestGenerator = (prefix: string) => new AntModel('id', { prefix: prefix });
+const modelTestGenerator = (prefix: string) => new AntModel<EntityTest>('id', { prefix: prefix });
 
 export class ModelManagerTest implements Test {
   /**
@@ -96,7 +96,7 @@ export class ModelManagerTest implements Test {
    */
   private async _helperSearchEntity(
     entity: EntityTest,
-    model: Model,
+    model: Model<Entity>,
     primaryEntityManager: PrimaryEntityManager<EntityTest>,
     queriesMap: Map<string, PrimaryQueryManager<EntityTest>>,
   ): Promise<[EntityTest, EntityTest[]]> {

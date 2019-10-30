@@ -1,12 +1,12 @@
 import { Entity } from '../model/entity';
-import { Model } from '../model/model';
+import { ApiModel } from './api-model';
 import { ApiModelManager } from './api-model-manager';
 import { ApiGeneralConfig } from './config/api-general-config';
 import { ApiModelConfig } from './config/api-model-config';
 
 export interface ApiGeneralManager<
   TConfig extends ApiModelConfig,
-  TModel extends Model,
+  TModel extends ApiModel,
   TAntModelManager extends ApiModelManager<Entity, TConfig>
 > {
   /**

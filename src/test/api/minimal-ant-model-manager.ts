@@ -10,7 +10,7 @@ import { RedisWrapper } from '../primary/redis-wrapper';
 export class MinimalAntModelManager<TEntity extends Entity> extends AntModelManager<
   TEntity,
   ApiModelConfig,
-  Model,
+  Model<TEntity>,
   PrimaryModelManager<TEntity>
 > {
   /**
@@ -27,7 +27,7 @@ export class MinimalAntModelManager<TEntity extends Entity> extends AntModelMana
    * @param model Model to manage.
    * @param queriesMap Queries map.
    */
-  public constructor(model: Model) {
+  public constructor(model: Model<TEntity>) {
     super(model);
     this._modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
     this._secondaryEntityManager = new SecondaryEntityManagerMock<TEntity>(model);
@@ -54,7 +54,7 @@ export class MinimalAntModelManager<TEntity extends Entity> extends AntModelMana
    * @param config AntJS model config.
    * @returns Model manager generated.
    */
-  protected _generateModelManager(model: Model, config: ApiModelConfig): PrimaryModelManager<TEntity> {
+  protected _generateModelManager(model: Model<TEntity>, config: ApiModelConfig): PrimaryModelManager<TEntity> {
     const [modelManager] = this._modelManagerGenerator.generateModelManager({
       model: model,
       secondaryOptions: {

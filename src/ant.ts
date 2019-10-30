@@ -1,5 +1,6 @@
 import { AntManager } from './api/ant-manager';
 import { ApiGeneralManager } from './api/api-general-manager';
+import { ApiModel } from './api/api-model';
 import { ApiGeneralConfig } from './api/config/api-general-config';
 import { ApiModelConfig } from './api/config/api-model-config';
 import { ApiQueryConfig } from './api/config/api-query-config';
@@ -18,6 +19,7 @@ export {
   AntManager,
   ApiGeneralConfig,
   ApiGeneralManager,
+  ApiModel,
   ApiModelConfig,
   ApiMultipleResultQueryManager,
   ApiQueryConfig,

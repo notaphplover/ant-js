@@ -60,8 +60,8 @@ export class MultipleResultQueryManagerTest implements Test {
   private _helperGenerateBaseInstances(
     prefix: string,
     entities: NamedEntity[],
-  ): [Model, PrimaryEntityManager<NamedEntity>, SecondaryEntityManagerMock<NamedEntity>] {
-    const model = new AntModel('id', { prefix: prefix });
+  ): [Model<NamedEntity>, PrimaryEntityManager<NamedEntity>, SecondaryEntityManagerMock<NamedEntity>] {
+    const model = new AntModel<NamedEntity>('id', { prefix: prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntity>(model, entities);
     const primaryEntityManager = new AntPrimaryEntityManager<NamedEntity, SecondaryEntityManager<NamedEntity>>(
       model,
@@ -228,7 +228,7 @@ export class MultipleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const model = new AntModel('id', { prefix: prefix });
+        const model = new AntModel<NamedEntityAlternative>('id', { prefix: prefix });
         const entity1: NamedEntityAlternative = { id: '1', name: 'Pepe' };
         const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntityAlternative>(model, [entity1]);
         const primaryEntityManager = new AntPrimaryEntityManager<

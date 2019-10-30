@@ -20,7 +20,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
   /**
    * Model managed.
    */
-  protected _model: Model;
+  protected _model: Model<TEntity>;
   /**
    * True to use negative entity cache.
    */
@@ -43,7 +43,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
    * @param negativeEntityCache True to use negative entity cache.
    */
   public constructor(
-    model: Model,
+    model: Model<TEntity>,
     redis: RedisMiddleware,
     negativeEntityCache: boolean,
     successor?: TSecondaryManager,
@@ -59,7 +59,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
   /**
    * Model managed.
    */
-  public get model(): Model {
+  public get model(): Model<TEntity> {
     return this._model;
   }
 

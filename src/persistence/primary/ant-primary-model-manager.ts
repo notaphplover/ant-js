@@ -48,7 +48,7 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @param queryManagers Query managers.
    */
   public constructor(
-    model: Model,
+    model: Model<TEntity>,
     redis: RedisMiddleware,
     negativeEntityCache: boolean,
     secondaryEntityManager?: TSecondaryManager,

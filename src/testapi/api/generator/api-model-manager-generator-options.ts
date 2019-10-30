@@ -5,7 +5,7 @@ import { ApiModelManagerGeneratorRedisOptions } from './api-model-manager-genera
 import { ApiModelManagerGeneratorSecodaryManagerOptions } from './api-model-manager-generator-secodary-manager-options';
 
 export interface ApiModelManagerGeneratorOptions<
-  TModel extends Model,
+  TModel extends Model<Entity>,
   TRedisOptions extends ApiModelManagerGeneratorRedisOptions,
   TSecondaryOptions extends ApiModelManagerGeneratorSecodaryManagerOptions<SecondaryEntityManager<Entity>>
 > {
