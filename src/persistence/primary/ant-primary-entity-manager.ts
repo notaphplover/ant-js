@@ -417,13 +417,13 @@ end`;
         this._luaGetMultipleSetEx(),
         entities.length,
         ...entities.map((entity) => this._getKey(entity[idField])),
-        ...entities.map((entity) => JSON.stringify(entity)),
+        ...entities.map((entity) => JSON.stringify(this.model.entityToPrimary(entity))),
         options.ttl,
       ]);
     } else {
       const cacheMap = new Map<string, string>();
       for (const entity of entities) {
-        cacheMap.set(this._getKey(entity[idField]), JSON.stringify(entity));
+        cacheMap.set(this._getKey(entity[idField]), JSON.stringify(this.model.entityToPrimary(entity)));
       }
       return ((this._redis.mset as unknown) as (map: Map<string, string>) => Promise<any>)(cacheMap);
     }
@@ -442,14 +442,14 @@ end`;
         this._luaGetMultipleSetNx(),
         entities.length,
         ...entities.map((entity) => this._getKey(entity[idField])),
-        ...entities.map((entity) => JSON.stringify(entity)),
+        ...entities.map((entity) => JSON.stringify(this.model.entityToPrimary(entity))),
       ]);
     } else {
       return this._redis.eval([
         this._luaGetMultipleSetNxEx(),
         entities.length,
         ...entities.map((entity) => this._getKey(entity[idField])),
-        ...entities.map((entity) => JSON.stringify(entity)),
+        ...entities.map((entity) => JSON.stringify(this.model.entityToPrimary(entity))),
         options.ttl,
       ]);
     }
@@ -472,15 +472,15 @@ end`;
     switch (options.cacheMode) {
       case CacheMode.CacheIfNotExist:
         if (null == options.ttl) {
-          return this._redis.set(key, JSON.stringify(entity), 'NX');
+          return this._redis.set(key, JSON.stringify(this.model.entityToPrimary(entity)), 'NX');
         } else {
-          return this._redis.set(key, JSON.stringify(entity), 'PX', options.ttl, 'NX');
+          return this._redis.set(key, JSON.stringify(this.model.entityToPrimary(entity)), 'PX', options.ttl, 'NX');
         }
       case CacheMode.CacheAndOverwrite:
         if (null == options.ttl) {
-          return this._redis.set(key, JSON.stringify(entity));
+          return this._redis.set(key, JSON.stringify(this.model.entityToPrimary(entity)));
         } else {
-          return this._redis.set(key, JSON.stringify(entity), 'PX', options.ttl);
+          return this._redis.set(key, JSON.stringify(this.model.entityToPrimary(entity)), 'PX', options.ttl);
         }
       default:
         throw new Error('Unexpected cache options.');

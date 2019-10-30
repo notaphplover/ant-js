@@ -144,7 +144,7 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
         evalParams.push(entity[this._model.id]);
       }
       for (const entity of entities) {
-        evalParams.push(JSON.stringify(entity));
+        evalParams.push(JSON.stringify(this.model.entityToPrimary(entity)));
       }
       for (const queryManager of this._queryManagers) {
         evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
@@ -171,7 +171,7 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
         evalParams.push(queryManager.entityKeyGen(entity));
       }
       evalParams.push(JSON.stringify(entity[this._model.id]));
-      evalParams.push(JSON.stringify(entity));
+      evalParams.push(JSON.stringify(this.model.entityToPrimary(entity)));
       if (options.ttl) {
         evalParams.push(options.ttl);
       }
