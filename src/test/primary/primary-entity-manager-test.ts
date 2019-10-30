@@ -277,7 +277,7 @@ return redis.call('get', ${luaExpression})`,
           done();
           return;
         }
-        const entityFound = JSON.parse(valueFound);
+        const entityFound = model.primaryToEntity(JSON.parse(valueFound));
         expect(entityFound).toEqual(entity);
         done();
       },

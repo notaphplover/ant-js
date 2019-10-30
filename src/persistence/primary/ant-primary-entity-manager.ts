@@ -164,7 +164,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
       if (VOID_RESULT_STRING === cachedEntity) {
         return null;
       } else {
-        return JSON.parse(cachedEntity);
+        return this.model.primaryToEntity(JSON.parse(cachedEntity));
       }
     }
     if (!this._successor) {
@@ -225,7 +225,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
       if (null == cacheResult) {
         missingIds.push(ids[i] as number & string);
       } else {
-        results.push(cacheResult);
+        results.push(this.model.primaryToEntity(cacheResult));
       }
     }
 
