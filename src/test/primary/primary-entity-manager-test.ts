@@ -301,6 +301,8 @@ return redis.call('get', ${luaExpression})`,
           entityToPrimary: () => primarySample,
           id: 'id',
           keyGen: { prefix: prefix },
+          mEntityToPrimary: () => [primarySample],
+          mPrimaryToEntity: (primaries) => primaries,
           primaryToEntity: (primary) => primary,
         };
 
@@ -335,6 +337,8 @@ return redis.call('get', ${luaExpression})`,
           entityToPrimary: () => primarySample,
           id: 'id',
           keyGen: { prefix: prefix },
+          mEntityToPrimary: () => [primarySample],
+          mPrimaryToEntity: (primaries) => primaries,
           primaryToEntity: (primary) => primary,
         };
 
@@ -366,9 +370,11 @@ return redis.call('get', ${luaExpression})`,
       async (done) => {
         const fakeEntitySample = { less: 'is more' };
         const model: Model<EntityTest> = {
-          entityToPrimary: (primary) => primary,
+          entityToPrimary: (entity) => entity,
           id: 'id',
           keyGen: { prefix: prefix },
+          mEntityToPrimary: (entities) => entities,
+          mPrimaryToEntity: () => [(fakeEntitySample as unknown) as EntityTest],
           primaryToEntity: () => (fakeEntitySample as unknown) as EntityTest,
         };
 
@@ -401,9 +407,11 @@ return redis.call('get', ${luaExpression})`,
       async (done) => {
         const fakeEntitySample = { less: 'is more' };
         const model: Model<EntityTest> = {
-          entityToPrimary: (primary) => primary,
+          entityToPrimary: (entity) => entity,
           id: 'id',
           keyGen: { prefix: prefix },
+          mEntityToPrimary: (entities) => entities,
+          mPrimaryToEntity: () => [(fakeEntitySample as unknown) as EntityTest],
           primaryToEntity: () => (fakeEntitySample as unknown) as EntityTest,
         };
 
