@@ -214,7 +214,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
     ids = Array.from(new Set<number | string>(ids)) as number[] | string[];
     const keysArray = (ids as Array<number | string>).map((id) => this._getKey(id));
     const entities: string[] = await this._redis.mget(...keysArray);
-    const results = new Array<TEntity>();
+    let results = new Array<TEntity>();
     const missingIds: number[] | string[] = new Array();
 
     for (let i = 0; i < keysArray.length; ++i) {
@@ -225,9 +225,11 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
       if (null == cacheResult) {
         missingIds.push(ids[i] as number & string);
       } else {
-        results.push(this.model.primaryToEntity(cacheResult));
+        results.push(cacheResult);
       }
     }
+
+    results = this.model.mPrimaryToEntity(results);
 
     await this._innerGetByDistinctIdsNotMappedProcessMissingIds(missingIds, results, options);
 
@@ -412,18 +414,19 @@ end`;
    */
   private _updateEntitiesCacheAndOverWrite(entities: TEntity[], options: PersistencyUpdateOptions): Promise<any> {
     const idField = this.model.id;
+    entities = this.model.mEntityToPrimary(entities);
     if (options.ttl) {
       return this._redis.eval([
         this._luaGetMultipleSetEx(),
         entities.length,
         ...entities.map((entity) => this._getKey(entity[idField])),
-        ...entities.map((entity) => JSON.stringify(this.model.entityToPrimary(entity))),
+        ...entities.map((entity) => JSON.stringify(entity)),
         options.ttl,
       ]);
     } else {
       const cacheMap = new Map<string, string>();
       for (const entity of entities) {
-        cacheMap.set(this._getKey(entity[idField]), JSON.stringify(this.model.entityToPrimary(entity)));
+        cacheMap.set(this._getKey(entity[idField]), JSON.stringify(entity));
       }
       return ((this._redis.mset as unknown) as (map: Map<string, string>) => Promise<any>)(cacheMap);
     }
@@ -437,19 +440,20 @@ end`;
    */
   private _updateEntitiesCacheIfNotExists(entities: TEntity[], options: PersistencyUpdateOptions): Promise<any> {
     const idField = this.model.id;
+    entities = this.model.mEntityToPrimary(entities);
     if (null == options.ttl) {
       return this._redis.eval([
         this._luaGetMultipleSetNx(),
         entities.length,
         ...entities.map((entity) => this._getKey(entity[idField])),
-        ...entities.map((entity) => JSON.stringify(this.model.entityToPrimary(entity))),
+        ...entities.map((entity) => JSON.stringify(entity)),
       ]);
     } else {
       return this._redis.eval([
         this._luaGetMultipleSetNxEx(),
         entities.length,
         ...entities.map((entity) => this._getKey(entity[idField])),
-        ...entities.map((entity) => JSON.stringify(this.model.entityToPrimary(entity))),
+        ...entities.map((entity) => JSON.stringify(entity)),
         options.ttl,
       ]);
     }

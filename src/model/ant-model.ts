@@ -31,6 +31,20 @@ export class AntModel<TEntity extends Entity> implements Model<TEntity> {
   }
 
   /**
+   * @inheritdoc
+   */
+  public mEntityToPrimary(entities: TEntity[]): any[] {
+    return entities;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public mPrimaryToEntity(primaries: any[]): TEntity[] {
+    return primaries;
+  }
+
+  /**
    * Model's id.
    * @returns Model's id.
    */
@@ -48,7 +62,7 @@ export class AntModel<TEntity extends Entity> implements Model<TEntity> {
   /**
    * @inheritdoc
    */
-  public primaryToEntity(entity: any): TEntity {
-    return entity;
+  public primaryToEntity(primary: any): TEntity {
+    return primary;
   }
 }
