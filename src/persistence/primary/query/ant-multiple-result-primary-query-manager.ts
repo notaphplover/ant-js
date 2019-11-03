@@ -32,10 +32,11 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
         return new Array();
       }
       const missingIds: number[] | string[] = new Array();
-      const finalResults = new Array();
+      let finalResults = new Array();
       for (const resultJson of resultsJSON) {
         this._getProcessParseableResult(key, finalResults, missingIds, resultJson);
       }
+      finalResults = this._primaryEntityManager.model.mPrimaryToEntity(finalResults);
       await this._getProcessMissingOptions(missingIds, finalResults, options);
       return finalResults;
     }
@@ -80,6 +81,8 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
       resultsFound = true;
       this._getProcessParseableResult(keys[currentIndex], finalResults, missingIds, resultJson);
     }
+
+    this._primaryEntityManager.model.mPrimaryToEntity(finalResults);
 
     if (0 < missingQueriesKeys.length) {
       const queriesMissingIds = await this._mGetProcessQueriesNotFound(missingQueriesParams, missingQueriesKeys);
@@ -128,7 +131,7 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
     const result = JSON.parse(resultJson);
     const resultType = typeof result;
     if ('object' === resultType) {
-      finalResults.push(this._primaryEntityManager.model.primaryToEntity(result));
+      finalResults.push(result);
       return;
     }
     if ('number' === resultType || 'string' === resultType) {
