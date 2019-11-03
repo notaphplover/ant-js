@@ -143,8 +143,9 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
       for (const entity of entities) {
         evalParams.push(entity[this._model.id]);
       }
+      entities = this.model.mEntityToPrimary(entities);
       for (const entity of entities) {
-        evalParams.push(JSON.stringify(this.model.entityToPrimary(entity)));
+        evalParams.push(JSON.stringify(entity));
       }
       for (const queryManager of this._queryManagers) {
         evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);

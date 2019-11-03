@@ -332,7 +332,7 @@ return redis.call('get', ${luaExpression})`,
     it(
       itsName,
       async (done) => {
-        const primarySample = { less: 'is more' };
+        const primarySample = { id: 0, less: 'is more' };
         const model: Model<EntityTest> = {
           entityToPrimary: () => primarySample,
           id: 'id',
