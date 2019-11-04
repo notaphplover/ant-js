@@ -491,6 +491,8 @@ export class ModelManagerTest implements Test {
           entityToPrimary: () => fakeInitialEntity,
           id: 'id',
           keyGen: { prefix: prefix },
+          mEntityToPrimary: () => [fakeInitialEntity],
+          mPrimaryToEntity: (primaries) => primaries,
           primaryToEntity: (primary) => primary,
         };
         const initialEntity: EntityTest = {

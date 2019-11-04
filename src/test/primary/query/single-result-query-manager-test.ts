@@ -119,6 +119,8 @@ export class SingleResultQueryManagerTest implements Test {
           entityToPrimary: (entity) => entity,
           id: 'id',
           keyGen: { prefix: prefix },
+          mEntityToPrimary: (entities) => entities,
+          mPrimaryToEntity: () => [fakeInitialEntity],
           primaryToEntity: () => fakeInitialEntity,
         };
         const initialEntity: EntityTestStr = {

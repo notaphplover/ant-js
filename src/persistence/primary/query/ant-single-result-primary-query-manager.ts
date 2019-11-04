@@ -36,7 +36,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
         key,
         resultJson,
         (entity) => {
-          result = entity;
+          result = this._primaryEntityManager.model.primaryToEntity(entity);
         },
         (id: number | string) => {
           result = this._primaryEntityManager.get(id, options);
@@ -63,7 +63,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
     const luaScript = this._luaMGetGenerator();
     const resultsJson = await this._redis.eval(luaScript, keys.length, keys);
     const missingIds: number[] | string[] = new Array();
-    const finalResults = new Array();
+    let finalResults = new Array();
     const missingQueriesKeys = new Array<string>();
     const missingParamsArray = new Array();
     for (let i = 0; i < resultsJson.length; ++i) {
@@ -86,6 +86,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
         () => {},
       );
     }
+    finalResults = this._primaryEntityManager.model.mPrimaryToEntity(finalResults);
     const idsFromMissingQueries = await this._mGetIdsAndSetToQueries(missingQueriesKeys, missingParamsArray);
     missingIds.push(...(idsFromMissingQueries as Array<number & string>));
     await this._mGetSearchMissingIds(finalResults, missingIds, options);
@@ -239,7 +240,7 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
     const result = JSON.parse(resultJson);
     const resultType = typeof result;
     if ('object' === resultType) {
-      entityAction(this._primaryEntityManager.model.primaryToEntity(result));
+      entityAction(result);
       return;
     }
     if ('number' === resultType || 'string' === resultType) {

@@ -11,6 +11,14 @@ export interface Model<TEntity extends Entity> extends BaseModel {
    */
   entityToPrimary: (entity: TEntity) => any;
   /**
+   * Entities to primaries algorithm
+   */
+  mEntityToPrimary: (entities: TEntity[]) => any[];
+  /**
+   * Primaries to entities algorithm
+   */
+  mPrimaryToEntity: (primaries: any[]) => TEntity[];
+  /**
    * Primary to entity algorithm.
    */
   primaryToEntity: (primary: any) => TEntity;
