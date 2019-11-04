@@ -67,7 +67,9 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
         missingQueriesParams.push(paramsArray[index]);
         missingQueriesKeys.push(keys[index]);
       },
-      (index, resultJson) => { this._getProcessParseableResult(keys[index], finalResults, missingIds, resultJson); },
+      (index, resultJson) => {
+        this._getProcessParseableResult(keys[index], finalResults, missingIds, resultJson);
+      },
     );
 
     finalResults = this._primaryEntityManager.model.mPrimaryToEntity(finalResults);
