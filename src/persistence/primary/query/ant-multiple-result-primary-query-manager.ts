@@ -54,35 +54,25 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
     }
     const keys = paramsArray.map((params: any) => this.queryKeyGen(params));
     const luaScript = this._luaMGetGenerator();
-    const resultsJson = await this._redis.eval(luaScript, keys.length, ...keys);
+    const resultsJson: string[] = await this._redis.eval(luaScript, keys.length, ...keys);
 
-    const finalResults = new Array<TEntity>();
+    let finalResults = new Array<TEntity>();
     const missingQueriesParams = new Array();
     const missingQueriesKeys = new Array<string>();
-    let currentIndex = 0;
-    let resultsFound = false;
-    let voidFound = false;
     const missingIds: number[] | string[] = new Array();
-    for (const resultJson of resultsJson) {
-      if (VOID_RESULT_STRING === resultJson) {
-        voidFound = true;
-        continue;
-      }
-      if (SEPARATOR_STRING === resultJson) {
-        if (!resultsFound && !voidFound) {
-          missingQueriesParams.push(paramsArray[currentIndex]);
-          missingQueriesKeys.push(keys[currentIndex]);
-        }
-        ++currentIndex;
-        resultsFound = false;
-        voidFound = false;
-        continue;
-      }
-      resultsFound = true;
-      this._getProcessParseableResult(keys[currentIndex], finalResults, missingIds, resultJson);
-    }
 
-    this._primaryEntityManager.model.mPrimaryToEntity(finalResults);
+    this._mGetProcessParseableResults(
+      resultsJson,
+      (index) => {
+        missingQueriesParams.push(paramsArray[index]);
+        missingQueriesKeys.push(keys[index]);
+      },
+      (index, resultJson) => {
+        this._getProcessParseableResult(keys[index], finalResults, missingIds, resultJson);
+      },
+    );
+
+    finalResults = this._primaryEntityManager.model.mPrimaryToEntity(finalResults);
 
     if (0 < missingQueriesKeys.length) {
       const queriesMissingIds = await this._mGetProcessQueriesNotFound(missingQueriesParams, missingQueriesKeys);
@@ -280,6 +270,40 @@ end`;
     return `if 0 == redis.call('scard', KEYS[1]) then
   redis.call('sadd', KEYS[1], '${VOID_RESULT_STRING}')
 end`;
+  }
+
+  /**
+   * Process reults obtained from an mQuery request to the cache server.
+   * @param resultsJson Results obtained from redis.
+   * @param onQueryMiss Action to perform if a missing query is found.
+   * @param onQueryHit Action to perform if query results are found.
+   */
+  private _mGetProcessParseableResults(
+    resultsJson: string[],
+    onQueryMiss: (index: number) => void,
+    onQueryHit: (index: number, result: any) => void,
+  ): void {
+    let currentIndex = 0;
+    let resultsFound = false;
+    let voidFound = false;
+
+    for (const resultJson of resultsJson) {
+      if (VOID_RESULT_STRING === resultJson) {
+        voidFound = true;
+        continue;
+      }
+      if (SEPARATOR_STRING === resultJson) {
+        if (!resultsFound && !voidFound) {
+          onQueryMiss(currentIndex);
+        }
+        ++currentIndex;
+        resultsFound = false;
+        voidFound = false;
+        continue;
+      }
+      resultsFound = true;
+      onQueryHit(currentIndex, resultJson);
+    }
   }
 
   /**
