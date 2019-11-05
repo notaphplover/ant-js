@@ -105,7 +105,7 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    */
   public mDelete(ids: number[] | string[], options: PersistencyDeleteOptions = new AntJsDeleteOptions()): Promise<any> {
     if (null == ids || 0 === ids.length) {
-      return new Promise((resolve) => resolve());
+      return Promise.resolve();
     }
     return this._luaMDeleteCachedQuery.eval(options, (scriptArg) => {
       const evalParams = [scriptArg, this._queryManagers.length];
@@ -130,7 +130,7 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    */
   public mUpdate(entities: TEntity[], options: PersistencyUpdateOptions = new AntJsUpdateOptions()): Promise<any> {
     if (null == entities || 0 === entities.length) {
-      return new Promise((resolve) => resolve());
+      return Promise.resolve();
     }
     return this._luaMUpdateCachedQuerySet.eval(options, (scriptArg) => {
       const evalParams = [scriptArg, this._queryManagers.length * (entities.length + 1)];

@@ -40,12 +40,10 @@ export class NamesStartingByLetter extends AntMultipleResultPrimaryQueryManager<
     };
     super(
       (params: any) =>
-        new Promise((resolve) =>
-          resolve(
-            secondaryModelManagerMock.store
-              .filter((entity) => entity.name.startsWith(params.name[0]))
-              .map((entity) => entity.id),
-          ),
+        Promise.resolve(
+          secondaryModelManagerMock.store
+            .filter((entity) => entity.name.startsWith(params.name[0]))
+            .map((entity) => entity.id),
         ),
       primaryEntityManager,
       redis,
