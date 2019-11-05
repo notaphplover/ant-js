@@ -44,8 +44,8 @@ export class SecondaryEntityManagerMock<TEntity extends Entity> implements Secon
    */
   public getById(id: number | string): Promise<TEntity> {
     const idField = this.model.id;
-    return new Promise((resolve) =>
-      resolve(this.store.find((entity) => undefined !== entity[idField] && id === entity[idField]) || null),
+    return Promise.resolve(
+      this.store.find((entity) => undefined !== entity[idField] && id === entity[idField]) || null,
     );
   }
 

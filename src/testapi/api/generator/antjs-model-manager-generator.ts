@@ -49,13 +49,11 @@ export class AntJsModelManagerGenerator extends ModelManagerGenerator<
     property: string,
     value: any,
   ): Promise<TEntity[]> {
-    return new Promise((resolve) => {
-      resolve(
-        (secondaryManager as SecondaryEntityManagerMock<TEntity>).store.filter(
-          (entity: TEntity) => value === entity[property],
-        ),
-      );
-    });
+    return Promise.resolve(
+      (secondaryManager as SecondaryEntityManagerMock<TEntity>).store.filter(
+        (entity: TEntity) => value === entity[property],
+      ),
+    );
   }
 
   /**
@@ -66,12 +64,10 @@ export class AntJsModelManagerGenerator extends ModelManagerGenerator<
     property: string,
     value: any,
   ): Promise<TEntity> {
-    return new Promise((resolve) => {
-      resolve(
-        (secondaryManager as SecondaryEntityManagerMock<TEntity>).store.find(
-          (entity: TEntity) => value === entity[property],
-        ),
-      );
-    });
+    return Promise.resolve(
+      (secondaryManager as SecondaryEntityManagerMock<TEntity>).store.find(
+        (entity: TEntity) => value === entity[property],
+      ),
+    );
   }
 }
