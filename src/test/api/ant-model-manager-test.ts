@@ -151,9 +151,9 @@ export class AntModelManagerTest implements Test {
           isMultiple: true,
           query: (params: any) =>
             Promise.resolve(
-                (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>)
-                  .filter((entity) => params.field === entity.field)
-                  .map((entity) => entity.id),
+              (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>)
+                .filter((entity) => params.field === entity.field)
+                .map((entity) => entity.id),
             ),
           queryKeyGen: (params: any) => prefix + 'query/' + params.field,
           reverseHashKey: prefix + 'query/reverse',
