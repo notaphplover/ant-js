@@ -36,15 +36,15 @@
   "license": "MIT",
   "devDependencies": {
     "@types/ioredis": "^4.0.18",
-    "@types/jasmine": "^3.4.5",
-    "@types/node": "^12.12.5",
+    "@types/jasmine": "^3.4.6",
+    "@types/node": "^12.12.6",
     "coveralls": "^3.0.7",
     "ioredis": "^4.14.1",
     "jasmine": "^3.5.0",
     "lodash": "^4.17.15",
     "nyc": "^14.1.1",
     "prettier": "^1.18.2",
-    "tslint": "^5.20.0",
-    "typescript": "^3.6.4"
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.2"
   }
 }
