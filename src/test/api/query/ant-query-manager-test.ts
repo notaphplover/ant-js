@@ -71,7 +71,7 @@ export class AntQueryManagerTest implements Test {
           null,
         );
         const queryManager = new SingleResultQueryByFieldManager<EntityTest>(
-          async (params: any) => null,
+          async () => null,
           primaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',

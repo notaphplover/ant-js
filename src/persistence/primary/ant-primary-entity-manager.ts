@@ -102,7 +102,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
     options: PersistencySearchOptions,
   ): Promise<any> {
     if (null == ids || 0 === ids.length) {
-      return new Promise((resolve) => resolve());
+      return Promise.resolve();
     }
     if (CacheMode.CacheAndOverwrite === options.cacheMode) {
       const evalArray = [this._luaGetMultipleDeleteUsingNegativeCache(options), 0, ...ids];
@@ -111,7 +111,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
       }
       return this._redis.eval(evalArray);
     } else {
-      return new Promise((resolve) => resolve());
+      return Promise.resolve();
     }
   }
 
@@ -129,7 +129,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
         return this._redis.set(key, VOID_RESULT_STRING);
       }
     } else {
-      return new Promise((resolve) => resolve());
+      return Promise.resolve();
     }
   }
 
@@ -190,9 +190,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
    */
   protected async _innerGetByIds(ids: number[] | string[], options: PersistencySearchOptions): Promise<TEntity[]> {
     if (0 === ids.length) {
-      return new Promise((resolve) => {
-        resolve(new Array());
-      });
+      return Promise.resolve(new Array());
     }
     return this._innerGetByDistinctIdsNotMapped(
       // Get the different ones.
@@ -390,10 +388,10 @@ end`;
    */
   private _updateEntities(entities: TEntity[], options: PersistencyUpdateOptions): Promise<any> {
     if (null == entities || 0 === entities.length) {
-      return new Promise<void>((resolve) => resolve());
+      return Promise.resolve();
     }
     if (CacheMode.NoCache === options.cacheMode) {
-      return new Promise<void>((resolve) => resolve());
+      return Promise.resolve();
     }
 
     switch (options.cacheMode) {
@@ -467,10 +465,10 @@ end`;
    */
   private _updateEntity(entity: TEntity, options: PersistencyUpdateOptions): Promise<any> {
     if (CacheMode.NoCache === options.cacheMode) {
-      return new Promise((resolve) => resolve());
+      return Promise.resolve();
     }
     if (null == entity) {
-      return new Promise((resolve) => resolve());
+      return Promise.resolve();
     }
     const key = this._getKey(entity[this.model.id]);
     switch (options.cacheMode) {
