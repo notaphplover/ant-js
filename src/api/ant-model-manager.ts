@@ -171,9 +171,9 @@ This is probably caused by the absence of a config instance. Ensure that config 
         queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number[] | string[]>,
       );
-      query = (new AntMultipleResultQueryManager<TEntity>(innerQueryManager as AntMultipleResultPrimaryQueryManager<
-        TEntity
-      >) as ApiMultipleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
+      query = (new AntMultipleResultQueryManager<TEntity>(
+        innerQueryManager as AntMultipleResultPrimaryQueryManager<TEntity>,
+      ) as ApiMultipleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
     } else {
       innerQueryManager = new AntSingleResultPrimaryQueryManager<TEntity>(
         queryConfig.query as TQuery<number | string>,
@@ -184,9 +184,9 @@ This is probably caused by the absence of a config instance. Ensure that config 
         queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number | string>,
       );
-      query = (new AntSingleResultQueryManager<TEntity>(innerQueryManager as AntSingleResultPrimaryQueryManager<
-        TEntity
-      >) as ApiSingleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
+      query = (new AntSingleResultQueryManager<TEntity>(
+        innerQueryManager as AntSingleResultPrimaryQueryManager<TEntity>,
+      ) as ApiSingleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
     }
 
     this.modelManager.addQuery(innerQueryManager);
