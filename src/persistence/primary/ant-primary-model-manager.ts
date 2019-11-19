@@ -209,12 +209,12 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @returns script generated.
    */
   private _luaSyncDeleteGenerator(options: PersistencyDeleteOptions): string {
-    const reverseHashKey: string = 'KEYS[i]';
+    const reverseHashKey = 'KEYS[i]';
 
-    const entityId: string = 'ARGV[1]';
-    const entityKey: string = this._luaKeyGeneratorFromId(entityId);
-    const queriesNumber: string = '#KEYS';
-    const ithQCode: string = 'ARGV[1 + i]';
+    const entityId = 'ARGV[1]';
+    const entityKey = this._luaKeyGeneratorFromId(entityId);
+    const queriesNumber = '#KEYS';
+    const ithQCode = 'ARGV[1 + i]';
 
     const deleteSentence = this._evaluateUseNegativeCache(options)
       ? `redis.call('set', ${entityKey}, '${VOID_RESULT_STRING}')`
@@ -253,7 +253,7 @@ ${deleteSentence}`;
    * @returns script generated.
    */
   private _luaSyncMDeleteGenerator(options: PersistencyDeleteOptions): string {
-    const queriesNumber: string = '#KEYS';
+    const queriesNumber = '#KEYS';
     const entitiesCount = '#ARGV - #KEYS';
     const ithQCode = 'ARGV[entitiesCount + i]';
     const ithReverseKey = 'KEYS[i]';
@@ -373,7 +373,7 @@ end`;
    * @returns script generated.
    */
   private _luaSyncUpdateGenerator(options: PersistencyUpdateOptions): string {
-    const queriesNumber: string = '#KEYS / 2';
+    const queriesNumber = '#KEYS / 2';
 
     const entityId = 'ARGV[1]';
     const entity = 'ARGV[2]';

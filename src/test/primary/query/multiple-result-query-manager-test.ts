@@ -62,7 +62,7 @@ export class MultipleResultQueryManagerTest implements Test {
     prefix: string,
     entities: NamedEntity[],
   ): [Model<NamedEntity>, PrimaryEntityManager<NamedEntity>, SecondaryEntityManagerMock<NamedEntity>] {
-    const model = new AntModel<NamedEntity>('id', { prefix: prefix });
+    const model = new AntModel<NamedEntity>('id', { prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntity>(model, entities);
     const primaryEntityManager = new AntPrimaryEntityManager<NamedEntity, SecondaryEntityManager<NamedEntity>>(
       model,
@@ -109,7 +109,7 @@ export class MultipleResultQueryManagerTest implements Test {
         const model: Model<NamedEntity> = {
           entityToPrimary: (entity) => entity,
           id: 'id',
-          keyGen: { prefix: prefix },
+          keyGen: { prefix },
           mEntityToPrimary: (entities) => entities,
           mPrimaryToEntity: () => [fakeInitialEntity],
           primaryToEntity: () => fakeInitialEntity,
@@ -275,7 +275,7 @@ export class MultipleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const model = new AntModel<NamedEntityAlternative>('id', { prefix: prefix });
+        const model = new AntModel<NamedEntityAlternative>('id', { prefix });
         const entity1: NamedEntityAlternative = { id: '1', name: 'Pepe' };
         const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntityAlternative>(model, [entity1]);
         const primaryEntityManager = new AntPrimaryEntityManager<

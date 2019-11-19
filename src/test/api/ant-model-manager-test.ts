@@ -8,7 +8,7 @@ import { MinimalAntModelManager } from './minimal-ant-model-manager';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-const modelGenerator = (prefix: string) => new AntModel('id', { prefix: prefix });
+const modelGenerator = (prefix: string): AntModel<Entity> => new AntModel('id', { prefix });
 
 type EntityTest = { id: number } & Entity;
 
@@ -149,13 +149,13 @@ export class AntModelManagerTest implements Test {
 
         const queryConfig = {
           isMultiple: true,
-          query: (params: any) =>
+          query: (params: any): Promise<number[]> =>
             Promise.resolve(
               (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>)
                 .filter((entity) => params.field === entity.field)
                 .map((entity) => entity.id),
             ),
-          queryKeyGen: (params: any) => prefix + 'query/' + params.field,
+          queryKeyGen: (params: any): string => prefix + 'query/' + params.field,
           reverseHashKey: prefix + 'query/reverse',
         };
         const queryManager = antModelManager.query(queryConfig);
@@ -182,14 +182,14 @@ export class AntModelManagerTest implements Test {
 
         const queryConfig = {
           isMultiple: false,
-          query: (params: any) =>
+          query: (params: any): Promise<number> =>
             new Promise<number>((resolve) => {
               const entity = (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>).find(
                 (entity) => params.field === entity.field,
               );
               resolve(entity ? entity.id : null);
             }),
-          queryKeyGen: (params: any) => prefix + 'query/' + params.field,
+          queryKeyGen: (params: any): string => prefix + 'query/' + params.field,
           reverseHashKey: prefix + 'query/reverse',
         };
 
@@ -217,14 +217,14 @@ export class AntModelManagerTest implements Test {
 
         const queryConfig = {
           isMultiple: false,
-          query: (params: any) =>
+          query: (params: any): Promise<number> =>
             new Promise<number>((resolve) => {
               const entity = (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>).find(
                 (entity) => params.field === entity.field,
               );
               resolve(entity ? entity.id : null);
             }),
-          queryKeyGen: (params: any) => prefix + 'query/' + params.field,
+          queryKeyGen: (params: any): string => prefix + 'query/' + params.field,
           reverseHashKey: prefix + 'query/reverse',
         };
         const queryManager = antModelManager.query(queryConfig);
@@ -265,9 +265,6 @@ export class AntModelManagerTest implements Test {
       async (done) => {
         const model = modelGenerator(prefix);
         const antModelManager = new MinimalAntModelManager(model);
-        const config = {
-          redis: this._redis.redis,
-        };
         expect(() => {
           // tslint:disable-next-line:no-unused-expression
           antModelManager.modelManager;

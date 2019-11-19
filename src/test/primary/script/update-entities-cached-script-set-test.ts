@@ -50,15 +50,13 @@ export class UpdateEntitiesCachedScriptSetTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const generator = () => new RedisCachedScript('return 0', this._redis.redis);
+        const generator = (): RedisCachedScript => new RedisCachedScript('return 0', this._redis.redis);
         const generatorSpy = jasmine.createSpy('generator', generator).and.callThrough();
-
         const cachedScriptSet = new UpdateEntitiesCachedScriptSet(generatorSpy);
 
         await cachedScriptSet.eval(new AntJsUpdateOptions(), (scriptArg) => [scriptArg, 0]);
 
         expect(generatorSpy.calls.count()).toBe(1);
-
         done();
       },
       MAX_SAFE_TIMEOUT,
@@ -71,16 +69,14 @@ export class UpdateEntitiesCachedScriptSetTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const generator = () => new RedisCachedScript('return 0', this._redis.redis);
+        const generator = (): RedisCachedScript => new RedisCachedScript('return 0', this._redis.redis);
         const generatorSpy = jasmine.createSpy('generator', generator).and.callThrough();
-
         const cachedScriptSet = new UpdateEntitiesCachedScriptSet(generatorSpy);
 
         await cachedScriptSet.eval(new AntJsUpdateOptions(), (scriptArg) => [scriptArg, 0]);
         await cachedScriptSet.eval(new AntJsUpdateOptions(), (scriptArg) => [scriptArg, 0]);
 
         expect(generatorSpy.calls.count()).toBe(1);
-
         done();
       },
       MAX_SAFE_TIMEOUT,
@@ -97,13 +93,12 @@ export class UpdateEntitiesCachedScriptSetTest implements Test {
         const cachedScript = new RedisCachedScript('return 0', this._redis.redis);
         spyOn(cachedScript, 'eval').and.callThrough();
 
-        const generator = () => cachedScript;
+        const generator = (): RedisCachedScript => cachedScript;
         const cachedScriptSet = new UpdateEntitiesCachedScriptSet(generator);
 
         await cachedScriptSet.eval(new AntJsUpdateOptions(), (scriptArg) => [scriptArg, 0]);
 
         expect(cachedScript.eval).toHaveBeenCalled();
-
         done();
       },
       MAX_SAFE_TIMEOUT,

@@ -232,7 +232,7 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
     entityAction: (entity: TEntity) => void,
     idAction: (id: number | string) => void,
     voidAction: () => void,
-  ) {
+  ): void {
     if (VOID_RESULT_STRING === resultJson) {
       voidAction();
       return;

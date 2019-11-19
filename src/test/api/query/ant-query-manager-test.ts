@@ -13,7 +13,7 @@ const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
 type EntityTest = { id: number } & Entity;
 
-const modelGenerator = (prefix: string) => new AntModel<EntityTest>('id', { prefix: prefix });
+const modelGenerator = (prefix: string): AntModel<EntityTest> => new AntModel<EntityTest>('id', { prefix });
 
 export class AntQueryManagerTest implements Test {
   /**
@@ -44,7 +44,6 @@ export class AntQueryManagerTest implements Test {
 
   private _itMustBeInitializable(): void {
     const itsName = 'mustBeInitializable';
-    const prefix = this._declareName + '/' + itsName + '/';
     it(
       itsName,
       async (done) => {

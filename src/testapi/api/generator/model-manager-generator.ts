@@ -191,7 +191,7 @@ export abstract class ModelManagerGenerator<
    */
   protected _generateRandomKey(): string {
     const length = 32;
-    const textGenerator = (length: number) => {
+    const textGenerator = (length: number): string => {
       let result = '';
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       const charactersLength = characters.length;

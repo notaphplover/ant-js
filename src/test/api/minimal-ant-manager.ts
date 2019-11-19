@@ -19,7 +19,7 @@ export class MinimalAntManager extends AntManager<ApiModelConfig, ApiModel, ApiM
    * @param apiModel Model to manage.
    * @returns model manager created.
    */
-  protected _createModelManager(apiModel: ApiModel) {
+  protected _createModelManager(apiModel: ApiModel): MinimalAntModelManager<Entity> {
     return new MinimalAntModelManager(new AntModel(apiModel.id, apiModel.keyGen));
   }
 }

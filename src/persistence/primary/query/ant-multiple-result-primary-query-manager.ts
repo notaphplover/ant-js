@@ -336,7 +336,7 @@ end`;
     evalParams: Array<string | number>,
     currentIds: Array<string & number>,
     finalIds: number[] | string[],
-  ) {
+  ): void {
     if (0 === currentIds.length) {
       evalParams.push(VOID_RESULT_STRING);
     } else {

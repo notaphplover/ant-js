@@ -20,10 +20,10 @@
           "ignore-pattern": "^import .+ from"
         }],
         "no-empty-interface": false,
-        "no-var-keyword": false,
-        "no-var-requires": false,
+        "no-var-keyword": true,
+        "no-var-requires": true,
         "no-shadowed-variable": false,
-        "object-literal-shorthand": [true, "never"],
+        "object-literal-shorthand": [true, "allways"],
         "only-arrow-functions": true,
         "quotemark": [true, "single", "avoid-escape"],
         "variable-name": [true, "check-format", "allow-leading-underscore"]

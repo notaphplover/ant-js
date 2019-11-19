@@ -104,7 +104,7 @@ export class RedisCachedScriptTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
 
-        const script = `return missingVar`;
+        const script = 'return missingVar';
         const cachedScript = new RedisCachedScript(script, this._redis.redis);
 
         const evalPromise = cachedScript.eval((scriptArg) => [scriptArg, 0]);

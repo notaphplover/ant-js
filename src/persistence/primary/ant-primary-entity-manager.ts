@@ -238,11 +238,11 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
    * Creates a function that creates a lua script to create an entity key from an id.
    * @param keyGenParams Key generation params.
    */
-  protected _innerGetKeyGenerationLuaScriptGenerator(keyGenParams: KeyGenParams) {
+  protected _innerGetKeyGenerationLuaScriptGenerator(keyGenParams: KeyGenParams): (alias: string) => string {
     const instructions = new Array<(alias: string) => string>();
     instructions.push(() => '"' + keyGenParams.prefix + '" .. ');
     instructions.push((alias) => alias);
-    return (alias: string) => {
+    return (alias: string): string => {
       return instructions.reduce((previousValue, currentValue) => previousValue + currentValue(alias), '');
     };
   }
@@ -311,7 +311,7 @@ end`;
     options: PersistencyUpdateOptions,
     keyExpression: string,
     entityExpression: string,
-    ttlExpression: string = 'ttl',
+    ttlExpression = 'ttl',
   ): string {
     switch (options.cacheMode) {
       case CacheMode.CacheAndOverwrite:

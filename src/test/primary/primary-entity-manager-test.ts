@@ -94,9 +94,9 @@ export class PrimaryEntityManagerTest implements Test {
   private _helperGenerateBaseInstances(
     prefix: string,
     entities: EntityTest[],
-    useNegativeCache: boolean = true,
+    useNegativeCache = true,
   ): [Model<EntityTest>, PrimaryEntityManager<EntityTest>, SecondaryEntityManagerMock<EntityTest>] {
-    const model = new AntModel<EntityTest>('id', { prefix: prefix });
+    const model = new AntModel<EntityTest>('id', { prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
     const primaryEntityManager = new AntPrimaryEntityManager<EntityTest, SecondaryEntityManager<EntityTest>>(
       model,
@@ -192,7 +192,7 @@ export class PrimaryEntityManagerTest implements Test {
     );
   }
 
-  private _itDoesNotSupportUndefinedCacheOptionAtCacheEntities() {
+  private _itDoesNotSupportUndefinedCacheOptionAtCacheEntities(): void {
     const itsName = 'doesNotSupportUndefinedCacheOptionAtCacheEntities';
     const prefix = this._declareName + '/' + itsName + '/';
     it(
@@ -226,7 +226,7 @@ export class PrimaryEntityManagerTest implements Test {
     );
   }
 
-  private _itDoesNotSupportUndefinedCacheOptionAtCacheEntity() {
+  private _itDoesNotSupportUndefinedCacheOptionAtCacheEntity(): void {
     const itsName = 'doesNotSupportUndefinedCacheOptionAtCacheEntity';
     const prefix = this._declareName + '/' + itsName + '/';
     it(
@@ -300,7 +300,7 @@ return redis.call('get', ${luaExpression})`,
         const model: Model<EntityTest> = {
           entityToPrimary: () => primarySample,
           id: 'id',
-          keyGen: { prefix: prefix },
+          keyGen: { prefix },
           mEntityToPrimary: () => [primarySample],
           mPrimaryToEntity: (primaries) => primaries,
           primaryToEntity: (primary) => primary,
@@ -336,7 +336,7 @@ return redis.call('get', ${luaExpression})`,
         const model: Model<EntityTest> = {
           entityToPrimary: () => primarySample,
           id: 'id',
-          keyGen: { prefix: prefix },
+          keyGen: { prefix },
           mEntityToPrimary: () => [primarySample],
           mPrimaryToEntity: (primaries) => primaries,
           primaryToEntity: (primary) => primary,
@@ -372,7 +372,7 @@ return redis.call('get', ${luaExpression})`,
         const model: Model<EntityTest> = {
           entityToPrimary: (entity) => entity,
           id: 'id',
-          keyGen: { prefix: prefix },
+          keyGen: { prefix },
           mEntityToPrimary: (entities) => entities,
           mPrimaryToEntity: () => [(fakeEntitySample as unknown) as EntityTest],
           primaryToEntity: () => (fakeEntitySample as unknown) as EntityTest,
@@ -409,7 +409,7 @@ return redis.call('get', ${luaExpression})`,
         const model: Model<EntityTest> = {
           entityToPrimary: (entity) => entity,
           id: 'id',
-          keyGen: { prefix: prefix },
+          keyGen: { prefix },
           mEntityToPrimary: (entities) => entities,
           mPrimaryToEntity: () => [(fakeEntitySample as unknown) as EntityTest],
           primaryToEntity: () => (fakeEntitySample as unknown) as EntityTest,
@@ -442,7 +442,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const model = new AntModel<{ id: string }>('id', { prefix: prefix });
+        const model = new AntModel<{ id: string }>('id', { prefix });
         const secondaryEntityManager = new SecondaryEntityManagerMock<{ id: string }>(model);
         expect(() => {
           // tslint:disable-next-line:no-unused-expression
@@ -536,7 +536,7 @@ return redis.call('get', ${luaExpression})`,
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const model = new AntModel('id', { prefix: prefix });
+        const model = new AntModel('id', { prefix });
         const primaryEntityManager = new AntPrimaryEntityManager(model, this._redis.redis, null);
         const idToSearch = 3;
 
@@ -880,7 +880,7 @@ return redis.call('get', ${luaExpression})`,
       async (done) => {
         await this._beforeAllPromise;
         const entity: IEntityTestString = { id: 'id0', field: 'sample' };
-        const model = new AntModel<IEntityTestString>('id', { prefix: prefix });
+        const model = new AntModel<IEntityTestString>('id', { prefix });
         const secondaryEntityManager = new SecondaryEntityManagerMock<IEntityTestString>(model, new Array());
         const primaryEntityManager = new AntPrimaryEntityManager(
           model,

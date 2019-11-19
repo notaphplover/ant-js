@@ -51,12 +51,11 @@ export class MinimalAntModelManager<TEntity extends Entity> extends AntModelMana
   /**
    * Generates a model manager.
    * @param model Model to manage.
-   * @param config AntJS model config.
    * @returns Model manager generated.
    */
-  protected _generateModelManager(model: Model<TEntity>, config: ApiModelConfig): PrimaryModelManager<TEntity> {
+  protected _generateModelManager(model: Model<TEntity>): PrimaryModelManager<TEntity> {
     const [modelManager] = this._modelManagerGenerator.generateModelManager({
-      model: model,
+      model,
       secondaryOptions: {
         manager: this._secondaryEntityManager,
       },
