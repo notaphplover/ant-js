@@ -1,5 +1,5 @@
-import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
 import { ApiQueriesManagerGeneratorOptions } from './api-queries-manager-generator-options';
+import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
 
 export interface ApiModelManagerGeneratorRedisOptions {
   /**

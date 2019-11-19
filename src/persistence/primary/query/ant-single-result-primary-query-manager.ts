@@ -28,7 +28,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
       if (null == id) {
         return null;
       } else {
-        return await this._primaryEntityManager.get(id, options);
+        return this._primaryEntityManager.get(id, options);
       }
     } else {
       let result: TEntity | Promise<TEntity>;
@@ -82,7 +82,6 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
         (id: number & string) => {
           missingIds.push(id);
         },
-        // tslint:disable-next-line:no-empty
         () => {},
       );
     }

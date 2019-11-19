@@ -47,7 +47,6 @@ export class AntManagerTest implements Test {
       itsName,
       async (done) => {
         expect(() => {
-          // tslint:disable-next-line:no-unused-expression
           new MinimalAntManager();
         }).not.toThrowError();
         done();

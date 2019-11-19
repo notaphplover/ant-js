@@ -1,14 +1,14 @@
+import { NamedEntity, NamesStartingByLetter } from './names-starting-by-letter';
+import { NamedEntityAlternative, NamesStartingByLetterAlternative } from './names-starting-by-letter-alternative';
 import { AntModel } from '../../../model/ant-model';
-import { Model } from '../../../model/model';
 import { AntPrimaryEntityManager } from '../../../persistence/primary/ant-primary-entity-manager';
 import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
+import { Model } from '../../../model/model';
 import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
+import { RedisWrapper } from '../redis-wrapper';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/secondary-entity-manager-mock';
 import { Test } from '../../../testapi/api/test';
-import { RedisWrapper } from '../redis-wrapper';
-import { NamedEntity, NamesStartingByLetter } from './names-starting-by-letter';
-import { NamedEntityAlternative, NamesStartingByLetterAlternative } from './names-starting-by-letter-alternative';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
@@ -82,7 +82,6 @@ export class MultipleResultQueryManagerTest implements Test {
         await this._beforeAllPromise;
         const [, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         expect(() => {
-          // tslint:disable-next-line:no-unused-expression
           new NamesStartingByLetter(
             primaryEntityManager,
             secondaryEntityManager,

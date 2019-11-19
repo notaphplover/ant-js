@@ -48,7 +48,6 @@ export class AntQueryManagerTest implements Test {
       itsName,
       async (done) => {
         expect(() => {
-          // tslint:disable-next-line:no-unused-expression
           new MinimalAntQueryManager<EntityTest, EntityTest>(null);
         }).not.toThrowError();
         done();

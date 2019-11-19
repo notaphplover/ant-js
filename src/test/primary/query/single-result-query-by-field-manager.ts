@@ -1,6 +1,6 @@
+import { AntSingleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-single-result-primary-query-manager';
 import { Entity } from '../../../model/entity';
 import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
-import { AntSingleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-single-result-primary-query-manager';
 import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
 
 export class SingleResultQueryByFieldManager<TEntity extends Entity> extends AntSingleResultPrimaryQueryManager<

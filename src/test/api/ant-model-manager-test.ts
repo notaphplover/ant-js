@@ -53,7 +53,6 @@ export class AntModelManagerTest implements Test {
       async (done) => {
         const model = modelGenerator(prefix);
         expect(() => {
-          // tslint:disable-next-line:no-unused-expression
           new MinimalAntModelManager(model);
         }).not.toThrowError();
         done();
@@ -265,10 +264,9 @@ export class AntModelManagerTest implements Test {
       async (done) => {
         const model = modelGenerator(prefix);
         const antModelManager = new MinimalAntModelManager(model);
-        expect(() => {
-          // tslint:disable-next-line:no-unused-expression
-          antModelManager.modelManager;
-        }).toThrowError();
+        expect(() =>
+          antModelManager.modelManager,
+        ).toThrowError();
         done();
       },
       MAX_SAFE_TIMEOUT,

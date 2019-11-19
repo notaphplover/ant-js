@@ -1,12 +1,12 @@
-import { Entity } from '../../../model/entity';
-import { Model } from '../../../model/model';
 import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
-import { PrimaryModelManager } from '../../../persistence/primary/primary-model-manager';
-import { SecondaryEntityManagerMock } from '../secondary/secondary-entity-manager-mock';
 import { ApiModelManagerGeneratorOptions } from './api-model-manager-generator-options';
 import { ApiModelManagerGeneratorRedisOptions } from './api-model-manager-generator-redis-options';
 import { ApiModelManagerGeneratorSecodaryManagerOptions } from './api-model-manager-generator-secodary-manager-options';
+import { Entity } from '../../../model/entity';
+import { Model } from '../../../model/model';
 import { ModelManagerGenerator } from './model-manager-generator';
+import { PrimaryModelManager } from '../../../persistence/primary/primary-model-manager';
+import { SecondaryEntityManagerMock } from '../secondary/secondary-entity-manager-mock';
 
 type TModelManagerOptions = ApiModelManagerGeneratorOptions<
   Model<Entity>,

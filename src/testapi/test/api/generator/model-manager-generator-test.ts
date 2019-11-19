@@ -1,9 +1,9 @@
+import { AntJsModelManagerGenerator } from '../../../api/generator/antjs-model-manager-generator';
 import { AntModel } from '../../../../model/ant-model';
+import { AntPrimaryModelManager } from '../../../../persistence/primary/ant-primary-model-manager';
 import { Entity } from '../../../../model/entity';
 import { Model } from '../../../../model/model';
-import { AntPrimaryModelManager } from '../../../../persistence/primary/ant-primary-model-manager';
 import { RedisWrapper } from '../../../../test/primary/redis-wrapper';
-import { AntJsModelManagerGenerator } from '../../../api/generator/antjs-model-manager-generator';
 import { SecondaryEntityManagerMock } from '../../../api/secondary/secondary-entity-manager-mock';
 import { Test } from '../../../api/test';
 
@@ -39,7 +39,6 @@ export class ModelManagerGeneratorTest implements Test {
   private _itMustBeInitializable(): void {
     it(this._itMustBeInitializable.name, async (done) => {
       expect(() => {
-        // tslint:disable-next-line:no-unused-expression
         new AntJsModelManagerGenerator(new RedisWrapper().redis);
       }).not.toThrowError();
       done();

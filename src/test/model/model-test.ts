@@ -13,7 +13,6 @@ export class ModelTest implements Test {
   private _itMustBeInitializable(): void {
     it('mustBeInitializable', () => {
       expect(() => {
-        // tslint:disable-next-line:no-unused-expression
         new AntModel('id', { prefix: 'prefix' });
       }).not.toThrowError();
     });
