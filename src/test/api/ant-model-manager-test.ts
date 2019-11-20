@@ -264,9 +264,7 @@ export class AntModelManagerTest implements Test {
       async (done) => {
         const model = modelGenerator(prefix);
         const antModelManager = new MinimalAntModelManager(model);
-        expect(() =>
-          antModelManager.modelManager,
-        ).toThrowError();
+        expect(() => antModelManager.modelManager).toThrowError();
         done();
       },
       MAX_SAFE_TIMEOUT,
