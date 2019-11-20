@@ -1,5 +1,5 @@
-import { Entity } from '../../model/entity';
 import { AntPrimaryEntityManager } from '../../persistence/primary/ant-primary-entity-manager';
+import { Entity } from '../../model/entity';
 import { SecondaryEntityManager } from '../../persistence/secondary/secondary-entity-manager';
 
 export class PrimaryEntityManagerForTest<

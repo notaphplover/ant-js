@@ -1,17 +1,17 @@
-import { Entity } from '../../../model/entity';
-import { Model } from '../../../model/model';
-import { PrimaryModelManager } from '../../../persistence/primary/primary-model-manager';
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { AntSingleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-single-result-primary-query-manager';
-import { MultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/multiple-result-primary-query-manager';
-import { PrimaryQueryManager } from '../../../persistence/primary/query/primary-query-manager';
-import { SingleResultPrimaryQueryManager } from '../../../persistence/primary/query/single-result-primary-query-manager';
-import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
-import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { ApiModelManagerGeneratorOptions } from './api-model-manager-generator-options';
 import { ApiModelManagerGeneratorRedisOptions } from './api-model-manager-generator-redis-options';
 import { ApiModelManagerGeneratorSecodaryManagerOptions } from './api-model-manager-generator-secodary-manager-options';
 import { ApiQueriesManagerGeneratorOptions } from './api-queries-manager-generator-options';
+import { Entity } from '../../../model/entity';
+import { Model } from '../../../model/model';
+import { MultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/multiple-result-primary-query-manager';
+import { PrimaryModelManager } from '../../../persistence/primary/primary-model-manager';
+import { PrimaryQueryManager } from '../../../persistence/primary/query/primary-query-manager';
+import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
+import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
+import { SingleResultPrimaryQueryManager } from '../../../persistence/primary/query/single-result-primary-query-manager';
 
 export abstract class ModelManagerGenerator<
   TOptions extends ApiModelManagerGeneratorOptions<
@@ -191,7 +191,7 @@ export abstract class ModelManagerGenerator<
    */
   protected _generateRandomKey(): string {
     const length = 32;
-    const textGenerator = (length: number) => {
+    const textGenerator = (length: number): string => {
       let result = '';
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       const charactersLength = characters.length;

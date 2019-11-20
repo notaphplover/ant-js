@@ -4,7 +4,7 @@ import { CacheMode } from '../persistence/primary/options/cache-mode';
 import { Test } from '../testapi/api/test';
 
 export class AntTest implements Test {
-  public performTests() {
+  public performTests(): void {
     describe('AntTest', () => {
       this._itMustExportTypes();
     });

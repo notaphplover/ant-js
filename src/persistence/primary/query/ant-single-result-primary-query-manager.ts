@@ -1,8 +1,8 @@
-import { Entity } from '../../../model/entity';
-import { VOID_RESULT_STRING } from '../lua-constants';
-import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { AntPrimaryQueryManager } from './ant-primary-query-manager';
+import { Entity } from '../../../model/entity';
+import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { SingleResultPrimaryQueryManager } from './single-result-primary-query-manager';
+import { VOID_RESULT_STRING } from '../lua-constants';
 
 export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
   extends AntPrimaryQueryManager<TEntity, number | string>
@@ -28,7 +28,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
       if (null == id) {
         return null;
       } else {
-        return await this._primaryEntityManager.get(id, options);
+        return this._primaryEntityManager.get(id, options);
       }
     } else {
       let result: TEntity | Promise<TEntity>;
@@ -82,7 +82,6 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
         (id: number & string) => {
           missingIds.push(id);
         },
-        // tslint:disable-next-line:no-empty
         () => {},
       );
     }
@@ -232,7 +231,7 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
     entityAction: (entity: TEntity) => void,
     idAction: (id: number | string) => void,
     voidAction: () => void,
-  ) {
+  ): void {
     if (VOID_RESULT_STRING === resultJson) {
       voidAction();
       return;

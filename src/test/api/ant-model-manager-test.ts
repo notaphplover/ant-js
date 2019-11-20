@@ -1,14 +1,14 @@
-import { AntQueryManager } from '../../api/query/ant-query-manager';
 import { AntModel } from '../../model/ant-model';
+import { AntQueryManager } from '../../api/query/ant-query-manager';
 import { Entity } from '../../model/entity';
-import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
-import { Test } from '../../testapi/api/test';
-import { RedisWrapper } from '../primary/redis-wrapper';
 import { MinimalAntModelManager } from './minimal-ant-model-manager';
+import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
+import { RedisWrapper } from '../primary/redis-wrapper';
+import { Test } from '../../testapi/api/test';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-const modelGenerator = (prefix: string) => new AntModel('id', { prefix: prefix });
+const modelGenerator = (prefix: string): AntModel<Entity> => new AntModel('id', { prefix });
 
 type EntityTest = { id: number } & Entity;
 
@@ -53,7 +53,6 @@ export class AntModelManagerTest implements Test {
       async (done) => {
         const model = modelGenerator(prefix);
         expect(() => {
-          // tslint:disable-next-line:no-unused-expression
           new MinimalAntModelManager(model);
         }).not.toThrowError();
         done();
@@ -149,13 +148,13 @@ export class AntModelManagerTest implements Test {
 
         const queryConfig = {
           isMultiple: true,
-          query: (params: any) =>
+          query: (params: any): Promise<number[]> =>
             Promise.resolve(
               (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>)
                 .filter((entity) => params.field === entity.field)
                 .map((entity) => entity.id),
             ),
-          queryKeyGen: (params: any) => prefix + 'query/' + params.field,
+          queryKeyGen: (params: any): string => prefix + 'query/' + params.field,
           reverseHashKey: prefix + 'query/reverse',
         };
         const queryManager = antModelManager.query(queryConfig);
@@ -182,14 +181,14 @@ export class AntModelManagerTest implements Test {
 
         const queryConfig = {
           isMultiple: false,
-          query: (params: any) =>
+          query: (params: any): Promise<number> =>
             new Promise<number>((resolve) => {
               const entity = (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>).find(
                 (entity) => params.field === entity.field,
               );
               resolve(entity ? entity.id : null);
             }),
-          queryKeyGen: (params: any) => prefix + 'query/' + params.field,
+          queryKeyGen: (params: any): string => prefix + 'query/' + params.field,
           reverseHashKey: prefix + 'query/reverse',
         };
 
@@ -217,14 +216,14 @@ export class AntModelManagerTest implements Test {
 
         const queryConfig = {
           isMultiple: false,
-          query: (params: any) =>
+          query: (params: any): Promise<number> =>
             new Promise<number>((resolve) => {
               const entity = (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>).find(
                 (entity) => params.field === entity.field,
               );
               resolve(entity ? entity.id : null);
             }),
-          queryKeyGen: (params: any) => prefix + 'query/' + params.field,
+          queryKeyGen: (params: any): string => prefix + 'query/' + params.field,
           reverseHashKey: prefix + 'query/reverse',
         };
         const queryManager = antModelManager.query(queryConfig);
@@ -265,13 +264,7 @@ export class AntModelManagerTest implements Test {
       async (done) => {
         const model = modelGenerator(prefix);
         const antModelManager = new MinimalAntModelManager(model);
-        const config = {
-          redis: this._redis.redis,
-        };
-        expect(() => {
-          // tslint:disable-next-line:no-unused-expression
-          antModelManager.modelManager;
-        }).toThrowError();
+        expect(() => antModelManager.modelManager).toThrowError();
         done();
       },
       MAX_SAFE_TIMEOUT,

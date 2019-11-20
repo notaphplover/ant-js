@@ -24,7 +24,7 @@ Dockerfile
 .env
 
 # npm lint
-tslint.json
+.eslintrc
 
 # npm development scripts
 /scripts

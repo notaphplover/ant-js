@@ -1,14 +1,14 @@
-import { Entity } from '../model/entity';
-import { BasePrimaryModelManager } from '../persistence/primary/primary-model-manager';
 import {
   MultipleQueryResult,
   QueryResult,
   SingleQueryResult,
 } from '../persistence/primary/query/ant-primary-query-manager';
 import { ApiModelConfig } from './config/api-model-config';
-import { ApiQueryConfig } from './config/api-query-config';
 import { ApiMultipleResultQueryManager } from './query/api-multiple-result-query-manager';
+import { ApiQueryConfig } from './config/api-query-config';
 import { ApiSingleResultQueryManager } from './query/api-single-result-query-manager';
+import { BasePrimaryModelManager } from '../persistence/primary/primary-model-manager';
+import { Entity } from '../model/entity';
 
 export type TAntQueryManager<TEntity, TQueryResult> = TQueryResult extends MultipleQueryResult
   ? ApiMultipleResultQueryManager<TEntity>

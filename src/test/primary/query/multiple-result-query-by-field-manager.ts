@@ -1,7 +1,7 @@
+import { TMQuery, TQuery } from '../../../persistence/primary/query/ant-primary-query-manager';
+import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { Entity } from '../../../model/entity';
 import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
-import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
-import { TMQuery, TQuery } from '../../../persistence/primary/query/ant-primary-query-manager';
 import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
 
 export class MultipleResultQueryByFieldManager<TEntity extends Entity> extends AntMultipleResultPrimaryQueryManager<
