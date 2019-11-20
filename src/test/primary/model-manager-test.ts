@@ -1,18 +1,18 @@
+import { AntJsModelManagerGenerator } from '../../testapi/api/generator/antjs-model-manager-generator';
+import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-update-options';
 import { AntModel } from '../../model/ant-model';
+import { CacheMode } from '../../persistence/primary/options/cache-mode';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
-import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-update-options';
-import { CacheMode } from '../../persistence/primary/options/cache-mode';
+import { MultipleResultQueryByFieldManager } from './query/multiple-result-query-by-field-manager';
 import { PrimaryEntityManager } from '../../persistence/primary/primary-entity-manager';
 import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
 import { PrimaryQueryManager } from '../../persistence/primary/query/primary-query-manager';
-import { SingleResultPrimaryQueryManager } from '../../persistence/primary/query/single-result-primary-query-manager';
-import { AntJsModelManagerGenerator } from '../../testapi/api/generator/antjs-model-manager-generator';
-import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondary-entity-manager-mock';
-import { Test } from '../../testapi/api/test';
-import { MultipleResultQueryByFieldManager } from './query/multiple-result-query-by-field-manager';
-import { SingleResultQueryByFieldManager } from './query/single-result-query-by-field-manager';
 import { RedisWrapper } from './redis-wrapper';
+import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondary-entity-manager-mock';
+import { SingleResultPrimaryQueryManager } from '../../persistence/primary/query/single-result-primary-query-manager';
+import { SingleResultQueryByFieldManager } from './query/single-result-query-by-field-manager';
+import { Test } from '../../testapi/api/test';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 

@@ -1,8 +1,8 @@
-import { Entity } from '../../../model/entity';
-import { VOID_RESULT_STRING } from '../lua-constants';
-import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { AntPrimaryQueryManager } from './ant-primary-query-manager';
+import { Entity } from '../../../model/entity';
+import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { SingleResultPrimaryQueryManager } from './single-result-primary-query-manager';
+import { VOID_RESULT_STRING } from '../lua-constants';
 
 export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
   extends AntPrimaryQueryManager<TEntity, number | string>

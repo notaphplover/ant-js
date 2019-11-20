@@ -1,10 +1,10 @@
-import { AntQueryManager } from '../../api/query/ant-query-manager';
 import { AntModel } from '../../model/ant-model';
+import { AntQueryManager } from '../../api/query/ant-query-manager';
 import { Entity } from '../../model/entity';
-import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
-import { Test } from '../../testapi/api/test';
-import { RedisWrapper } from '../primary/redis-wrapper';
 import { MinimalAntModelManager } from './minimal-ant-model-manager';
+import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
+import { RedisWrapper } from '../primary/redis-wrapper';
+import { Test } from '../../testapi/api/test';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 

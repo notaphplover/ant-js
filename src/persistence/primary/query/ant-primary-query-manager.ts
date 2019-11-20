@@ -1,8 +1,8 @@
+import { BasePrimaryQueryManager, PrimaryQueryManager } from './primary-query-manager';
 import { Entity } from '../../../model/entity';
 import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { PrimaryEntityManager } from '../primary-entity-manager';
 import { RedisMiddleware } from '../redis-middleware';
-import { BasePrimaryQueryManager, PrimaryQueryManager } from './primary-query-manager';
 
 export type MultipleQueryResult = number[] | string[];
 export type SingleQueryResult = number | string;

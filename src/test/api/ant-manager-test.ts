@@ -1,11 +1,11 @@
+import { AntModel } from '../../model/ant-model';
 import { AntModelManager } from '../../api/ant-model-manager';
 import { ApiGeneralConfig } from '../../api/config/api-general-config';
 import { ApiModelConfig } from '../../api/config/api-model-config';
-import { AntModel } from '../../model/ant-model';
 import { Entity } from '../../model/entity';
-import { Test } from '../../testapi/api/test';
-import { RedisWrapper } from '../primary/redis-wrapper';
 import { MinimalAntManager } from './minimal-ant-manager';
+import { RedisWrapper } from '../primary/redis-wrapper';
+import { Test } from '../../testapi/api/test';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 

@@ -1,17 +1,17 @@
-import { Entity } from '../../model/entity';
-import { Model } from '../../model/model';
-import { SecondaryEntityManager } from '../secondary/secondary-entity-manager';
-import { AntPrimaryEntityManager } from './ant-primary-entity-manager';
 import { MULTIPLE_RESULT_QUERY_CODE, SINGLE_RESULT_QUERY_CODE, VOID_RESULT_STRING } from './lua-constants';
 import { AntJsDeleteOptions } from './options/antjs-delete-options';
 import { AntJsUpdateOptions } from './options/antjs-update-options';
+import { AntPrimaryEntityManager } from './ant-primary-entity-manager';
+import { DeleteEntitiesCachedScriptSet } from './script/delete-entities-cached-script-set';
+import { Entity } from '../../model/entity';
+import { Model } from '../../model/model';
 import { PersistencyDeleteOptions } from './options/persistency-delete-options';
 import { PersistencyUpdateOptions } from './options/persistency-update-options';
 import { PrimaryModelManager } from './primary-model-manager';
 import { PrimaryQueryManager } from './query/primary-query-manager';
-import { RedisMiddleware } from './redis-middleware';
-import { DeleteEntitiesCachedScriptSet } from './script/delete-entities-cached-script-set';
 import { RedisCachedScript } from './script/redis-cached-script';
+import { RedisMiddleware } from './redis-middleware';
+import { SecondaryEntityManager } from '../secondary/secondary-entity-manager';
 import { UpdateEntitiesCachedScriptSet } from './script/update-entities-cached-script-set';
 
 export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager extends SecondaryEntityManager<TEntity>>

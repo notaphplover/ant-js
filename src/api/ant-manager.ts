@@ -1,9 +1,9 @@
-import { Entity } from '../model/entity';
+import { ApiGeneralConfig } from './config/api-general-config';
 import { ApiGeneralManager } from './api-general-manager';
 import { ApiModel } from './api-model';
-import { ApiModelManager } from './api-model-manager';
-import { ApiGeneralConfig } from './config/api-general-config';
 import { ApiModelConfig } from './config/api-model-config';
+import { ApiModelManager } from './api-model-manager';
+import { Entity } from '../model/entity';
 
 export abstract class AntManager<
   TConfig extends ApiModelConfig,
