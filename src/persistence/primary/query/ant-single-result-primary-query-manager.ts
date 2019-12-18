@@ -82,6 +82,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
         (id: number & string) => {
           missingIds.push(id);
         },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         () => {},
       );
     }
