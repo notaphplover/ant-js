@@ -32,7 +32,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
       }
     } else {
       let result: TEntity | Promise<TEntity>;
-      this._parseGetResult(
+      this._parseGetResultWithVoidAction(
         key,
         resultJson,
         (entity) => {
@@ -73,7 +73,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
         missingParamsArray.push(paramsArray[i]);
         continue;
       }
-      this._parseGetResult(
+      this._parseGetResultWithNoVoidAction(
         keys[i],
         resultJson,
         (entity) => {
@@ -82,8 +82,6 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
         (id: number & string) => {
           missingIds.push(id);
         },
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        () => {},
       );
     }
     finalResults = this._primaryEntityManager.model.mPrimaryToEntity(finalResults);
@@ -224,19 +222,13 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
    * @param resultJson Result obtained from the key.
    * @param entityAction Action to perform if the result is an entity.
    * @param idAction Action to perform if the result is an id.
-   * @param voidAction Action to perform if there is a void result.
    */
   private _parseGetResult(
     key: string,
     resultJson: string,
     entityAction: (entity: TEntity) => void,
     idAction: (id: number | string) => void,
-    voidAction: () => void,
   ): void {
-    if (VOID_RESULT_STRING === resultJson) {
-      voidAction();
-      return;
-    }
     const result = JSON.parse(resultJson);
     const resultType = typeof result;
     if ('object' === resultType) {
@@ -248,5 +240,46 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
       return;
     }
     throw new Error(`Query "${key}" corrupted!`);
+  }
+
+  /**
+   * Parses the result of an entity get request to the cache server.
+   * @param key key obtained.
+   * @param resultJson Result obtained from the key.
+   * @param entityAction Action to perform if the result is an entity.
+   * @param idAction Action to perform if the result is an id.
+   */
+  private _parseGetResultWithNoVoidAction(
+    key: string,
+    resultJson: string,
+    entityAction: (entity: TEntity) => void,
+    idAction: (id: number | string) => void,
+  ): void {
+    if (VOID_RESULT_STRING === resultJson) {
+      return;
+    }
+    this._parseGetResult(key, resultJson, entityAction, idAction);
+  }
+
+  /**
+   * Parses the result of an entity get request to the cache server.
+   * @param key key obtained.
+   * @param resultJson Result obtained from the key.
+   * @param entityAction Action to perform if the result is an entity.
+   * @param idAction Action to perform if the result is an id.
+   * @param voidAction Action to perform if there is a void result.
+   */
+  private _parseGetResultWithVoidAction(
+    key: string,
+    resultJson: string,
+    entityAction: (entity: TEntity) => void,
+    idAction: (id: number | string) => void,
+    voidAction: () => void,
+  ): void {
+    if (VOID_RESULT_STRING === resultJson) {
+      voidAction();
+      return;
+    }
+    this._parseGetResult(key, resultJson, entityAction, idAction);
   }
 }
