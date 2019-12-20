@@ -1,19 +1,19 @@
-import { ApiQueryManager } from '../../../api/query/api-query-manager';
 import { AntModel } from '../../../model/ant-model';
-import { Entity } from '../../../model/entity';
-import { Model } from '../../../model/model';
 import { AntPrimaryEntityManager } from '../../../persistence/primary/ant-primary-entity-manager';
-import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
-import { Test } from '../../../testapi/api/test';
-import { SingleResultQueryByFieldManager } from '../../primary/query/single-result-query-by-field-manager';
-import { RedisWrapper } from '../../primary/redis-wrapper';
+import { ApiQueryManager } from '../../../api/query/api-query-manager';
+import { Entity } from '../../../model/entity';
 import { MinimalAntQueryManager } from './minimal-ant-query-manager';
+import { Model } from '../../../model/model';
+import { RedisWrapper } from '../../primary/redis-wrapper';
+import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
+import { SingleResultQueryByFieldManager } from '../../primary/query/single-result-query-by-field-manager';
+import { Test } from '../../../testapi/api/test';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
 type EntityTest = { id: number } & Entity;
 
-const modelGenerator = (prefix: string) => new AntModel<EntityTest>('id', { prefix: prefix });
+const modelGenerator = (prefix: string): AntModel<EntityTest> => new AntModel<EntityTest>('id', { prefix });
 
 export class AntQueryManagerTest implements Test {
   /**
@@ -44,12 +44,10 @@ export class AntQueryManagerTest implements Test {
 
   private _itMustBeInitializable(): void {
     const itsName = 'mustBeInitializable';
-    const prefix = this._declareName + '/' + itsName + '/';
     it(
       itsName,
       async (done) => {
         expect(() => {
-          // tslint:disable-next-line:no-unused-expression
           new MinimalAntQueryManager<EntityTest, EntityTest>(null);
         }).not.toThrowError();
         done();

@@ -1,9 +1,9 @@
+import { AntJsModelManagerGenerator } from '../../../api/generator/antjs-model-manager-generator';
 import { AntModel } from '../../../../model/ant-model';
+import { AntPrimaryModelManager } from '../../../../persistence/primary/ant-primary-model-manager';
 import { Entity } from '../../../../model/entity';
 import { Model } from '../../../../model/model';
-import { AntPrimaryModelManager } from '../../../../persistence/primary/ant-primary-model-manager';
 import { RedisWrapper } from '../../../../test/primary/redis-wrapper';
-import { AntJsModelManagerGenerator } from '../../../api/generator/antjs-model-manager-generator';
 import { SecondaryEntityManagerMock } from '../../../api/secondary/secondary-entity-manager-mock';
 import { Test } from '../../../api/test';
 
@@ -25,7 +25,7 @@ export class ModelManagerGeneratorTest implements Test {
     this._redisCleanPromise = redisCleanPromise;
   }
 
-  public performTests() {
+  public performTests(): void {
     describe(this._describeName, () => {
       this._itMustBeInitializable();
       this._itMustGenerateAModelManagerWithCustomSecondaryModelManager();
@@ -39,7 +39,6 @@ export class ModelManagerGeneratorTest implements Test {
   private _itMustBeInitializable(): void {
     it(this._itMustBeInitializable.name, async (done) => {
       expect(() => {
-        // tslint:disable-next-line:no-unused-expression
         new AntJsModelManagerGenerator(new RedisWrapper().redis);
       }).not.toThrowError();
       done();
@@ -52,7 +51,7 @@ export class ModelManagerGeneratorTest implements Test {
       const modelManagerGenerator = new AntJsModelManagerGenerator(new RedisWrapper().redis);
       const originalSecondaryManager = new SecondaryEntityManagerMock(model);
       const [, secondaryManager] = modelManagerGenerator.generateModelManager({
-        model: model,
+        model,
         secondaryOptions: {
           manager: originalSecondaryManager,
         },
@@ -73,7 +72,7 @@ export class ModelManagerGeneratorTest implements Test {
         singleResultQueryManagers,
         multipleResultQueryManagers,
       ] = modelManagerGenerator.generateModelManager({
-        model: model,
+        model,
         redisOptions: {
           multipleResultQueryManagersOptions: {
             properties: ['ps1', 'ps2'],
@@ -97,7 +96,7 @@ export class ModelManagerGeneratorTest implements Test {
         singleResultQueryManagers,
         multipleResultQueryManagers,
       ] = modelManagerGenerator.generateModelManager({
-        model: model,
+        model,
       });
       expect(modelManager instanceof AntPrimaryModelManager).toBe(true);
       expect(secondaryManager instanceof SecondaryEntityManagerMock).toBe(true);
@@ -118,7 +117,7 @@ export class ModelManagerGeneratorTest implements Test {
         singleResultQueryManagers,
         multipleResultQueryManagers,
       ] = modelManagerGenerator.generateModelManager({
-        model: model,
+        model,
         redisOptions: {
           singleResultQueryManagersOptions: {
             properties: ['ps1', 'ps2'],
@@ -134,7 +133,6 @@ export class ModelManagerGeneratorTest implements Test {
 
   private _itMustGenerateAMRQManagerAndSearchEntitiesByProperty(): void {
     const itsName = this._itMustGenerateAMRQManagerAndSearchEntitiesByProperty.name;
-    const prefix = this._describeName + '/' + itsName + '/';
 
     it(
       itsName,
@@ -159,7 +157,7 @@ export class ModelManagerGeneratorTest implements Test {
         const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [, , singleResultQueryManagers, multipleResultQueryManagers] = modelManagerGenerator.generateModelManager(
           {
-            model: model,
+            model,
             redisOptions: {
               multipleResultQueryManagersOptions: {
                 properties: ['numberField', 'strField'],

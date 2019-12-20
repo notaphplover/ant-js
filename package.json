@@ -1,6 +1,6 @@
 {
   "name": "@antjs/ant-js",
-  "version": "1.0.0-beta.17",
+  "version": "1.0.0",
   "description": "Scalable query manager for redis.",
   "main": "build/ant.js",
   "scripts": {
@@ -9,17 +9,15 @@
     "build-and-test": "npm run build && npm run test-only && npm run testapi-test-only",
     "build-and-test-debug": "npm run build && npm run test-debug-only && npm run testapi-test-debug-only",
     "ci": "npm run build && npm run linter && npm run format-check && npm run test-only && npm run testapi-test-only && npm run report-coverage",
-    "ci-docker": "sh scripts/prepare-env.sh && docker-compose -f docker-compose.test.ci.yml up --abort-on-container-exit --exit-code-from ant_lib",
     "clear-js": "node ./scripts/clear-compiled.js",
     "format": "prettier --write \"src/**/*.ts\"",
     "format-check": "prettier --check \"src/**/*.ts\"",
-    "linter": "tslint -c ./tslint.json -p ./src.tsconfig.commonjs.dev.json",
-    "linter-fix": "tslint --fix -c ./tslint.json -p ./src.tsconfig.commonjs.dev.json",
+    "linter": "eslint 'src/**/*.ts'",
+    "linter-fix": "eslint --fix 'src/**/*.ts'",
     "publish-npm": "npm run clear-js && npm run test && npm run build-prod && npm publish --access public",
     "publish-npm-beta": " npm run clear-js && npm run test && npm run build-prod && npm publish --access public --tag beta",
     "report-coverage": "cat ./api-coverage/lcov.info | coveralls",
     "test": "npm run test-docker",
-    "test-ci": "npm run ci-docker",
     "test-debug": "npm run test-docker-debug",
     "test-debug-only": "node --inspect-brk=0.0.0.0:${NODE_DEBUG_PORT_INNER} ./node_modules/jasmine/bin/jasmine.js ./build/test/main.test.js",
     "test-docker": "docker-compose -f docker-compose.test.yml up --abort-on-container-exit --exit-code-from ant_lib",
@@ -35,16 +33,18 @@
   "author": "Roberto Pintos López",
   "license": "MIT",
   "devDependencies": {
-    "@types/ioredis": "^4.0.18",
-    "@types/jasmine": "^3.4.6",
-    "@types/node": "^12.12.6",
-    "coveralls": "^3.0.7",
+    "@types/ioredis": "^4.14.2",
+    "@types/jasmine": "^3.5.0",
+    "@types/node": "^12.12.20",
+    "@typescript-eslint/eslint-plugin": "^2.12.0",
+    "@typescript-eslint/parser": "^2.12.0",
+    "coveralls": "^3.0.9",
+    "eslint": "^6.7.2",
     "ioredis": "^4.14.1",
     "jasmine": "^3.5.0",
     "lodash": "^4.17.15",
     "nyc": "^14.1.1",
-    "prettier": "^1.18.2",
-    "tslint": "^5.20.1",
-    "typescript": "^3.7.2"
+    "prettier": "^1.19.1",
+    "typescript": "^3.7.3"
   }
 }

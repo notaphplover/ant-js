@@ -1,8 +1,8 @@
-import { Entity } from '../model/entity';
-import { ApiModel } from './api-model';
-import { ApiModelManager } from './api-model-manager';
 import { ApiGeneralConfig } from './config/api-general-config';
+import { ApiModel } from './api-model';
 import { ApiModelConfig } from './config/api-model-config';
+import { ApiModelManager } from './api-model-manager';
+import { Entity } from '../model/entity';
 
 export interface ApiGeneralManager<
   TConfig extends ApiModelConfig,

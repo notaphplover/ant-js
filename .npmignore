@@ -24,7 +24,7 @@ Dockerfile
 .env
 
 # npm lint
-tslint.json
+.eslintrc
 
 # npm development scripts
 /scripts
@@ -57,9 +57,6 @@ testapi.nycrc.json
 # Prettier config
 .prettierignore
 .prettierrc
-
-# Travis build
-.travis.yml
 
 # coveralls config
 .coveralls.yml

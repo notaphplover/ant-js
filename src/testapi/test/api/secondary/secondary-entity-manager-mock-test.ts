@@ -24,9 +24,7 @@ export class SecondaryEntityManagerMockTest implements Test {
   private _itMustBeInitializable(): void {
     it(this._itMustBeInitializable.name, async (done) => {
       expect(() => {
-        // tslint:disable-next-line:no-unused-expression
         new SecondaryEntityManagerMock(new AntModel('id', { prefix: '' }));
-        // tslint:disable-next-line:no-unused-expression
         new SecondaryEntityManagerMock(new AntModel('id', { prefix: '' }), new Array());
       }).not.toThrowError();
       done();

@@ -1,8 +1,8 @@
+import { BasePrimaryQueryManager, PrimaryQueryManager } from './primary-query-manager';
 import { Entity } from '../../../model/entity';
 import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { PrimaryEntityManager } from '../primary-entity-manager';
 import { RedisMiddleware } from '../redis-middleware';
-import { BasePrimaryQueryManager, PrimaryQueryManager } from './primary-query-manager';
 
 export type MultipleQueryResult = number[] | string[];
 export type SingleQueryResult = number | string;
@@ -127,13 +127,7 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
    * @param query query to manage.
    */
   private _getDefaultMQuery(query: TQuery<TQueryResult>): TMQuery<TQueryResult> {
-    return (paramsArray: any) => {
-      const promisesArray = new Array<Promise<TQueryResult>>();
-      for (const params of paramsArray) {
-        promisesArray.push(query(params));
-      }
-      return Promise.all(promisesArray);
-    };
+    return (paramsArray: any[]): Promise<TQueryResult[]> => Promise.all(paramsArray.map((params) => query(params)));
   }
 
   /**
@@ -142,10 +136,6 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
    * @param mQuery mquery to manage.
    */
   private _setMQuery(query: TQuery<TQueryResult>, mQuery: TMQuery<TQueryResult>): void {
-    if (null == mQuery) {
-      this._mquery = this._getDefaultMQuery(query);
-    } else {
-      this._mquery = mQuery;
-    }
+    this._mquery = mQuery ?? this._getDefaultMQuery(query);
   }
 }

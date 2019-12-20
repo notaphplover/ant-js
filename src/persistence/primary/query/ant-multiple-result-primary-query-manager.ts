@@ -1,8 +1,8 @@
-import { Entity } from '../../../model/entity';
 import { SEPARATOR_STRING, VOID_RESULT_STRING } from '../lua-constants';
-import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { AntPrimaryQueryManager } from './ant-primary-query-manager';
+import { Entity } from '../../../model/entity';
 import { MultipleResultPrimaryQueryManager } from './multiple-result-primary-query-manager';
+import { PersistencySearchOptions } from '../options/persistency-search-options';
 
 export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
   extends AntPrimaryQueryManager<TEntity, number[] | string[]>
@@ -336,7 +336,7 @@ end`;
     evalParams: Array<string | number>,
     currentIds: Array<string & number>,
     finalIds: number[] | string[],
-  ) {
+  ): void {
     if (0 === currentIds.length) {
       evalParams.push(VOID_RESULT_STRING);
     } else {

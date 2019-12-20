@@ -1,14 +1,15 @@
+import { AntModel } from '../../model/ant-model';
 import { AntModelManager } from '../../api/ant-model-manager';
 import { ApiGeneralConfig } from '../../api/config/api-general-config';
 import { ApiModelConfig } from '../../api/config/api-model-config';
-import { AntModel } from '../../model/ant-model';
-import { Test } from '../../testapi/api/test';
-import { RedisWrapper } from '../primary/redis-wrapper';
+import { Entity } from '../../model/entity';
 import { MinimalAntManager } from './minimal-ant-manager';
+import { RedisWrapper } from '../primary/redis-wrapper';
+import { Test } from '../../testapi/api/test';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
-const modelGenerator = (prefix: string) => new AntModel('id', { prefix: prefix });
+const modelGenerator = (prefix: string): AntModel<Entity> => new AntModel('id', { prefix });
 
 export class AntManagerTest implements Test {
   /**
@@ -46,7 +47,6 @@ export class AntManagerTest implements Test {
       itsName,
       async (done) => {
         expect(() => {
-          // tslint:disable-next-line:no-unused-expression
           new MinimalAntManager();
         }).not.toThrowError();
         done();

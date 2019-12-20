@@ -1,11 +1,11 @@
+import { AntJsModelManagerGenerator } from '../../testapi/api/generator/antjs-model-manager-generator';
 import { AntModelManager } from '../../api/ant-model-manager';
 import { ApiModelConfig } from '../../api/config/api-model-config';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
-import { AntJsModelManagerGenerator } from '../../testapi/api/generator/antjs-model-manager-generator';
-import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondary-entity-manager-mock';
 import { RedisWrapper } from '../primary/redis-wrapper';
+import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondary-entity-manager-mock';
 
 export class MinimalAntModelManager<TEntity extends Entity> extends AntModelManager<
   TEntity,
@@ -51,12 +51,11 @@ export class MinimalAntModelManager<TEntity extends Entity> extends AntModelMana
   /**
    * Generates a model manager.
    * @param model Model to manage.
-   * @param config AntJS model config.
    * @returns Model manager generated.
    */
-  protected _generateModelManager(model: Model<TEntity>, config: ApiModelConfig): PrimaryModelManager<TEntity> {
+  protected _generateModelManager(model: Model<TEntity>): PrimaryModelManager<TEntity> {
     const [modelManager] = this._modelManagerGenerator.generateModelManager({
-      model: model,
+      model,
       secondaryOptions: {
         manager: this._secondaryEntityManager,
       },

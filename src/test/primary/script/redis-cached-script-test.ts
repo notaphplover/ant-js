@@ -1,7 +1,7 @@
-import { RedisCachedScript } from '../../../persistence/primary/script/redis-cached-script';
-import { Test } from '../../../testapi/api/test';
-import { RedisWrapper } from '../redis-wrapper';
 import { MinimalRedisCachedScript } from './minimal-redis-cached-script';
+import { RedisCachedScript } from '../../../persistence/primary/script/redis-cached-script';
+import { RedisWrapper } from '../redis-wrapper';
+import { Test } from '../../../testapi/api/test';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
@@ -46,7 +46,6 @@ export class RedisCachedScriptTest implements Test {
         await this._beforeAllPromise;
 
         expect(() => {
-          // tslint:disable-next-line:no-unused-expression
           new RedisCachedScript('return ARGV[0]', this._redis.redis);
         }).not.toThrowError();
 
@@ -104,7 +103,7 @@ export class RedisCachedScriptTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
 
-        const script = `return missingVar`;
+        const script = 'return missingVar';
         const cachedScript = new RedisCachedScript(script, this._redis.redis);
 
         const evalPromise = cachedScript.eval((scriptArg) => [scriptArg, 0]);

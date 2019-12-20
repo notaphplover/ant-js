@@ -1,14 +1,14 @@
 import { AntModel } from '../../../model/ant-model';
-import { Entity } from '../../../model/entity';
-import { Model } from '../../../model/model';
 import { AntPrimaryEntityManager } from '../../../persistence/primary/ant-primary-entity-manager';
 import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
+import { Entity } from '../../../model/entity';
+import { Model } from '../../../model/model';
 import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
+import { RedisWrapper } from '../redis-wrapper';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/secondary-entity-manager-mock';
-import { Test } from '../../../testapi/api/test';
-import { RedisWrapper } from '../redis-wrapper';
 import { SingleResultQueryByFieldManager } from './single-result-query-by-field-manager';
+import { Test } from '../../../testapi/api/test';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
@@ -68,7 +68,7 @@ export class SingleResultQueryManagerTest implements Test {
     prefix: string,
     entities: EntityTestStr[],
   ): [Model<EntityTestStr>, PrimaryEntityManager<EntityTestStr>, SecondaryEntityManagerMock<EntityTestStr>] {
-    const model = new AntModel<EntityTestStr>('id', { prefix: prefix });
+    const model = new AntModel<EntityTestStr>('id', { prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTestStr>(model, entities);
     const primaryEntityManager = new AntPrimaryEntityManager<EntityTestStr, SecondaryEntityManager<EntityTestStr>>(
       model,
@@ -88,9 +88,8 @@ export class SingleResultQueryManagerTest implements Test {
         await this._beforeAllPromise;
         const [, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         expect(() => {
-          // tslint:disable-next-line:no-unused-expression
           new SingleResultQueryByFieldManager(
-            async (params: any) => null,
+            () => null,
             primaryEntityManager,
             this._redis.redis,
             prefix + 'reverse/',
@@ -118,7 +117,7 @@ export class SingleResultQueryManagerTest implements Test {
         const model: Model<EntityTestStr> = {
           entityToPrimary: (entity) => entity,
           id: 'id',
-          keyGen: { prefix: prefix },
+          keyGen: { prefix },
           mEntityToPrimary: (entities) => entities,
           mPrimaryToEntity: () => [fakeInitialEntity],
           primaryToEntity: () => fakeInitialEntity,
@@ -134,7 +133,7 @@ export class SingleResultQueryManagerTest implements Test {
           true,
           secondaryEntityManager,
         );
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<number> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -169,9 +168,9 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: EntityTestStr = { id: 1, field: 'sample-1' };
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
         const [, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<number> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -203,12 +202,12 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: EntityTestStr = { id: 1, field: 'sample-1' };
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
         ]);
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<number> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -245,8 +244,8 @@ export class SingleResultQueryManagerTest implements Test {
           id: string;
           field: string;
         };
-        const model = new AntModel<EntityTest>('id', { prefix: prefix });
-        const entity1: EntityTest = { id: '1', field: 'sample-1' };
+        const model = new AntModel<EntityTest>('id', { prefix });
+        const entity1: EntityTest = { field: 'sample-1', id: '1' };
         const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [entity1]);
         const primaryEntityManager = new AntPrimaryEntityManager(
           model,
@@ -255,7 +254,7 @@ export class SingleResultQueryManagerTest implements Test {
           secondaryEntityManager,
         );
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<string> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -288,13 +287,13 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: EntityTestStr = { id: 1, field: 'sample-1' };
-        const entity2: EntityTestStr = { id: 2, field: 'sample-2' };
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
+        const entity2: EntityTestStr = { field: 'sample-2', id: 2 };
         const [, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
           entity2,
         ]);
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<number> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -302,8 +301,8 @@ export class SingleResultQueryManagerTest implements Test {
             return entityFound.id;
           }
         };
-        const mQuery = async (paramsArray: any[]) => {
-          const results = new Array(paramsArray.length);
+        const mQuery = async (paramsArray: any[]): Promise<number[]> => {
+          const results = new Array<number>(paramsArray.length);
           const resultsMap = new Map<string, number>();
           for (let i = 0; i < paramsArray.length; ++i) {
             results[i] = null;
@@ -342,9 +341,9 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: EntityTestStr = { id: 1, field: 'sample-1' };
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
         const [, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<number> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -376,12 +375,12 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: EntityTestStr = { id: 1, field: 'sample-1' };
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
         ]);
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<number> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -418,8 +417,8 @@ export class SingleResultQueryManagerTest implements Test {
           id: string;
           field: string;
         };
-        const model = new AntModel<EntityTest>('id', { prefix: prefix });
-        const entity1: EntityTest = { id: '1', field: 'sample-1' };
+        const model = new AntModel<EntityTest>('id', { prefix });
+        const entity1: EntityTest = { field: 'sample-1', id: '1' };
         const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [entity1]);
         const primaryEntityManager = new AntPrimaryEntityManager(
           model,
@@ -428,7 +427,7 @@ export class SingleResultQueryManagerTest implements Test {
           secondaryEntityManager,
         );
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<string> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -461,13 +460,13 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: EntityTestStr = { id: 1, field: 'sample-1' };
-        const entity2: EntityTestStr = { id: 2, field: 'sample-2' };
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
+        const entity2: EntityTestStr = { field: 'sample-2', id: 2 };
         const [, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
           entity2,
         ]);
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<number> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -499,9 +498,9 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: EntityTestStr = { id: 1, field: 'sample-1' };
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
         const [, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<number> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -533,9 +532,9 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: EntityTestStr = { id: 1, field: 'sample-1' };
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
         const [, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<number> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -567,7 +566,7 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const [, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<number> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -598,9 +597,9 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: EntityTestStr = { id: 1, field: 'sample-1' };
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
         const [, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<number> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -631,9 +630,9 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: EntityTestStr = { id: 1, field: 'sample-1' };
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
         const [, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<number> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -665,9 +664,9 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: EntityTestStr = { id: 1, field: 'sample-1' };
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
         const [, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<number> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;
@@ -698,13 +697,13 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const entity1: EntityTestStr = { id: 1, field: 'sample-1' };
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
         ]);
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
         modelManager.delete(entity1[model.id]);
-        const query = async (params: any) => {
+        const query = async (params: any): Promise<number> => {
           const entityFound = secondaryEntityManager.store.find((entity) => params.field === entity.field);
           if (null == entityFound) {
             return null;

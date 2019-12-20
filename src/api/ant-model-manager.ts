@@ -1,21 +1,21 @@
+import { ApiModelManager, TAntQueryManager } from './api-model-manager';
+import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/ant-primary-query-manager';
+import { AntMultipleResultPrimaryQueryManager } from '../persistence/primary/query/ant-multiple-result-primary-query-manager';
+import { AntMultipleResultQueryManager } from './query/ant-multiple-result-query-manager';
+import { AntSingleResultPrimaryQueryManager } from '../persistence/primary/query/ant-single-result-primary-query-manager';
+import { AntSingleResultQueryManager } from './query/ant-single-result-query-manager';
+import { ApiModelConfig } from './config/api-model-config';
+import { ApiMultipleResultQueryManager } from './query/api-multiple-result-query-manager';
+import { ApiQueryConfig } from './config/api-query-config';
+import { ApiQueryManager } from './query/api-query-manager';
+import { ApiSingleResultQueryManager } from './query/api-single-result-query-manager';
 import { Entity } from '../model/entity';
 import { Model } from '../model/model';
 import { PersistencyDeleteOptions } from '../persistence/primary/options/persistency-delete-options';
 import { PersistencySearchOptions } from '../persistence/primary/options/persistency-search-options';
 import { PersistencyUpdateOptions } from '../persistence/primary/options/persistency-update-options';
 import { PrimaryModelManager } from '../persistence/primary/primary-model-manager';
-import { AntMultipleResultPrimaryQueryManager } from '../persistence/primary/query/ant-multiple-result-primary-query-manager';
-import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/ant-primary-query-manager';
-import { AntSingleResultPrimaryQueryManager } from '../persistence/primary/query/ant-single-result-primary-query-manager';
 import { PrimaryQueryManager } from '../persistence/primary/query/primary-query-manager';
-import { ApiModelManager, TAntQueryManager } from './api-model-manager';
-import { ApiModelConfig } from './config/api-model-config';
-import { ApiQueryConfig } from './config/api-query-config';
-import { AntMultipleResultQueryManager } from './query/ant-multiple-result-query-manager';
-import { AntSingleResultQueryManager } from './query/ant-single-result-query-manager';
-import { ApiMultipleResultQueryManager } from './query/api-multiple-result-query-manager';
-import { ApiQueryManager } from './query/api-query-manager';
-import { ApiSingleResultQueryManager } from './query/api-single-result-query-manager';
 
 export type QueryMapType<TEntity extends Entity> = Map<string, ApiQueryManager<TEntity, TEntity | TEntity[]>>;
 
@@ -171,9 +171,9 @@ This is probably caused by the absence of a config instance. Ensure that config 
         queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number[] | string[]>,
       );
-      query = (new AntMultipleResultQueryManager<TEntity>(innerQueryManager as AntMultipleResultPrimaryQueryManager<
-        TEntity
-      >) as ApiMultipleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
+      query = (new AntMultipleResultQueryManager<TEntity>(
+        innerQueryManager as AntMultipleResultPrimaryQueryManager<TEntity>,
+      ) as ApiMultipleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
     } else {
       innerQueryManager = new AntSingleResultPrimaryQueryManager<TEntity>(
         queryConfig.query as TQuery<number | string>,
@@ -184,9 +184,9 @@ This is probably caused by the absence of a config instance. Ensure that config 
         queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number | string>,
       );
-      query = (new AntSingleResultQueryManager<TEntity>(innerQueryManager as AntSingleResultPrimaryQueryManager<
-        TEntity
-      >) as ApiSingleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
+      query = (new AntSingleResultQueryManager<TEntity>(
+        innerQueryManager as AntSingleResultPrimaryQueryManager<TEntity>,
+      ) as ApiSingleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
     }
 
     this.modelManager.addQuery(innerQueryManager);

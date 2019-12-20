@@ -1,14 +1,14 @@
+import { NamedEntity, NamesStartingByLetter } from './names-starting-by-letter';
+import { NamedEntityAlternative, NamesStartingByLetterAlternative } from './names-starting-by-letter-alternative';
 import { AntModel } from '../../../model/ant-model';
-import { Model } from '../../../model/model';
 import { AntPrimaryEntityManager } from '../../../persistence/primary/ant-primary-entity-manager';
 import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
+import { Model } from '../../../model/model';
 import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
+import { RedisWrapper } from '../redis-wrapper';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/secondary-entity-manager-mock';
 import { Test } from '../../../testapi/api/test';
-import { RedisWrapper } from '../redis-wrapper';
-import { NamedEntity, NamesStartingByLetter } from './names-starting-by-letter';
-import { NamedEntityAlternative, NamesStartingByLetterAlternative } from './names-starting-by-letter-alternative';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
@@ -62,7 +62,7 @@ export class MultipleResultQueryManagerTest implements Test {
     prefix: string,
     entities: NamedEntity[],
   ): [Model<NamedEntity>, PrimaryEntityManager<NamedEntity>, SecondaryEntityManagerMock<NamedEntity>] {
-    const model = new AntModel<NamedEntity>('id', { prefix: prefix });
+    const model = new AntModel<NamedEntity>('id', { prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntity>(model, entities);
     const primaryEntityManager = new AntPrimaryEntityManager<NamedEntity, SecondaryEntityManager<NamedEntity>>(
       model,
@@ -82,7 +82,6 @@ export class MultipleResultQueryManagerTest implements Test {
         await this._beforeAllPromise;
         const [, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         expect(() => {
-          // tslint:disable-next-line:no-unused-expression
           new NamesStartingByLetter(
             primaryEntityManager,
             secondaryEntityManager,
@@ -109,7 +108,7 @@ export class MultipleResultQueryManagerTest implements Test {
         const model: Model<NamedEntity> = {
           entityToPrimary: (entity) => entity,
           id: 'id',
-          keyGen: { prefix: prefix },
+          keyGen: { prefix },
           mEntityToPrimary: (entities) => entities,
           mPrimaryToEntity: () => [fakeInitialEntity],
           primaryToEntity: () => fakeInitialEntity,
@@ -275,7 +274,7 @@ export class MultipleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const model = new AntModel<NamedEntityAlternative>('id', { prefix: prefix });
+        const model = new AntModel<NamedEntityAlternative>('id', { prefix });
         const entity1: NamedEntityAlternative = { id: '1', name: 'Pepe' };
         const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntityAlternative>(model, [entity1]);
         const primaryEntityManager = new AntPrimaryEntityManager<

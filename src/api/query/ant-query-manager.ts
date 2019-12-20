@@ -1,7 +1,7 @@
+import { ApiQueryManager } from './api-query-manager';
 import { Entity } from '../../model/entity';
 import { PersistencySearchOptions } from '../../persistence/primary/options/persistency-search-options';
 import { QueryManager } from '../../persistence/primary/query/query-manager';
-import { ApiQueryManager } from './api-query-manager';
 
 export abstract class AntQueryManager<TEntity extends Entity, TResult extends TEntity | TEntity[]>
   implements ApiQueryManager<TEntity, TResult> {
