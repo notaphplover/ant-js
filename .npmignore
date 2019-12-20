@@ -58,9 +58,6 @@ testapi.nycrc.json
 .prettierignore
 .prettierrc
 
-# Travis build
-.travis.yml
-
 # coveralls config
 .coveralls.yml
 
