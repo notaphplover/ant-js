@@ -4,7 +4,5 @@ services:
     command: ["npm", "run", "build-and-test-debug"]
     environment:
       NODE_DEBUG_PORT_INNER: ${NODE_DEBUG_PORT_INNER}
-    depends_on:
-      - ant_redis
     ports:
       - "${NODE_DEBUG_PORT_OUTER}:${NODE_DEBUG_PORT_INNER}"
