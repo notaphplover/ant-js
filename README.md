@@ -8,7 +8,7 @@ Scalable query manager for redis. This library receives a set of models and quer
 
 ## Status
 
-In beta phase. The library is being tested in a preproduction environments of a backend service.
+We finally released an stable version! The library is still being tested in a preproduction environments of a backend service.
 
 ## How to install the library
 
