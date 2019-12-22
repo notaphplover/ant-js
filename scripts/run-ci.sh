@@ -18,4 +18,4 @@ else
 fi
 echo '$GITHUB_BRANCH added to .env file'
 
-docker-compose -f docker-compose.test.ci.yml up --abort-on-container-exit --exit-code-from ant_lib
+docker-compose -f docker-compose.yml -f docker-compose.test.ci.yml up --abort-on-container-exit --exit-code-from ant_lib
