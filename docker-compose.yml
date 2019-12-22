@@ -1,0 +1,18 @@
+version: '3'
+services:
+  ant_lib:
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules/
+    depends_on:
+      - ant_redis
+    networks:
+      - ant
+  ant_redis:
+    image: redis:5.0.6-alpine
+    networks:
+      - ant
+networks:
+  ant:
+    driver: bridge
