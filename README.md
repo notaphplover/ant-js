@@ -1,4 +1,4 @@
-[![Build status](https://travis-ci.org/notaphplover/ant-js.svg?branch=develop)](https://travis-ci.org/notaphplover/ant-js.svg?branch=develop)
+[![Build status](https://github.com/notaphplover/ant-js/workflows/ci/badge.svg)](https://github.com/notaphplover/ant-js/workflows/ci/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/notaphplover/ant-js/badge.svg?branch=develop)](https://coveralls.io/github/notaphplover/ant-js?branch=develop)
 [![npm version](https://badge.fury.io/js/%40antjs%2Fant-js.svg)](https://badge.fury.io/js/%40antjs%2Fant-js.svg)
 
