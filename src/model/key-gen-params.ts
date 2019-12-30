@@ -2,5 +2,5 @@ export interface KeyGenParams {
   /**
    * Key prefix.
    */
-  prefix: string;
+  readonly prefix: string;
 }

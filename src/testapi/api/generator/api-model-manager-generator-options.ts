@@ -12,7 +12,7 @@ export interface ApiModelManagerGeneratorOptions<
   /**
    * Model to manage.
    */
-  model: TModel;
+  readonly model: TModel;
   /**
    * Redis options.
    */

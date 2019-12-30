@@ -6,7 +6,7 @@ export interface BasePrimaryQueryManager<TEntity extends Entity, TResult extends
   /**
    * True if the queries managed can return multiple results.
    */
-  isMultiple: boolean;
+  readonly isMultiple: boolean;
   /**
    * Query key generator.
    */
@@ -18,7 +18,7 @@ export interface BasePrimaryQueryManager<TEntity extends Entity, TResult extends
   /**
    * Obtains the reverse hash key.
    */
-  reverseHashKey: string;
+  readonly reverseHashKey: string;
 }
 
 export interface PrimaryQueryManager<TEntity extends Entity>

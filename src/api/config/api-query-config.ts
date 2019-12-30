@@ -5,25 +5,25 @@ export interface ApiQueryConfig<TEntity extends Entity, TQueryResult extends Que
   /**
    * True if the query returns an array of results instead of a single result.
    */
-  isMultiple: boolean;
+  readonly isMultiple: boolean;
   /**
    * Entity key generator
    */
-  entityKeyGen?: (entity: TEntity) => string;
+  readonly entityKeyGen?: (entity: TEntity) => string;
   /**
    * Query key generator.
    */
-  queryKeyGen: (params: any) => string;
+  readonly queryKeyGen: (params: any) => string;
   /**
    * Multiple query.
    */
-  mQuery?: TMQuery<TQueryResult>;
+  readonly mQuery?: TMQuery<TQueryResult>;
   /**
    * Single query.
    */
-  query: TQuery<TQueryResult>;
+  readonly query: TQuery<TQueryResult>;
   /**
    * Key to store a hash used by AntJS to manage queries properly.
    */
-  reverseHashKey: string;
+  readonly reverseHashKey: string;
 }
