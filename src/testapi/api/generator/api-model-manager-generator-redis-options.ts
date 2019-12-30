@@ -5,7 +5,7 @@ export interface ApiModelManagerGeneratorRedisOptions {
   /**
    * Multipe result query managers options.
    */
-  multipleResultQueryManagersOptions?: ApiQueriesManagerGeneratorOptions;
+  readonly multipleResultQueryManagersOptions?: ApiQueriesManagerGeneratorOptions;
   /**
    * Redis middleware.
    */
@@ -13,9 +13,9 @@ export interface ApiModelManagerGeneratorRedisOptions {
   /**
    * Single result query managers options.
    */
-  singleResultQueryManagersOptions?: ApiQueriesManagerGeneratorOptions;
+  readonly singleResultQueryManagersOptions?: ApiQueriesManagerGeneratorOptions;
   /**
    * Determines if the model manager generated will use negative cache.
    */
-  useEntityNegativeCache?: boolean;
+  readonly useEntityNegativeCache?: boolean;
 }

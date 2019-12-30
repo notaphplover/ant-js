@@ -7,19 +7,23 @@ import { Entity } from './entity';
  */
 export interface Model<TEntity extends Entity> extends BaseModel {
   /**
-   * Entity to primary algorithm
+   * Transforms an entity into a primary object.
+   * @param entity Entity to transform
    */
-  entityToPrimary: (entity: TEntity) => any;
+  entityToPrimary(entity: TEntity): any;
   /**
-   * Entities to primaries algorithm
+   * Transforms a set of entities into a set of primary objects.
+   * @param entities Entities to transform
    */
-  mEntityToPrimary: (entities: TEntity[]) => any[];
+  mEntityToPrimary(entities: TEntity[]): any[];
   /**
-   * Primaries to entities algorithm
+   * Transform a set of primary objects into a set of entities
+   * @param primaries Primaries to transform
    */
-  mPrimaryToEntity: (primaries: any[]) => TEntity[];
+  mPrimaryToEntity(primaries: any[]): TEntity[];
   /**
-   * Primary to entity algorithm.
+   * Transform a primary object into an entity.
+   * @param primary Primary object to transform.
    */
-  primaryToEntity: (primary: any) => TEntity;
+  primaryToEntity(primary: any): TEntity;
 }

@@ -4,9 +4,9 @@ export interface BaseModel {
   /**
    * Model's id field.
    */
-  id: string;
+  readonly id: string;
   /**
    * Key generation config.
    */
-  keyGen: KeyGenParams;
+  readonly keyGen: KeyGenParams;
 }

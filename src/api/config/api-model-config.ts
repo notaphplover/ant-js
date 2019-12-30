@@ -4,9 +4,9 @@ export interface ApiModelConfig {
   /**
    * True to perform a negative entity cache strategy.
    */
-  negativeCache?: boolean;
+  readonly negativeCache?: boolean;
   /**
    * Redis connection.
    */
-  redis: RedisMiddleware;
+  readonly redis: RedisMiddleware;
 }
