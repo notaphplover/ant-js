@@ -4,5 +4,5 @@ export interface ApiGeneralConfig<TConfig extends ApiModelConfig> {
   /**
    * Default managers config.
    */
-  default: TConfig;
+  readonly default: TConfig;
 }

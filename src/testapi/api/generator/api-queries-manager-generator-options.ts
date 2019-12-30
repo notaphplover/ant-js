@@ -2,7 +2,7 @@ export interface ApiQueriesManagerGeneratorOptions {
   /**
    * Properties to be handled by a query manager.
    */
-  properties: string[];
+  readonly properties: string[];
   /**
    * Query prefix used to store queries.
    */
