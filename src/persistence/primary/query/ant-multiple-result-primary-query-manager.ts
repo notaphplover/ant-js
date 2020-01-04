@@ -334,13 +334,13 @@ end`;
    */
   private _mGetProcessQueriesNotFoundProcessIds(
     evalParams: Array<string | number>,
-    currentIds: Array<string & number>,
+    currentIds: number[] | string[],
     finalIds: number[] | string[],
   ): void {
     if (0 === currentIds.length) {
       evalParams.push(VOID_RESULT_STRING);
     } else {
-      finalIds.push(...currentIds);
+      finalIds.push(...(currentIds as never[]));
       const mappedIds = (currentIds as any[]).map((id) => JSON.stringify(id));
       evalParams.push(...mappedIds);
     }

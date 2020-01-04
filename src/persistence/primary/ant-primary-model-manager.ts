@@ -74,7 +74,11 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @returns Queries managed.
    */
   public getQueries(): Array<PrimaryQueryManager<TEntity>> {
-    return Object.assign(new Array(), this._queryManagers);
+    const copy = new Array<PrimaryQueryManager<TEntity>>(this._queryManagers.length);
+    for (let i = 0; i < this._queryManagers.length; ++i) {
+      copy[i] = this._queryManagers[i];
+    }
+    return copy;
   }
 
   /**
