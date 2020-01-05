@@ -7,7 +7,6 @@ import { AntSingleResultQueryManager } from './query/ant-single-result-query-man
 import { ApiModelConfig } from './config/api-model-config';
 import { ApiMultipleResultQueryManager } from './query/api-multiple-result-query-manager';
 import { ApiQueryConfig } from './config/api-query-config';
-import { ApiQueryManager } from './query/api-query-manager';
 import { ApiSingleResultQueryManager } from './query/api-single-result-query-manager';
 import { Entity } from '../model/entity';
 import { Model } from '../model/model';
@@ -16,8 +15,6 @@ import { PersistencySearchOptions } from '../persistence/primary/options/persist
 import { PersistencyUpdateOptions } from '../persistence/primary/options/persistency-update-options';
 import { PrimaryModelManager } from '../persistence/primary/primary-model-manager';
 import { PrimaryQueryManager } from '../persistence/primary/query/primary-query-manager';
-
-export type QueryMapType<TEntity extends Entity> = Map<string, ApiQueryManager<TEntity, TEntity | TEntity[]>>;
 
 export abstract class AntModelManager<
   TEntity extends Entity,
