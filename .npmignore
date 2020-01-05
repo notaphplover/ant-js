@@ -61,5 +61,8 @@ testapi.nycrc.json
 # coveralls config
 .coveralls.yml
 
+# Typedoc
+typedoc.js
+
 # Visual studio code
 /.vscode
