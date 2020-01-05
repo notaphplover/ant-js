@@ -1,8 +1,4 @@
-import {
-  MultipleQueryResult,
-  QueryResult,
-  SingleQueryResult,
-} from '../persistence/primary/query/ant-primary-query-manager';
+import { MultipleQueryResult, QueryResult, SingleQueryResult } from '../persistence/primary/query/query-types';
 import { ApiModelConfig } from './config/api-model-config';
 import { ApiMultipleResultQueryManager } from './query/api-multiple-result-query-manager';
 import { ApiQueryConfig } from './config/api-query-config';

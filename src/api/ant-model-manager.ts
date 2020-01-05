@@ -1,5 +1,5 @@
 import { ApiModelManager, TAntQueryManager } from './api-model-manager';
-import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/ant-primary-query-manager';
+import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/query-types';
 import { AntMultipleResultPrimaryQueryManager } from '../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { AntMultipleResultQueryManager } from './query/ant-multiple-result-query-manager';
 import { AntSingleResultPrimaryQueryManager } from '../persistence/primary/query/ant-single-result-primary-query-manager';

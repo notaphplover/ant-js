@@ -1,21 +1,9 @@
 import { BasePrimaryQueryManager, PrimaryQueryManager } from './primary-query-manager';
+import { QueryResult, TMQuery, TQuery, TResult } from './query-types';
 import { Entity } from '../../../model/entity';
 import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { PrimaryEntityManager } from '../primary-entity-manager';
 import { RedisMiddleware } from '../redis-middleware';
-
-export type MultipleQueryResult = number[] | string[];
-export type SingleQueryResult = number | string;
-export type QueryResult = MultipleQueryResult | SingleQueryResult;
-
-type TResult<TEntity extends Entity, TQueryResult extends QueryResult> = TQueryResult extends MultipleQueryResult
-  ? TEntity[]
-  : TQueryResult extends SingleQueryResult
-  ? TEntity
-  : never;
-
-export type TMQuery<TQueryResult> = (paramsArray: any[]) => Promise<TQueryResult[]>;
-export type TQuery<TQueryResult> = (params: any) => Promise<TQueryResult>;
 
 export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResult extends QueryResult>
   implements BasePrimaryQueryManager<TEntity, TResult<TEntity, TQueryResult>>, PrimaryQueryManager<TEntity> {
