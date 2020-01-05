@@ -10,6 +10,7 @@
     "build-and-test-debug": "npm run build && npm run test-debug-only && npm run testapi-test-debug-only",
     "ci": "npm run build && npm run linter && npm run format-check && npm run test-only && npm run testapi-test-only && npm run report-coverage",
     "clear-js": "node ./scripts/clear-compiled.js",
+    "doc": "typedoc",
     "format": "prettier --write \"src/**/*.ts\"",
     "format-check": "prettier --check \"src/**/*.ts\"",
     "linter": "eslint 'src/**/*.ts'",
@@ -44,6 +45,7 @@
     "lodash": "^4.17.15",
     "nyc": "^15.0.0",
     "prettier": "^1.19.1",
+    "typedoc": "^0.15.6",
     "typescript": "^3.7.4"
   }
 }

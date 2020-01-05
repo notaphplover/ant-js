@@ -1,4 +1,4 @@
-import { TMQuery, TQuery } from '../../../persistence/primary/query/ant-primary-query-manager';
+import { TMQuery, TQuery } from '../../../persistence/primary/query/query-types';
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { Entity } from '../../../model/entity';
 import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';

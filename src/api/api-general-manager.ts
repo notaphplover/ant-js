@@ -20,9 +20,9 @@ export interface ApiGeneralManager<
    */
   config(config: ApiGeneralConfig<TConfig>): this;
   /**
-   * Gets (or creates) a model manager.
+   * Gets (or creates) a model manager by it's model.
    * @param model model of the manager.
-   * @returns model manager of the model provided.
+   * @returns model manager found. If no manager is found, a new one is created and returned.
    */
   get(model: TModel): TAntModelManager;
 }

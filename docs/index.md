@@ -6,3 +6,5 @@ Contents:
 
   1. [Introduction](introduction/introduction.md).
   2. [Tutorials](tutorial/introduction.md).
+
+You can now access the [API docs](api/index.html)

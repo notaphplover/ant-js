@@ -1,3 +1,6 @@
+/**
+ * Determines how an entity or a set of entities will be persisted in a Redis node
+ */
 export enum CacheMode {
   /**
    * The entity is not cached.

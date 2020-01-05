@@ -5,13 +5,17 @@ import { ApiModelConfig } from './config/api-model-config';
 import { ApiModelManager } from './api-model-manager';
 import { Entity } from '../model/entity';
 
+/**
+ * General manager.
+ * This class takes the responsabilities of providing the entry point of the API and managing model managers
+ */
 export abstract class AntManager<
   TConfig extends ApiModelConfig,
   TModel extends ApiModel,
   TAntModelManager extends ApiModelManager<Entity, TConfig>
 > implements ApiGeneralManager<TConfig, TModel, TAntModelManager> {
   /**
-   * AntJS config.
+   * AntJS general config.
    */
   protected _config: ApiGeneralConfig<TConfig>;
 
@@ -48,9 +52,9 @@ export abstract class AntManager<
   }
 
   /**
-   * Gets an AntJS model manager.
+   * Gets an AntJS model manager by it's model.
    * @param model model of the manager.
-   * @returns AntJS model manager found.
+   * @returns AntJS model manager found. If no manager is found, a new one is created and returned.
    */
   public get(model: TModel): TAntModelManager {
     let manager = this._managersByModel.get(model);
