@@ -145,14 +145,31 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
     options: PersistencySearchOptions,
   ): Promise<TEntity[]> {
     const ids = await this._query(params);
-    const idsJSON = _.map(ids as any[], (id) => JSON.stringify(id));
     if (null != ids && ids.length > 0) {
-      this._redis.eval([this._luaSetQueryGenerator(), 2, key, this._reverseHashKey, ...idsJSON]);
+      this._redis.eval(this._getProcessQueryNotFoundBuildMSetParams(ids, key));
       return this._primaryEntityManager.mGet(ids, options);
     } else {
       this._redis.eval(this._luaSetVoidQueryGenerator(), 1, key);
       return new Array();
     }
+  }
+
+  /**
+   * Creates a param array to assign ids to a cached query entry.
+   * @param ids Entity ids.
+   * @param key Query key.
+   * @returns Param array generated.
+   */
+  private _getProcessQueryNotFoundBuildMSetParams(ids: number[] | string[], key: string): Array<number | string> {
+    const evalParams = new Array(ids.length + 4);
+    evalParams[0] = this._luaSetQueryGenerator();
+    evalParams[1] = 2;
+    evalParams[2] = key;
+    evalParams[3] = this._reverseHashKey;
+    for (let i = 0; i < ids.length; ++i) {
+      evalParams[i + 4] = JSON.stringify(ids[i]);
+    }
+    return evalParams;
   }
 
   /**
@@ -341,9 +358,10 @@ end`;
     if (0 === currentIds.length) {
       evalParams.push(VOID_RESULT_STRING);
     } else {
-      finalIds.push(...(currentIds as never[]));
-      const mappedIds = _.map(currentIds as any[], (id) => JSON.stringify(id));
-      evalParams.push(...mappedIds);
+      for (const id of currentIds) {
+        (finalIds as Array<number | string>).push(id);
+        evalParams.push(JSON.stringify(id));
+      }
     }
   }
 }
