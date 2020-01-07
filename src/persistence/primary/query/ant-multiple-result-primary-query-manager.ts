@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { SEPARATOR_STRING, VOID_RESULT_STRING } from '../lua-constants';
 import { AntPrimaryQueryManager } from './ant-primary-query-manager';
 import { Entity } from '../../../model/entity';
@@ -52,7 +53,7 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
     }
-    const keys = paramsArray.map((params: any) => this.queryKeyGen(params));
+    const keys = _.map(paramsArray, this.queryKeyGen.bind(this));
     const luaScript = this._luaMGetGenerator();
     const resultsJson: string[] = await this._redis.eval(luaScript, keys.length, ...keys);
 
@@ -144,7 +145,7 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
     options: PersistencySearchOptions,
   ): Promise<TEntity[]> {
     const ids = await this._query(params);
-    const idsJSON = (ids as any[]).map((id) => JSON.stringify(id));
+    const idsJSON = _.map(ids as any[], (id) => JSON.stringify(id));
     if (null != ids && ids.length > 0) {
       this._redis.eval([this._luaSetQueryGenerator(), 2, key, this._reverseHashKey, ...idsJSON]);
       return this._primaryEntityManager.mGet(ids, options);
@@ -341,7 +342,7 @@ end`;
       evalParams.push(VOID_RESULT_STRING);
     } else {
       finalIds.push(...(currentIds as never[]));
-      const mappedIds = (currentIds as any[]).map((id) => JSON.stringify(id));
+      const mappedIds = _.map(currentIds as any[], (id) => JSON.stringify(id));
       evalParams.push(...mappedIds);
     }
   }
