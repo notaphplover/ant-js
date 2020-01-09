@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { Entity } from '../../../model/entity';
 import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
@@ -41,9 +42,11 @@ export class NamesStartingByLetter extends AntMultipleResultPrimaryQueryManager<
     super(
       (params: any) =>
         Promise.resolve(
-          secondaryModelManagerMock.store
-            .filter((entity) => entity.name.startsWith(params.name[0]))
-            .map((entity) => entity.id),
+          _.map(
+              secondaryModelManagerMock.store
+                .filter((entity) => entity.name.startsWith(params.name[0])),
+              (entity) => entity.id
+          )
         ),
       primaryEntityManager,
       redis,
