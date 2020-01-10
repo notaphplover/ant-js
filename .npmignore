@@ -53,6 +53,7 @@ testapi.nycrc.json
 
 # AntJS Tests
 /build/test
+/build/testapi/test
 
 # Prettier config
 .prettierignore

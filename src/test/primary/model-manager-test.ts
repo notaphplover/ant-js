@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/antjs-model-manager-generator';
 import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-update-options';
 import { AntModel } from '../../model/ant-model';
@@ -729,7 +730,7 @@ export class ModelManagerTest implements Test {
           (params: any) =>
             new Promise((resolve) => {
               const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
-              resolve(entities.map((entity) => entity.id));
+              resolve(_.map(entities, (entity) => entity.id));
             }),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
@@ -790,7 +791,7 @@ export class ModelManagerTest implements Test {
           (params: any) =>
             new Promise((resolve) => {
               const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
-              resolve(entities.map((entity) => entity.id));
+              resolve(_.map(entities, (entity) => entity.id));
             }),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
@@ -857,7 +858,7 @@ export class ModelManagerTest implements Test {
           (params: any) =>
             new Promise((resolve) => {
               const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
-              resolve(entities.map((entity) => entity.id));
+              resolve(_.map(entities, (entity) => entity.id));
             }),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
@@ -939,7 +940,7 @@ export class ModelManagerTest implements Test {
           (params: any) =>
             new Promise((resolve) => {
               const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
-              resolve(entities.map((entity) => entity.id));
+              resolve(_.map(entities, (entity) => entity.id));
             }),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,

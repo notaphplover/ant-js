@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { BasePrimaryQueryManager, PrimaryQueryManager } from './primary-query-manager';
 import { QueryResult, TMQuery, TQuery, TResult } from './query-types';
 import { Entity } from '../../../model/entity';
@@ -115,7 +116,7 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
    * @param query query to manage.
    */
   private _getDefaultMQuery(query: TQuery<TQueryResult>): TMQuery<TQueryResult> {
-    return (paramsArray: any[]): Promise<TQueryResult[]> => Promise.all(paramsArray.map((params) => query(params)));
+    return (paramsArray: any[]): Promise<TQueryResult[]> => Promise.all(_.map(paramsArray, query));
   }
 
   /**
