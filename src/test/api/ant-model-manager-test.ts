@@ -152,8 +152,9 @@ export class AntModelManagerTest implements Test {
           query: (params: any): Promise<number[]> =>
             Promise.resolve(
               _.map(
-                (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>)
-                  .filter((entity) => params.field === entity.field),
+                (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>).filter(
+                  (entity) => params.field === entity.field,
+                ),
                 (entity) => entity.id,
               ),
             ),
