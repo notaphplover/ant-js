@@ -1,6 +1,6 @@
 {
   "name": "@antjs/ant-js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Scalable query manager for redis.",
   "main": "build/ant.js",
   "scripts": {
@@ -35,9 +35,10 @@
   "devDependencies": {
     "@types/ioredis": "^4.14.3",
     "@types/jasmine": "^3.5.0",
+    "@types/lodash": "^4.14.149",
     "@types/node": "^12.12.21",
-    "@typescript-eslint/eslint-plugin": "^2.14.0",
-    "@typescript-eslint/parser": "^2.14.0",
+    "@typescript-eslint/eslint-plugin": "^2.15.0",
+    "@typescript-eslint/parser": "^2.15.0",
     "coveralls": "^3.0.9",
     "eslint": "^6.8.0",
     "ioredis": "^4.14.1",
@@ -45,7 +46,7 @@
     "lodash": "^4.17.15",
     "nyc": "^15.0.0",
     "prettier": "^1.19.1",
-    "typedoc": "^0.15.6",
+    "typedoc": "^0.16.1",
     "typescript": "^3.7.4"
   }
 }

@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { AntModel } from '../../model/ant-model';
 import { AntQueryManager } from '../../api/query/ant-query-manager';
 import { Entity } from '../../model/entity';
@@ -150,9 +151,12 @@ export class AntModelManagerTest implements Test {
           isMultiple: true,
           query: (params: any): Promise<number[]> =>
             Promise.resolve(
-              (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>)
-                .filter((entity) => params.field === entity.field)
-                .map((entity) => entity.id),
+              _.map(
+                (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>).filter(
+                  (entity) => params.field === entity.field,
+                ),
+                (entity) => entity.id,
+              ),
             ),
           queryKeyGen: (params: any): string => prefix + 'query/' + params.field,
           reverseHashKey: prefix + 'query/reverse',

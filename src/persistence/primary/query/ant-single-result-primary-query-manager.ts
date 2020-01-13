@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { AntPrimaryQueryManager } from './ant-primary-query-manager';
 import { Entity } from '../../../model/entity';
 import { PersistencySearchOptions } from '../options/persistency-search-options';
@@ -59,7 +60,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
     }
-    const keys = paramsArray.map((params) => this.queryKeyGen(params));
+    const keys = _.map(paramsArray, this.queryKeyGen);
     const luaScript = this._luaMGetGenerator();
     const resultsJson = await this._redis.eval(luaScript, keys.length, keys);
     const missingIds: number[] | string[] = new Array();
@@ -79,14 +80,14 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
         (entity) => {
           finalResults.push(entity);
         },
-        (id: number & string) => {
-          missingIds.push(id);
+        (id: number | string) => {
+          (missingIds as Array<number | string>).push(id);
         },
       );
     }
     finalResults = this._primaryEntityManager.model.mPrimaryToEntity(finalResults);
     const idsFromMissingQueries = await this._mGetIdsAndSetToQueries(missingQueriesKeys, missingParamsArray);
-    missingIds.push(...(idsFromMissingQueries as Array<number & string>));
+    (missingIds as Array<number | string>).push(...idsFromMissingQueries);
     await this._mGetSearchMissingIds(finalResults, missingIds, options);
     return finalResults;
   }
@@ -191,7 +192,7 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
       return new Array();
     }
     const originalIds = await this._mquery(paramsArray);
-    const ids = originalIds.map((id) => (null == id ? VOID_RESULT_STRING : JSON.stringify(id)));
+    const ids = _.map(originalIds, (id) => (null == id ? VOID_RESULT_STRING : JSON.stringify(id)));
     this._redis.eval([this._luaMSetGenerator(), keys.length + 1, ...keys, this._reverseHashKey, ...ids]);
     return originalIds.filter((id) => null != id);
   }

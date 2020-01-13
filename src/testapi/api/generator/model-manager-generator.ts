@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { AntSingleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-single-result-primary-query-manager';
 import { ApiModelManagerGeneratorOptions } from './api-model-manager-generator-options';
@@ -170,7 +171,7 @@ export abstract class ModelManagerGenerator<
       const queryManager = new AntMultipleResultPrimaryQueryManager(
         (params: any) =>
           this._searchEntitiesByProperty(secondaryManager, property, params[property]).then((entities) =>
-            entities.map((entity) => entity[options.model.id]),
+            _.map(entities, (entity) => entity[options.model.id]),
           ),
         modelManager,
         options.redisOptions.redis,

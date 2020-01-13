@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { AntJsSearchOptions } from './options/antjs-search-options';
 import { CacheMode } from './options/cache-mode';
 import { Entity } from '../../model/entity';
@@ -210,7 +211,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
     options: PersistencySearchOptions,
   ): Promise<TEntity[]> {
     ids = Array.from(new Set<number | string>(ids)) as number[] | string[];
-    const keysArray = (ids as Array<number | string>).map((id) => this._getKey(id));
+    const keysArray = _.map(ids as Array<number | string>, this._getKey.bind(this));
     const entities: string[] = await this._redis.mget(...keysArray);
     let results = new Array<TEntity>();
     const missingIds: number[] | string[] = new Array();
@@ -334,6 +335,54 @@ end`;
   }
 
   /**
+   * Inserts params in a param vector creating an array of params to perform an special mSet at Redis.
+   * @param evalParams Params vector.
+   * @param primaries Primary objects to process
+   * @param scriptParam Script parameter.
+   */
+  private _buildMultipleSetParamsBaseTransform(
+    evalParams: Array<number | string>,
+    primaries: any[],
+    scriptParam: string,
+  ): void {
+    const idField = this.model.id;
+    evalParams[0] = scriptParam;
+    evalParams[1] = primaries.length;
+    for (let i = 0; i < primaries.length; ++i) {
+      const entity = primaries[i];
+      const currentIndex = i + 2;
+      evalParams[currentIndex] = this._getKey(entity[idField]);
+      evalParams[currentIndex + primaries.length] = JSON.stringify(entity);
+    }
+  }
+
+  /**
+   * Creates a param array to perform an special mSet operation at Redis.
+   * @param primaries Primary objects to process
+   * @param scriptParam Script parameter.
+   * @returns Param array.
+   */
+  private _buildMultipleSetParamsWithNoTtl(primaries: any[], scriptParam: string): Array<number | string> {
+    const evalParams = new Array<number | string>(2 * primaries.length + 2);
+    this._buildMultipleSetParamsBaseTransform(evalParams, primaries, scriptParam);
+    return evalParams;
+  }
+
+  /**
+   * Creates a param array to perform an special mSet operation at Redis.
+   * @param primaries Primary objects to process
+   * @param scriptParam Script parameter.
+   * @param ttl TTL param.
+   * @returns Param array.
+   */
+  private _buildMultipleSetParamsWithTtl(primaries: any[], scriptParam: string, ttl: number): Array<number | string> {
+    const evalParams = new Array<number | string>(2 * primaries.length + 3);
+    this._buildMultipleSetParamsBaseTransform(evalParams, primaries, scriptParam);
+    evalParams[evalParams.length - 1] = ttl;
+    return evalParams;
+  }
+
+  /**
    * Process missing ids.
    * @param missingIds Missing ids to process.
    * @param results Results array.
@@ -411,19 +460,13 @@ end`;
    * @returns Promise of entities cached.
    */
   private _updateEntitiesCacheAndOverWrite(entities: TEntity[], options: PersistencyUpdateOptions): Promise<any> {
-    const idField = this.model.id;
-    entities = this.model.mEntityToPrimary(entities);
+    const primaries = this.model.mEntityToPrimary(entities);
     if (options.ttl) {
-      return this._redis.eval([
-        this._luaGetMultipleSetEx(),
-        entities.length,
-        ...entities.map((entity) => this._getKey(entity[idField])),
-        ...entities.map((entity) => JSON.stringify(entity)),
-        options.ttl,
-      ]);
+      return this._redis.eval(this._buildMultipleSetParamsWithTtl(primaries, this._luaGetMultipleSetEx(), options.ttl));
     } else {
+      const idField = this.model.id;
       const cacheMap = new Map<string, string>();
-      for (const entity of entities) {
+      for (const entity of primaries) {
         cacheMap.set(this._getKey(entity[idField]), JSON.stringify(entity));
       }
       return ((this._redis.mset as unknown) as (map: Map<string, string>) => Promise<any>)(cacheMap);
@@ -437,23 +480,13 @@ end`;
    * @returns Promise of entities cached if not exist.
    */
   private _updateEntitiesCacheIfNotExists(entities: TEntity[], options: PersistencyUpdateOptions): Promise<any> {
-    const idField = this.model.id;
-    entities = this.model.mEntityToPrimary(entities);
+    const primaries = this.model.mEntityToPrimary(entities);
     if (null == options.ttl) {
-      return this._redis.eval([
-        this._luaGetMultipleSetNx(),
-        entities.length,
-        ...entities.map((entity) => this._getKey(entity[idField])),
-        ...entities.map((entity) => JSON.stringify(entity)),
-      ]);
+      return this._redis.eval(this._buildMultipleSetParamsWithNoTtl(primaries, this._luaGetMultipleSetNx()));
     } else {
-      return this._redis.eval([
-        this._luaGetMultipleSetNxEx(),
-        entities.length,
-        ...entities.map((entity) => this._getKey(entity[idField])),
-        ...entities.map((entity) => JSON.stringify(entity)),
-        options.ttl,
-      ]);
+      return this._redis.eval(
+        this._buildMultipleSetParamsWithTtl(primaries, this._luaGetMultipleSetNxEx(), options.ttl),
+      );
     }
   }
 
