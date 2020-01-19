@@ -123,7 +123,7 @@ export class PrimaryEntityManagerTest implements Test {
         ]);
 
         await primaryEntityManager.get(entity1[model.id]);
-        secondaryEntityManager.store[0] = entity1Modified;
+        secondaryEntityManager.store.set(entity1Modified[model.id], entity1Modified);
 
         expect(
           await primaryEntityManager.get(
@@ -156,7 +156,7 @@ export class PrimaryEntityManagerTest implements Test {
           [entity1[model.id]],
           new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.NoCache)),
         );
-        secondaryEntityManager.store.pop();
+        secondaryEntityManager.store.clear();
 
         expect(await primaryEntityManager.get(entity1[model.id])).toBe(null);
         done();
@@ -183,7 +183,7 @@ export class PrimaryEntityManagerTest implements Test {
           entity1[model.id],
           new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.NoCache)),
         );
-        secondaryEntityManager.store.pop();
+        secondaryEntityManager.store.clear();
 
         expect(await primaryEntityManager.get(entity1[model.id])).toBe(null);
         done();

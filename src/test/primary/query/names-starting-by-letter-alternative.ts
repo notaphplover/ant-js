@@ -43,7 +43,15 @@ export class NamesStartingByLetterAlternative extends AntMultipleResultPrimaryQu
       (params: any) =>
         Promise.resolve(
           _.map(
-            secondaryModelManagerMock.store.filter((entity) => entity.name.startsWith(params.name[0])),
+            ((): Entity[] => {
+              const filteredEntities = new Array();
+              for (const entity of secondaryModelManagerMock.store.values()) {
+                if (entity.name.startsWith(params.name[0])) {
+                  filteredEntities.push(entity);
+                }
+              }
+              return filteredEntities;
+            })(),
             (entity) => entity.id,
           ),
         ),

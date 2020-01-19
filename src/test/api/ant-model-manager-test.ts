@@ -152,9 +152,15 @@ export class AntModelManagerTest implements Test {
           query: (params: any): Promise<number[]> =>
             Promise.resolve(
               _.map(
-                (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>).filter(
-                  (entity) => params.field === entity.field,
-                ),
+                ((): Entity[] => {
+                  const entitiesByField = new Array();
+                  for (const entity of antModelManager.secondaryModelManager.store.values()) {
+                    if (params.field === entity.field) {
+                      entitiesByField.push(entity);
+                    }
+                  }
+                  return entitiesByField;
+                })(),
                 (entity) => entity.id,
               ),
             ),
@@ -187,10 +193,13 @@ export class AntModelManagerTest implements Test {
           isMultiple: false,
           query: (params: any): Promise<number> =>
             new Promise<number>((resolve) => {
-              const entity = (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>).find(
-                (entity) => params.field === entity.field,
-              );
-              resolve(entity ? entity.id : null);
+              for (const entity of antModelManager.secondaryModelManager.store.values()) {
+                if (params.field === entity.field) {
+                  resolve(entity[model.id]);
+                  return;
+                }
+              }
+              resolve(null);
             }),
           queryKeyGen: (params: any): string => prefix + 'query/' + params.field,
           reverseHashKey: prefix + 'query/reverse',
@@ -222,10 +231,13 @@ export class AntModelManagerTest implements Test {
           isMultiple: false,
           query: (params: any): Promise<number> =>
             new Promise<number>((resolve) => {
-              const entity = (antModelManager.secondaryModelManager.store as Array<{ id: number; field: string }>).find(
-                (entity) => params.field === entity.field,
-              );
-              resolve(entity ? entity.id : null);
+              for (const entity of antModelManager.secondaryModelManager.store.values()) {
+                if (params.field === entity.field) {
+                  resolve(entity[model.id]);
+                  return;
+                }
+              }
+              resolve(null);
             }),
           queryKeyGen: (params: any): string => prefix + 'query/' + params.field,
           reverseHashKey: prefix + 'query/reverse',

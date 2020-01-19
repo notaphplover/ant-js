@@ -259,6 +259,7 @@ export class MultipleResultQueryManagerTest implements Test {
         );
         await queryManager.get(entity1);
         await modelManager.delete(entity1.id);
+        secondaryEntityManager.store.set(entity1[model.id], entity1);
         const entityFound = await queryManager.get(entity1);
         expect(entityFound).toEqual([entity1]);
         done();
