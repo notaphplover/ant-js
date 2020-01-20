@@ -22,10 +22,7 @@ const entityByFieldParam = <T extends number | string>(
   model: Model<Entity>,
   secondaryEntityManager: SecondaryEntityManagerMock<Entity>,
 ) => (params: any): Promise<T> => {
-  const entity = iterableFind(
-    secondaryEntityManager.store.values(),
-    (entity) => params.field === entity.field,
-  );
+  const entity = iterableFind(secondaryEntityManager.store.values(), (entity) => params.field === entity.field);
   return Promise.resolve(entity ? entity[model.id] : null);
 };
 

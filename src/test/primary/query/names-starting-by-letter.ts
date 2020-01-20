@@ -44,9 +44,8 @@ export class NamesStartingByLetter extends AntMultipleResultPrimaryQueryManager<
       (params: any) =>
         Promise.resolve(
           _.map(
-            iterableFilter(
-              secondaryModelManagerMock.store.values(),
-              (entity) => entity.name.startsWith(params.name[0]),
+            iterableFilter(secondaryModelManagerMock.store.values(), (entity) =>
+              entity.name.startsWith(params.name[0]),
             ),
             (entity) => entity.id,
           ),
