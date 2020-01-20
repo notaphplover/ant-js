@@ -27,6 +27,17 @@ interface EntityTest extends Entity {
 const modelTestProperties = ['id', 'numberField', 'strField'];
 const modelTestGenerator = (prefix: string): AntModel<EntityTest> => new AntModel<EntityTest>('id', { prefix });
 
+const entityByStrFieldParam = <T extends number | string>(
+  model: Model<Entity>,
+  secondaryEntityManager: SecondaryEntityManagerMock<Entity>,
+) => (params: any): Promise<T> => {
+  const entity = iterableFind(
+    secondaryEntityManager.store.values(),
+    (entity) => params.strField === entity.strField,
+  );
+  return Promise.resolve(entity ? entity[model.id] : null);
+};
+
 export class ModelManagerTest implements Test {
   /**
    * Before all task performed promise.
@@ -143,10 +154,7 @@ export class ModelManagerTest implements Test {
         });
 
         const singleResultQueryManager = new SingleResultQueryByFieldManager<EntityTest>(
-          (params: any) =>
-            Promise.resolve(
-              iterableFind(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField)?.id,
-            ),
+          entityByStrFieldParam(model, secondaryEntityManager),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/strField/',
@@ -661,10 +669,7 @@ export class ModelManagerTest implements Test {
         });
 
         const singleResultQueryManager = new SingleResultQueryByFieldManager<EntityTest>(
-          (params: any) =>
-            Promise.resolve(
-              iterableFind(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField)?.id,
-            ),
+          entityByStrFieldParam(model, secondaryEntityManager),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/strField/',
@@ -1001,10 +1006,7 @@ export class ModelManagerTest implements Test {
           },
         });
         const query = new SingleResultQueryByFieldManager(
-          (params: any) =>
-            Promise.resolve(
-              iterableFind(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField)?.id,
-            ),
+          entityByStrFieldParam(model, secondaryEntityManager),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
@@ -1054,10 +1056,7 @@ export class ModelManagerTest implements Test {
           },
         });
         const query = new SingleResultQueryByFieldManager(
-          (params: any) =>
-            Promise.resolve(
-              iterableFind(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField)?.id,
-            ),
+          entityByStrFieldParam(model, secondaryEntityManager),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
@@ -1112,10 +1111,7 @@ export class ModelManagerTest implements Test {
           },
         });
         const query = new SingleResultQueryByFieldManager(
-          (params: any) =>
-            Promise.resolve(
-              iterableFind(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField)?.id,
-            ),
+          entityByStrFieldParam(model, secondaryEntityManager),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
@@ -1177,10 +1173,7 @@ export class ModelManagerTest implements Test {
           },
         });
         const query = new SingleResultQueryByFieldManager(
-          (params: any) =>
-            Promise.resolve(
-              iterableFind(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField)?.id,
-            ),
+          entityByStrFieldParam(model, secondaryEntityManager),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
