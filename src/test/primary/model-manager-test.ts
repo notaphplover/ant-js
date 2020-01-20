@@ -14,6 +14,8 @@ import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondar
 import { SingleResultPrimaryQueryManager } from '../../persistence/primary/query/single-result-primary-query-manager';
 import { SingleResultQueryByFieldManager } from './query/single-result-query-by-field-manager';
 import { Test } from '../../testapi/api/test';
+import { iterableFilter } from '../util/iterable-filter';
+import { iterableFind } from '../util/iterable-find';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
@@ -142,15 +144,9 @@ export class ModelManagerTest implements Test {
 
         const singleResultQueryManager = new SingleResultQueryByFieldManager<EntityTest>(
           (params: any) =>
-            new Promise((resolve) => {
-              for (const entity of secondaryEntityManager.store.values()) {
-                if (params.strField === entity.strField) {
-                  resolve(entity[model.id]);
-                  return;
-                }
-              }
-              resolve(null);
-            }),
+            Promise.resolve(
+              iterableFind(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField)?.id,
+            ),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/strField/',
@@ -666,15 +662,9 @@ export class ModelManagerTest implements Test {
 
         const singleResultQueryManager = new SingleResultQueryByFieldManager<EntityTest>(
           (params: any) =>
-            new Promise((resolve) => {
-              for (const entity of secondaryEntityManager.store.values()) {
-                if (params.strField === entity.strField) {
-                  resolve(entity[model.id]);
-                  return;
-                }
-              }
-              resolve(null);
-            }),
+            Promise.resolve(
+              iterableFind(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField)?.id,
+            ),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/strField/',
@@ -728,18 +718,12 @@ export class ModelManagerTest implements Test {
         });
         const query = new MultipleResultQueryByFieldManager(
           (params: any) =>
-            new Promise((resolve) => {
-              const entities = ((): Entity[] => {
-                const entitiesByField = new Array();
-                for (const entity of secondaryEntityManager.store.values()) {
-                  if (params.strField === entity.strField) {
-                    entitiesByField.push(entity);
-                  }
-                }
-                return entitiesByField;
-              })();
-              resolve(_.map(entities, (entity) => entity.id));
-            }),
+            Promise.resolve(
+              _.map(
+                iterableFilter(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField),
+                (entity) => entity.id,
+              )
+            ),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
@@ -796,18 +780,12 @@ export class ModelManagerTest implements Test {
         });
         const query = new MultipleResultQueryByFieldManager(
           (params: any) =>
-            new Promise((resolve) => {
-              const entities = ((): Entity[] => {
-                const entitiesByField = new Array();
-                for (const entity of secondaryEntityManager.store.values()) {
-                  if (params.strField === entity.strField) {
-                    entitiesByField.push(entity);
-                  }
-                }
-                return entitiesByField;
-              })();
-              resolve(_.map(entities, (entity) => entity.id));
-            }),
+            Promise.resolve(
+              _.map(
+                iterableFilter(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField),
+                (entity) => entity.id,
+              )
+            ),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
@@ -869,18 +847,12 @@ export class ModelManagerTest implements Test {
         });
         const query = new MultipleResultQueryByFieldManager(
           (params: any) =>
-            new Promise((resolve) => {
-              const entities = ((): Entity[] => {
-                const entitiesByField = new Array();
-                for (const entity of secondaryEntityManager.store.values()) {
-                  if (params.strField === entity.strField) {
-                    entitiesByField.push(entity);
-                  }
-                }
-                return entitiesByField;
-              })();
-              resolve(_.map(entities, (entity) => entity.id));
-            }),
+            Promise.resolve(
+              _.map(
+                iterableFilter(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField),
+                (entity) => entity.id,
+              )
+            ),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
@@ -959,18 +931,12 @@ export class ModelManagerTest implements Test {
         });
         const query = new MultipleResultQueryByFieldManager(
           (params: any) =>
-            new Promise((resolve) => {
-              const entities = ((): Entity[] => {
-                const entitiesByField = new Array();
-                for (const entity of secondaryEntityManager.store.values()) {
-                  if (params.strField === entity.strField) {
-                    entitiesByField.push(entity);
-                  }
-                }
-                return entitiesByField;
-              })();
-              resolve(_.map(entities, (entity) => entity.id));
-            }),
+            Promise.resolve(
+              _.map(
+                iterableFilter(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField),
+                (entity) => entity.id,
+              )
+            ),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
@@ -1036,15 +1002,9 @@ export class ModelManagerTest implements Test {
         });
         const query = new SingleResultQueryByFieldManager(
           (params: any) =>
-            new Promise((resolve) => {
-              for (const entity of secondaryEntityManager.store.values()) {
-                if (params.strField === entity.strField) {
-                  resolve(entity[model.id]);
-                  return;
-                }
-              }
-              resolve(null);
-            }),
+            Promise.resolve(
+              iterableFind(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField)?.id,
+            ),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
@@ -1095,15 +1055,9 @@ export class ModelManagerTest implements Test {
         });
         const query = new SingleResultQueryByFieldManager(
           (params: any) =>
-            new Promise((resolve) => {
-              for (const entity of secondaryEntityManager.store.values()) {
-                if (params.strField === entity.strField) {
-                  resolve(entity[model.id]);
-                  return;
-                }
-              }
-              resolve(null);
-            }),
+            Promise.resolve(
+              iterableFind(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField)?.id,
+            ),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
@@ -1159,15 +1113,9 @@ export class ModelManagerTest implements Test {
         });
         const query = new SingleResultQueryByFieldManager(
           (params: any) =>
-            new Promise((resolve) => {
-              for (const entity of secondaryEntityManager.store.values()) {
-                if (params.strField === entity.strField) {
-                  resolve(entity[model.id]);
-                  return;
-                }
-              }
-              resolve(null);
-            }),
+            Promise.resolve(
+              iterableFind(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField)?.id,
+            ),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',
@@ -1230,15 +1178,9 @@ export class ModelManagerTest implements Test {
         });
         const query = new SingleResultQueryByFieldManager(
           (params: any) =>
-            new Promise((resolve) => {
-              for (const entity of secondaryEntityManager.store.values()) {
-                if (params.strField === entity.strField) {
-                  resolve(entity[model.id]);
-                  return;
-                }
-              }
-              resolve(null);
-            }),
+            Promise.resolve(
+              iterableFind(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField)?.id,
+            ),
           modelManager as PrimaryModelManager<EntityTest>,
           this._redis.redis,
           prefix + 'reverse/',

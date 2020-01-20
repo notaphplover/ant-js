@@ -9,12 +9,24 @@ import { SecondaryEntityManager } from '../../../persistence/secondary/secondary
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/secondary-entity-manager-mock';
 import { SingleResultQueryByFieldManager } from './single-result-query-by-field-manager';
 import { Test } from '../../../testapi/api/test';
+import { iterableFind } from '../../util/iterable-find';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
 type EntityTestStr = Entity & {
   id: number;
   field: string;
+};
+
+const entityByFieldParam = <T extends number | string>(
+  model: Model<Entity>,
+  secondaryEntityManager: SecondaryEntityManagerMock<Entity>,
+) => (params: any): Promise<T> => {
+  const entity = iterableFind(
+    secondaryEntityManager.store.values(),
+    (entity) => params.field === entity.field,
+  );
+  return Promise.resolve(entity ? entity[model.id] : null);
 };
 
 export class SingleResultQueryManagerTest implements Test {
@@ -133,16 +145,7 @@ export class SingleResultQueryManagerTest implements Test {
           true,
           secondaryEntityManager,
         );
-        const query = (params: any): Promise<number> =>
-          new Promise<number>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,
@@ -174,16 +177,7 @@ export class SingleResultQueryManagerTest implements Test {
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
         ]);
-        const query = (params: any): Promise<number> =>
-          new Promise<number>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,
@@ -213,16 +207,7 @@ export class SingleResultQueryManagerTest implements Test {
           entity1,
         ]);
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
-        const query = (params: any): Promise<number> =>
-          new Promise<number>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,
@@ -263,16 +248,7 @@ export class SingleResultQueryManagerTest implements Test {
           secondaryEntityManager,
         );
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
-        const query = (params: any): Promise<string> =>
-          new Promise<string>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,
@@ -304,16 +280,7 @@ export class SingleResultQueryManagerTest implements Test {
           entity1,
           entity2,
         ]);
-        const query = (params: any): Promise<number> =>
-          new Promise<number>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const mQuery = async (paramsArray: any[]): Promise<number[]> => {
           const results = new Array<number>(paramsArray.length);
           const resultsMap = new Map<string, number>();
@@ -358,16 +325,7 @@ export class SingleResultQueryManagerTest implements Test {
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
         ]);
-        const query = (params: any): Promise<number> =>
-          new Promise<number>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,
@@ -397,16 +355,7 @@ export class SingleResultQueryManagerTest implements Test {
           entity1,
         ]);
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
-        const query = (params: any): Promise<number> =>
-          new Promise<number>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,
@@ -447,16 +396,7 @@ export class SingleResultQueryManagerTest implements Test {
           secondaryEntityManager,
         );
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
-        const query = (params: any): Promise<string> =>
-          new Promise<string>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,
@@ -488,16 +428,7 @@ export class SingleResultQueryManagerTest implements Test {
           entity1,
           entity2,
         ]);
-        const query = (params: any): Promise<number> =>
-          new Promise<number>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,
@@ -527,16 +458,7 @@ export class SingleResultQueryManagerTest implements Test {
           prefix,
           new Array(),
         );
-        const query = (params: any): Promise<number> =>
-          new Promise<number>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,
@@ -566,16 +488,7 @@ export class SingleResultQueryManagerTest implements Test {
           prefix,
           new Array(),
         );
-        const query = (params: any): Promise<number> =>
-          new Promise<number>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,
@@ -603,16 +516,7 @@ export class SingleResultQueryManagerTest implements Test {
           prefix,
           new Array(),
         );
-        const query = (params: any): Promise<number> =>
-          new Promise<number>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,
@@ -640,16 +544,7 @@ export class SingleResultQueryManagerTest implements Test {
         const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
         ]);
-        const query = (params: any): Promise<number> =>
-          new Promise<number>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,
@@ -678,16 +573,7 @@ export class SingleResultQueryManagerTest implements Test {
           prefix,
           new Array(),
         );
-        const query = (params: any): Promise<number> =>
-          new Promise<number>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,
@@ -717,16 +603,7 @@ export class SingleResultQueryManagerTest implements Test {
           prefix,
           new Array(),
         );
-        const query = (params: any): Promise<number> =>
-          new Promise<number>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,
@@ -756,16 +633,7 @@ export class SingleResultQueryManagerTest implements Test {
         ]);
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
         modelManager.delete(entity1[model.id]);
-        const query = (params: any): Promise<number> =>
-          new Promise<number>((resolve) => {
-            for (const entity of secondaryEntityManager.store.values()) {
-              if (params.field === entity.field) {
-                resolve(entity[model.id]);
-                return;
-              }
-            }
-            resolve(null);
-          });
+        const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
           primaryEntityManager,

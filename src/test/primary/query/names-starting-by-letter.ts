@@ -4,6 +4,7 @@ import { Entity } from '../../../model/entity';
 import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/secondary-entity-manager-mock';
+import { iterableFilter } from '../../util/iterable-filter';
 
 export type NamedEntity = { id: number; name: string } & Entity;
 
@@ -43,15 +44,10 @@ export class NamesStartingByLetter extends AntMultipleResultPrimaryQueryManager<
       (params: any) =>
         Promise.resolve(
           _.map(
-            ((): Entity[] => {
-              const filteredEntities = new Array();
-              for (const entity of secondaryModelManagerMock.store.values()) {
-                if (entity.name.startsWith(params.name[0])) {
-                  filteredEntities.push(entity);
-                }
-              }
-              return filteredEntities;
-            })(),
+            iterableFilter(
+              secondaryModelManagerMock.store.values(),
+              (entity) => entity.name.startsWith(params.name[0]),
+            ),
             (entity) => entity.id,
           ),
         ),

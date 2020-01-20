@@ -6,6 +6,8 @@ import { MinimalAntModelManager } from './minimal-ant-model-manager';
 import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
 import { RedisWrapper } from '../primary/redis-wrapper';
 import { Test } from '../../testapi/api/test';
+import { iterableFilter } from '../util/iterable-filter';
+import { iterableFind } from '../util/iterable-find';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
@@ -152,15 +154,10 @@ export class AntModelManagerTest implements Test {
           query: (params: any): Promise<number[]> =>
             Promise.resolve(
               _.map(
-                ((): Entity[] => {
-                  const entitiesByField = new Array();
-                  for (const entity of antModelManager.secondaryModelManager.store.values()) {
-                    if (params.field === entity.field) {
-                      entitiesByField.push(entity);
-                    }
-                  }
-                  return entitiesByField;
-                })(),
+                iterableFilter(
+                  antModelManager.secondaryModelManager.store.values(),
+                  (entity) => params.field === entity.field,
+                ),
                 (entity) => entity.id,
               ),
             ),
@@ -191,16 +188,13 @@ export class AntModelManagerTest implements Test {
 
         const queryConfig = {
           isMultiple: false,
-          query: (params: any): Promise<number> =>
-            new Promise<number>((resolve) => {
-              for (const entity of antModelManager.secondaryModelManager.store.values()) {
-                if (params.field === entity.field) {
-                  resolve(entity[model.id]);
-                  return;
-                }
-              }
-              resolve(null);
-            }),
+          query: (params: any): Promise<number> => {
+            const entity = iterableFind(
+              antModelManager.secondaryModelManager.store.values(),
+              (entity) => params.field === entity.field,
+            );
+            return Promise.resolve(entity ? entity[model.id] : null);
+          },
           queryKeyGen: (params: any): string => prefix + 'query/' + params.field,
           reverseHashKey: prefix + 'query/reverse',
         };
@@ -229,16 +223,13 @@ export class AntModelManagerTest implements Test {
 
         const queryConfig = {
           isMultiple: false,
-          query: (params: any): Promise<number> =>
-            new Promise<number>((resolve) => {
-              for (const entity of antModelManager.secondaryModelManager.store.values()) {
-                if (params.field === entity.field) {
-                  resolve(entity[model.id]);
-                  return;
-                }
-              }
-              resolve(null);
-            }),
+          query: (params: any): Promise<number> => {
+            const entity = iterableFind(
+              antModelManager.secondaryModelManager.store.values(),
+              (entity) => params.field === entity.field,
+            );
+            return Promise.resolve(entity ? entity[model.id] : null);
+          },
           queryKeyGen: (params: any): string => prefix + 'query/' + params.field,
           reverseHashKey: prefix + 'query/reverse',
         };
