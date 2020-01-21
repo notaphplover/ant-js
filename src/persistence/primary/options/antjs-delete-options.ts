@@ -11,7 +11,7 @@ export class AntJsDeleteOptions implements PersistencyDeleteOptions {
    * @param negativeCache True to use negative cache
    */
   public constructor(negativeCache?: boolean) {
-    this._negativeCache = negativeCache;
+    this._negativeCache = negativeCache ?? false;
   }
 
   /**
