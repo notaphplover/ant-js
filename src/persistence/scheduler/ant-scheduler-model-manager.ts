@@ -1,11 +1,16 @@
+import { MultipleQueryResult, SingleQueryResult, TMQuery, TQuery } from '../primary/query/query-types';
+import { AntMultipleResultPrimaryQueryManager } from '../primary/query/ant-multiple-result-primary-query-manager';
+import { AntSingleResultPrimaryQueryManager } from '../primary/query/ant-single-result-primary-query-manager';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
+import { MultipleResultPrimaryQueryManager } from '../primary/query/multiple-result-primary-query-manager';
 import { PersistencyDeleteOptions } from '../primary/options/persistency-delete-options';
 import { PersistencySearchOptions } from '../primary/options/persistency-search-options';
 import { PrimaryModelManager } from '../primary/primary-model-manager';
-import { PrimaryQueryManager } from '../primary/query/primary-query-manager';
+import { RedisMiddleware } from '../primary/redis-middleware';
 import { SchedulerModelManager } from './scheduler-model-manager';
 import { SecondaryEntityManager } from '../secondary/secondary-entity-manager';
+import { SingleResultPrimaryQueryManager } from '../primary/query/single-result-primary-query-manager';
 
 export class AntScheduleModelManager<
   TEntity extends Entity,
@@ -33,17 +38,51 @@ export class AntScheduleModelManager<
   /**
    * @inheritdoc
    */
-  public get model(): TModel {
-    return this._model;
+  public addMultipleResultQuery<TResult extends MultipleQueryResult>(
+    query: TQuery<TResult>,
+    redis: RedisMiddleware,
+    reverseHashKey: string,
+    queryKeyGen: (params: any) => string,
+    entityKeyGen: (entity: TEntity) => string,
+    mquery: TMQuery<TResult>,
+  ): MultipleResultPrimaryQueryManager<TEntity> {
+    const queryManager = new AntMultipleResultPrimaryQueryManager(
+      this._model,
+      this._primaryManager,
+      query,
+      redis,
+      reverseHashKey,
+      queryKeyGen,
+      entityKeyGen,
+      mquery,
+    );
+    this._primaryManager.addQuery(queryManager);
+    return queryManager;
   }
 
   /**
-   * Adds a query manager to the model manager.
-   * @param queryManager Query manager to add.
+   * @inheritdoc
    */
-  public addQuery(queryManager: PrimaryQueryManager<TEntity>): this {
+  public addSingleResultQuery<TResult extends SingleQueryResult>(
+    query: TQuery<TResult>,
+    redis: RedisMiddleware,
+    reverseHashKey: string,
+    queryKeyGen: (params: any) => string,
+    entityKeyGen: (entity: TEntity) => string,
+    mquery: TMQuery<TResult>,
+  ): SingleResultPrimaryQueryManager<TEntity> {
+    const queryManager = new AntSingleResultPrimaryQueryManager(
+      this._model,
+      this._primaryManager,
+      query,
+      redis,
+      reverseHashKey,
+      queryKeyGen,
+      entityKeyGen,
+      mquery,
+    );
     this._primaryManager.addQuery(queryManager);
-    return this;
+    return queryManager;
   }
 
   /**

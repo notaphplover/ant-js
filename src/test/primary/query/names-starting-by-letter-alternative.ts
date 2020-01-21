@@ -2,8 +2,8 @@ import * as _ from 'lodash';
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
+import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
-import { SchedulerModelManager } from '../../../persistence/scheduler/scheduler-model-manager';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/secondary-entity-manager-mock';
 import { iterableFilter } from '../../util/iterable-filter';
 
@@ -16,14 +16,11 @@ export class NamesStartingByLetterAlternative extends AntMultipleResultPrimaryQu
   protected _prefix: string;
 
   /**
-   * Creates a new NamesStartingByLetter.
-   * @param manager Primary entity manager.
-   * @param redis Redis connection.
-   * @param reverseHashKey Reverse hash key.
-   * @param prefix Query prefix.
+   * @inheritdoc
    */
   public constructor(
-    manager: SchedulerModelManager<NamedEntityAlternative, Model<NamedEntityAlternative>>,
+    model: Model<NamedEntityAlternative>,
+    manager: PrimaryEntityManager<NamedEntityAlternative>,
     secondaryModelManagerMock: SecondaryEntityManagerMock<NamedEntityAlternative>,
     redis: RedisMiddleware,
     reverseHashKey: string,
@@ -42,6 +39,8 @@ export class NamesStartingByLetterAlternative extends AntMultipleResultPrimaryQu
       }
     };
     super(
+      model,
+      manager,
       (params: any) =>
         Promise.resolve(
           _.map(
@@ -51,7 +50,6 @@ export class NamesStartingByLetterAlternative extends AntMultipleResultPrimaryQu
             (entity) => entity.id,
           ),
         ),
-      manager,
       redis,
       reverseHashKey,
       key,

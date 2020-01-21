@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/antjs-model-manager-generator';
 import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-update-options';
 import { AntModel } from '../../model/ant-model';
-import { AntScheduleModelManager } from '../../persistence/scheduler/ant-scheduler-model-manager';
 import { CacheMode } from '../../persistence/primary/options/cache-mode';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
@@ -11,7 +10,6 @@ import { PrimaryEntityManager } from '../../persistence/primary/primary-entity-m
 import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
 import { PrimaryQueryManager } from '../../persistence/primary/query/primary-query-manager';
 import { RedisWrapper } from './redis-wrapper';
-import { SecondaryEntityManager } from '../../persistence/secondary/secondary-entity-manager';
 import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondary-entity-manager-mock';
 import { SingleResultPrimaryQueryManager } from '../../persistence/primary/query/single-result-primary-query-manager';
 import { SingleResultQueryByFieldManager } from './query/single-result-query-by-field-manager';
@@ -150,20 +148,11 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const schedulerManager = new AntScheduleModelManager<
-          EntityTest,
-          Model<EntityTest>,
-          PrimaryModelManager<EntityTest>,
-          SecondaryEntityManager<EntityTest>
-        >(
-          model,
-          modelManager as PrimaryModelManager<EntityTest>,
-          secondaryEntityManager,
-        );
 
         const singleResultQueryManager = new SingleResultQueryByFieldManager<EntityTest>(
+          model,
+          modelManager as PrimaryModelManager<EntityTest>,
           entityByStrFieldParam(model, secondaryEntityManager),
-          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/strField/',
           'strField',
@@ -694,17 +683,9 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const schedulerManager = new AntScheduleModelManager<
-          EntityTest,
-          Model<EntityTest>,
-          PrimaryModelManager<EntityTest>,
-          SecondaryEntityManager<EntityTest>
-        >(
+        const query = new MultipleResultQueryByFieldManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
-          secondaryEntityManager,
-        );
-        const query = new MultipleResultQueryByFieldManager(
           (params: any) =>
             Promise.resolve(
               _.map(
@@ -712,7 +693,6 @@ export class ModelManagerTest implements Test {
                 (entity) => entity.id,
               ),
             ),
-          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -767,17 +747,9 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const schedulerManager = new AntScheduleModelManager<
-          EntityTest,
-          Model<EntityTest>,
-          PrimaryModelManager<EntityTest>,
-          SecondaryEntityManager<EntityTest>
-        >(
+        const query = new MultipleResultQueryByFieldManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
-          secondaryEntityManager,
-        );
-        const query = new MultipleResultQueryByFieldManager(
           (params: any) =>
             Promise.resolve(
               _.map(
@@ -785,7 +757,6 @@ export class ModelManagerTest implements Test {
                 (entity) => entity.id,
               ),
             ),
-          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -845,17 +816,9 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const schedulerManager = new AntScheduleModelManager<
-          EntityTest,
-          Model<EntityTest>,
-          PrimaryModelManager<EntityTest>,
-          SecondaryEntityManager<EntityTest>
-        >(
+        const query = new MultipleResultQueryByFieldManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
-          secondaryEntityManager,
-        );
-        const query = new MultipleResultQueryByFieldManager(
           (params: any) =>
             Promise.resolve(
               _.map(
@@ -863,7 +826,6 @@ export class ModelManagerTest implements Test {
                 (entity) => entity.id,
               ),
             ),
-          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -939,17 +901,9 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const schedulerManager = new AntScheduleModelManager<
-          EntityTest,
-          Model<EntityTest>,
-          PrimaryModelManager<EntityTest>,
-          SecondaryEntityManager<EntityTest>
-        >(
+        const query = new MultipleResultQueryByFieldManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
-          secondaryEntityManager,
-        );
-        const query = new MultipleResultQueryByFieldManager(
           (params: any) =>
             Promise.resolve(
               _.map(
@@ -957,7 +911,6 @@ export class ModelManagerTest implements Test {
                 (entity) => entity.id,
               ),
             ),
-          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1020,19 +973,10 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const schedulerManager = new AntScheduleModelManager<
-          EntityTest,
-          Model<EntityTest>,
-          PrimaryModelManager<EntityTest>,
-          SecondaryEntityManager<EntityTest>
-        >(
+        const query = new SingleResultQueryByFieldManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
-          secondaryEntityManager,
-        );
-        const query = new SingleResultQueryByFieldManager(
           entityByStrFieldParam(model, secondaryEntityManager),
-          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1081,19 +1025,10 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const schedulerManager = new AntScheduleModelManager<
-          EntityTest,
-          Model<EntityTest>,
-          PrimaryModelManager<EntityTest>,
-          SecondaryEntityManager<EntityTest>
-        >(
+        const query = new SingleResultQueryByFieldManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
-          secondaryEntityManager,
-        );
-        const query = new SingleResultQueryByFieldManager(
           entityByStrFieldParam(model, secondaryEntityManager),
-          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1147,19 +1082,10 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const schedulerManager = new AntScheduleModelManager<
-          EntityTest,
-          Model<EntityTest>,
-          PrimaryModelManager<EntityTest>,
-          SecondaryEntityManager<EntityTest>
-        >(
+        const query = new SingleResultQueryByFieldManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
-          secondaryEntityManager,
-        );
-        const query = new SingleResultQueryByFieldManager(
           entityByStrFieldParam(model, secondaryEntityManager),
-          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1219,19 +1145,10 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const schedulerManager = new AntScheduleModelManager<
-          EntityTest,
-          Model<EntityTest>,
-          PrimaryModelManager<EntityTest>,
-          SecondaryEntityManager<EntityTest>
-        >(
+        const query = new SingleResultQueryByFieldManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
-          secondaryEntityManager,
-        );
-        const query = new SingleResultQueryByFieldManager(
           entityByStrFieldParam(model, secondaryEntityManager),
-          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',

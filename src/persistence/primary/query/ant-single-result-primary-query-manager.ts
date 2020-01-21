@@ -37,7 +37,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
         key,
         resultJson,
         (entity) => {
-          result = this._manager.model.primaryToEntity(entity);
+          result = this._model.primaryToEntity(entity);
         },
         (id: number | string) => {
           result = this._manager.get(id, options);
@@ -85,7 +85,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
         },
       );
     }
-    finalResults = this._manager.model.mPrimaryToEntity(finalResults);
+    finalResults = this._model.mPrimaryToEntity(finalResults);
     const idsFromMissingQueries = await this._mGetIdsAndSetToQueries(missingQueriesKeys, missingParamsArray);
     (missingIds as Array<number | string>).push(...idsFromMissingQueries);
     await this._mGetSearchMissingIds(finalResults, missingIds, options);

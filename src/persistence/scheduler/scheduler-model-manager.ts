@@ -1,8 +1,11 @@
+import { MultipleQueryResult, SingleQueryResult, TMQuery, TQuery } from '../primary/query/query-types';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
+import { MultipleResultPrimaryQueryManager } from '../primary/query/multiple-result-primary-query-manager';
 import { PersistencyDeleteOptions } from '../primary/options/persistency-delete-options';
 import { PersistencySearchOptions } from '../primary/options/persistency-search-options';
-import { PrimaryQueryManager } from '../primary/query/primary-query-manager';
+import { RedisMiddleware } from '../primary/redis-middleware';
+import { SingleResultPrimaryQueryManager } from '../primary/query/single-result-primary-query-manager';
 
 export interface SchedulerModelManagerBase<TEntity> {
   /**
@@ -38,12 +41,39 @@ export interface SchedulerModelManagerBase<TEntity> {
 export interface SchedulerModelManager<TEntity extends Entity, TModel extends Model<TEntity>>
   extends SchedulerModelManagerBase<TEntity> {
   /**
-   * Model of the manager.
+   * Adds a single result query to the manager and returns it.
+   * @param query Single ids query handler.
+   * @param redis Redis middleware.
+   * @param reverseHashKey Redis reverse hash key.
+   * @param queryKeyGen Query key generator.
+   * @param entityKeyGen Entity key generator.
+   * @param mquery Multiple ids query handler.
+   * @returns Single query result manager generated.
    */
-  readonly model: TModel;
+  addMultipleResultQuery<TResult extends MultipleQueryResult>(
+    query: TQuery<TResult>,
+    redis: RedisMiddleware,
+    reverseHashKey: string,
+    queryKeyGen: (params: any) => string,
+    entityKeyGen: (entity: TEntity) => string,
+    mquery: TMQuery<TResult>,
+  ): MultipleResultPrimaryQueryManager<TEntity>;
   /**
-   * Adds a query manager to the model manager.
-   * @param queryManager Query manager to add.
+   * Adds a single result query to the manager and returns it.
+   * @param query Single ids query handler.
+   * @param redis Redis middleware.
+   * @param reverseHashKey Redis reverse hash key.
+   * @param queryKeyGen Query key generator.
+   * @param entityKeyGen Entity key generator.
+   * @param mquery Multiple ids query handler.
+   * @returns Single query result manager generated.
    */
-  addQuery(queryManager: PrimaryQueryManager<TEntity>): this;
+  addSingleResultQuery<TResult extends SingleQueryResult>(
+    query: TQuery<TResult>,
+    redis: RedisMiddleware,
+    reverseHashKey: string,
+    queryKeyGen: (params: any) => string,
+    entityKeyGen: (entity: TEntity) => string,
+    mquery: TMQuery<TResult>,
+  ): SingleResultPrimaryQueryManager<TEntity>;
 }

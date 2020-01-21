@@ -1,13 +1,10 @@
 import { AntModel } from '../../../model/ant-model';
 import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
-import { AntScheduleModelManager } from '../../../persistence/scheduler/ant-scheduler-model-manager';
 import { ApiQueryManager } from '../../../api/query/api-query-manager';
 import { Entity } from '../../../model/entity';
 import { MinimalAntQueryManager } from './minimal-ant-query-manager';
 import { Model } from '../../../model/model';
-import { PrimaryModelManager } from '../../../persistence/primary/primary-model-manager';
 import { RedisWrapper } from '../../primary/redis-wrapper';
-import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { SingleResultQueryByFieldManager } from '../../primary/query/single-result-query-by-field-manager';
 import { Test } from '../../../testapi/api/test';
 
@@ -66,15 +63,10 @@ export class AntQueryManagerTest implements Test {
       async (done) => {
         const model: Model<EntityTest> = modelGenerator(prefix);
         const primaryManager = new AntPrimaryModelManager(model, this._redis.redis, true);
-        const schedulerManager = new AntScheduleModelManager<
-          EntityTest,
-          Model<EntityTest>,
-          PrimaryModelManager<EntityTest>,
-          SecondaryEntityManager<EntityTest>
-        >(model, primaryManager, null);
         const queryManager = new SingleResultQueryByFieldManager<EntityTest>(
+          model,
+          primaryManager,
           async () => null,
-          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'id',

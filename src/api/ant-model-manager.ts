@@ -1,8 +1,6 @@
 import { ApiModelManager, TAntQueryManager } from './api-model-manager';
 import { QueryResult, TMQuery, TQuery } from '../persistence/primary/query/query-types';
-import { AntMultipleResultPrimaryQueryManager } from '../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { AntMultipleResultQueryManager } from './query/ant-multiple-result-query-manager';
-import { AntSingleResultPrimaryQueryManager } from '../persistence/primary/query/ant-single-result-primary-query-manager';
 import { AntSingleResultQueryManager } from './query/ant-single-result-query-manager';
 import { ApiModelConfig } from './config/api-model-config';
 import { ApiMultipleResultQueryManager } from './query/api-multiple-result-query-manager';
@@ -12,7 +10,6 @@ import { Entity } from '../model/entity';
 import { Model } from '../model/model';
 import { PersistencyDeleteOptions } from '../persistence/primary/options/persistency-delete-options';
 import { PersistencySearchOptions } from '../persistence/primary/options/persistency-search-options';
-import { PrimaryQueryManager } from '../persistence/primary/query/primary-query-manager';
 import { SchedulerModelManager } from '../persistence/scheduler/scheduler-model-manager';
 
 export abstract class AntModelManager<
@@ -137,11 +134,9 @@ export abstract class AntModelManager<
     queryConfig: ApiQueryConfig<TEntity, TResult>,
   ): TAntQueryManager<TEntity, TResult> {
     let query: TAntQueryManager<TEntity, TResult>;
-    let innerQueryManager: PrimaryQueryManager<TEntity>;
     if (queryConfig.isMultiple) {
-      innerQueryManager = new AntMultipleResultPrimaryQueryManager<TEntity>(
+      const innerQueryManager = this._scheduledManager.addMultipleResultQuery(
         queryConfig.query as TQuery<number[] | string[]>,
-        this.scheduledManager,
         this._config.redis,
         queryConfig.reverseHashKey,
         queryConfig.queryKeyGen,
@@ -149,12 +144,11 @@ export abstract class AntModelManager<
         queryConfig.mQuery as TMQuery<number[] | string[]>,
       );
       query = (new AntMultipleResultQueryManager<TEntity>(
-        innerQueryManager as AntMultipleResultPrimaryQueryManager<TEntity>,
+        innerQueryManager,
       ) as ApiMultipleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
     } else {
-      innerQueryManager = new AntSingleResultPrimaryQueryManager<TEntity>(
+      const innerQueryManager = this._scheduledManager.addSingleResultQuery(
         queryConfig.query as TQuery<number | string>,
-        this.scheduledManager,
         this._config.redis,
         queryConfig.reverseHashKey,
         queryConfig.queryKeyGen,
@@ -162,11 +156,9 @@ export abstract class AntModelManager<
         queryConfig.mQuery as TMQuery<number | string>,
       );
       query = (new AntSingleResultQueryManager<TEntity>(
-        innerQueryManager as AntSingleResultPrimaryQueryManager<TEntity>,
+        innerQueryManager,
       ) as ApiSingleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
     }
-
-    this.scheduledManager.addQuery(innerQueryManager);
     return query;
   }
 

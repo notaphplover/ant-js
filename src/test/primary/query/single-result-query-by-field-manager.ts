@@ -1,8 +1,8 @@
 import { AntSingleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-single-result-primary-query-manager';
 import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
+import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
-import { SchedulerModelManager } from '../../../persistence/scheduler/scheduler-model-manager';
 
 export class SingleResultQueryByFieldManager<TEntity extends Entity> extends AntSingleResultPrimaryQueryManager<
   TEntity
@@ -17,18 +17,12 @@ export class SingleResultQueryByFieldManager<TEntity extends Entity> extends Ant
   protected _queryPrefix: string;
 
   /**
-   * Creates a query by field manager.
-   * @param query Query.
-   * @param manager Primary entity manager.
-   * @param redis Redis connection.
-   * @param reverseHashKey Reverse hash key.
-   * @param field Query field.
-   * @param queryPrefix Query prefix.
-   * @param mQuery Multiple result query.
+   * @inheritdoc
    */
   public constructor(
+    model: Model<TEntity>,
+    manager: PrimaryEntityManager<TEntity>,
     query: (params: any) => Promise<number | string>,
-    manager: SchedulerModelManager<TEntity, Model<TEntity>>,
     redis: RedisMiddleware,
     reverseHashKey: string,
     field: string,
@@ -43,7 +37,7 @@ export class SingleResultQueryByFieldManager<TEntity extends Entity> extends Ant
     const key = (param: any): string => {
       return this._queryPrefix + param[this._field];
     };
-    super(query, manager, redis, reverseHashKey, key, key, mQuery);
+    super(model, manager, query, redis, reverseHashKey, key, key, mQuery);
     this._field = field;
     this._queryPrefix = queryPrefix;
   }

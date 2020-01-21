@@ -37,7 +37,7 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
       for (const resultJson of resultsJSON) {
         this._getProcessParseableResult(key, finalResults, missingIds, resultJson);
       }
-      finalResults = this._manager.model.mPrimaryToEntity(finalResults);
+      finalResults = this._model.mPrimaryToEntity(finalResults);
       await this._getProcessMissingOptions(missingIds, finalResults, options);
       return finalResults;
     }
@@ -73,7 +73,7 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
       },
     );
 
-    finalResults = this._manager.model.mPrimaryToEntity(finalResults);
+    finalResults = this._model.mPrimaryToEntity(finalResults);
 
     if (0 < missingQueriesKeys.length) {
       const queriesMissingIds = await this._mGetProcessQueriesNotFound(missingQueriesParams, missingQueriesKeys);

@@ -1,15 +1,15 @@
 import * as _ from 'lodash';
-import { BasePrimaryQueryManager, PrimaryQueryManager } from './primary-query-manager';
 import { QueryResult, TMQuery, TQuery, TResult } from './query-types';
+import { BasePrimaryQueryManager } from './primary-query-manager';
 import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
 import { PersistencySearchOptions } from '../options/persistency-search-options';
+import { PrimaryEntityManager } from '../primary-entity-manager';
 import { RedisMiddleware } from '../redis-middleware';
-import { SchedulerModelManager } from '../../scheduler/scheduler-model-manager';
 import { luaKeyGenerator } from '../lua-key-generator';
 
 export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResult extends QueryResult>
-  implements BasePrimaryQueryManager<TEntity, TResult<TEntity, TQueryResult>>, PrimaryQueryManager<TEntity> {
+  implements BasePrimaryQueryManager<TEntity, TResult<TEntity, TQueryResult>> {
   /**
    * Entity key generator.
    */
@@ -19,13 +19,17 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
    */
   protected _queryKeyGen: (params: any) => string;
   /**
+   * Query model
+   */
+  protected _model: Model<TEntity>;
+  /**
    * Multiple query
    */
   protected _mquery: TMQuery<TQueryResult>;
   /**
    * Primary entity manager.
    */
-  protected _manager: SchedulerModelManager<TEntity, Model<TEntity>>;
+  protected _manager: PrimaryEntityManager<TEntity>;
   /**
    * Query to obtain ids.
    */
@@ -45,16 +49,18 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
 
   /**
    * Creates primary query manager.
-   * @param query Query to obtain ids.
+   * @param model Query model
    * @param manager Primary entity manager.
+   * @param query Query to obtain ids.
    * @param redis Redis connection to manage queries.
    * @param reverseHashKey Key of the reverse structure to obtain a map of entities to queries.
    * @param queryKeyGen Query key generator.
    * @param mQuery Multiple query.
    */
   public constructor(
+    model: Model<TEntity>,
+    manager: PrimaryEntityManager<TEntity>,
     query: TQuery<TQueryResult>,
-    manager: SchedulerModelManager<TEntity, Model<TEntity>>,
     redis: RedisMiddleware,
     reverseHashKey: string,
     queryKeyGen: (params: any) => string,
@@ -62,12 +68,13 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
     mQuery?: TMQuery<TQueryResult>,
   ) {
     this._manager = manager;
+    this._model = model;
     this._query = query;
     this._redis = redis;
     this._reverseHashKey = reverseHashKey;
     this._queryKeyGen = queryKeyGen;
     this._entityKeyGen = entityKeyGen ? entityKeyGen : queryKeyGen;
-    this._luaKeyGeneratorFromId = luaKeyGenerator(this._manager.model.keyGen);
+    this._luaKeyGeneratorFromId = luaKeyGenerator(this._model.keyGen);
 
     this._setMQuery(query, mQuery);
   }
