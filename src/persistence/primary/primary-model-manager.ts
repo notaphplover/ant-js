@@ -1,10 +1,10 @@
-import { PrimaryEntityManager, PrimaryEntityManagerBase } from './primary-entity-manager';
 import { Entity } from '../../model/entity';
 import { PersistencyDeleteOptions } from './options/persistency-delete-options';
 import { PersistencyUpdateOptions } from './options/persistency-update-options';
+import { PrimaryEntityManager } from './primary-entity-manager';
 import { PrimaryQueryManager } from './query/primary-query-manager';
 
-export interface BasePrimaryModelManager<TEntity extends Entity> extends PrimaryEntityManagerBase<TEntity> {
+export interface BasePrimaryModelManager<TEntity extends Entity> extends PrimaryEntityManager<TEntity> {
   /**
    * Deletes an entity from the cache layer.
    * @param id id of the entity to delete.
@@ -43,10 +43,4 @@ export interface PrimaryModelManager<TEntity extends Entity>
    * @param queryManager Query manager to add.
    */
   addQuery(queryManager: PrimaryQueryManager<TEntity>): this;
-
-  /**
-   * Returns the queries managed.
-   * @returns Queries managed.
-   */
-  getQueries(): Array<PrimaryQueryManager<TEntity>>;
 }

@@ -1,8 +1,9 @@
 import { TMQuery, TQuery } from '../../../persistence/primary/query/query-types';
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { Entity } from '../../../model/entity';
-import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
+import { Model } from '../../../model/model';
 import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
+import { SchedulerModelManager } from '../../../persistence/scheduler/scheduler-model-manager';
 
 export class MultipleResultQueryByFieldManager<TEntity extends Entity> extends AntMultipleResultPrimaryQueryManager<
   TEntity
@@ -19,7 +20,7 @@ export class MultipleResultQueryByFieldManager<TEntity extends Entity> extends A
   /**
    * Creates a query by field manager.
    * @param query Query.
-   * @param primaryEntityManager Primary entity manager.
+   * @param manager Primary entity manager.
    * @param redis Redis connection.
    * @param reverseHashKey Reverse hash key.
    * @param field Query field.
@@ -28,7 +29,7 @@ export class MultipleResultQueryByFieldManager<TEntity extends Entity> extends A
    */
   public constructor(
     query: TQuery<number[] | string[]>,
-    primaryEntityManager: PrimaryEntityManager<TEntity>,
+    manager: SchedulerModelManager<TEntity, Model<TEntity>>,
     redis: RedisMiddleware,
     reverseHashKey: string,
     field: string,
@@ -43,7 +44,7 @@ export class MultipleResultQueryByFieldManager<TEntity extends Entity> extends A
     const key = (param: any): string => {
       return this._queryPrefix + param[this._field];
     };
-    super(query, primaryEntityManager, redis, reverseHashKey, key, key, mQuery);
+    super(query, manager, redis, reverseHashKey, key, key, mQuery);
     this._field = field;
     this._queryPrefix = queryPrefix;
   }

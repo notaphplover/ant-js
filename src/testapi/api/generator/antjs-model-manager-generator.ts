@@ -1,4 +1,5 @@
 import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
+import { AntScheduleModelManager } from '../../../persistence/scheduler/ant-scheduler-model-manager';
 import { ApiModelManagerGeneratorOptions } from './api-model-manager-generator-options';
 import { ApiModelManagerGeneratorRedisOptions } from './api-model-manager-generator-redis-options';
 import { ApiModelManagerGeneratorSecodaryManagerOptions } from './api-model-manager-generator-secodary-manager-options';
@@ -6,6 +7,7 @@ import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
 import { ModelManagerGenerator } from './model-manager-generator';
 import { PrimaryModelManager } from '../../../persistence/primary/primary-model-manager';
+import { SchedulerModelManager } from '../../../persistence/scheduler/scheduler-model-manager';
 import { SecondaryEntityManagerMock } from '../secondary/secondary-entity-manager-mock';
 
 type TModelManagerOptions = ApiModelManagerGeneratorOptions<
@@ -17,8 +19,16 @@ type TModelManagerOptions = ApiModelManagerGeneratorOptions<
 export class AntJsModelManagerGenerator extends ModelManagerGenerator<
   TModelManagerOptions,
   PrimaryModelManager<Entity>,
-  SecondaryEntityManagerMock<Entity>
+  SecondaryEntityManagerMock<Entity>,
+  SchedulerModelManager<Entity, Model<Entity>>
 > {
+  /**
+   * @inheritdoc
+   */
+  protected _generateDefaultSecondaryManager(options: TModelManagerOptions): SecondaryEntityManagerMock<Entity> {
+    return new SecondaryEntityManagerMock(options.model);
+  }
+
   /**
    * @inheritdoc
    */
@@ -29,16 +39,23 @@ export class AntJsModelManagerGenerator extends ModelManagerGenerator<
     return new AntPrimaryModelManager(
       options.model,
       options.redisOptions.redis,
-      options.redisOptions.useEntityNegativeCache || true,
+      options.redisOptions.useEntityNegativeCache ?? true,
       secondaryManager,
     );
   }
 
   /**
-   * @inheritdoc
+   * Generates an scheduler manager.
+   * @param options Generation options
+   * @param primaryManager Primary manager
+   * @param secondaryManager Secondary manager.
    */
-  protected _generateDefaultSecondaryManager(options: TModelManagerOptions): SecondaryEntityManagerMock<Entity> {
-    return new SecondaryEntityManagerMock(options.model);
+  protected _generateSchedulerManager(
+    options: TModelManagerOptions,
+    primaryManager: PrimaryModelManager<Entity>,
+    secondaryManager: SecondaryEntityManagerMock<Entity>,
+  ): SchedulerModelManager<Entity, Model<Entity>> {
+    return new AntScheduleModelManager(options.model, primaryManager, secondaryManager);
   }
 
   /**

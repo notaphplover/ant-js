@@ -5,7 +5,7 @@ import { KeyGenParams } from '../../model/key-gen-params';
  * @param keyGenParams Key generation params.
  * @returns function that creates lua code to generate a key from an id.
  */
-export const luaKeyGenerator = (keyGenParams: KeyGenParams): (alias: string) => string => {
+export const luaKeyGenerator = (keyGenParams: KeyGenParams): ((alias: string) => string) => {
   return (alias: string): string => {
     return '"' + keyGenParams.prefix + '" .. ' + alias;
   };

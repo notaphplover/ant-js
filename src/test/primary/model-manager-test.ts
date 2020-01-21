@@ -2,6 +2,7 @@ import * as _ from 'lodash';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/antjs-model-manager-generator';
 import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-update-options';
 import { AntModel } from '../../model/ant-model';
+import { AntScheduleModelManager } from '../../persistence/scheduler/ant-scheduler-model-manager';
 import { CacheMode } from '../../persistence/primary/options/cache-mode';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
@@ -10,6 +11,7 @@ import { PrimaryEntityManager } from '../../persistence/primary/primary-entity-m
 import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
 import { PrimaryQueryManager } from '../../persistence/primary/query/primary-query-manager';
 import { RedisWrapper } from './redis-wrapper';
+import { SecondaryEntityManager } from '../../persistence/secondary/secondary-entity-manager';
 import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondary-entity-manager-mock';
 import { SingleResultPrimaryQueryManager } from '../../persistence/primary/query/single-result-primary-query-manager';
 import { SingleResultQueryByFieldManager } from './query/single-result-query-by-field-manager';
@@ -75,7 +77,6 @@ export class ModelManagerTest implements Test {
       this._itMustDeleteZeroEntities();
       this._itMustGetAnEntity();
       this._itMustGetMultipleEntities();
-      this._itMustGetQueriesManaged();
       this._itMustInvokeEntityToPrimaryOnUpdate();
       this._itMustSyncAMRQWhenDeletingAnEntity();
       this._itMustSyncAMRQWhenDeletingMultipleEntities();
@@ -149,10 +150,20 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        const schedulerManager = new AntScheduleModelManager<
+          EntityTest,
+          Model<EntityTest>,
+          PrimaryModelManager<EntityTest>,
+          SecondaryEntityManager<EntityTest>
+        >(
+          model,
+          modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        );
 
         const singleResultQueryManager = new SingleResultQueryByFieldManager<EntityTest>(
           entityByStrFieldParam(model, secondaryEntityManager),
-          modelManager as PrimaryModelManager<EntityTest>,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/strField/',
           'strField',
@@ -227,6 +238,7 @@ export class ModelManagerTest implements Test {
           },
         });
 
+        await secondaryEntityManager.delete(entity1.id);
         await modelManager.delete(entity1.id);
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
@@ -292,6 +304,7 @@ export class ModelManagerTest implements Test {
           },
         });
 
+        await secondaryEntityManager.delete(entity1.id);
         await modelManager.delete(entity1.id);
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
@@ -360,6 +373,7 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        await secondaryEntityManager.mDelete([entity1.id, entity2.id]);
         await modelManager.mDelete([entity1.id, entity2.id]);
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
@@ -438,6 +452,7 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        await secondaryEntityManager.mDelete([entity1.id, entity2.id]);
         await modelManager.mDelete([entity1.id, entity2.id]);
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
@@ -645,45 +660,6 @@ export class ModelManagerTest implements Test {
     );
   }
 
-  private _itMustGetQueriesManaged(): void {
-    const itsName = 'mustGetQueriesManaged';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(
-      itsName,
-      async (done) => {
-        await this._beforeAllPromise;
-
-        const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model);
-        const [modelManager] = this._modelManagerGenerator.generateModelManager({
-          model,
-          redisOptions: {
-            useEntityNegativeCache: true,
-          },
-          secondaryOptions: {
-            manager: secondaryEntityManager,
-          },
-        });
-
-        const singleResultQueryManager = new SingleResultQueryByFieldManager<EntityTest>(
-          entityByStrFieldParam(model, secondaryEntityManager),
-          modelManager as PrimaryModelManager<EntityTest>,
-          this._redis.redis,
-          prefix + 'reverse/strField/',
-          'strField',
-          prefix + 'query/strField/',
-        );
-
-        modelManager.addQuery(singleResultQueryManager);
-        const queriesManaged = modelManager.getQueries();
-
-        expect(queriesManaged).toEqual([singleResultQueryManager]);
-        done();
-      },
-      MAX_SAFE_TIMEOUT,
-    );
-  }
-
   private _itMustSyncAMRQWhenDeletingAnEntity(): void {
     const itsName = 'mustSyncAMRQWhenDeletingAnEntity';
     const prefix = this._declareName + '/' + itsName + '/';
@@ -718,6 +694,16 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        const schedulerManager = new AntScheduleModelManager<
+          EntityTest,
+          Model<EntityTest>,
+          PrimaryModelManager<EntityTest>,
+          SecondaryEntityManager<EntityTest>
+        >(
+          model,
+          modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        );
         const query = new MultipleResultQueryByFieldManager(
           (params: any) =>
             Promise.resolve(
@@ -726,7 +712,7 @@ export class ModelManagerTest implements Test {
                 (entity) => entity.id,
               ),
             ),
-          modelManager as PrimaryModelManager<EntityTest>,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -734,6 +720,7 @@ export class ModelManagerTest implements Test {
         );
         modelManager.addQuery(query);
         await query.mGet([entity1, entity2, entity3]);
+        await secondaryEntityManager.delete(entity1.id);
         await modelManager.delete(entity1.id);
         expect(await modelManager.get(entity1.id)).toBeNull();
         expect(await modelManager.get(entity2.id)).toEqual(entity2);
@@ -780,6 +767,16 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        const schedulerManager = new AntScheduleModelManager<
+          EntityTest,
+          Model<EntityTest>,
+          PrimaryModelManager<EntityTest>,
+          SecondaryEntityManager<EntityTest>
+        >(
+          model,
+          modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        );
         const query = new MultipleResultQueryByFieldManager(
           (params: any) =>
             Promise.resolve(
@@ -788,7 +785,7 @@ export class ModelManagerTest implements Test {
                 (entity) => entity.id,
               ),
             ),
-          modelManager as PrimaryModelManager<EntityTest>,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -796,6 +793,7 @@ export class ModelManagerTest implements Test {
         );
         modelManager.addQuery(query);
         await query.mGet([entity1, entity2, entity3]);
+        await secondaryEntityManager.mDelete([entity1.id, entity3.id]);
         await modelManager.mDelete([entity1.id, entity3.id]);
         expect(await modelManager.get(entity1.id)).toBeNull();
         expect(await modelManager.get(entity2.id)).toEqual(entity2);
@@ -847,6 +845,16 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        const schedulerManager = new AntScheduleModelManager<
+          EntityTest,
+          Model<EntityTest>,
+          PrimaryModelManager<EntityTest>,
+          SecondaryEntityManager<EntityTest>
+        >(
+          model,
+          modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        );
         const query = new MultipleResultQueryByFieldManager(
           (params: any) =>
             Promise.resolve(
@@ -855,7 +863,7 @@ export class ModelManagerTest implements Test {
                 (entity) => entity.id,
               ),
             ),
-          modelManager as PrimaryModelManager<EntityTest>,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -931,6 +939,16 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        const schedulerManager = new AntScheduleModelManager<
+          EntityTest,
+          Model<EntityTest>,
+          PrimaryModelManager<EntityTest>,
+          SecondaryEntityManager<EntityTest>
+        >(
+          model,
+          modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        );
         const query = new MultipleResultQueryByFieldManager(
           (params: any) =>
             Promise.resolve(
@@ -939,7 +957,7 @@ export class ModelManagerTest implements Test {
                 (entity) => entity.id,
               ),
             ),
-          modelManager as PrimaryModelManager<EntityTest>,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1002,9 +1020,19 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        const schedulerManager = new AntScheduleModelManager<
+          EntityTest,
+          Model<EntityTest>,
+          PrimaryModelManager<EntityTest>,
+          SecondaryEntityManager<EntityTest>
+        >(
+          model,
+          modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        );
         const query = new SingleResultQueryByFieldManager(
           entityByStrFieldParam(model, secondaryEntityManager),
-          modelManager as PrimaryModelManager<EntityTest>,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1012,6 +1040,7 @@ export class ModelManagerTest implements Test {
         );
         modelManager.addQuery(query);
         await Promise.all([query.get(entity1), query.get(entity2)]);
+        await secondaryEntityManager.delete(entity1.id);
         await modelManager.delete(entity1.id);
         expect(await modelManager.get(entity1.id)).toBeNull();
         expect(await modelManager.get(entity2.id)).toEqual(entity2);
@@ -1052,9 +1081,19 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        const schedulerManager = new AntScheduleModelManager<
+          EntityTest,
+          Model<EntityTest>,
+          PrimaryModelManager<EntityTest>,
+          SecondaryEntityManager<EntityTest>
+        >(
+          model,
+          modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        );
         const query = new SingleResultQueryByFieldManager(
           entityByStrFieldParam(model, secondaryEntityManager),
-          modelManager as PrimaryModelManager<EntityTest>,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1062,6 +1101,7 @@ export class ModelManagerTest implements Test {
         );
         modelManager.addQuery(query);
         await Promise.all([query.get(entity1), query.get(entity2)]);
+        await secondaryEntityManager.mDelete([entity1.id, entity2.id]);
         await modelManager.mDelete([entity1.id, entity2.id]);
         expect(await modelManager.get(entity1.id)).toBeNull();
         expect(await modelManager.get(entity2.id)).toBeNull();
@@ -1107,9 +1147,19 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        const schedulerManager = new AntScheduleModelManager<
+          EntityTest,
+          Model<EntityTest>,
+          PrimaryModelManager<EntityTest>,
+          SecondaryEntityManager<EntityTest>
+        >(
+          model,
+          modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        );
         const query = new SingleResultQueryByFieldManager(
           entityByStrFieldParam(model, secondaryEntityManager),
-          modelManager as PrimaryModelManager<EntityTest>,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1169,9 +1219,19 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        const schedulerManager = new AntScheduleModelManager<
+          EntityTest,
+          Model<EntityTest>,
+          PrimaryModelManager<EntityTest>,
+          SecondaryEntityManager<EntityTest>
+        >(
+          model,
+          modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        );
         const query = new SingleResultQueryByFieldManager(
           entityByStrFieldParam(model, secondaryEntityManager),
-          modelManager as PrimaryModelManager<EntityTest>,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'strField',

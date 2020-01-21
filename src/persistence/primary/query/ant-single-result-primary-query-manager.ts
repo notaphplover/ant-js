@@ -29,7 +29,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
       if (null == id) {
         return null;
       } else {
-        return this._primaryEntityManager.get(id, options);
+        return this._manager.get(id, options);
       }
     } else {
       let result: TEntity | Promise<TEntity>;
@@ -37,10 +37,10 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
         key,
         resultJson,
         (entity) => {
-          result = this._primaryEntityManager.model.primaryToEntity(entity);
+          result = this._manager.model.primaryToEntity(entity);
         },
         (id: number | string) => {
-          result = this._primaryEntityManager.get(id, options);
+          result = this._manager.get(id, options);
         },
         () => {
           result = null;
@@ -85,7 +85,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
         },
       );
     }
-    finalResults = this._primaryEntityManager.model.mPrimaryToEntity(finalResults);
+    finalResults = this._manager.model.mPrimaryToEntity(finalResults);
     const idsFromMissingQueries = await this._mGetIdsAndSetToQueries(missingQueriesKeys, missingParamsArray);
     (missingIds as Array<number | string>).push(...idsFromMissingQueries);
     await this._mGetSearchMissingIds(finalResults, missingIds, options);
@@ -210,7 +210,7 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
     options?: PersistencySearchOptions,
   ): Promise<void> {
     if (0 < missingIds.length) {
-      const missingEntities = await this._primaryEntityManager.mGet(missingIds, options);
+      const missingEntities = await this._manager.mGet(missingIds, options);
       for (const missingEntity of missingEntities) {
         finalResults.push(missingEntity);
       }

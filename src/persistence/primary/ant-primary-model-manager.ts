@@ -70,26 +70,23 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
   }
 
   /**
-   * Returns the queries managed.
-   * @returns Queries managed.
-   */
-  public getQueries(): Array<PrimaryQueryManager<TEntity>> {
-    const copy = new Array<PrimaryQueryManager<TEntity>>(this._queryManagers.length);
-    for (let i = 0; i < this._queryManagers.length; ++i) {
-      copy[i] = this._queryManagers[i];
-    }
-    return copy;
-  }
-
-  /**
    * Deletes an entity
    * @param id id of the entity to delete.
    * @param options Delete options.
    * @returns Promise of entity deleted.
    */
   public async delete(id: number | string, options: PersistencyDeleteOptions = new AntJsDeleteOptions()): Promise<any> {
-    await this._deleteAtSecondary(id);
-    return this._deleteAtPrimary(id, options);
+    return this._luaDeleteCachedQuery.eval(options, (scriptArg: string) => {
+      const evalParams = [scriptArg, this._queryManagers.length];
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.reverseHashKey);
+      }
+      evalParams.push(JSON.stringify(id));
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
+      }
+      return evalParams;
+    });
   }
 
   /**
@@ -102,8 +99,22 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
     ids: number[] | string[],
     options: PersistencyDeleteOptions = new AntJsDeleteOptions(),
   ): Promise<any> {
-    await this._mDeleteAtSecondary(ids);
-    return this._mDeleteAtPrimary(ids, options);
+    if (null == ids || 0 === ids.length) {
+      return Promise.resolve();
+    }
+    return this._luaMDeleteCachedQuery.eval(options, (scriptArg) => {
+      const evalParams = [scriptArg, this._queryManagers.length];
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.reverseHashKey);
+      }
+      for (const id of ids) {
+        evalParams.push(JSON.stringify(id));
+      }
+      for (const queryManager of this._queryManagers) {
+        evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
+      }
+      return evalParams;
+    });
   }
 
   /**
@@ -165,69 +176,6 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
       }
       return evalParams;
     });
-  }
-
-  /**
-   * Deletes an entity from the cache layer.
-   * @param id id of the entity to delete.
-   * @param options Delete options.
-   * @returns Promise of entity deleted.
-   */
-  protected _deleteAtPrimary(id: number | string, options: PersistencyDeleteOptions): Promise<any> {
-    return this._luaDeleteCachedQuery.eval(options, (scriptArg: string) => {
-      const evalParams = [scriptArg, this._queryManagers.length];
-      for (const queryManager of this._queryManagers) {
-        evalParams.push(queryManager.reverseHashKey);
-      }
-      evalParams.push(JSON.stringify(id));
-      for (const queryManager of this._queryManagers) {
-        evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
-      }
-      return evalParams;
-    });
-  }
-
-  /**
-   * Deletes an entity from the secondary layer
-   * @param id Entity's id
-   * @returns Promise of entity deleted.
-   */
-  protected _deleteAtSecondary(id: number | string): Promise<any> {
-    return this._successor.delete(id);
-  }
-
-  /**
-   * Deletes multiple entities from the cache layer.
-   * @param ids Ids of the entities to delete.
-   * @param options Delete options.
-   * @returns Promise of entities deleted.
-   */
-  protected _mDeleteAtPrimary(ids: number[] | string[], options: PersistencyDeleteOptions): Promise<any> {
-    if (null == ids || 0 === ids.length) {
-      return Promise.resolve();
-    }
-    return this._luaMDeleteCachedQuery.eval(options, (scriptArg) => {
-      const evalParams = [scriptArg, this._queryManagers.length];
-      for (const queryManager of this._queryManagers) {
-        evalParams.push(queryManager.reverseHashKey);
-      }
-      for (const id of ids) {
-        evalParams.push(JSON.stringify(id));
-      }
-      for (const queryManager of this._queryManagers) {
-        evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
-      }
-      return evalParams;
-    });
-  }
-
-  /**
-   * Detetes multiple entities from its ids.
-   * @param ids Ids of the entities to be deleted.
-   * @returns Promise of entities deleted.
-   */
-  protected _mDeleteAtSecondary(ids: number[] | string[]): Promise<any> {
-    return this._successor.mDelete(ids);
   }
 
   /**

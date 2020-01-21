@@ -1,8 +1,7 @@
 import { Entity } from '../../model/entity';
-import { Model } from '../../model/model';
 import { PersistencySearchOptions } from './options/persistency-search-options';
 
-export interface PrimaryEntityManagerBase<TEntity extends Entity> {
+export interface PrimaryEntityManager<TEntity extends Entity> {
   /**
    * Gets a model by its id.
    * @param id: Model's id.
@@ -17,14 +16,4 @@ export interface PrimaryEntityManagerBase<TEntity extends Entity> {
    * @returns Models found.
    */
   mGet(ids: number[] | string[], options?: PersistencySearchOptions): Promise<TEntity[]>;
-}
-
-/**
- * Represents a manager able to obtain entities by ids.
- */
-export interface PrimaryEntityManager<TEntity extends Entity> extends PrimaryEntityManagerBase<TEntity> {
-  /**
-   * Model of the manager.
-   */
-  readonly model: Model<TEntity>;
 }

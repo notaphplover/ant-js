@@ -1,10 +1,11 @@
 import { AntModel } from '../../../model/ant-model';
-import { AntPrimaryEntityManager } from '../../../persistence/primary/ant-primary-entity-manager';
 import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
+import { AntScheduleModelManager } from '../../../persistence/scheduler/ant-scheduler-model-manager';
 import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
-import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
+import { PrimaryModelManager } from '../../../persistence/primary/primary-model-manager';
 import { RedisWrapper } from '../redis-wrapper';
+import { SchedulerModelManager } from '../../../persistence/scheduler/scheduler-model-manager';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/secondary-entity-manager-mock';
 import { SingleResultQueryByFieldManager } from './single-result-query-by-field-manager';
@@ -76,16 +77,21 @@ export class SingleResultQueryManagerTest implements Test {
   private _helperGenerateBaseInstances(
     prefix: string,
     entities: EntityTestStr[],
-  ): [Model<EntityTestStr>, PrimaryEntityManager<EntityTestStr>, SecondaryEntityManagerMock<EntityTestStr>] {
+  ): [
+    Model<EntityTestStr>,
+    SecondaryEntityManagerMock<EntityTestStr>,
+    SchedulerModelManager<EntityTestStr, Model<EntityTestStr>>,
+  ] {
     const model = new AntModel<EntityTestStr>('id', { prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTestStr>(model, entities);
-    const primaryEntityManager = new AntPrimaryEntityManager<EntityTestStr, SecondaryEntityManager<EntityTestStr>>(
-      model,
-      this._redis.redis,
-      true,
-      secondaryEntityManager,
-    );
-    return [model, primaryEntityManager, secondaryEntityManager];
+    const primaryManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
+    const schedulerManager = new AntScheduleModelManager<
+      EntityTestStr,
+      Model<EntityTestStr>,
+      PrimaryModelManager<EntityTestStr>,
+      SecondaryEntityManager<EntityTestStr>
+    >(model, primaryManager, secondaryEntityManager);
+    return [model, secondaryEntityManager, schedulerManager];
   }
 
   private _itMustBeInitializable(): void {
@@ -95,11 +101,11 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const [, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
+        const [, , manager] = this._helperGenerateBaseInstances(prefix, new Array());
         expect(() => {
           new SingleResultQueryByFieldManager(
             () => null,
-            primaryEntityManager,
+            manager,
             this._redis.redis,
             prefix + 'reverse/',
             'field',
@@ -136,16 +142,17 @@ export class SingleResultQueryManagerTest implements Test {
           id: 0,
         };
         const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTestStr>(model, [initialEntity]);
-        const primaryEntityManager = new AntPrimaryEntityManager<EntityTestStr, SecondaryEntityManager<EntityTestStr>>(
-          model,
-          this._redis.redis,
-          true,
-          secondaryEntityManager,
-        );
+        const primaryManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
+        const schedulerManager = new AntScheduleModelManager<
+          EntityTestStr,
+          Model<EntityTestStr>,
+          PrimaryModelManager<EntityTestStr>,
+          SecondaryEntityManager<EntityTestStr>
+        >(model, primaryManager, secondaryEntityManager);
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -171,13 +178,11 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
-        const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
-          entity1,
-        ]);
+        const [model, secondaryEntityManager, schedulerManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -200,14 +205,12 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
-        const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
-          entity1,
-        ]);
+        const [model, secondaryEntityManager, schedulerManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -215,7 +218,6 @@ export class SingleResultQueryManagerTest implements Test {
         );
         await queryManager.get({ field: entity1.field });
         await modelManager.delete(entity1.id);
-        secondaryEntityManager.store.set(entity1[model.id], entity1);
         const entityFound = await queryManager.get({ field: entity1.field });
         expect(entityFound).toEqual(entity1);
         done();
@@ -238,17 +240,17 @@ export class SingleResultQueryManagerTest implements Test {
         const model = new AntModel<EntityTest>('id', { prefix });
         const entity1: EntityTest = { field: 'sample-1', id: '1' };
         const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [entity1]);
-        const primaryEntityManager = new AntPrimaryEntityManager(
-          model,
-          this._redis.redis,
-          true,
-          secondaryEntityManager,
-        );
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
+        const schedulerManager = new AntScheduleModelManager<
+          EntityTest,
+          Model<EntityTest>,
+          PrimaryModelManager<EntityTest>,
+          SecondaryEntityManager<EntityTest>
+        >(model, modelManager, secondaryEntityManager);
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -273,7 +275,7 @@ export class SingleResultQueryManagerTest implements Test {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
         const entity2: EntityTestStr = { field: 'sample-2', id: 2 };
-        const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
+        const [model, secondaryEntityManager, schedulerManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
           entity2,
         ]);
@@ -295,7 +297,7 @@ export class SingleResultQueryManagerTest implements Test {
         };
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -319,13 +321,11 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
-        const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
-          entity1,
-        ]);
+        const [model, secondaryEntityManager, schedulerManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -348,14 +348,12 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
-        const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
-          entity1,
-        ]);
+        const [model, secondaryEntityManager, schedulerManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -363,7 +361,6 @@ export class SingleResultQueryManagerTest implements Test {
         );
         await queryManager.mGet([{ field: entity1.field }]);
         await modelManager.delete(entity1.id);
-        secondaryEntityManager.store.set(entity1[model.id], entity1);
         const entitiesFound = await queryManager.mGet([{ field: entity1.field }]);
         expect(entitiesFound).toEqual([entity1]);
         done();
@@ -386,17 +383,17 @@ export class SingleResultQueryManagerTest implements Test {
         const model = new AntModel<EntityTest>('id', { prefix });
         const entity1: EntityTest = { field: 'sample-1', id: '1' };
         const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [entity1]);
-        const primaryEntityManager = new AntPrimaryEntityManager(
-          model,
-          this._redis.redis,
-          true,
-          secondaryEntityManager,
-        );
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
+        const schedulerManager = new AntScheduleModelManager<
+          EntityTest,
+          Model<EntityTest>,
+          PrimaryModelManager<EntityTest>,
+          SecondaryEntityManager<EntityTest>
+        >(model, modelManager, secondaryEntityManager);
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -421,14 +418,14 @@ export class SingleResultQueryManagerTest implements Test {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
         const entity2: EntityTestStr = { field: 'sample-2', id: 2 };
-        const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
+        const [model, secondaryEntityManager, schedulerManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
           entity2,
         ]);
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -451,14 +448,14 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
-        const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(
+        const [model, secondaryEntityManager, schedulerManager] = this._helperGenerateBaseInstances(
           prefix,
           new Array(),
         );
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -481,14 +478,14 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
-        const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(
+        const [model, secondaryEntityManager, schedulerManager] = this._helperGenerateBaseInstances(
           prefix,
           new Array(),
         );
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -509,14 +506,14 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(
+        const [model, secondaryEntityManager, schedulerManager] = this._helperGenerateBaseInstances(
           prefix,
           new Array(),
         );
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -538,13 +535,11 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
-        const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
-          entity1,
-        ]);
+        const [model, secondaryEntityManager, schedulerManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -566,14 +561,14 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
-        const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(
+        const [model, secondaryEntityManager, schedulerManager] = this._helperGenerateBaseInstances(
           prefix,
           new Array(),
         );
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -596,14 +591,14 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
-        const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(
+        const [model, secondaryEntityManager, schedulerManager] = this._helperGenerateBaseInstances(
           prefix,
           new Array(),
         );
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',
@@ -625,15 +620,13 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
-        const [model, primaryEntityManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
-          entity1,
-        ]);
+        const [model, secondaryEntityManager, schedulerManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
         modelManager.delete(entity1[model.id]);
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           query,
-          primaryEntityManager,
+          schedulerManager,
           this._redis.redis,
           prefix + 'reverse/',
           'field',

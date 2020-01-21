@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import { AntJsSearchOptions } from './options/antjs-search-options';
 import { CacheMode } from './options/cache-mode';
 import { Entity } from '../../model/entity';
-import { KeyGenParams } from '../../model/key-gen-params';
 import { Model } from '../../model/model';
 import { PersistencyDeleteOptions } from './options/persistency-delete-options';
 import { PersistencySearchOptions } from './options/persistency-search-options';
@@ -61,7 +60,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
   /**
    * Model managed.
    */
-  public get model(): Model<TEntity> {
+  protected get model(): Model<TEntity> {
     return this._model;
   }
 
@@ -186,10 +185,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
     if (0 === ids.length) {
       return Promise.resolve(new Array());
     }
-    return this._innerGetByDistinctIdsNotMapped(
-      ids,
-      options,
-    );
+    return this._innerGetByDistinctIdsNotMapped(ids, options);
   }
 
   /**
@@ -226,19 +222,6 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
     await this._innerGetByDistinctIdsNotMappedProcessMissingIds(missingIds, results, options);
 
     return results;
-  }
-
-  /**
-   * Creates a function that creates a lua script to create an entity key from an id.
-   * @param keyGenParams Key generation params.
-   */
-  protected _innerGetKeyGenerationLuaScriptGenerator(keyGenParams: KeyGenParams): (alias: string) => string {
-    const instructions = new Array<(alias: string) => string>();
-    instructions.push(() => '"' + keyGenParams.prefix + '" .. ');
-    instructions.push((alias) => alias);
-    return (alias: string): string => {
-      return instructions.reduce((previousValue, currentValue) => previousValue + currentValue(alias), '');
-    };
   }
 
   /**
@@ -305,7 +288,7 @@ end`;
     options: PersistencyUpdateOptions,
     keyExpression: string,
     entityExpression: string,
-    ttlExpression = 'ttl',
+    ttlExpression: string,
   ): string {
     switch (options.cacheMode) {
       case CacheMode.CacheAndOverwrite:
