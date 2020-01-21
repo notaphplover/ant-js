@@ -74,11 +74,7 @@ export class SingleResultQueryManagerTest implements Test {
   private _helperGenerateBaseInstances(
     prefix: string,
     entities: EntityTestStr[],
-  ): [
-    Model<EntityTestStr>,
-    PrimaryModelManager<EntityTestStr>,
-    SecondaryEntityManagerMock<EntityTestStr>,
-  ] {
+  ): [Model<EntityTestStr>, PrimaryModelManager<EntityTestStr>, SecondaryEntityManagerMock<EntityTestStr>] {
     const model = new AntModel<EntityTestStr>('id', { prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTestStr>(model, entities);
     const primaryManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
@@ -259,7 +255,7 @@ export class SingleResultQueryManagerTest implements Test {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
         const entity2: EntityTestStr = { field: 'sample-2', id: 2 };
-        const [model, primaryManager , secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
+        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
           entity1,
           entity2,
         ]);
@@ -431,10 +427,7 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(
-          prefix,
-          new Array(),
-        );
+        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           model,
@@ -462,10 +455,7 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(
-          prefix,
-          new Array(),
-        );
+        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           model,
@@ -491,10 +481,7 @@ export class SingleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(
-          prefix,
-          new Array(),
-        );
+        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           model,
@@ -548,10 +535,7 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(
-          prefix,
-          new Array(),
-        );
+        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           model,
@@ -579,10 +563,7 @@ export class SingleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(
-          prefix,
-          new Array(),
-        );
+        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           model,

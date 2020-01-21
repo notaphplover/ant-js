@@ -59,11 +59,7 @@ export class MultipleResultQueryManagerTest implements Test {
   private _helperGenerateBaseInstances(
     prefix: string,
     entities: NamedEntity[],
-  ): [
-    Model<NamedEntity>,
-    PrimaryModelManager<NamedEntity>,
-    SecondaryEntityManagerMock<NamedEntity>,
-  ] {
+  ): [Model<NamedEntity>, PrimaryModelManager<NamedEntity>, SecondaryEntityManagerMock<NamedEntity>] {
     const model = new AntModel<NamedEntity>('id', { prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntity>(model, entities);
     const primaryManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);

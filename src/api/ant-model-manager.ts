@@ -143,9 +143,9 @@ export abstract class AntModelManager<
         queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number[] | string[]>,
       );
-      query = (new AntMultipleResultQueryManager<TEntity>(
-        innerQueryManager,
-      ) as ApiMultipleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
+      query = (new AntMultipleResultQueryManager<TEntity>(innerQueryManager) as ApiMultipleResultQueryManager<
+        TEntity
+      >) as TAntQueryManager<TEntity, TResult>;
     } else {
       const innerQueryManager = this._scheduledManager.addSingleResultQuery(
         queryConfig.query as TQuery<number | string>,
@@ -155,9 +155,9 @@ export abstract class AntModelManager<
         queryConfig.entityKeyGen,
         queryConfig.mQuery as TMQuery<number | string>,
       );
-      query = (new AntSingleResultQueryManager<TEntity>(
-        innerQueryManager,
-      ) as ApiSingleResultQueryManager<TEntity>) as TAntQueryManager<TEntity, TResult>;
+      query = (new AntSingleResultQueryManager<TEntity>(innerQueryManager) as ApiSingleResultQueryManager<
+        TEntity
+      >) as TAntQueryManager<TEntity, TResult>;
     }
     return query;
   }

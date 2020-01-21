@@ -21,7 +21,7 @@ export abstract class ModelManagerGenerator<
     ApiModelManagerGeneratorSecodaryManagerOptions<TSecondaryManager>
   >,
   TModelManager extends PrimaryModelManager<Entity>,
-  TSecondaryManager extends SecondaryEntityManager<Entity>,
+  TSecondaryManager extends SecondaryEntityManager<Entity>
 > {
   /**
    * Default redis middleware.

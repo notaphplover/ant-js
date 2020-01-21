@@ -78,12 +78,7 @@ export class AntModelManagerTest implements Test {
         });
         const modelManager = antModelManager.scheduledManager;
 
-        const methodsToTest: Array<keyof SchedulerModelManager<any, Model<any>>> = [
-          'delete',
-          'get',
-          'mDelete',
-          'mGet',
-        ];
+        const methodsToTest: Array<keyof SchedulerModelManager<any, Model<any>>> = ['delete', 'get', 'mDelete', 'mGet'];
 
         for (const methodToTest of methodsToTest) {
           spyOn(modelManager, methodToTest as any).and.returnValue(methodToTest as any);
