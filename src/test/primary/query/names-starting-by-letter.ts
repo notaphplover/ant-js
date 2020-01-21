@@ -1,9 +1,11 @@
 import * as _ from 'lodash';
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { Entity } from '../../../model/entity';
+import { Model } from '../../../model/model';
 import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/secondary-entity-manager-mock';
+import { iterableFilter } from '../../util/iterable-filter';
 
 export type NamedEntity = { id: number; name: string } & Entity;
 
@@ -15,13 +17,14 @@ export class NamesStartingByLetter extends AntMultipleResultPrimaryQueryManager<
 
   /**
    * Creates a new NamesStartingByLetter.
-   * @param primaryEntityManager Primary entity manager.
+   * @param manager Primary entity manager.
    * @param redis Redis connection.
    * @param reverseHashKey Reverse hash key.
    * @param prefix Query prefix.
    */
   public constructor(
-    primaryEntityManager: PrimaryEntityManager<NamedEntity>,
+    model: Model<NamedEntity>,
+    manager: PrimaryEntityManager<NamedEntity>,
     secondaryModelManagerMock: SecondaryEntityManagerMock<NamedEntity>,
     redis: RedisMiddleware,
     reverseHashKey: string,
@@ -40,14 +43,17 @@ export class NamesStartingByLetter extends AntMultipleResultPrimaryQueryManager<
       }
     };
     super(
+      model,
+      manager,
       (params: any) =>
         Promise.resolve(
           _.map(
-            secondaryModelManagerMock.store.filter((entity) => entity.name.startsWith(params.name[0])),
+            iterableFilter(secondaryModelManagerMock.store.values(), (entity) =>
+              entity.name.startsWith(params.name[0]),
+            ),
             (entity) => entity.id,
           ),
         ),
-      primaryEntityManager,
       redis,
       reverseHashKey,
       key,

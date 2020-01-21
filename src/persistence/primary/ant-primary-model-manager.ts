@@ -70,24 +70,12 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
   }
 
   /**
-   * Returns the queries managed.
-   * @returns Queries managed.
-   */
-  public getQueries(): Array<PrimaryQueryManager<TEntity>> {
-    const copy = new Array<PrimaryQueryManager<TEntity>>(this._queryManagers.length);
-    for (let i = 0; i < this._queryManagers.length; ++i) {
-      copy[i] = this._queryManagers[i];
-    }
-    return copy;
-  }
-
-  /**
-   * Deletes an entity from the cache layer.
+   * Deletes an entity
    * @param id id of the entity to delete.
    * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  public delete(id: number | string, options: PersistencyDeleteOptions = new AntJsDeleteOptions()): Promise<any> {
+  public async delete(id: number | string, options: PersistencyDeleteOptions = new AntJsDeleteOptions()): Promise<any> {
     return this._luaDeleteCachedQuery.eval(options, (scriptArg: string) => {
       const evalParams = [scriptArg, this._queryManagers.length];
       for (const queryManager of this._queryManagers) {
@@ -107,7 +95,10 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @param options Delete options.
    * @returns Promise of entities deleted.
    */
-  public mDelete(ids: number[] | string[], options: PersistencyDeleteOptions = new AntJsDeleteOptions()): Promise<any> {
+  public async mDelete(
+    ids: number[] | string[],
+    options: PersistencyDeleteOptions = new AntJsDeleteOptions(),
+  ): Promise<any> {
     if (null == ids || 0 === ids.length) {
       return Promise.resolve();
     }

@@ -157,7 +157,7 @@ export abstract class ModelManagerGenerator<
   protected _generateMultipleResultQueryManagers<TEntity extends Entity>(
     options: TOptions,
     secondaryManager: TSecondaryManager,
-    modelManager: TModelManager,
+    primaryManager: TModelManager,
   ): Map<string, MultipleResultPrimaryQueryManager<TEntity>> {
     const queryManagersMap = new Map<string, MultipleResultPrimaryQueryManager<TEntity>>();
     const mrqmOptions = options.redisOptions.multipleResultQueryManagersOptions;
@@ -169,11 +169,12 @@ export abstract class ModelManagerGenerator<
     for (const property of mrqmOptions.properties) {
       const queryKeyGen = this._buildQueryKeyGen(mrqmOptions.queryPrefix, property);
       const queryManager = new AntMultipleResultPrimaryQueryManager(
+        options.model,
+        primaryManager,
         (params: any) =>
           this._searchEntitiesByProperty(secondaryManager, property, params[property]).then((entities) =>
             _.map(entities, (entity) => entity[options.model.id]),
           ),
-        modelManager,
         options.redisOptions.redis,
         mrqmOptions.reverseHashKey + property,
         queryKeyGen,
@@ -219,7 +220,7 @@ export abstract class ModelManagerGenerator<
   protected _generateSingleResultQueryManagers<TEntity extends Entity>(
     options: TOptions,
     secondaryManager: TSecondaryManager,
-    modelManager: TModelManager,
+    primaryManager: TModelManager,
   ): Map<string, SingleResultPrimaryQueryManager<TEntity>> {
     const queryManagersMap = new Map<string, SingleResultPrimaryQueryManager<TEntity>>();
     const srqmOptions = options.redisOptions.singleResultQueryManagersOptions;
@@ -231,6 +232,8 @@ export abstract class ModelManagerGenerator<
     for (const property of srqmOptions.properties) {
       const queryKeyGen = this._buildQueryKeyGen(srqmOptions.queryPrefix, property);
       const queryManager = new AntSingleResultPrimaryQueryManager(
+        options.model,
+        primaryManager,
         (params: any) =>
           this._searchEntityByProperty(secondaryManager, property, params[property]).then((entity) => {
             if (null == entity) {
@@ -238,7 +241,6 @@ export abstract class ModelManagerGenerator<
             }
             return entity[options.model.id];
           }),
-        modelManager,
         options.redisOptions.redis,
         srqmOptions.reverseHashKey + property,
         queryKeyGen,

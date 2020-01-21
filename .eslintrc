@@ -54,6 +54,7 @@
     "prefer-arrow-callback": "error",
     "prefer-promise-reject-errors": "error",
     "quotes": [ "error", "single", { "avoidEscape": true } ],
+    "semi": "error",
     "sort-imports": "error",
     "sort-keys": "error",
     "sort-vars": "error"

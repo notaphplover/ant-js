@@ -22,6 +22,13 @@ export class AntJsModelManagerGenerator extends ModelManagerGenerator<
   /**
    * @inheritdoc
    */
+  protected _generateDefaultSecondaryManager(options: TModelManagerOptions): SecondaryEntityManagerMock<Entity> {
+    return new SecondaryEntityManagerMock(options.model);
+  }
+
+  /**
+   * @inheritdoc
+   */
   protected _generateModelManager(
     options: TModelManagerOptions,
     secondaryManager: SecondaryEntityManagerMock<Entity>,
@@ -29,16 +36,9 @@ export class AntJsModelManagerGenerator extends ModelManagerGenerator<
     return new AntPrimaryModelManager(
       options.model,
       options.redisOptions.redis,
-      options.redisOptions.useEntityNegativeCache || true,
+      options.redisOptions.useEntityNegativeCache ?? true,
       secondaryManager,
     );
-  }
-
-  /**
-   * @inheritdoc
-   */
-  protected _generateDefaultSecondaryManager(options: TModelManagerOptions): SecondaryEntityManagerMock<Entity> {
-    return new SecondaryEntityManagerMock(options.model);
   }
 
   /**
@@ -49,11 +49,15 @@ export class AntJsModelManagerGenerator extends ModelManagerGenerator<
     property: string,
     value: any,
   ): Promise<TEntity[]> {
-    return Promise.resolve(
-      (secondaryManager as SecondaryEntityManagerMock<TEntity>).store.filter(
-        (entity: TEntity) => value === entity[property],
-      ),
-    );
+    return new Promise<TEntity[]>((resolve) => {
+      const entitiesByProperty = new Array<TEntity>();
+      for (const entity of (secondaryManager as SecondaryEntityManagerMock<TEntity>).store.values()) {
+        if (value === entity[property]) {
+          entitiesByProperty.push(entity);
+        }
+      }
+      resolve(entitiesByProperty);
+    });
   }
 
   /**
@@ -64,10 +68,14 @@ export class AntJsModelManagerGenerator extends ModelManagerGenerator<
     property: string,
     value: any,
   ): Promise<TEntity> {
-    return Promise.resolve(
-      (secondaryManager as SecondaryEntityManagerMock<TEntity>).store.find(
-        (entity: TEntity) => value === entity[property],
-      ),
-    );
+    return new Promise<TEntity>((resolve) => {
+      for (const entity of (secondaryManager as SecondaryEntityManagerMock<TEntity>).store.values()) {
+        if (value === entity[property]) {
+          resolve(entity);
+          return;
+        }
+      }
+      resolve(null);
+    });
   }
 }

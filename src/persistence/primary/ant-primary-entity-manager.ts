@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import { AntJsSearchOptions } from './options/antjs-search-options';
 import { CacheMode } from './options/cache-mode';
 import { Entity } from '../../model/entity';
-import { KeyGenParams } from '../../model/key-gen-params';
 import { Model } from '../../model/model';
 import { PersistencyDeleteOptions } from './options/persistency-delete-options';
 import { PersistencySearchOptions } from './options/persistency-search-options';
@@ -11,6 +10,7 @@ import { PrimaryEntityManager } from './primary-entity-manager';
 import { RedisMiddleware } from './redis-middleware';
 import { SecondaryEntityManager } from '../secondary/secondary-entity-manager';
 import { VOID_RESULT_STRING } from './lua-constants';
+import { luaKeyGenerator } from './lua-key-generator';
 
 export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager extends SecondaryEntityManager<TEntity>>
   implements PrimaryEntityManager<TEntity> {
@@ -54,13 +54,13 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
     this._redis = redis;
     this._successor = successor;
 
-    this._luaKeyGeneratorFromId = this._innerGetKeyGenerationLuaScriptGenerator(this.model.keyGen);
+    this._luaKeyGeneratorFromId = luaKeyGenerator(this.model.keyGen);
   }
 
   /**
    * Model managed.
    */
-  public get model(): Model<TEntity> {
+  protected get model(): Model<TEntity> {
     return this._model;
   }
 
@@ -71,14 +71,6 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
    */
   public get(id: number | string, options: PersistencySearchOptions = new AntJsSearchOptions()): Promise<TEntity> {
     return this._innerGetById(id, options);
-  }
-
-  /**
-   * Gets the lua key generator from id.
-   * @returns Lua key generator
-   */
-  public getLuaKeyGeneratorFromId(): (alias: string) => string {
-    return this._luaKeyGeneratorFromId;
   }
 
   /**
@@ -193,11 +185,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
     if (0 === ids.length) {
       return Promise.resolve(new Array());
     }
-    return this._innerGetByDistinctIdsNotMapped(
-      // Get the different ones.
-      ids,
-      options,
-    );
+    return this._innerGetByDistinctIdsNotMapped(ids, options);
   }
 
   /**
@@ -210,6 +198,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
     ids: number[] | string[],
     options: PersistencySearchOptions,
   ): Promise<TEntity[]> {
+    // Get the different ones.
     ids = Array.from(new Set<number | string>(ids)) as number[] | string[];
     const keysArray = _.map(ids as Array<number | string>, this._getKey.bind(this));
     const entities: string[] = await this._redis.mget(...keysArray);
@@ -233,19 +222,6 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
     await this._innerGetByDistinctIdsNotMappedProcessMissingIds(missingIds, results, options);
 
     return results;
-  }
-
-  /**
-   * Creates a function that creates a lua script to create an entity key from an id.
-   * @param keyGenParams Key generation params.
-   */
-  protected _innerGetKeyGenerationLuaScriptGenerator(keyGenParams: KeyGenParams): (alias: string) => string {
-    const instructions = new Array<(alias: string) => string>();
-    instructions.push(() => '"' + keyGenParams.prefix + '" .. ');
-    instructions.push((alias) => alias);
-    return (alias: string): string => {
-      return instructions.reduce((previousValue, currentValue) => previousValue + currentValue(alias), '');
-    };
   }
 
   /**
@@ -312,7 +288,7 @@ end`;
     options: PersistencyUpdateOptions,
     keyExpression: string,
     entityExpression: string,
-    ttlExpression = 'ttl',
+    ttlExpression: string,
   ): string {
     switch (options.cacheMode) {
       case CacheMode.CacheAndOverwrite:

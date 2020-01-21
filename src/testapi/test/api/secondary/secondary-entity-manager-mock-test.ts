@@ -111,7 +111,7 @@ export class SecondaryEntityManagerMockTest implements Test {
       const model = new AntModel('id', { prefix: '' });
       const store = [{ id: 0 }];
       const manager = new SecondaryEntityManagerMock(model, store);
-      expect(manager.store).toBe(store);
+      expect([...manager.store.values()]).toEqual(store);
       done();
     });
   }

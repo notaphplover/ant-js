@@ -53,7 +53,6 @@ export class PrimaryEntityManagerTest implements Test {
       this._itDoesNotCacheEntityIfNoCacheOptionIsProvided();
       this._itDoesNotSupportUndefinedCacheOptionAtCacheEntities();
       this._itDoesNotSupportUndefinedCacheOptionAtCacheEntity();
-      this._itGeneratesALuaKeyGeneratorUsingAPrefix();
       this._itInvokesEntityToPrimaryAtGet();
       this._itInvokesEntityToPrimaryAtMGet();
       this._itInvokesPrimaryToEntityAtGet();
@@ -123,7 +122,7 @@ export class PrimaryEntityManagerTest implements Test {
         ]);
 
         await primaryEntityManager.get(entity1[model.id]);
-        secondaryEntityManager.store[0] = entity1Modified;
+        secondaryEntityManager.store.set(entity1Modified[model.id], entity1Modified);
 
         expect(
           await primaryEntityManager.get(
@@ -156,7 +155,7 @@ export class PrimaryEntityManagerTest implements Test {
           [entity1[model.id]],
           new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.NoCache)),
         );
-        secondaryEntityManager.store.pop();
+        secondaryEntityManager.store.clear();
 
         expect(await primaryEntityManager.get(entity1[model.id])).toBe(null);
         done();
@@ -183,7 +182,7 @@ export class PrimaryEntityManagerTest implements Test {
           entity1[model.id],
           new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.NoCache)),
         );
-        secondaryEntityManager.store.pop();
+        secondaryEntityManager.store.clear();
 
         expect(await primaryEntityManager.get(entity1[model.id])).toBe(null);
         done();
@@ -255,36 +254,6 @@ export class PrimaryEntityManagerTest implements Test {
         } catch {
           done();
         }
-      },
-      MAX_SAFE_TIMEOUT,
-    );
-  }
-
-  private _itGeneratesALuaKeyGeneratorUsingAPrefix(): void {
-    const itsName = 'generatesALuaKeyGeneratorUsingAPrefix';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(
-      itsName,
-      async (done) => {
-        await this._beforeAllPromise;
-        const entity: EntityTest = { field: 'sample', id: 0 };
-        const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
-        await primaryEntityManager.get(entity[model.id]);
-        const luaKey = 'key';
-        const luaExpression = primaryEntityManager.getLuaKeyGeneratorFromId()(luaKey);
-        const valueFound = await this._redis.redis.eval(
-          `local ${luaKey} = ${entity.id}
-return redis.call('get', ${luaExpression})`,
-          0,
-        );
-        if (null == valueFound) {
-          fail();
-          done();
-          return;
-        }
-        const entityFound = model.primaryToEntity(JSON.parse(valueFound));
-        expect(entityFound).toEqual(entity);
-        done();
       },
       MAX_SAFE_TIMEOUT,
     );

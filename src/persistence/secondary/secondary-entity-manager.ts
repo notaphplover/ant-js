@@ -6,10 +6,18 @@ export interface SecondaryEntityManager<TEntity extends Entity> {
    * Model of the manager.
    */
   readonly model: Model<TEntity>;
+
   /**
-   * Gets a model by its id.
-   * @param id: Model's id.
-   * @returns Model found.
+   * Detetes an entity by its id.
+   * @param id Entity's id.
+   * @returns Promise of entity deleted.
+   */
+  delete(id: number | string): Promise<any>;
+
+  /**
+   * Gets an entity by its id.
+   * @param id: Entity's id.
+   * @returns Entity found.
    */
   getById(id: number | string): Promise<TEntity>;
 
@@ -26,4 +34,11 @@ export interface SecondaryEntityManager<TEntity extends Entity> {
    * @returns Models found.
    */
   getByIdsOrderedAsc(ids: number[] | string[]): Promise<TEntity[]>;
+
+  /**
+   * Deletes entities from their ids.
+   * @param ids Ids of the entities to delete.
+   * @returns Promise of entities deleted.
+   */
+  mDelete(ids: string[] | number[]): Promise<any>;
 }

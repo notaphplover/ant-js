@@ -37,7 +37,7 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
       for (const resultJson of resultsJSON) {
         this._getProcessParseableResult(key, finalResults, missingIds, resultJson);
       }
-      finalResults = this._primaryEntityManager.model.mPrimaryToEntity(finalResults);
+      finalResults = this._model.mPrimaryToEntity(finalResults);
       await this._getProcessMissingOptions(missingIds, finalResults, options);
       return finalResults;
     }
@@ -73,7 +73,7 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
       },
     );
 
-    finalResults = this._primaryEntityManager.model.mPrimaryToEntity(finalResults);
+    finalResults = this._model.mPrimaryToEntity(finalResults);
 
     if (0 < missingQueriesKeys.length) {
       const queriesMissingIds = await this._mGetProcessQueriesNotFound(missingQueriesParams, missingQueriesKeys);
@@ -98,7 +98,7 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
     options: PersistencySearchOptions,
   ): Promise<void> {
     if (0 < missingIds.length) {
-      const missingEntities = await this._primaryEntityManager.mGet(missingIds, options);
+      const missingEntities = await this._manager.mGet(missingIds, options);
       for (const missingEntity of missingEntities) {
         finalResults.push(missingEntity);
       }
@@ -147,7 +147,7 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
     const ids = await this._query(params);
     if (null != ids && ids.length > 0) {
       this._redis.eval(this._getProcessQueryNotFoundBuildMSetParams(ids, key));
-      return this._primaryEntityManager.mGet(ids, options);
+      return this._manager.mGet(ids, options);
     } else {
       this._redis.eval(this._luaSetVoidQueryGenerator(), 1, key);
       return new Array();

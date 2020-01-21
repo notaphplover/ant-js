@@ -14,6 +14,8 @@ import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondar
 import { SingleResultPrimaryQueryManager } from '../../persistence/primary/query/single-result-primary-query-manager';
 import { SingleResultQueryByFieldManager } from './query/single-result-query-by-field-manager';
 import { Test } from '../../testapi/api/test';
+import { iterableFilter } from '../util/iterable-filter';
+import { iterableFind } from '../util/iterable-find';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 
@@ -24,6 +26,14 @@ interface EntityTest extends Entity {
 }
 const modelTestProperties = ['id', 'numberField', 'strField'];
 const modelTestGenerator = (prefix: string): AntModel<EntityTest> => new AntModel<EntityTest>('id', { prefix });
+
+const entityByStrFieldParam = <T extends number | string>(
+  model: Model<Entity>,
+  secondaryEntityManager: SecondaryEntityManagerMock<Entity>,
+) => (params: any): Promise<T> => {
+  const entity = iterableFind(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField);
+  return Promise.resolve(entity ? entity[model.id] : null);
+};
 
 export class ModelManagerTest implements Test {
   /**
@@ -65,7 +75,6 @@ export class ModelManagerTest implements Test {
       this._itMustDeleteZeroEntities();
       this._itMustGetAnEntity();
       this._itMustGetMultipleEntities();
-      this._itMustGetQueriesManaged();
       this._itMustInvokeEntityToPrimaryOnUpdate();
       this._itMustSyncAMRQWhenDeletingAnEntity();
       this._itMustSyncAMRQWhenDeletingMultipleEntities();
@@ -141,14 +150,9 @@ export class ModelManagerTest implements Test {
         });
 
         const singleResultQueryManager = new SingleResultQueryByFieldManager<EntityTest>(
-          (params: any) =>
-            new Promise((resolve) => {
-              const entity = secondaryEntityManager.store.find(
-                (value: EntityTest) => value.strField === params.strField,
-              );
-              resolve(entity ? entity[model.id] : null);
-            }),
+          model,
           modelManager as PrimaryModelManager<EntityTest>,
+          entityByStrFieldParam(model, secondaryEntityManager),
           this._redis.redis,
           prefix + 'reverse/strField/',
           'strField',
@@ -223,7 +227,7 @@ export class ModelManagerTest implements Test {
           },
         });
 
-        secondaryEntityManager.store.shift();
+        await secondaryEntityManager.delete(entity1.id);
         await modelManager.delete(entity1.id);
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
@@ -289,7 +293,7 @@ export class ModelManagerTest implements Test {
           },
         });
 
-        secondaryEntityManager.store.shift();
+        await secondaryEntityManager.delete(entity1.id);
         await modelManager.delete(entity1.id);
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
@@ -358,8 +362,7 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        secondaryEntityManager.store.shift();
-        secondaryEntityManager.store.shift();
+        await secondaryEntityManager.mDelete([entity1.id, entity2.id]);
         await modelManager.mDelete([entity1.id, entity2.id]);
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
@@ -438,8 +441,7 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        secondaryEntityManager.store.shift();
-        secondaryEntityManager.store.shift();
+        await secondaryEntityManager.mDelete([entity1.id, entity2.id]);
         await modelManager.mDelete([entity1.id, entity2.id]);
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
@@ -647,51 +649,6 @@ export class ModelManagerTest implements Test {
     );
   }
 
-  private _itMustGetQueriesManaged(): void {
-    const itsName = 'mustGetQueriesManaged';
-    const prefix = this._declareName + '/' + itsName + '/';
-    it(
-      itsName,
-      async (done) => {
-        await this._beforeAllPromise;
-
-        const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model);
-        const [modelManager] = this._modelManagerGenerator.generateModelManager({
-          model,
-          redisOptions: {
-            useEntityNegativeCache: true,
-          },
-          secondaryOptions: {
-            manager: secondaryEntityManager,
-          },
-        });
-
-        const singleResultQueryManager = new SingleResultQueryByFieldManager<EntityTest>(
-          (params: any) =>
-            new Promise((resolve) => {
-              const entity = secondaryEntityManager.store.find(
-                (value: EntityTest) => value.strField === params.strField,
-              );
-              resolve(entity ? entity[model.id] : null);
-            }),
-          modelManager as PrimaryModelManager<EntityTest>,
-          this._redis.redis,
-          prefix + 'reverse/strField/',
-          'strField',
-          prefix + 'query/strField/',
-        );
-
-        modelManager.addQuery(singleResultQueryManager);
-        const queriesManaged = modelManager.getQueries();
-
-        expect(queriesManaged).toEqual([singleResultQueryManager]);
-        done();
-      },
-      MAX_SAFE_TIMEOUT,
-    );
-  }
-
   private _itMustSyncAMRQWhenDeletingAnEntity(): void {
     const itsName = 'mustSyncAMRQWhenDeletingAnEntity';
     const prefix = this._declareName + '/' + itsName + '/';
@@ -727,12 +684,15 @@ export class ModelManagerTest implements Test {
           },
         });
         const query = new MultipleResultQueryByFieldManager(
-          (params: any) =>
-            new Promise((resolve) => {
-              const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
-              resolve(_.map(entities, (entity) => entity.id));
-            }),
+          model,
           modelManager as PrimaryModelManager<EntityTest>,
+          (params: any) =>
+            Promise.resolve(
+              _.map(
+                iterableFilter(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField),
+                (entity) => entity.id,
+              ),
+            ),
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -740,7 +700,7 @@ export class ModelManagerTest implements Test {
         );
         modelManager.addQuery(query);
         await query.mGet([entity1, entity2, entity3]);
-        secondaryEntityManager.store.shift();
+        await secondaryEntityManager.delete(entity1.id);
         await modelManager.delete(entity1.id);
         expect(await modelManager.get(entity1.id)).toBeNull();
         expect(await modelManager.get(entity2.id)).toEqual(entity2);
@@ -788,12 +748,15 @@ export class ModelManagerTest implements Test {
           },
         });
         const query = new MultipleResultQueryByFieldManager(
-          (params: any) =>
-            new Promise((resolve) => {
-              const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
-              resolve(_.map(entities, (entity) => entity.id));
-            }),
+          model,
           modelManager as PrimaryModelManager<EntityTest>,
+          (params: any) =>
+            Promise.resolve(
+              _.map(
+                iterableFilter(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField),
+                (entity) => entity.id,
+              ),
+            ),
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -801,8 +764,7 @@ export class ModelManagerTest implements Test {
         );
         modelManager.addQuery(query);
         await query.mGet([entity1, entity2, entity3]);
-        secondaryEntityManager.store.pop();
-        secondaryEntityManager.store.shift();
+        await secondaryEntityManager.mDelete([entity1.id, entity3.id]);
         await modelManager.mDelete([entity1.id, entity3.id]);
         expect(await modelManager.get(entity1.id)).toBeNull();
         expect(await modelManager.get(entity2.id)).toEqual(entity2);
@@ -855,12 +817,15 @@ export class ModelManagerTest implements Test {
           },
         });
         const query = new MultipleResultQueryByFieldManager(
-          (params: any) =>
-            new Promise((resolve) => {
-              const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
-              resolve(_.map(entities, (entity) => entity.id));
-            }),
+          model,
           modelManager as PrimaryModelManager<EntityTest>,
+          (params: any) =>
+            Promise.resolve(
+              _.map(
+                iterableFilter(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField),
+                (entity) => entity.id,
+              ),
+            ),
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -868,7 +833,7 @@ export class ModelManagerTest implements Test {
         );
         modelManager.addQuery(query);
         await query.mGet([entity1, entity2, entity3]);
-        secondaryEntityManager.store[0] = entity1After;
+        secondaryEntityManager.store.set(entity1After[model.id], entity1After);
         await modelManager.update(entity1After);
         const [entity1SearchResult, entity2SearchResult, entity3SearchResult] = await modelManager.mGet([
           entity1After.id,
@@ -937,12 +902,15 @@ export class ModelManagerTest implements Test {
           },
         });
         const query = new MultipleResultQueryByFieldManager(
-          (params: any) =>
-            new Promise((resolve) => {
-              const entities = secondaryEntityManager.store.filter((entity) => params.strField === entity.strField);
-              resolve(_.map(entities, (entity) => entity.id));
-            }),
+          model,
           modelManager as PrimaryModelManager<EntityTest>,
+          (params: any) =>
+            Promise.resolve(
+              _.map(
+                iterableFilter(secondaryEntityManager.store.values(), (entity) => params.strField === entity.strField),
+                (entity) => entity.id,
+              ),
+            ),
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -950,8 +918,8 @@ export class ModelManagerTest implements Test {
         );
         modelManager.addQuery(query);
         await query.mGet([entity1, entity2, entity3]);
-        secondaryEntityManager.store[0] = entity1After;
-        secondaryEntityManager.store[2] = entity3After;
+        secondaryEntityManager.store.set(entity1After[model.id], entity1After);
+        secondaryEntityManager.store.set(entity3After[model.id], entity3After);
         await modelManager.mUpdate([entity1After, entity3After]);
         const [entity1SearchResult, entity2SearchResult, entity3SearchResult] = await modelManager.mGet([
           entity1After.id,
@@ -1006,12 +974,9 @@ export class ModelManagerTest implements Test {
           },
         });
         const query = new SingleResultQueryByFieldManager(
-          (params: any) =>
-            new Promise((resolve) => {
-              const entity = secondaryEntityManager.store.find((entity) => params.strField === entity.strField);
-              resolve(entity ? entity.id : null);
-            }),
+          model,
           modelManager as PrimaryModelManager<EntityTest>,
+          entityByStrFieldParam(model, secondaryEntityManager),
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1019,7 +984,7 @@ export class ModelManagerTest implements Test {
         );
         modelManager.addQuery(query);
         await Promise.all([query.get(entity1), query.get(entity2)]);
-        secondaryEntityManager.store.shift();
+        await secondaryEntityManager.delete(entity1.id);
         await modelManager.delete(entity1.id);
         expect(await modelManager.get(entity1.id)).toBeNull();
         expect(await modelManager.get(entity2.id)).toEqual(entity2);
@@ -1061,12 +1026,9 @@ export class ModelManagerTest implements Test {
           },
         });
         const query = new SingleResultQueryByFieldManager(
-          (params: any) =>
-            new Promise((resolve) => {
-              const entity = secondaryEntityManager.store.find((entity) => params.strField === entity.strField);
-              resolve(entity ? entity.id : null);
-            }),
+          model,
           modelManager as PrimaryModelManager<EntityTest>,
+          entityByStrFieldParam(model, secondaryEntityManager),
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1074,7 +1036,7 @@ export class ModelManagerTest implements Test {
         );
         modelManager.addQuery(query);
         await Promise.all([query.get(entity1), query.get(entity2)]);
-        secondaryEntityManager.store.length = 0;
+        await secondaryEntityManager.mDelete([entity1.id, entity2.id]);
         await modelManager.mDelete([entity1.id, entity2.id]);
         expect(await modelManager.get(entity1.id)).toBeNull();
         expect(await modelManager.get(entity2.id)).toBeNull();
@@ -1121,12 +1083,9 @@ export class ModelManagerTest implements Test {
           },
         });
         const query = new SingleResultQueryByFieldManager(
-          (params: any) =>
-            new Promise((resolve) => {
-              const entity = secondaryEntityManager.store.find((entity) => params.strField === entity.strField);
-              resolve(entity ? entity.id : null);
-            }),
+          model,
           modelManager as PrimaryModelManager<EntityTest>,
+          entityByStrFieldParam(model, secondaryEntityManager),
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1134,7 +1093,7 @@ export class ModelManagerTest implements Test {
         );
         modelManager.addQuery(query);
         await Promise.all([query.get(entity1), query.get(entity2)]);
-        secondaryEntityManager.store[0] = entity1After;
+        secondaryEntityManager.store.set(entity1After[model.id], entity1After);
         await modelManager.update(entity1After);
         expect(await modelManager.get(entity1After.id)).toEqual(entity1After);
         expect(await modelManager.get(entity2.id)).toEqual(entity2);
@@ -1187,12 +1146,9 @@ export class ModelManagerTest implements Test {
           },
         });
         const query = new SingleResultQueryByFieldManager(
-          (params: any) =>
-            new Promise((resolve) => {
-              const entity = secondaryEntityManager.store.find((entity) => params.strField === entity.strField);
-              resolve(entity ? entity.id : null);
-            }),
+          model,
           modelManager as PrimaryModelManager<EntityTest>,
+          entityByStrFieldParam(model, secondaryEntityManager),
           this._redis.redis,
           prefix + 'reverse/',
           'strField',
@@ -1200,8 +1156,8 @@ export class ModelManagerTest implements Test {
         );
         modelManager.addQuery(query);
         await Promise.all([query.get(entity1), query.get(entity2)]);
-        secondaryEntityManager.store[0] = entity1After;
-        secondaryEntityManager.store[1] = entity2After;
+        secondaryEntityManager.store.set(entity1After[model.id], entity1After);
+        secondaryEntityManager.store.set(entity2After[model.id], entity2After);
         await modelManager.mUpdate([entity1After, entity2After]);
         expect(await modelManager.get(entity1After.id)).toEqual(entity1After);
         expect(await modelManager.get(entity2After.id)).toEqual(entity2After);
