@@ -29,10 +29,10 @@ export class AntScheduleModelManager<
    */
   protected _secondaryManager: TSecondaryManager;
 
-  public constructor(model: TModel, primaryManager: TPrimaryManager, secondaryManager: TSecondaryManager) {
+  public constructor(model: TModel, primaryManager: TPrimaryManager, secondaryManager?: TSecondaryManager) {
     this._model = model;
     this._primaryManager = primaryManager;
-    this._secondaryManager = secondaryManager;
+    this._secondaryManager = secondaryManager ?? null;
   }
 
   /**

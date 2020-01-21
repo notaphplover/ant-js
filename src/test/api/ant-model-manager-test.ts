@@ -3,8 +3,9 @@ import { AntModel } from '../../model/ant-model';
 import { AntQueryManager } from '../../api/query/ant-query-manager';
 import { Entity } from '../../model/entity';
 import { MinimalAntModelManager } from './minimal-ant-model-manager';
-import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
+import { Model } from '../../model/model';
 import { RedisWrapper } from '../primary/redis-wrapper';
+import { SchedulerModelManager } from '../../persistence/scheduler/scheduler-model-manager';
 import { Test } from '../../testapi/api/test';
 import { iterableFilter } from '../util/iterable-filter';
 import { iterableFind } from '../util/iterable-find';
@@ -75,9 +76,14 @@ export class AntModelManagerTest implements Test {
         antModelManager.config({
           redis: this._redis.redis,
         });
-        const modelManager = antModelManager.primaryManager;
+        const modelManager = antModelManager.scheduledManager;
 
-        const methodsToTest = ['delete', 'get', 'mDelete', 'mGet'] as Array<keyof PrimaryModelManager<any>>;
+        const methodsToTest: Array<keyof SchedulerModelManager<any, Model<any>>> = [
+          'delete',
+          'get',
+          'mDelete',
+          'mGet',
+        ];
 
         for (const methodToTest of methodsToTest) {
           spyOn(modelManager, methodToTest as any).and.returnValue(methodToTest as any);
