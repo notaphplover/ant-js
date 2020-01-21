@@ -5,6 +5,7 @@ import { Entity } from '../../../model/entity';
 import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { PrimaryEntityManager } from '../primary-entity-manager';
 import { RedisMiddleware } from '../redis-middleware';
+import { luaKeyGenerator } from '../lua-key-generator';
 
 export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResult extends QueryResult>
   implements BasePrimaryQueryManager<TEntity, TResult<TEntity, TQueryResult>>, PrimaryQueryManager<TEntity> {
@@ -65,7 +66,7 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
     this._reverseHashKey = reverseHashKey;
     this._queryKeyGen = queryKeyGen;
     this._entityKeyGen = entityKeyGen ? entityKeyGen : queryKeyGen;
-    this._luaKeyGeneratorFromId = this._primaryEntityManager.getLuaKeyGeneratorFromId();
+    this._luaKeyGeneratorFromId = luaKeyGenerator(this._primaryEntityManager.model.keyGen);
 
     this._setMQuery(query, mQuery);
   }

@@ -11,6 +11,7 @@ import { PrimaryEntityManager } from './primary-entity-manager';
 import { RedisMiddleware } from './redis-middleware';
 import { SecondaryEntityManager } from '../secondary/secondary-entity-manager';
 import { VOID_RESULT_STRING } from './lua-constants';
+import { luaKeyGenerator } from './lua-key-generator';
 
 export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager extends SecondaryEntityManager<TEntity>>
   implements PrimaryEntityManager<TEntity> {
@@ -54,7 +55,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
     this._redis = redis;
     this._successor = successor;
 
-    this._luaKeyGeneratorFromId = this._innerGetKeyGenerationLuaScriptGenerator(this.model.keyGen);
+    this._luaKeyGeneratorFromId = luaKeyGenerator(this.model.keyGen);
   }
 
   /**
@@ -71,14 +72,6 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
    */
   public get(id: number | string, options: PersistencySearchOptions = new AntJsSearchOptions()): Promise<TEntity> {
     return this._innerGetById(id, options);
-  }
-
-  /**
-   * Gets the lua key generator from id.
-   * @returns Lua key generator
-   */
-  public getLuaKeyGeneratorFromId(): (alias: string) => string {
-    return this._luaKeyGeneratorFromId;
   }
 
   /**
@@ -194,7 +187,6 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
       return Promise.resolve(new Array());
     }
     return this._innerGetByDistinctIdsNotMapped(
-      // Get the different ones.
       ids,
       options,
     );
@@ -210,6 +202,7 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
     ids: number[] | string[],
     options: PersistencySearchOptions,
   ): Promise<TEntity[]> {
+    // Get the different ones.
     ids = Array.from(new Set<number | string>(ids)) as number[] | string[];
     const keysArray = _.map(ids as Array<number | string>, this._getKey.bind(this));
     const entities: string[] = await this._redis.mget(...keysArray);

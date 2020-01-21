@@ -27,10 +27,4 @@ export interface PrimaryEntityManager<TEntity extends Entity> extends PrimaryEnt
    * Model of the manager.
    */
   readonly model: Model<TEntity>;
-
-  /**
-   * Gets the lua key generator from id.
-   * @returns Lua key generator
-   */
-  getLuaKeyGeneratorFromId(): (alias: string) => string;
 }
