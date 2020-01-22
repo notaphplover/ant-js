@@ -59,7 +59,7 @@
 					<a href="schedulermodelmanager.html">SchedulerModelManager</a>
 				</li>
 			</ul>
-			<h1>Interface SchedulerModelManager&lt;TEntity, TModel&gt;</h1>
+			<h1>Interface SchedulerModelManager&lt;TEntity&gt;</h1>
 		</div>
 	</div>
 </header>
@@ -71,9 +71,6 @@
 				<ul class="tsd-type-parameters">
 					<li>
 						<h4>TEntity<span class="tsd-signature-symbol">: </span><a href="entity.html" class="tsd-signature-type">Entity</a></h4>
-					</li>
-					<li>
-						<h4>TModel<span class="tsd-signature-symbol">: </span><a href="model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -120,13 +117,13 @@
 					<a name="addmultipleresultquery" class="tsd-anchor"></a>
 					<h3>add<wbr>Multiple<wbr>Result<wbr>Query</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Multiple<wbr>Result<wbr>Query&lt;TResult&gt;<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><a href="../globals.html#tquery" class="tsd-signature-type">TQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span>, redis<span class="tsd-signature-symbol">: </span><a href="redismiddleware.html" class="tsd-signature-type">RedisMiddleware</a>, reverseHashKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, queryKeyGen<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, entityKeyGen<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, mquery<span class="tsd-signature-symbol">: </span><a href="../globals.html#tmquery" class="tsd-signature-type">TMQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="multipleresultprimaryquerymanager.html" class="tsd-signature-type">MultipleResultPrimaryQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Multiple<wbr>Result<wbr>Query&lt;TResult&gt;<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><a href="../globals.html#tquery" class="tsd-signature-type">TQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span>, redis<span class="tsd-signature-symbol">: </span><a href="redismiddleware.html" class="tsd-signature-type">RedisMiddleware</a>, reverseHashKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, queryKeyGen<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span>, entityKeyGen<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span>, mquery<span class="tsd-signature-symbol">: </span><a href="../globals.html#tmquery" class="tsd-signature-type">TMQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="multipleresultprimaryquerymanager.html" class="tsd-signature-type">MultipleResultPrimaryQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/scheduler/scheduler-model-manager.ts#L53">persistence/scheduler/scheduler-model-manager.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/b41f158/src/persistence/scheduler/scheduler-model-manager.ts#L51">persistence/scheduler/scheduler-model-manager.ts:51</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -161,7 +158,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>queryKeyGen: <span class="tsd-signature-type">function</span></h5>
+									<h5>queryKeyGen: <span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Query key generator.</p>
 									</div>
@@ -185,7 +182,7 @@
 									</ul>
 								</li>
 								<li>
-									<h5>entityKeyGen: <span class="tsd-signature-type">function</span></h5>
+									<h5>entityKeyGen: <span class="tsd-signature-symbol">(</span>entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Entity key generator.</p>
 									</div>
@@ -224,13 +221,13 @@
 					<a name="addsingleresultquery" class="tsd-anchor"></a>
 					<h3>add<wbr>Single<wbr>Result<wbr>Query</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">add<wbr>Single<wbr>Result<wbr>Query&lt;TResult&gt;<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><a href="../globals.html#tquery" class="tsd-signature-type">TQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span>, redis<span class="tsd-signature-symbol">: </span><a href="redismiddleware.html" class="tsd-signature-type">RedisMiddleware</a>, reverseHashKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, queryKeyGen<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, entityKeyGen<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, mquery<span class="tsd-signature-symbol">: </span><a href="../globals.html#tmquery" class="tsd-signature-type">TMQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="singleresultprimaryquerymanager.html" class="tsd-signature-type">SingleResultPrimaryQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Single<wbr>Result<wbr>Query&lt;TResult&gt;<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><a href="../globals.html#tquery" class="tsd-signature-type">TQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span>, redis<span class="tsd-signature-symbol">: </span><a href="redismiddleware.html" class="tsd-signature-type">RedisMiddleware</a>, reverseHashKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, queryKeyGen<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span>, entityKeyGen<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span>, mquery<span class="tsd-signature-symbol">: </span><a href="../globals.html#tmquery" class="tsd-signature-type">TMQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="singleresultprimaryquerymanager.html" class="tsd-signature-type">SingleResultPrimaryQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/scheduler/scheduler-model-manager.ts#L71">persistence/scheduler/scheduler-model-manager.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/b41f158/src/persistence/scheduler/scheduler-model-manager.ts#L69">persistence/scheduler/scheduler-model-manager.ts:69</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -265,7 +262,7 @@
 									</div>
 								</li>
 								<li>
-									<h5>queryKeyGen: <span class="tsd-signature-type">function</span></h5>
+									<h5>queryKeyGen: <span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Query key generator.</p>
 									</div>
@@ -289,7 +286,7 @@
 									</ul>
 								</li>
 								<li>
-									<h5>entityKeyGen: <span class="tsd-signature-type">function</span></h5>
+									<h5>entityKeyGen: <span class="tsd-signature-symbol">(</span>entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">string</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Entity key generator.</p>
 									</div>
@@ -335,7 +332,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="schedulermodelmanagerbase.html">SchedulerModelManagerBase</a>.<a href="schedulermodelmanagerbase.html#delete">delete</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/scheduler/scheduler-model-manager.ts#L17">persistence/scheduler/scheduler-model-manager.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/b41f158/src/persistence/scheduler/scheduler-model-manager.ts#L16">persistence/scheduler/scheduler-model-manager.ts:16</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -374,7 +371,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="schedulermodelmanagerbase.html">SchedulerModelManagerBase</a>.<a href="schedulermodelmanagerbase.html#get">get</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/scheduler/scheduler-model-manager.ts#L24">persistence/scheduler/scheduler-model-manager.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/b41f158/src/persistence/scheduler/scheduler-model-manager.ts#L23">persistence/scheduler/scheduler-model-manager.ts:23</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -410,7 +407,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="schedulermodelmanagerbase.html">SchedulerModelManagerBase</a>.<a href="schedulermodelmanagerbase.html#mdelete">mDelete</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/scheduler/scheduler-model-manager.ts#L31">persistence/scheduler/scheduler-model-manager.ts:31</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/b41f158/src/persistence/scheduler/scheduler-model-manager.ts#L30">persistence/scheduler/scheduler-model-manager.ts:30</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -449,7 +446,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="schedulermodelmanagerbase.html">SchedulerModelManagerBase</a>.<a href="schedulermodelmanagerbase.html#mget">mGet</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/scheduler/scheduler-model-manager.ts#L38">persistence/scheduler/scheduler-model-manager.ts:38</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/b41f158/src/persistence/scheduler/scheduler-model-manager.ts#L37">persistence/scheduler/scheduler-model-manager.ts:37</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
