@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import { AntJsSearchOptions } from './options/antjs-search-options';
 import { CacheMode } from './options/cache-mode';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
@@ -69,8 +68,20 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
    * @param id: Entity's id.
    * @returns Model found.
    */
-  public get(id: number | string, options?: Partial<PersistencySearchOptions>): Promise<TEntity> {
-    return this._innerGetById(id, new AntJsSearchOptions(options));
+  public get(id: number | string, options: PersistencySearchOptions): Promise<TEntity> {
+    if (options.ignorePrimaryLayer) {
+      if (options.ignoreSecondaryLayer) {
+        return Promise.resolve(null);
+      } else {
+        return this._successor.getById(id);
+      }
+    } else {
+      if (options.ignoreSecondaryLayer) {
+        throw new Error('this configuration is not currently supported');
+      } else {
+        return this._innerGetById(id, options);
+      }
+    }
   }
 
   /**
@@ -78,8 +89,20 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
    * @param ids Entities ids.
    * @returns Entities found.
    */
-  public mGet(ids: number[] | string[], options?: Partial<PersistencySearchOptions>): Promise<TEntity[]> {
-    return this._innerGetByIds(ids, new AntJsSearchOptions(options));
+  public mGet(ids: number[] | string[], options: PersistencySearchOptions): Promise<TEntity[]> {
+    if (options.ignorePrimaryLayer) {
+      if (options.ignoreSecondaryLayer) {
+        return Promise.resolve(new Array());
+      } else {
+        return this._successor.getByIds(ids);
+      }
+    } else {
+      if (options.ignoreSecondaryLayer) {
+        throw new Error('this configuration is not currently supported');
+      } else {
+        return this._innerGetByIds(ids, options);
+      }
+    }
   }
 
   /**

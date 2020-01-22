@@ -1,3 +1,4 @@
+import { AntJsSearchOptions } from '../../persistence/primary/options/antjs-search-options';
 import { ApiQueryManager } from './api-query-manager';
 import { Entity } from '../../model/entity';
 import { PersistencySearchOptions } from '../../persistence/primary/options/persistency-search-options';
@@ -24,7 +25,7 @@ export abstract class AntQueryManager<TEntity extends Entity, TResult extends TE
    * @returns query results.
    */
   public get(params: any, options?: Partial<PersistencySearchOptions>): Promise<TResult> {
-    return this._queryManager.get(params, options);
+    return this._queryManager.get(params, new AntJsSearchOptions(options));
   }
 
   /**
@@ -34,6 +35,6 @@ export abstract class AntQueryManager<TEntity extends Entity, TResult extends TE
    * @returns Queries results.
    */
   public mGet(paramsArray: any[], options?: Partial<PersistencySearchOptions>): Promise<TEntity[]> {
-    return this._queryManager.mGet(paramsArray, options);
+    return this._queryManager.mGet(paramsArray, new AntJsSearchOptions(options));
   }
 }

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { AntJsSearchOptions } from '../../../persistence/primary/options/antjs-search-options';
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { AntSingleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-single-result-primary-query-manager';
 import { ApiModelManagerGeneratorOptions } from './api-model-manager-generator-options';
@@ -103,13 +104,13 @@ export abstract class ModelManagerGenerator<
 
     for (const [property, manager] of srQueryManagers) {
       for (const entity of entities) {
-        srqmResults.set([entity, property], manager.get(entity));
+        srqmResults.set([entity, property], manager.get(entity, new AntJsSearchOptions()));
       }
     }
 
     for (const [property, manager] of mrQueryManagers) {
       for (const entity of entities) {
-        mrqmResults.set([entity, property], manager.get(entity));
+        mrqmResults.set([entity, property], manager.get(entity, new AntJsSearchOptions()));
       }
     }
 

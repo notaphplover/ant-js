@@ -7,7 +7,7 @@ export interface QueryManager<TEntity extends Entity, TResult extends TEntity | 
    * @param params query params.
    * @returns query results.
    */
-  get(params: any, options?: Partial<PersistencySearchOptions>): Promise<TResult>;
+  get(params: any, options: PersistencySearchOptions): Promise<TResult>;
 
   /**
    * Gets the result of multiple queries.
@@ -15,5 +15,5 @@ export interface QueryManager<TEntity extends Entity, TResult extends TEntity | 
    * @param options Cache options.
    * @returns Queries results.
    */
-  mGet(paramsArray: any[], options?: Partial<PersistencySearchOptions>): Promise<TEntity[]>;
+  mGet(paramsArray: any[], options: PersistencySearchOptions): Promise<TEntity[]>;
 }

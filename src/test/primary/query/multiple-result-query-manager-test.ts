@@ -1,5 +1,7 @@
 import { NamedEntity, NamesStartingByLetter } from './names-starting-by-letter';
 import { NamedEntityAlternative, NamesStartingByLetterAlternative } from './names-starting-by-letter-alternative';
+import { AntJsDeleteOptions } from '../../../persistence/primary/options/antjs-delete-options';
+import { AntJsSearchOptions } from '../../../persistence/primary/options/antjs-search-options';
 import { AntModel } from '../../../model/ant-model';
 import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
 import { Model } from '../../../model/model';
@@ -33,6 +35,10 @@ export class MultipleResultQueryManagerTest implements Test {
   public performTests(): void {
     describe(this._declareName, () => {
       this._itMustBeInitializable();
+      this._itMustIgnorePrimaryAndSecondaryLayerIfIgnoreFlagIsUpAtGetMethod();
+      this._itMustIgnorePrimaryAndSecondaryLayerIfIgnoreFlagIsUpAtMGetMethod();
+      this._itMustIgnorePrimaryLayerIfIgnoreFlagIsUpAtGetMethod();
+      this._itMustIgnorePrimaryLayerIfIgnoreFlagIsUpAtMGetMethod();
       this._itMustInvokePrimaryToEntityAtGetOnQueryCacheHit();
       this._itMustPerformACachedSearchWithCachedEntities();
       this._itMustPerformACachedSearchWithLotsOfCachedEntities();
@@ -90,6 +96,132 @@ export class MultipleResultQueryManagerTest implements Test {
     );
   }
 
+  private _itMustIgnorePrimaryAndSecondaryLayerIfIgnoreFlagIsUpAtGetMethod(): void {
+    const itsName = 'mustIgnorePrimaryAndSecondaryLayerIfIgnoreFlagIsUpAtGetMethod';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const entity1: NamedEntity = {
+          id: 0,
+          name: 'sample-name', };
+        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const queryManager = new NamesStartingByLetter(
+          model,
+          primaryManager,
+          secondaryEntityManager,
+          this._redis.redis,
+          prefix + 'reverse/',
+          prefix + 'query-by-field/',
+        );
+        await queryManager.get({ name: entity1.name }, new AntJsSearchOptions());
+        const entityFound = await queryManager.get(
+          { name: entity1.name },
+          new AntJsSearchOptions({ ignorePrimaryLayer: true, ignoreSecondaryLayer: true }),
+        );
+        expect(entityFound).toEqual(new Array());
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustIgnorePrimaryAndSecondaryLayerIfIgnoreFlagIsUpAtMGetMethod(): void {
+    const itsName = 'mustIgnorePrimaryAndSecondaryLayerIfIgnoreFlagIsUpAtMGetMethod';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const entity1: NamedEntity = {
+          id: 0,
+          name: 'sample-name', };
+        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const queryManager = new NamesStartingByLetter(
+          model,
+          primaryManager,
+          secondaryEntityManager,
+          this._redis.redis,
+          prefix + 'reverse/',
+          prefix + 'query-by-field/',
+        );
+        await queryManager.get({ name: entity1.name }, new AntJsSearchOptions());
+        const entityFound = await queryManager.mGet(
+          [{ name: entity1.name }],
+          new AntJsSearchOptions({ ignorePrimaryLayer: true, ignoreSecondaryLayer: true }),
+        );
+        expect(entityFound).toEqual(new Array());
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustIgnorePrimaryLayerIfIgnoreFlagIsUpAtGetMethod(): void {
+    const itsName = 'mustIgnorePrimaryLayerIfIgnoreFlagIsUpAtGetMethod';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const entity1: NamedEntity = {
+          id: 0,
+          name: 'sample-name', };
+        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const queryManager = new NamesStartingByLetter(
+          model,
+          primaryManager,
+          secondaryEntityManager,
+          this._redis.redis,
+          prefix + 'reverse/',
+          prefix + 'query-by-field/',
+        );
+        await queryManager.get({ name: entity1.name }, new AntJsSearchOptions());
+        await secondaryEntityManager.delete(entity1.id);
+        const entityFound = await queryManager.get(
+          { name: entity1.name },
+          new AntJsSearchOptions({ ignorePrimaryLayer: true }),
+        );
+        expect(entityFound).toEqual(new Array());
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustIgnorePrimaryLayerIfIgnoreFlagIsUpAtMGetMethod(): void {
+    const itsName = 'mustIgnorePrimaryLayerIfIgnoreFlagIsUpAtMGetMethod';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const entity1: NamedEntity = {
+          id: 0,
+          name: 'sample-name', };
+        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const queryManager = new NamesStartingByLetter(
+          model,
+          primaryManager,
+          secondaryEntityManager,
+          this._redis.redis,
+          prefix + 'reverse/',
+          prefix + 'query-by-field/',
+        );
+        await queryManager.get({ name: entity1.name }, new AntJsSearchOptions());
+        await secondaryEntityManager.delete(entity1.id);
+        const entityFound = await queryManager.mGet(
+          [{ name: entity1.name }],
+          new AntJsSearchOptions({ ignorePrimaryLayer: true }),
+        );
+        expect(entityFound).toEqual(new Array());
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
   private _itMustInvokePrimaryToEntityAtGetOnQueryCacheHit(): void {
     const itsName = 'mustInvokePrimaryToEntityAtGetOnQueryCacheHit';
     const prefix = this._declareName + '/' + itsName + '/';
@@ -122,9 +254,9 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'names-starting-with/',
         );
         // A cache miss should happen
-        await entitiesStartingWithLetterQuery.get(initialEntity);
+        await entitiesStartingWithLetterQuery.get(initialEntity, new AntJsSearchOptions());
         // A cache hit should happen.
-        const [entityFound] = await entitiesStartingWithLetterQuery.get(initialEntity);
+        const [entityFound] = await entitiesStartingWithLetterQuery.get(initialEntity, new AntJsSearchOptions());
         expect(entityFound).toEqual(fakeInitialEntity);
         done();
       },
@@ -149,8 +281,8 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
-        await queryManager.get(entity);
-        expect(await queryManager.get(entity)).toEqual([entity]);
+        await queryManager.get(entity, new AntJsSearchOptions());
+        expect(await queryManager.get(entity, new AntJsSearchOptions())).toEqual([entity]);
         done();
       },
       MAX_SAFE_TIMEOUT,
@@ -182,8 +314,8 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'names-starting-with/',
         );
         const searchParams = { name: 'P' };
-        await queryManager.get(searchParams);
-        const results = await queryManager.get(searchParams);
+        await queryManager.get(searchParams, new AntJsSearchOptions());
+        const results = await queryManager.get(searchParams, new AntJsSearchOptions());
         expect(results.length).toBe(entities.length);
         for (const result of results) {
           expect(entitiesMap.get(result.id)).toEqual(result);
@@ -219,8 +351,8 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'names-starting-with/',
         );
         const searchParams = { name: 'P' };
-        await queryManager.get(searchParams);
-        const results = await queryManager.get(searchParams);
+        await queryManager.get(searchParams, new AntJsSearchOptions());
+        const results = await queryManager.get(searchParams, new AntJsSearchOptions());
         expect(results.length).toBe(entities.length);
         for (const result of results) {
           expect(entitiesMap.get(result.id)).toEqual(result);
@@ -249,9 +381,9 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
-        await queryManager.get(entity1);
-        await modelManager.delete(entity1.id);
-        const entityFound = await queryManager.get(entity1);
+        await queryManager.get(entity1, new AntJsSearchOptions());
+        await modelManager.delete(entity1.id, new AntJsDeleteOptions());
+        const entityFound = await queryManager.get(entity1, new AntJsSearchOptions());
         expect(entityFound).toEqual([entity1]);
         done();
       },
@@ -279,9 +411,9 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
-        await queryManager.get(entity1);
-        await modelManager.delete(entity1.id);
-        const entityFound = await queryManager.get(entity1);
+        await queryManager.get(entity1, new AntJsSearchOptions());
+        await modelManager.delete(entity1.id, new AntJsDeleteOptions());
+        const entityFound = await queryManager.get(entity1, new AntJsSearchOptions());
         expect(entityFound).toEqual([entity1]);
         done();
       },
@@ -306,8 +438,8 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
-        await queryManager.mGet([entity]);
-        expect(await queryManager.mGet([entity])).toEqual([entity]);
+        await queryManager.mGet([entity], new AntJsSearchOptions());
+        expect(await queryManager.mGet([entity], new AntJsSearchOptions())).toEqual([entity]);
         done();
       },
       MAX_SAFE_TIMEOUT,
@@ -335,7 +467,7 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
-        const results = await queryManager.mGet([entity1, entity2]);
+        const results = await queryManager.mGet([entity1, entity2], new AntJsSearchOptions());
         expect(results).toContain(entity1);
         expect(results).toContain(entity2);
         done();
@@ -361,7 +493,7 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
-        const results = await queryManager.mGet(new Array());
+        const results = await queryManager.mGet(new Array(), new AntJsSearchOptions());
         expect(results).toEqual(new Array());
         done();
       },
@@ -386,7 +518,7 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
-        expect(await queryManager.get(entity)).toEqual([entity]);
+        expect(await queryManager.get(entity, new AntJsSearchOptions())).toEqual([entity]);
         done();
       },
       MAX_SAFE_TIMEOUT,
@@ -414,7 +546,7 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
-        expect(await queryManager.get({ name: 'P' })).toEqual(entities);
+        expect(await queryManager.get({ name: 'P' }, new AntJsSearchOptions())).toEqual(entities);
         done();
       },
       MAX_SAFE_TIMEOUT,
@@ -438,8 +570,8 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
-        await queryManager.get(entity);
-        expect(await queryManager.get(entity)).toEqual(new Array());
+        await queryManager.get(entity, new AntJsSearchOptions());
+        expect(await queryManager.get(entity, new AntJsSearchOptions())).toEqual(new Array());
         done();
       },
       MAX_SAFE_TIMEOUT,
@@ -463,8 +595,8 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
-        await queryManager.mGet([entity]);
-        expect(await queryManager.mGet([entity])).toEqual(new Array());
+        await queryManager.mGet([entity], new AntJsSearchOptions());
+        expect(await queryManager.mGet([entity], new AntJsSearchOptions())).toEqual(new Array());
         done();
       },
       MAX_SAFE_TIMEOUT,
@@ -488,7 +620,7 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
-        expect(await queryManager.get(entity)).toEqual(new Array());
+        expect(await queryManager.get(entity, new AntJsSearchOptions())).toEqual(new Array());
         done();
       },
       MAX_SAFE_TIMEOUT,
@@ -513,8 +645,8 @@ export class MultipleResultQueryManagerTest implements Test {
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
-        modelManager.delete(entity1[model.id]);
-        const entityFound = await queryManager.get({ name: entity1.name });
+        modelManager.delete(entity1[model.id], new AntJsDeleteOptions());
+        const entityFound = await queryManager.get({ name: entity1.name }, new AntJsSearchOptions());
         expect(entityFound).toEqual(new Array());
       },
       MAX_SAFE_TIMEOUT,
