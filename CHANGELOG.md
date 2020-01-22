@@ -1,3 +1,7 @@
+## 2.0.0-beta.1
+
+- Removed unused TModel at SchedulerModelManager interface.
+
 ## 2.0.0-beta.0
 
 - Interface improvements: primary layer interfaces no longer inherits secondary layer interfaces.
