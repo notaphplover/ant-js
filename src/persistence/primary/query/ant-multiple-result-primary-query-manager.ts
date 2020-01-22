@@ -21,7 +21,7 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
    * @param options Cache options.
    * @returns Entities found.
    */
-  public async get(params: any, options?: PersistencySearchOptions): Promise<TEntity[]> {
+  public async get(params: any, options?: Partial<PersistencySearchOptions>): Promise<TEntity[]> {
     const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultsJSON = await this._redis.eval(luaScript, 1, key);
@@ -49,7 +49,7 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
    * @param options Cache options.
    * @returns Queries results.
    */
-  public async mGet(paramsArray: any[], options?: PersistencySearchOptions): Promise<TEntity[]> {
+  public async mGet(paramsArray: any[], options?: Partial<PersistencySearchOptions>): Promise<TEntity[]> {
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
     }
@@ -95,7 +95,7 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
   private async _getProcessMissingOptions(
     missingIds: number[] | string[],
     finalResults: TEntity[],
-    options: PersistencySearchOptions,
+    options: Partial<PersistencySearchOptions>,
   ): Promise<void> {
     if (0 < missingIds.length) {
       const missingEntities = await this._manager.mGet(missingIds, options);
@@ -142,7 +142,7 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
   private async _getProcessQueryNotFound(
     key: string,
     params: any,
-    options: PersistencySearchOptions,
+    options: Partial<PersistencySearchOptions>,
   ): Promise<TEntity[]> {
     const ids = await this._query(params);
     if (null != ids && ids.length > 0) {

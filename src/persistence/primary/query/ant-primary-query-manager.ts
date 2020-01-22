@@ -110,7 +110,10 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
    * @param params query params.
    * @returns query results.
    */
-  public abstract get(params: any, options?: PersistencySearchOptions): Promise<TResult<TEntity, TQueryResult>>;
+  public abstract get(
+    params: any,
+    options?: Partial<PersistencySearchOptions>,
+  ): Promise<TResult<TEntity, TQueryResult>>;
 
   /**
    * Gets the result of multiple queries.
@@ -118,7 +121,7 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
    * @param options Cache options.
    * @returns Queries results.
    */
-  public abstract mGet(paramsArray: any[], options?: PersistencySearchOptions): Promise<TEntity[]>;
+  public abstract mGet(paramsArray: any[], options?: Partial<PersistencySearchOptions>): Promise<TEntity[]>;
 
   /**
    * Creates an standard mquery.

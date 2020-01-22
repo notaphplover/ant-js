@@ -69,8 +69,8 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
    * @param id: Entity's id.
    * @returns Model found.
    */
-  public get(id: number | string, options: PersistencySearchOptions = new AntJsSearchOptions()): Promise<TEntity> {
-    return this._innerGetById(id, options);
+  public get(id: number | string, options?: Partial<PersistencySearchOptions>): Promise<TEntity> {
+    return this._innerGetById(id, new AntJsSearchOptions(options));
   }
 
   /**
@@ -78,11 +78,8 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
    * @param ids Entities ids.
    * @returns Entities found.
    */
-  public mGet(
-    ids: number[] | string[],
-    options: PersistencySearchOptions = new AntJsSearchOptions(),
-  ): Promise<TEntity[]> {
-    return this._innerGetByIds(ids, options);
+  public mGet(ids: number[] | string[], options?: Partial<PersistencySearchOptions>): Promise<TEntity[]> {
+    return this._innerGetByIds(ids, new AntJsSearchOptions(options));
   }
 
   /**

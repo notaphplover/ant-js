@@ -1,50 +1,45 @@
-import { AntJsDeleteOptions } from './antjs-delete-options';
-import { AntJsUpdateOptions } from './antjs-update-options';
+import {
+  DEFAULT_CACHE_MODE_OPTION,
+  DEFAULT_IGNORE_PRIMARY_LAYER,
+  DEFAULT_IGNORE_SECONDARY_LAYER,
+  DEFAULT_NEGATIVE_CACHE_OPTION,
+  DEFAULT_TTL_OPTION,
+} from './default-options';
 import { CacheMode } from './cache-mode';
 import { PersistencySearchOptions } from './persistency-search-options';
 
 export class AntJsSearchOptions implements PersistencySearchOptions {
   /**
-   * True if negative cache must be used.
+   * @inheritdoc
    */
-  protected _deleteOptions: AntJsDeleteOptions;
-
+  public readonly cacheMode: CacheMode;
   /**
-   * Update options.
+   * @inheritdoc
    */
-  protected _updateOptions: AntJsUpdateOptions;
+  public readonly ignorePrimaryLayer: boolean;
+  /**
+   * @inheritdoc
+   */
+  public readonly ignoreSecondaryLayer: boolean;
+  /**
+   * @inheritdoc
+   */
+  public readonly negativeCache: boolean;
+  /**
+   * @inheritdoc
+   */
+  public readonly ttl: number;
 
   /**
    * Creates a new persistency search options.
    * @param deleteOptions Delete options.
    * @param updateOptions Update options.
    */
-  public constructor(
-    deleteOptions: AntJsDeleteOptions = new AntJsDeleteOptions(),
-    updateOptions: AntJsUpdateOptions = new AntJsUpdateOptions(),
-  ) {
-    this._deleteOptions = deleteOptions;
-    this._updateOptions = updateOptions;
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public get negativeCache(): boolean {
-    return this._deleteOptions.negativeCache;
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public get cacheMode(): CacheMode {
-    return this._updateOptions.cacheMode;
-  }
-
-  /**
-   * @inheritdoc
-   */
-  public get ttl(): number {
-    return this._updateOptions.ttl;
+  public constructor(options: Partial<PersistencySearchOptions> = {}) {
+    this.cacheMode = options.cacheMode ?? DEFAULT_CACHE_MODE_OPTION;
+    this.ignorePrimaryLayer = options.ignorePrimaryLayer ?? DEFAULT_IGNORE_PRIMARY_LAYER;
+    this.ignoreSecondaryLayer = options.ignoreSecondaryLayer ?? DEFAULT_IGNORE_SECONDARY_LAYER;
+    this.negativeCache = options.negativeCache ?? DEFAULT_NEGATIVE_CACHE_OPTION;
+    this.ttl = options.ttl ?? DEFAULT_TTL_OPTION;
   }
 }

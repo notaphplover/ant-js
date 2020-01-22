@@ -75,8 +75,8 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  public async delete(id: number | string, options: PersistencyDeleteOptions = new AntJsDeleteOptions()): Promise<any> {
-    return this._luaDeleteCachedQuery.eval(options, (scriptArg: string) => {
+  public async delete(id: number | string, options?: Partial<PersistencyDeleteOptions>): Promise<any> {
+    return this._luaDeleteCachedQuery.eval(new AntJsDeleteOptions(options), (scriptArg: string) => {
       const evalParams = [scriptArg, this._queryManagers.length];
       for (const queryManager of this._queryManagers) {
         evalParams.push(queryManager.reverseHashKey);
@@ -95,14 +95,11 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @param options Delete options.
    * @returns Promise of entities deleted.
    */
-  public async mDelete(
-    ids: number[] | string[],
-    options: PersistencyDeleteOptions = new AntJsDeleteOptions(),
-  ): Promise<any> {
+  public async mDelete(ids: number[] | string[], options?: Partial<PersistencyDeleteOptions>): Promise<any> {
     if (null == ids || 0 === ids.length) {
       return Promise.resolve();
     }
-    return this._luaMDeleteCachedQuery.eval(options, (scriptArg) => {
+    return this._luaMDeleteCachedQuery.eval(new AntJsDeleteOptions(options), (scriptArg) => {
       const evalParams = [scriptArg, this._queryManagers.length];
       for (const queryManager of this._queryManagers) {
         evalParams.push(queryManager.reverseHashKey);
@@ -123,11 +120,12 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @param options Cache options.
    * @returns Promise of entities updated.
    */
-  public mUpdate(entities: TEntity[], options: PersistencyUpdateOptions = new AntJsUpdateOptions()): Promise<any> {
+  public mUpdate(entities: TEntity[], options?: Partial<PersistencyUpdateOptions>): Promise<any> {
     if (null == entities || 0 === entities.length) {
       return Promise.resolve();
     }
-    return this._luaMUpdateCachedQuerySet.eval(options, (scriptArg) => {
+    const processedOptions = new AntJsUpdateOptions(options);
+    return this._luaMUpdateCachedQuerySet.eval(processedOptions, (scriptArg) => {
       const evalParams = [scriptArg, this._queryManagers.length * (entities.length + 1)];
       for (const queryManager of this._queryManagers) {
         evalParams.push(queryManager.reverseHashKey);
@@ -146,8 +144,8 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
         evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);
       }
       evalParams.push(this._queryManagers.length);
-      if (options.ttl) {
-        evalParams.push(options.ttl);
+      if (processedOptions.ttl) {
+        evalParams.push(processedOptions.ttl);
       }
       return evalParams;
     });
@@ -159,8 +157,9 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @param options Cache options.
    * @returns Promise of entity updated.
    */
-  public update(entity: TEntity, options: PersistencyUpdateOptions = new AntJsUpdateOptions()): Promise<any> {
-    return this._luaUpdateCachedQuerySet.eval(options, (scriptArg) => {
+  public update(entity: TEntity, options?: Partial<PersistencyUpdateOptions>): Promise<any> {
+    const processedOptions = new AntJsUpdateOptions(options);
+    return this._luaUpdateCachedQuerySet.eval(processedOptions, (scriptArg) => {
       const evalParams = [scriptArg, 2 * this._queryManagers.length];
       for (const queryManager of this._queryManagers) {
         evalParams.push(queryManager.reverseHashKey);
@@ -168,8 +167,8 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
       }
       evalParams.push(JSON.stringify(entity[this._model.id]));
       evalParams.push(JSON.stringify(this.model.entityToPrimary(entity)));
-      if (options.ttl) {
-        evalParams.push(options.ttl);
+      if (processedOptions.ttl) {
+        evalParams.push(processedOptions.ttl);
       }
       for (const queryManager of this._queryManagers) {
         evalParams.push(queryManager.isMultiple ? MULTIPLE_RESULT_QUERY_CODE : SINGLE_RESULT_QUERY_CODE);

@@ -23,7 +23,7 @@ export abstract class AntQueryManager<TEntity extends Entity, TResult extends TE
    * @param params query params.
    * @returns query results.
    */
-  public get(params: any, options?: PersistencySearchOptions): Promise<TResult> {
+  public get(params: any, options?: Partial<PersistencySearchOptions>): Promise<TResult> {
     return this._queryManager.get(params, options);
   }
 
@@ -33,7 +33,7 @@ export abstract class AntQueryManager<TEntity extends Entity, TResult extends TE
    * @param options Cache options.
    * @returns Queries results.
    */
-  public mGet(paramsArray: any[], options?: PersistencySearchOptions): Promise<TEntity[]> {
+  public mGet(paramsArray: any[], options?: Partial<PersistencySearchOptions>): Promise<TEntity[]> {
     return this._queryManager.mGet(paramsArray, options);
   }
 }

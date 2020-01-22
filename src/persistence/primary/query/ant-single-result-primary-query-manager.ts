@@ -20,7 +20,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
    * @param params Query parameters.
    * @param options Cache options.
    */
-  public async get(params: any, options?: PersistencySearchOptions): Promise<TEntity> {
+  public async get(params: any, options?: Partial<PersistencySearchOptions>): Promise<TEntity> {
     const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultJson = await this._redis.eval(luaScript, 1, key);
@@ -56,7 +56,7 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
    * @param options Cache options.
    * @returns Queries results.
    */
-  public async mGet(paramsArray: any[], options?: PersistencySearchOptions): Promise<TEntity[]> {
+  public async mGet(paramsArray: any[], options?: Partial<PersistencySearchOptions>): Promise<TEntity[]> {
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
     }
@@ -207,7 +207,7 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
   private async _mGetSearchMissingIds(
     finalResults: TEntity[],
     missingIds: number[] | string[],
-    options?: PersistencySearchOptions,
+    options?: Partial<PersistencySearchOptions>,
   ): Promise<void> {
     if (0 < missingIds.length) {
       const missingEntities = await this._manager.mGet(missingIds, options);

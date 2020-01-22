@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/antjs-model-manager-generator';
-import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-update-options';
 import { AntModel } from '../../model/ant-model';
 import { CacheMode } from '../../persistence/primary/options/cache-mode';
 import { Entity } from '../../model/entity';
@@ -1265,7 +1264,7 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        await modelManager.update(entity1, new AntJsUpdateOptions(CacheMode.CacheAndOverwrite));
+        await modelManager.update(entity1, { cacheMode: CacheMode.CacheAndOverwrite });
 
         expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
 
@@ -1300,7 +1299,7 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        await modelManager.update(entity1, new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000));
+        await modelManager.update(entity1, { cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000 });
 
         expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
 
@@ -1346,9 +1345,9 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        await modelManager.update(entity1, new AntJsUpdateOptions(CacheMode.CacheIfNotExist));
-        await modelManager.update(entity2, new AntJsUpdateOptions(CacheMode.CacheIfNotExist));
-        await modelManager.update(entity2After, new AntJsUpdateOptions(CacheMode.CacheIfNotExist));
+        await modelManager.update(entity1, { cacheMode: CacheMode.CacheIfNotExist });
+        await modelManager.update(entity2, { cacheMode: CacheMode.CacheIfNotExist });
+        await modelManager.update(entity2After, { cacheMode: CacheMode.CacheIfNotExist });
 
         expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
         expect(await modelManager.get(entity2[model.id])).toEqual(entity2);
@@ -1395,9 +1394,9 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        await modelManager.update(entity1, new AntJsUpdateOptions(CacheMode.CacheIfNotExist, 10000));
-        await modelManager.update(entity2, new AntJsUpdateOptions(CacheMode.CacheIfNotExist, 10000));
-        await modelManager.update(entity2After, new AntJsUpdateOptions(CacheMode.CacheIfNotExist, 10000));
+        await modelManager.update(entity1, { cacheMode: CacheMode.CacheIfNotExist, ttl: 10000 });
+        await modelManager.update(entity2, { cacheMode: CacheMode.CacheIfNotExist, ttl: 10000 });
+        await modelManager.update(entity2After, { cacheMode: CacheMode.CacheIfNotExist, ttl: 10000 });
 
         expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
         expect(await modelManager.get(entity2[model.id])).toEqual(entity2);
@@ -1569,7 +1568,7 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        await modelManager.mUpdate([entity1], new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000));
+        await modelManager.mUpdate([entity1], { cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000 });
 
         expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
 

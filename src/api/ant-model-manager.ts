@@ -75,7 +75,7 @@ export abstract class AntModelManager<
    * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  public async delete(id: number | string, options?: PersistencyDeleteOptions): Promise<any> {
+  public async delete(id: number | string, options?: Partial<PersistencyDeleteOptions>): Promise<any> {
     return this.scheduledManager.delete(id, options);
   }
   /**
@@ -84,7 +84,7 @@ export abstract class AntModelManager<
    * @param options Cache options.
    * @returns Entity found
    */
-  public get(id: string | number, options?: PersistencySearchOptions): Promise<TEntity> {
+  public get(id: string | number, options?: Partial<PersistencySearchOptions>): Promise<TEntity> {
     return this.scheduledManager.get(id, options);
   }
   /**
@@ -93,7 +93,7 @@ export abstract class AntModelManager<
    * @param options Delete options.
    * @returns Promise of entities deleted.
    */
-  public async mDelete(ids: number[] | string[], options?: PersistencyDeleteOptions): Promise<any> {
+  public async mDelete(ids: number[] | string[], options?: Partial<PersistencyDeleteOptions>): Promise<any> {
     return this.scheduledManager.mDelete(ids, options);
   }
   /**
@@ -102,7 +102,7 @@ export abstract class AntModelManager<
    * @param options Cache options.
    * @returns Entities found.
    */
-  public mGet(ids: number[] | string[], options?: PersistencySearchOptions): Promise<TEntity[]> {
+  public mGet(ids: number[] | string[], options?: Partial<PersistencySearchOptions>): Promise<TEntity[]> {
     return this.scheduledManager.mGet(ids, options);
   }
 

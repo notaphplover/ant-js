@@ -1,6 +1,3 @@
-import { AntJsDeleteOptions } from '../../persistence/primary/options/antjs-delete-options';
-import { AntJsSearchOptions } from '../../persistence/primary/options/antjs-search-options';
-import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-update-options';
 import { AntModel } from '../../model/ant-model';
 import { AntPrimaryEntityManager } from '../../persistence/primary/ant-primary-entity-manager';
 import { AntPrimaryModelManager } from '../../persistence/primary/ant-primary-model-manager';
@@ -125,10 +122,7 @@ export class PrimaryEntityManagerTest implements Test {
         secondaryEntityManager.store.set(entity1Modified[model.id], entity1Modified);
 
         expect(
-          await primaryEntityManager.get(
-            entity1Modified[model.id],
-            new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.CacheIfNotExist)),
-          ),
+          await primaryEntityManager.get(entity1Modified[model.id], { cacheMode: CacheMode.CacheIfNotExist }),
         ).toEqual(entity1);
 
         done();
@@ -151,10 +145,7 @@ export class PrimaryEntityManagerTest implements Test {
           entity1,
         ]);
 
-        await primaryEntityManager.mGet(
-          [entity1[model.id]],
-          new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.NoCache)),
-        );
+        await primaryEntityManager.mGet([entity1[model.id]], { cacheMode: CacheMode.NoCache });
         secondaryEntityManager.store.clear();
 
         expect(await primaryEntityManager.get(entity1[model.id])).toBe(null);
@@ -178,10 +169,7 @@ export class PrimaryEntityManagerTest implements Test {
           entity1,
         ]);
 
-        await primaryEntityManager.get(
-          entity1[model.id],
-          new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.NoCache)),
-        );
+        await primaryEntityManager.get(entity1[model.id], { cacheMode: CacheMode.NoCache });
         secondaryEntityManager.store.clear();
 
         expect(await primaryEntityManager.get(entity1[model.id])).toBe(null);
@@ -208,13 +196,9 @@ export class PrimaryEntityManagerTest implements Test {
          * https://github.com/jasmine/jasmine/issues/1410
          */
         try {
-          await primaryEntityManager.mGet(
-            [entity1[model.id]],
-            new AntJsSearchOptions(
-              new AntJsDeleteOptions(),
-              new AntJsUpdateOptions(('Ohhh yeaaaahh!' as unknown) as CacheMode),
-            ),
-          );
+          await primaryEntityManager.mGet([entity1[model.id]], {
+            cacheMode: ('Ohhh yeaaaahh!' as unknown) as CacheMode,
+          });
           fail();
           done();
         } catch {
@@ -242,13 +226,7 @@ export class PrimaryEntityManagerTest implements Test {
          * https://github.com/jasmine/jasmine/issues/1410
          */
         try {
-          await primaryEntityManager.get(
-            entity1[model.id],
-            new AntJsSearchOptions(
-              new AntJsDeleteOptions(),
-              new AntJsUpdateOptions(('Ohhh yeaaaahh!' as unknown) as CacheMode),
-            ),
-          );
+          await primaryEntityManager.get(entity1[model.id], { cacheMode: ('Ohhh yeaaaahh!' as unknown) as CacheMode });
           fail();
           done();
         } catch {
@@ -558,10 +536,7 @@ export class PrimaryEntityManagerTest implements Test {
         await this._beforeAllPromise;
         const entity: EntityTest = { field: 'sample', id: 0 };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
-        const entityFound = await primaryEntityManager.get(
-          entity[model.id],
-          new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.CacheIfNotExist)),
-        );
+        const entityFound = await primaryEntityManager.get(entity[model.id], { cacheMode: CacheMode.CacheIfNotExist });
 
         expect(entityFound).toEqual(entity);
         done();
@@ -579,10 +554,10 @@ export class PrimaryEntityManagerTest implements Test {
         await this._beforeAllPromise;
         const entity: EntityTest = { field: 'sample', id: 0 };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
-        const entityFound = await primaryEntityManager.get(
-          entity[model.id],
-          new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.CacheIfNotExist, 10000)),
-        );
+        const entityFound = await primaryEntityManager.get(entity[model.id], {
+          cacheMode: CacheMode.CacheIfNotExist,
+          ttl: 10000,
+        });
 
         expect(entityFound).toEqual(entity);
         done();
@@ -600,10 +575,10 @@ export class PrimaryEntityManagerTest implements Test {
         await this._beforeAllPromise;
         const entity: EntityTest = { field: 'sample', id: 0 };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
-        const entityFound = await primaryEntityManager.get(
-          entity[model.id],
-          new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000)),
-        );
+        const entityFound = await primaryEntityManager.get(entity[model.id], {
+          cacheMode: CacheMode.CacheAndOverwrite,
+          ttl: 10000,
+        });
 
         expect(entityFound).toEqual(entity);
         done();
@@ -663,10 +638,7 @@ export class PrimaryEntityManagerTest implements Test {
         await this._beforeAllPromise;
         const entity: EntityTest = { field: 'sample', id: 0 };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
-        const entityFound = await primaryEntityManager.get(
-          entity[model.id],
-          new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.CacheIfNotExist)),
-        );
+        const entityFound = await primaryEntityManager.get(entity[model.id], { cacheMode: CacheMode.CacheIfNotExist });
 
         expect(entityFound).toBeNull();
         done();
@@ -684,10 +656,10 @@ export class PrimaryEntityManagerTest implements Test {
         await this._beforeAllPromise;
         const entity: EntityTest = { field: 'sample', id: 0 };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array(), true);
-        const entityFound = await primaryEntityManager.get(
-          entity[model.id],
-          new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000)),
-        );
+        const entityFound = await primaryEntityManager.get(entity[model.id], {
+          cacheMode: CacheMode.CacheAndOverwrite,
+          ttl: 10000,
+        });
 
         expect(entityFound).toBeNull();
         done();
@@ -705,10 +677,10 @@ export class PrimaryEntityManagerTest implements Test {
         await this._beforeAllPromise;
         const entity: EntityTest = { field: 'sample', id: 0 };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
-        const entityFound = await primaryEntityManager.get(
-          entity[model.id],
-          new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000)),
-        );
+        const entityFound = await primaryEntityManager.get(entity[model.id], {
+          cacheMode: CacheMode.CacheAndOverwrite,
+          ttl: 10000,
+        });
 
         expect(entityFound).toBeNull();
         done();
@@ -726,10 +698,9 @@ export class PrimaryEntityManagerTest implements Test {
         await this._beforeAllPromise;
         const entity: EntityTest = { field: 'sample', id: 0 };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
-        const entityFound = await primaryEntityManager.mGet(
-          [entity[model.id]],
-          new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.CacheIfNotExist)),
-        );
+        const entityFound = await primaryEntityManager.mGet([entity[model.id]], {
+          cacheMode: CacheMode.CacheIfNotExist,
+        });
 
         expect(entityFound).toEqual([entity]);
         done();
@@ -747,10 +718,10 @@ export class PrimaryEntityManagerTest implements Test {
         await this._beforeAllPromise;
         const entity: EntityTest = { field: 'sample', id: 0 };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
-        const entityFound = await primaryEntityManager.mGet(
-          [entity[model.id]],
-          new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.CacheIfNotExist, 10000)),
-        );
+        const entityFound = await primaryEntityManager.mGet([entity[model.id]], {
+          cacheMode: CacheMode.CacheIfNotExist,
+          ttl: 10000,
+        });
 
         expect(entityFound).toEqual([entity]);
         done();
@@ -768,10 +739,10 @@ export class PrimaryEntityManagerTest implements Test {
         await this._beforeAllPromise;
         const entity: EntityTest = { field: 'sample', id: 0 };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
-        const entityFound = await primaryEntityManager.mGet(
-          [entity[model.id]],
-          new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000)),
-        );
+        const entityFound = await primaryEntityManager.mGet([entity[model.id]], {
+          cacheMode: CacheMode.CacheAndOverwrite,
+          ttl: 10000,
+        });
 
         expect(entityFound).toEqual([entity]);
         done();
@@ -807,10 +778,10 @@ export class PrimaryEntityManagerTest implements Test {
         await this._beforeAllPromise;
         const entity: EntityTest = { field: 'sample', id: 0 };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
-        const entityFound = await primaryEntityManager.mGet(
-          [entity[model.id]],
-          new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.CacheIfNotExist, 10000)),
-        );
+        const entityFound = await primaryEntityManager.mGet([entity[model.id]], {
+          cacheMode: CacheMode.CacheIfNotExist,
+          ttl: 10000,
+        });
 
         expect(entityFound).toEqual(new Array());
         done();
@@ -828,10 +799,10 @@ export class PrimaryEntityManagerTest implements Test {
         await this._beforeAllPromise;
         const entity: EntityTest = { field: 'sample', id: 0 };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
-        const entityFound = await primaryEntityManager.mGet(
-          [entity[model.id]],
-          new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000)),
-        );
+        const entityFound = await primaryEntityManager.mGet([entity[model.id]], {
+          cacheMode: CacheMode.CacheAndOverwrite,
+          ttl: 10000,
+        });
 
         expect(entityFound).toEqual(new Array());
         done();
@@ -856,10 +827,10 @@ export class PrimaryEntityManagerTest implements Test {
           true,
           secondaryEntityManager,
         );
-        const entityFound = await primaryEntityManager.mGet(
-          [entity[model.id]],
-          new AntJsSearchOptions(new AntJsDeleteOptions(), new AntJsUpdateOptions(CacheMode.CacheAndOverwrite, 10000)),
-        );
+        const entityFound = await primaryEntityManager.mGet([entity[model.id]], {
+          cacheMode: CacheMode.CacheAndOverwrite,
+          ttl: 10000,
+        });
 
         expect(entityFound).toEqual(new Array());
         done();

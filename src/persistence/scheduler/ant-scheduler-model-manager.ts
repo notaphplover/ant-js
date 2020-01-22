@@ -88,7 +88,7 @@ export class AntScheduleModelManager<
   /**
    * @inheritdoc
    */
-  public async delete(id: number | string, options?: PersistencyDeleteOptions): Promise<any> {
+  public async delete(id: number | string, options?: Partial<PersistencyDeleteOptions>): Promise<any> {
     if (null != this._secondaryManager) {
       await this._secondaryManager.delete(id);
     }
@@ -98,14 +98,14 @@ export class AntScheduleModelManager<
   /**
    * @inheritdoc
    */
-  public get(id: string | number, options?: PersistencySearchOptions): Promise<TEntity> {
+  public get(id: string | number, options?: Partial<PersistencySearchOptions>): Promise<TEntity> {
     return this._primaryManager.get(id, options);
   }
 
   /**
    * @inheritdoc
    */
-  public async mDelete(ids: number[] | string[], options?: PersistencyDeleteOptions): Promise<any> {
+  public async mDelete(ids: number[] | string[], options?: Partial<PersistencyDeleteOptions>): Promise<any> {
     if (null != this._secondaryManager) {
       await this._secondaryManager.mDelete(ids);
     }
@@ -115,7 +115,7 @@ export class AntScheduleModelManager<
   /**
    * @inheritdoc
    */
-  public mGet(ids: number[] | string[], options?: PersistencySearchOptions): Promise<TEntity[]> {
+  public mGet(ids: number[] | string[], options?: Partial<PersistencySearchOptions>): Promise<TEntity[]> {
     return this._primaryManager.mGet(ids, options);
   }
 }
