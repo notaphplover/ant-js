@@ -8,12 +8,12 @@ export interface PrimaryEntityManager<TEntity extends Entity> {
    * @param options Cache options.
    * @returns Model found.
    */
-  get(id: number | string, options?: PersistencySearchOptions): Promise<TEntity>;
+  get(id: number | string, options: PersistencySearchOptions): Promise<TEntity>;
   /**
    * Gets a collection of models by its ids.
    * @param ids Model ids.
    * @param options Cache options.
    * @returns Models found.
    */
-  mGet(ids: number[] | string[], options?: PersistencySearchOptions): Promise<TEntity[]>;
+  mGet(ids: number[] | string[], options: PersistencySearchOptions): Promise<TEntity[]>;
 }

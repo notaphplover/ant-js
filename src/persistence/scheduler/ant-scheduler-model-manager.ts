@@ -1,4 +1,6 @@
 import { MultipleQueryResult, SingleQueryResult, TMQuery, TQuery } from '../primary/query/query-types';
+import { AntJsDeleteOptions } from '../primary/options/antjs-delete-options';
+import { AntJsSearchOptions } from '../primary/options/antjs-search-options';
 import { AntMultipleResultPrimaryQueryManager } from '../primary/query/ant-multiple-result-primary-query-manager';
 import { AntSingleResultPrimaryQueryManager } from '../primary/query/ant-single-result-primary-query-manager';
 import { Entity } from '../../model/entity';
@@ -88,34 +90,44 @@ export class AntScheduleModelManager<
   /**
    * @inheritdoc
    */
-  public async delete(id: number | string, options?: PersistencyDeleteOptions): Promise<any> {
-    if (null != this._secondaryManager) {
+  public async delete(id: number | string, options?: Partial<PersistencyDeleteOptions>): Promise<any> {
+    const deleteOptions = new AntJsDeleteOptions(options);
+    if (null != this._secondaryManager && !deleteOptions.ignoreSecondaryLayer) {
       await this._secondaryManager.delete(id);
     }
-    return this._primaryManager.delete(id, options);
+    if (deleteOptions.ignorePrimaryLayer) {
+      return Promise.resolve();
+    } else {
+      return this._primaryManager.delete(id, deleteOptions);
+    }
   }
 
   /**
    * @inheritdoc
    */
-  public get(id: string | number, options?: PersistencySearchOptions): Promise<TEntity> {
-    return this._primaryManager.get(id, options);
+  public get(id: string | number, options?: Partial<PersistencySearchOptions>): Promise<TEntity> {
+    return this._primaryManager.get(id, new AntJsSearchOptions(options));
   }
 
   /**
    * @inheritdoc
    */
-  public async mDelete(ids: number[] | string[], options?: PersistencyDeleteOptions): Promise<any> {
-    if (null != this._secondaryManager) {
+  public async mDelete(ids: number[] | string[], options?: Partial<PersistencyDeleteOptions>): Promise<any> {
+    const deleteOptions = new AntJsDeleteOptions(options);
+    if (null != this._secondaryManager && !deleteOptions.ignoreSecondaryLayer) {
       await this._secondaryManager.mDelete(ids);
     }
-    return this._primaryManager.mDelete(ids, options);
+    if (deleteOptions.ignorePrimaryLayer) {
+      return Promise.resolve();
+    } else {
+      return this._primaryManager.mDelete(ids, deleteOptions);
+    }
   }
 
   /**
    * @inheritdoc
    */
-  public mGet(ids: number[] | string[], options?: PersistencySearchOptions): Promise<TEntity[]> {
-    return this._primaryManager.mGet(ids, options);
+  public mGet(ids: number[] | string[], options?: Partial<PersistencySearchOptions>): Promise<TEntity[]> {
+    return this._primaryManager.mGet(ids, new AntJsSearchOptions(options));
   }
 }

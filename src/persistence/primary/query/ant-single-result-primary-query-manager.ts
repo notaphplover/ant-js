@@ -20,7 +20,13 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
    * @param params Query parameters.
    * @param options Cache options.
    */
-  public async get(params: any, options?: PersistencySearchOptions): Promise<TEntity> {
+  public async get(params: any, options: PersistencySearchOptions): Promise<TEntity> {
+    if (options.ignorePrimaryLayer) {
+      return this._getQueryIgnoringPrimaryLayer(params, options);
+    }
+    if (options.ignoreSecondaryLayer) {
+      throw new Error('this configuration is not currently supported');
+    }
     const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultJson = await this._redis.eval(luaScript, 1, key);
@@ -56,9 +62,15 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
    * @param options Cache options.
    * @returns Queries results.
    */
-  public async mGet(paramsArray: any[], options?: PersistencySearchOptions): Promise<TEntity[]> {
+  public async mGet(paramsArray: any[], options: PersistencySearchOptions): Promise<TEntity[]> {
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
+    }
+    if (options.ignorePrimaryLayer) {
+      return this._getMQueryIgnoringPrimaryLayer(paramsArray, options);
+    }
+    if (options.ignoreSecondaryLayer) {
+      throw new Error('this configuration is not currently supported');
     }
     const keys = _.map(paramsArray, this.queryKeyGen);
     const luaScript = this._luaMGetGenerator();
@@ -90,6 +102,16 @@ export class AntSingleResultPrimaryQueryManager<TEntity extends Entity>
     (missingIds as Array<number | string>).push(...idsFromMissingQueries);
     await this._mGetSearchMissingIds(finalResults, missingIds, options);
     return finalResults;
+  }
+
+  /**
+   * Gets a query result ignoring the primary layer.
+   * @param params Query parameters.
+   * @param options Query options.
+   * @returns Query result
+   */
+  protected _getQueryIgnoringPrimaryLayer(params: any, options: PersistencySearchOptions): Promise<TEntity> {
+    return this._query(params).then((id) => this._manager.get(id, options));
   }
 
   /**
@@ -207,7 +229,7 @@ redis.call('hset', KEYS[2], ARGV[1], KEYS[1])`;
   private async _mGetSearchMissingIds(
     finalResults: TEntity[],
     missingIds: number[] | string[],
-    options?: PersistencySearchOptions,
+    options: PersistencySearchOptions,
   ): Promise<void> {
     if (0 < missingIds.length) {
       const missingEntities = await this._manager.mGet(missingIds, options);

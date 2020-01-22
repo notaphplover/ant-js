@@ -14,28 +14,28 @@ export interface SchedulerModelManagerBase<TEntity> {
    * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  delete(id: number | string, options?: PersistencyDeleteOptions): Promise<any>;
+  delete(id: number | string, options?: Partial<PersistencyDeleteOptions>): Promise<any>;
   /**
    * Gets a model by its id.
    * @param id: Model's id.
    * @param options Cache options.
    * @returns Model found.
    */
-  get(id: number | string, options?: PersistencySearchOptions): Promise<TEntity>;
+  get(id: number | string, options?: Partial<PersistencySearchOptions>): Promise<TEntity>;
   /**
    * Deletes multiple entities from the cache layer.
    * @param ids Ids of the entities to delete.
    * @param options Delete options.
    * @returns Promise of entities deleted.
    */
-  mDelete(ids: number[] | string[], options?: PersistencyDeleteOptions): Promise<any>;
+  mDelete(ids: number[] | string[], options?: Partial<PersistencyDeleteOptions>): Promise<any>;
   /**
    * Gets a collection of models by its ids.
    * @param ids Model ids.
    * @param options Cache options.
    * @returns Models found.
    */
-  mGet(ids: number[] | string[], options?: PersistencySearchOptions): Promise<TEntity[]>;
+  mGet(ids: number[] | string[], options?: Partial<PersistencySearchOptions>): Promise<TEntity[]>;
 }
 
 export interface SchedulerModelManager<TEntity extends Entity, TModel extends Model<TEntity>>

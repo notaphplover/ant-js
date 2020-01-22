@@ -1,37 +1,38 @@
+import {
+  DEFAULT_CACHE_MODE_OPTION,
+  DEFAULT_IGNORE_PRIMARY_LAYER,
+  DEFAULT_IGNORE_SECONDARY_LAYER,
+  DEFAULT_TTL_OPTION,
+} from './default-options';
 import { CacheMode } from './cache-mode';
 import { PersistencyUpdateOptions } from './persistency-update-options';
 
 export class AntJsUpdateOptions implements PersistencyUpdateOptions {
   /**
-   * Cache options.
+   * @inheritdoc
    */
-  protected _cacheMode: CacheMode;
+  public readonly cacheMode: CacheMode;
   /**
-   * TTL of the entity (in milliseconds). A null value represents no TTL.
+   * @inheritdoc
    */
-  protected _ttl?: number;
+  public readonly ignorePrimaryLayer: boolean;
+  /**
+   * @inheritdoc
+   */
+  public readonly ignoreSecondaryLayer: boolean;
+  /**
+   * @inheritdoc
+   */
+  public readonly ttl: number;
 
   /**
    * Creates a new entity search options.
-   * @param cacheMode Cache options.
-   * @param ttl TTL of the entity. A null value represents no TTL.
+   * @param options Update options.
    */
-  public constructor(cacheMode: CacheMode = CacheMode.CacheAndOverwrite, ttl: number = null) {
-    this._cacheMode = cacheMode;
-    this._ttl = ttl;
-  }
-
-  /**
-   * Cache options.
-   */
-  public get cacheMode(): CacheMode {
-    return this._cacheMode;
-  }
-
-  /**
-   * TTL of the entity. A null value represents no TTL.
-   */
-  public get ttl(): number {
-    return this._ttl;
+  public constructor(options: Partial<PersistencyUpdateOptions> = {}) {
+    this.cacheMode = options.cacheMode ?? DEFAULT_CACHE_MODE_OPTION;
+    this.ignorePrimaryLayer = options.ignorePrimaryLayer ?? DEFAULT_IGNORE_PRIMARY_LAYER;
+    this.ignoreSecondaryLayer = options.ignoreSecondaryLayer ?? DEFAULT_IGNORE_SECONDARY_LAYER;
+    this.ttl = options.ttl ?? DEFAULT_TTL_OPTION;
   }
 }

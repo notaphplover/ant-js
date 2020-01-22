@@ -110,7 +110,7 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
    * @param params query params.
    * @returns query results.
    */
-  public abstract get(params: any, options?: PersistencySearchOptions): Promise<TResult<TEntity, TQueryResult>>;
+  public abstract get(params: any, options: PersistencySearchOptions): Promise<TResult<TEntity, TQueryResult>>;
 
   /**
    * Gets the result of multiple queries.
@@ -118,7 +118,17 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
    * @param options Cache options.
    * @returns Queries results.
    */
-  public abstract mGet(paramsArray: any[], options?: PersistencySearchOptions): Promise<TEntity[]>;
+  public abstract mGet(paramsArray: any[], options: PersistencySearchOptions): Promise<TEntity[]>;
+
+  /**
+   * Gets a query result ignoring the primary layer.
+   * @param params MQuery parameters.
+   * @param options MQuery options.
+   * @returns MQuery result.
+   */
+  protected _getMQueryIgnoringPrimaryLayer(params: any[], options: PersistencySearchOptions): Promise<TEntity[]> {
+    return this._mquery(params).then((ids) => this._manager.mGet(ids as number[] | string[], options));
+  }
 
   /**
    * Creates an standard mquery.

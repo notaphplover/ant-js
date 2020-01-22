@@ -1,3 +1,5 @@
+import { AntJsDeleteOptions } from '../../../persistence/primary/options/antjs-delete-options';
+import { AntJsSearchOptions } from '../../../persistence/primary/options/antjs-search-options';
 import { AntModel } from '../../../model/ant-model';
 import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
 import { Entity } from '../../../model/entity';
@@ -47,6 +49,10 @@ export class SingleResultQueryManagerTest implements Test {
   public performTests(): void {
     describe(this._declareName, () => {
       this._itMustBeInitializable();
+      this._itMustIgnorePrimaryAndSecondaryLayerIfIgnoreFlagIsUpAtGetMethod();
+      this._itMustIgnorePrimaryAndSecondaryLayerIfIgnoreFlagIsUpAtMGetMethod();
+      this._itMustIgnorePrimaryLayerIfIgnoreFlagIsUpAtGetMethod();
+      this._itMustIgnorePrimaryLayerIfIgnoreFlagIsUpAtMGetMethod();
       this._itMustInvokePrimaryToEntityAtGetOnQueryCacheHit();
       this._itMustPerformACachedSearchWithCachedEntities();
       this._itMustPerformACachedSearchWithoutCachedEntitiesWithIdAsNumber();
@@ -106,10 +112,135 @@ export class SingleResultQueryManagerTest implements Test {
     );
   }
 
+  private _itMustIgnorePrimaryAndSecondaryLayerIfIgnoreFlagIsUpAtGetMethod(): void {
+    const itsName = 'mustIgnorePrimaryAndSecondaryLayerIfIgnoreFlagIsUpAtGetMethod';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
+        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const query = entityByFieldParam(model, secondaryEntityManager);
+        const queryManager = new SingleResultQueryByFieldManager(
+          model,
+          primaryManager,
+          query,
+          this._redis.redis,
+          prefix + 'reverse/',
+          'field',
+          prefix + 'query-by-field/',
+        );
+        await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
+        const entityFound = await queryManager.get(
+          { field: entity1.field },
+          new AntJsSearchOptions({ ignorePrimaryLayer: true, ignoreSecondaryLayer: true }),
+        );
+        expect(entityFound).toBeNull();
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustIgnorePrimaryAndSecondaryLayerIfIgnoreFlagIsUpAtMGetMethod(): void {
+    const itsName = 'mustIgnorePrimaryAndSecondaryLayerIfIgnoreFlagIsUpAtMGetMethod';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
+        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const query = entityByFieldParam(model, secondaryEntityManager);
+        const queryManager = new SingleResultQueryByFieldManager(
+          model,
+          primaryManager,
+          query,
+          this._redis.redis,
+          prefix + 'reverse/',
+          'field',
+          prefix + 'query-by-field/',
+        );
+        await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
+        const entityFound = await queryManager.mGet(
+          [{ field: entity1.field }],
+          new AntJsSearchOptions({ ignorePrimaryLayer: true, ignoreSecondaryLayer: true }),
+        );
+        expect(entityFound).toEqual(new Array());
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustIgnorePrimaryLayerIfIgnoreFlagIsUpAtGetMethod(): void {
+    const itsName = 'mustIgnorePrimaryLayerIfIgnoreFlagIsUpAtGetMethod';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
+        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const query = entityByFieldParam(model, secondaryEntityManager);
+        const queryManager = new SingleResultQueryByFieldManager(
+          model,
+          primaryManager,
+          query,
+          this._redis.redis,
+          prefix + 'reverse/',
+          'field',
+          prefix + 'query-by-field/',
+        );
+        await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
+        await secondaryEntityManager.delete(entity1.id);
+        const entityFound = await queryManager.get(
+          { field: entity1.field },
+          new AntJsSearchOptions({ ignorePrimaryLayer: true }),
+        );
+        expect(entityFound).toBeNull();
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustIgnorePrimaryLayerIfIgnoreFlagIsUpAtMGetMethod(): void {
+    const itsName = 'mustIgnorePrimaryLayerIfIgnoreFlagIsUpAtMGetMethod';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
+        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const query = entityByFieldParam(model, secondaryEntityManager);
+        const queryManager = new SingleResultQueryByFieldManager(
+          model,
+          primaryManager,
+          query,
+          this._redis.redis,
+          prefix + 'reverse/',
+          'field',
+          prefix + 'query-by-field/',
+        );
+        await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
+        await secondaryEntityManager.delete(entity1.id);
+        const entityFound = await queryManager.mGet(
+          [{ field: entity1.field }],
+          new AntJsSearchOptions({ ignorePrimaryLayer: true }),
+        );
+        expect(entityFound).toEqual(new Array());
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
   private _itMustInvokePrimaryToEntityAtGetOnQueryCacheHit(): void {
     const itsName = 'mustInvokePrimaryToEntityAtGetOnQueryCacheHit';
     const prefix = this._declareName + '/' + itsName + '/';
-
     it(
       itsName,
       async (done) => {
@@ -143,9 +274,9 @@ export class SingleResultQueryManagerTest implements Test {
         );
 
         // A cache miss should happen
-        await queryManager.get({ field: initialEntity.field });
+        await queryManager.get({ field: initialEntity.field }, new AntJsSearchOptions());
         // A cache hit should happen.
-        const entityFound = await queryManager.get({ field: initialEntity.field });
+        const entityFound = await queryManager.get({ field: initialEntity.field }, new AntJsSearchOptions());
         expect(entityFound).toEqual(fakeInitialEntity);
         done();
       },
@@ -172,8 +303,8 @@ export class SingleResultQueryManagerTest implements Test {
           'field',
           prefix + 'query-by-field/',
         );
-        await queryManager.get({ field: entity1.field });
-        const entityFound = await queryManager.get({ field: entity1.field });
+        await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
+        const entityFound = await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
         expect(entityFound).toEqual(entity1);
         done();
       },
@@ -201,9 +332,9 @@ export class SingleResultQueryManagerTest implements Test {
           'field',
           prefix + 'query-by-field/',
         );
-        await queryManager.get({ field: entity1.field });
-        await modelManager.delete(entity1.id);
-        const entityFound = await queryManager.get({ field: entity1.field });
+        await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
+        await modelManager.delete(entity1.id, new AntJsDeleteOptions());
+        const entityFound = await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
         expect(entityFound).toEqual(entity1);
         done();
       },
@@ -236,9 +367,9 @@ export class SingleResultQueryManagerTest implements Test {
           'field',
           prefix + 'query-by-field/',
         );
-        await queryManager.get({ field: entity1.field });
-        await modelManager.delete(entity1.id);
-        const entityFound = await queryManager.get({ field: entity1.field });
+        await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
+        await modelManager.delete(entity1.id, new AntJsDeleteOptions());
+        const entityFound = await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
         expect(entityFound).toEqual(entity1);
         done();
       },
@@ -285,7 +416,10 @@ export class SingleResultQueryManagerTest implements Test {
           prefix + 'query-by-field/',
           mQuery,
         );
-        const entitiesFound = await queryManager.mGet([{ field: entity1.field }, { field: entity2.field }]);
+        const entitiesFound = await queryManager.mGet(
+          [{ field: entity1.field }, { field: entity2.field }],
+          new AntJsSearchOptions(),
+        );
         expect(entitiesFound).toContain(entity1);
         expect(entitiesFound).toContain(entity2);
         done();
@@ -313,8 +447,8 @@ export class SingleResultQueryManagerTest implements Test {
           'field',
           prefix + 'query-by-field/',
         );
-        await queryManager.mGet([{ field: entity1.field }]);
-        const entityFound = await queryManager.mGet([{ field: entity1.field }]);
+        await queryManager.mGet([{ field: entity1.field }], new AntJsSearchOptions());
+        const entityFound = await queryManager.mGet([{ field: entity1.field }], new AntJsSearchOptions());
         expect(entityFound).toEqual([entity1]);
         done();
       },
@@ -342,9 +476,9 @@ export class SingleResultQueryManagerTest implements Test {
           'field',
           prefix + 'query-by-field/',
         );
-        await queryManager.mGet([{ field: entity1.field }]);
-        await modelManager.delete(entity1.id);
-        const entitiesFound = await queryManager.mGet([{ field: entity1.field }]);
+        await queryManager.mGet([{ field: entity1.field }], new AntJsSearchOptions());
+        await modelManager.delete(entity1.id, new AntJsDeleteOptions());
+        const entitiesFound = await queryManager.mGet([{ field: entity1.field }], new AntJsSearchOptions());
         expect(entitiesFound).toEqual([entity1]);
         done();
       },
@@ -377,9 +511,9 @@ export class SingleResultQueryManagerTest implements Test {
           'field',
           prefix + 'query-by-field/',
         );
-        await queryManager.mGet([{ field: entity1.field }]);
-        await modelManager.delete(entity1.id);
-        const entityFound = await queryManager.mGet([{ field: entity1.field }]);
+        await queryManager.mGet([{ field: entity1.field }], new AntJsSearchOptions());
+        await modelManager.delete(entity1.id, new AntJsDeleteOptions());
+        const entityFound = await queryManager.mGet([{ field: entity1.field }], new AntJsSearchOptions());
         expect(entityFound).toEqual([entity1]);
         done();
       },
@@ -410,7 +544,10 @@ export class SingleResultQueryManagerTest implements Test {
           'field',
           prefix + 'query-by-field/',
         );
-        const entitiesFound = await queryManager.mGet([{ field: entity1.field }, { field: entity2.field }]);
+        const entitiesFound = await queryManager.mGet(
+          [{ field: entity1.field }, { field: entity2.field }],
+          new AntJsSearchOptions(),
+        );
         expect(entitiesFound).toContain(entity1);
         expect(entitiesFound).toContain(entity2);
         done();
@@ -438,8 +575,8 @@ export class SingleResultQueryManagerTest implements Test {
           'field',
           prefix + 'query-by-field/',
         );
-        await queryManager.mGet([{ field: entity1.field }]);
-        const entityFound = await queryManager.mGet([{ field: entity1.field }]);
+        await queryManager.mGet([{ field: entity1.field }], new AntJsSearchOptions());
+        const entityFound = await queryManager.mGet([{ field: entity1.field }], new AntJsSearchOptions());
         expect(entityFound).toEqual(new Array());
         done();
       },
@@ -466,7 +603,7 @@ export class SingleResultQueryManagerTest implements Test {
           'field',
           prefix + 'query-by-field/',
         );
-        const entityFound = await queryManager.mGet([{ field: entity1.field }]);
+        const entityFound = await queryManager.mGet([{ field: entity1.field }], new AntJsSearchOptions());
         expect(entityFound).toEqual(new Array());
         done();
       },
@@ -492,7 +629,7 @@ export class SingleResultQueryManagerTest implements Test {
           'field',
           prefix + 'query-by-field/',
         );
-        const entityFound = await queryManager.mGet(new Array());
+        const entityFound = await queryManager.mGet(new Array(), new AntJsSearchOptions());
         expect(entityFound).toEqual(new Array());
         done();
       },
@@ -519,7 +656,7 @@ export class SingleResultQueryManagerTest implements Test {
           'field',
           prefix + 'query-by-field/',
         );
-        const entityFound = await queryManager.get({ field: entity1.field });
+        const entityFound = await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
         expect(entityFound).toEqual(entity1);
         done();
       },
@@ -546,8 +683,8 @@ export class SingleResultQueryManagerTest implements Test {
           'field',
           prefix + 'query-by-field/',
         );
-        await queryManager.get({ field: entity1.field });
-        const entityFound = await queryManager.get({ field: entity1.field });
+        await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
+        const entityFound = await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
         expect(entityFound).toBeNull();
         done();
       },
@@ -574,7 +711,7 @@ export class SingleResultQueryManagerTest implements Test {
           'field',
           prefix + 'query-by-field/',
         );
-        const entityFound = await queryManager.get({ field: entity1.field });
+        const entityFound = await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
         expect(entityFound).toBeNull();
         done();
       },
@@ -592,7 +729,7 @@ export class SingleResultQueryManagerTest implements Test {
         const entity1: EntityTestStr = { field: 'sample-1', id: 1 };
         const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const modelManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
-        modelManager.delete(entity1[model.id]);
+        modelManager.delete(entity1[model.id], new AntJsDeleteOptions());
         const query = entityByFieldParam(model, secondaryEntityManager);
         const queryManager = new SingleResultQueryByFieldManager(
           model,
@@ -603,7 +740,7 @@ export class SingleResultQueryManagerTest implements Test {
           'field',
           prefix + 'query-by-field/',
         );
-        const entityFound = await queryManager.get({ field: entity1.field });
+        const entityFound = await queryManager.get({ field: entity1.field }, new AntJsSearchOptions());
         expect(entityFound).toBeNull();
         done();
       },

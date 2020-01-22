@@ -1,6 +1,4 @@
 import { MULTIPLE_RESULT_QUERY_CODE, SINGLE_RESULT_QUERY_CODE, VOID_RESULT_STRING } from './lua-constants';
-import { AntJsDeleteOptions } from './options/antjs-delete-options';
-import { AntJsUpdateOptions } from './options/antjs-update-options';
 import { AntPrimaryEntityManager } from './ant-primary-entity-manager';
 import { DeleteEntitiesCachedScriptSet } from './script/delete-entities-cached-script-set';
 import { Entity } from '../../model/entity';
@@ -75,7 +73,7 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  public async delete(id: number | string, options: PersistencyDeleteOptions = new AntJsDeleteOptions()): Promise<any> {
+  public async delete(id: number | string, options: PersistencyDeleteOptions): Promise<any> {
     return this._luaDeleteCachedQuery.eval(options, (scriptArg: string) => {
       const evalParams = [scriptArg, this._queryManagers.length];
       for (const queryManager of this._queryManagers) {
@@ -95,10 +93,7 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @param options Delete options.
    * @returns Promise of entities deleted.
    */
-  public async mDelete(
-    ids: number[] | string[],
-    options: PersistencyDeleteOptions = new AntJsDeleteOptions(),
-  ): Promise<any> {
+  public async mDelete(ids: number[] | string[], options: PersistencyDeleteOptions): Promise<any> {
     if (null == ids || 0 === ids.length) {
       return Promise.resolve();
     }
@@ -123,7 +118,7 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @param options Cache options.
    * @returns Promise of entities updated.
    */
-  public mUpdate(entities: TEntity[], options: PersistencyUpdateOptions = new AntJsUpdateOptions()): Promise<any> {
+  public mUpdate(entities: TEntity[], options: PersistencyUpdateOptions): Promise<any> {
     if (null == entities || 0 === entities.length) {
       return Promise.resolve();
     }
@@ -159,7 +154,7 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @param options Cache options.
    * @returns Promise of entity updated.
    */
-  public update(entity: TEntity, options: PersistencyUpdateOptions = new AntJsUpdateOptions()): Promise<any> {
+  public update(entity: TEntity, options: PersistencyUpdateOptions): Promise<any> {
     return this._luaUpdateCachedQuerySet.eval(options, (scriptArg) => {
       const evalParams = [scriptArg, 2 * this._queryManagers.length];
       for (const queryManager of this._queryManagers) {

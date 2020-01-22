@@ -21,7 +21,13 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
    * @param options Cache options.
    * @returns Entities found.
    */
-  public async get(params: any, options?: PersistencySearchOptions): Promise<TEntity[]> {
+  public async get(params: any, options: PersistencySearchOptions): Promise<TEntity[]> {
+    if (options.ignorePrimaryLayer) {
+      return this._getQueryIgnoringPrimaryLayer(params, options);
+    }
+    if (options.ignoreSecondaryLayer) {
+      throw new Error('this configuration is not currently supported');
+    }
     const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultsJSON = await this._redis.eval(luaScript, 1, key);
@@ -49,9 +55,15 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
    * @param options Cache options.
    * @returns Queries results.
    */
-  public async mGet(paramsArray: any[], options?: PersistencySearchOptions): Promise<TEntity[]> {
+  public async mGet(paramsArray: any[], options: PersistencySearchOptions): Promise<TEntity[]> {
     if (null == paramsArray || 0 === paramsArray.length) {
       return new Array();
+    }
+    if (options.ignorePrimaryLayer) {
+      return this._getMQueryIgnoringPrimaryLayer(paramsArray, options);
+    }
+    if (options.ignoreSecondaryLayer) {
+      throw new Error('this configuration is not currently supported');
     }
     const keys = _.map(paramsArray, this.queryKeyGen.bind(this));
     const luaScript = this._luaMGetGenerator();
@@ -83,6 +95,16 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
     await this._getProcessMissingOptions(missingIds, finalResults, options);
 
     return finalResults;
+  }
+
+  /**
+   * Gets a query result ignoring the primary layer.
+   * @param params Query parameters.
+   * @param options Query options.
+   * @returns Query result
+   */
+  protected _getQueryIgnoringPrimaryLayer(params: any, options: PersistencySearchOptions): Promise<TEntity[]> {
+    return this._query(params).then((ids) => this._manager.mGet(ids, options));
   }
 
   /**

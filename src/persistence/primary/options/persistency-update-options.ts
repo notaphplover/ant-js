@@ -1,6 +1,7 @@
 import { CacheMode } from './cache-mode';
+import { PersistencyBaseOptions } from './persistency-base-options';
 
-export interface PersistencyUpdateOptions {
+export interface PersistencyUpdateOptions extends PersistencyBaseOptions {
   /**
    * Determines if the entity must be cached if not found in cache.
    */

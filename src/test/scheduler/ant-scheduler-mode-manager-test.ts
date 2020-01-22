@@ -34,6 +34,8 @@ export class AntSchedulerModelManagerTest implements Test {
       this._itMustCallPrimaryManagerMethods();
       this._itMustCallPrimaryManagerMethodsEvenIfNoSecondaryManagerIsProvided();
       this._itMustCallSecondaryManagerMethods();
+      this._mustIgnorePrimaryLayerIfTheIgnoreFlagIsUpOnDeleteMethods();
+      this._mustIgnoreSecondaryLayerIfTheIgnoreFlagIsUpOnDeleteMethods();
     });
   }
 
@@ -47,8 +49,8 @@ export class AntSchedulerModelManagerTest implements Test {
         const [primaryManager, secondaryManager] = this._modelManagerGenerator.generateModelManager({ model });
         const schedulerModelManager = new AntScheduleModelManager(model, primaryManager, secondaryManager);
 
-        const methodsToTestAtPrimary: Array<keyof PrimaryModelManager<any>> = ['delete', 'get', 'mDelete', 'mGet'];
-        for (const methodToTest of methodsToTestAtPrimary) {
+        const methodsToTest: Array<keyof PrimaryModelManager<any>> = ['delete', 'get', 'mDelete', 'mGet'];
+        for (const methodToTest of methodsToTest) {
           spyOn(primaryManager, methodToTest as any).and.returnValue(Promise.resolve(methodToTest) as any);
         }
 
@@ -68,7 +70,7 @@ export class AntSchedulerModelManagerTest implements Test {
           mGet: mGetResult,
         };
 
-        for (const methodToTest of methodsToTestAtPrimary) {
+        for (const methodToTest of methodsToTest) {
           expect(primaryManager[methodToTest]).toHaveBeenCalled();
           expect(results[methodToTest]).toBe(methodToTest);
         }
@@ -89,8 +91,8 @@ export class AntSchedulerModelManagerTest implements Test {
         const [primaryManager] = this._modelManagerGenerator.generateModelManager({ model });
         const schedulerModelManager = new AntScheduleModelManager(model, primaryManager);
 
-        const methodsToTestAtPrimary: Array<keyof PrimaryModelManager<any>> = ['delete', 'get', 'mDelete', 'mGet'];
-        for (const methodToTest of methodsToTestAtPrimary) {
+        const methodsToTest: Array<keyof PrimaryModelManager<any>> = ['delete', 'get', 'mDelete', 'mGet'];
+        for (const methodToTest of methodsToTest) {
           spyOn(primaryManager, methodToTest as any).and.returnValue(Promise.resolve(methodToTest) as any);
         }
 
@@ -110,7 +112,7 @@ export class AntSchedulerModelManagerTest implements Test {
           mGet: mGetResult,
         };
 
-        for (const methodToTest of methodsToTestAtPrimary) {
+        for (const methodToTest of methodsToTest) {
           expect(primaryManager[methodToTest]).toHaveBeenCalled();
           expect(results[methodToTest]).toBe(methodToTest);
         }
@@ -131,13 +133,8 @@ export class AntSchedulerModelManagerTest implements Test {
         const [primaryManager, secondaryManager] = this._modelManagerGenerator.generateModelManager({ model });
         const schedulerModelManager = new AntScheduleModelManager(model, primaryManager, secondaryManager);
 
-        const methodsToTestAtPrimary: Array<keyof SecondaryEntityManager<any>> = [
-          'delete',
-          'getById',
-          'getByIds',
-          'mDelete',
-        ];
-        for (const methodToTest of methodsToTestAtPrimary) {
+        const methodsToTest: Array<keyof SecondaryEntityManager<any>> = ['delete', 'getById', 'getByIds', 'mDelete'];
+        for (const methodToTest of methodsToTest) {
           spyOn(secondaryManager, methodToTest as any).and.callThrough();
         }
 
@@ -149,8 +146,70 @@ export class AntSchedulerModelManagerTest implements Test {
           schedulerModelManager.mDelete([entity.id]),
           schedulerModelManager.mGet([entity.id]),
         ]);
-        for (const methodToTest of methodsToTestAtPrimary) {
+        for (const methodToTest of methodsToTest) {
           expect(secondaryManager[methodToTest]).toHaveBeenCalled();
+        }
+
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _mustIgnorePrimaryLayerIfTheIgnoreFlagIsUpOnDeleteMethods(): void {
+    const itsName = 'must ignore primary layer if the ignore flag is up on delete methods';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        const model = new AntModel('id', { prefix });
+        const [primaryManager, secondaryManager] = this._modelManagerGenerator.generateModelManager({ model });
+        const schedulerModelManager = new AntScheduleModelManager(model, primaryManager, secondaryManager);
+
+        const methodsToTest: Array<keyof PrimaryModelManager<any>> = ['delete', 'mDelete'];
+        for (const methodToTest of methodsToTest) {
+          spyOn(primaryManager, methodToTest as any).and.callThrough();
+        }
+
+        const entity: Entity = { id: 0 };
+
+        await Promise.all([
+          schedulerModelManager.delete(entity.id, { ignorePrimaryLayer: true }),
+          schedulerModelManager.mDelete([entity.id], { ignorePrimaryLayer: true }),
+        ]);
+        for (const methodToTest of methodsToTest) {
+          expect(primaryManager[methodToTest]).not.toHaveBeenCalled();
+        }
+
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _mustIgnoreSecondaryLayerIfTheIgnoreFlagIsUpOnDeleteMethods(): void {
+    const itsName = 'must ignore secondary layer if the ignore flag is up on delete methods';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        const model = new AntModel('id', { prefix });
+        const [primaryManager, secondaryManager] = this._modelManagerGenerator.generateModelManager({ model });
+        const schedulerModelManager = new AntScheduleModelManager(model, primaryManager, secondaryManager);
+
+        const methodsToTest: Array<keyof SecondaryEntityManager<any>> = ['delete', 'mDelete'];
+        for (const methodToTest of methodsToTest) {
+          spyOn(secondaryManager, methodToTest as any).and.callThrough();
+        }
+
+        const entity: Entity = { id: 0 };
+
+        await Promise.all([
+          schedulerModelManager.delete(entity.id, { ignoreSecondaryLayer: true }),
+          schedulerModelManager.mDelete([entity.id], { ignoreSecondaryLayer: true }),
+        ]);
+        for (const methodToTest of methodsToTest) {
+          expect(secondaryManager[methodToTest]).not.toHaveBeenCalled();
         }
 
         done();

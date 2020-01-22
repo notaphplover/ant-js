@@ -1,3 +1,4 @@
+import { AntJsSearchOptions } from '../../persistence/primary/options/antjs-search-options';
 import { AntModel } from '../../model/ant-model';
 import { AntPrimaryEntityManager } from '../../persistence/primary/ant-primary-entity-manager';
 import { Entity } from '../../model/entity';
@@ -74,7 +75,7 @@ export class LuaKeyGeneratorTest implements Test {
         await this._beforeAllPromise;
         const entity: EntityTest = { field: 'sample', id: 0 };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
-        await primaryEntityManager.get(entity[model.id]);
+        await primaryEntityManager.get(entity[model.id], new AntJsSearchOptions());
         const luaKey = 'key';
         const luaExpression = luaKeyGenerator({ prefix })(luaKey);
         const valueFound = await this._redis.redis.eval(
