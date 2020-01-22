@@ -37,8 +37,7 @@ export interface SchedulerModelManagerBase<TEntity> {
   mGet(ids: number[] | string[], options?: Partial<PersistencySearchOptions>): Promise<TEntity[]>;
 }
 
-export interface SchedulerModelManager<TEntity extends Entity>
-  extends SchedulerModelManagerBase<TEntity> {
+export interface SchedulerModelManager<TEntity extends Entity> extends SchedulerModelManagerBase<TEntity> {
   /**
    * Adds a single result query to the manager and returns it.
    * @param query Single ids query handler.
