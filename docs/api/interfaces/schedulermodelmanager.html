@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ApiModelManager | AntJs API Doc</title>
+	<title>SchedulerModelManager | AntJs API Doc</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="apimodelmanager.html">ApiModelManager</a>
+					<a href="schedulermodelmanager.html">SchedulerModelManager</a>
 				</li>
 			</ul>
-			<h1>Interface ApiModelManager&lt;TEntity, TConfig&gt;</h1>
+			<h1>Interface SchedulerModelManager&lt;TEntity, TModel&gt;</h1>
 		</div>
 	</div>
 </header>
@@ -73,7 +73,7 @@
 						<h4>TEntity<span class="tsd-signature-symbol">: </span><a href="entity.html" class="tsd-signature-type">Entity</a></h4>
 					</li>
 					<li>
-						<h4>TConfig<span class="tsd-signature-symbol">: </span><a href="apimodelconfig.html" class="tsd-signature-type">ApiModelConfig</a></h4>
+						<h4>TModel<span class="tsd-signature-symbol">: </span><a href="model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
 					</li>
 				</ul>
 			</section>
@@ -84,7 +84,7 @@
 						<a href="schedulermodelmanagerbase.html" class="tsd-signature-type">SchedulerModelManagerBase</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">ApiModelManager</span>
+								<span class="target">SchedulerModelManager</span>
 							</li>
 						</ul>
 					</li>
@@ -93,8 +93,7 @@
 			<section class="tsd-panel">
 				<h3>Implemented by</h3>
 				<ul class="tsd-hierarchy">
-					<li><a href="../classes/antmodelmanager.html" class="tsd-signature-type">AntModelManager</a></li>
-					<li><a href="../classes/minimalantmodelmanager.html" class="tsd-signature-type">MinimalAntModelManager</a></li>
+					<li><a href="../classes/antschedulemodelmanager.html" class="tsd-signature-type">AntScheduleModelManager</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -104,12 +103,12 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="apimodelmanager.html#config" class="tsd-kind-icon">config</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="apimodelmanager.html#delete" class="tsd-kind-icon">delete</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="apimodelmanager.html#get" class="tsd-kind-icon">get</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="apimodelmanager.html#mdelete" class="tsd-kind-icon">m<wbr>Delete</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="apimodelmanager.html#mget" class="tsd-kind-icon">m<wbr>Get</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="apimodelmanager.html#query" class="tsd-kind-icon">query</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="schedulermodelmanager.html#addmultipleresultquery" class="tsd-kind-icon">add<wbr>Multiple<wbr>Result<wbr>Query</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter"><a href="schedulermodelmanager.html#addsingleresultquery" class="tsd-kind-icon">add<wbr>Single<wbr>Result<wbr>Query</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="schedulermodelmanager.html#delete" class="tsd-kind-icon">delete</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="schedulermodelmanager.html#get" class="tsd-kind-icon">get</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="schedulermodelmanager.html#mdelete" class="tsd-kind-icon">m<wbr>Delete</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="schedulermodelmanager.html#mget" class="tsd-kind-icon">m<wbr>Get</a></li>
 							</ul>
 						</section>
 					</div>
@@ -117,49 +116,211 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="config" class="tsd-anchor"></a>
-					<h3>config</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">config<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TConfig</span></li>
-						<li class="tsd-signature tsd-kind-icon">config<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TConfig</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+					<a name="addmultipleresultquery" class="tsd-anchor"></a>
+					<h3>add<wbr>Multiple<wbr>Result<wbr>Query</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Multiple<wbr>Result<wbr>Query&lt;TResult&gt;<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><a href="../globals.html#tquery" class="tsd-signature-type">TQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span>, redis<span class="tsd-signature-symbol">: </span><a href="redismiddleware.html" class="tsd-signature-type">RedisMiddleware</a>, reverseHashKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, queryKeyGen<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, entityKeyGen<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, mquery<span class="tsd-signature-symbol">: </span><a href="../globals.html#tmquery" class="tsd-signature-type">TMQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="multipleresultprimaryquerymanager.html" class="tsd-signature-type">MultipleResultPrimaryQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/api-model-manager.ts#L21">api/api-model-manager.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/scheduler/scheduler-model-manager.ts#L53">persistence/scheduler/scheduler-model-manager.ts:53</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Gets the AntJS model config.</p>
+									<p>Adds a single result query to the manager and returns it.</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TConfig</span></h4>
-							<p>AntJS model config.</p>
-						</li>
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/api-model-manager.ts#L26">api/api-model-manager.ts:26</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Sets the AntJS model onfig.</p>
-								</div>
-							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TResult<span class="tsd-signature-symbol">: </span><a href="../globals.html#multiplequeryresult" class="tsd-signature-type">MultipleQueryResult</a></h4>
+								</li>
+							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>config: <span class="tsd-signature-type">TConfig</span></h5>
+									<h5>query: <a href="../globals.html#tquery" class="tsd-signature-type">TQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>AntJS model config.</p>
+										<p>Single ids query handler.</p>
+									</div>
+								</li>
+								<li>
+									<h5>redis: <a href="redismiddleware.html" class="tsd-signature-type">RedisMiddleware</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Redis middleware.</p>
+									</div>
+								</li>
+								<li>
+									<h5>reverseHashKey: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Redis reverse hash key.</p>
+									</div>
+								</li>
+								<li>
+									<h5>queryKeyGen: <span class="tsd-signature-type">function</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Query key generator.</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>params: <span class="tsd-signature-type">any</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>entityKeyGen: <span class="tsd-signature-type">function</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Entity key generator.</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>entity: <span class="tsd-signature-type">TEntity</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>mquery: <a href="../globals.html#tmquery" class="tsd-signature-type">TMQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Multiple ids query handler.</p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
+							<h4 class="tsd-returns-title">Returns <a href="multipleresultprimaryquerymanager.html" class="tsd-signature-type">MultipleResultPrimaryQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>Single query result manager generated.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+					<a name="addsingleresultquery" class="tsd-anchor"></a>
+					<h3>add<wbr>Single<wbr>Result<wbr>Query</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Single<wbr>Result<wbr>Query&lt;TResult&gt;<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><a href="../globals.html#tquery" class="tsd-signature-type">TQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span>, redis<span class="tsd-signature-symbol">: </span><a href="redismiddleware.html" class="tsd-signature-type">RedisMiddleware</a>, reverseHashKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, queryKeyGen<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, entityKeyGen<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, mquery<span class="tsd-signature-symbol">: </span><a href="../globals.html#tmquery" class="tsd-signature-type">TMQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="singleresultprimaryquerymanager.html" class="tsd-signature-type">SingleResultPrimaryQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/scheduler/scheduler-model-manager.ts#L71">persistence/scheduler/scheduler-model-manager.ts:71</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Adds a single result query to the manager and returns it.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TResult<span class="tsd-signature-symbol">: </span><a href="../globals.html#singlequeryresult" class="tsd-signature-type">SingleQueryResult</a></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>query: <a href="../globals.html#tquery" class="tsd-signature-type">TQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Single ids query handler.</p>
+									</div>
+								</li>
+								<li>
+									<h5>redis: <a href="redismiddleware.html" class="tsd-signature-type">RedisMiddleware</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Redis middleware.</p>
+									</div>
+								</li>
+								<li>
+									<h5>reverseHashKey: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Redis reverse hash key.</p>
+									</div>
+								</li>
+								<li>
+									<h5>queryKeyGen: <span class="tsd-signature-type">function</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Query key generator.</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>params: <span class="tsd-signature-type">any</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>entityKeyGen: <span class="tsd-signature-type">function</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Entity key generator.</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>entity: <span class="tsd-signature-type">TEntity</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>mquery: <a href="../globals.html#tmquery" class="tsd-signature-type">TMQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Multiple ids query handler.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="singleresultprimaryquerymanager.html" class="tsd-signature-type">SingleResultPrimaryQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>Single query result manager generated.</p>
 						</li>
 					</ul>
 				</section>
@@ -316,41 +477,6 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
-					<a name="query" class="tsd-anchor"></a>
-					<h3>query</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">query&lt;TQueryResult&gt;<span class="tsd-signature-symbol">(</span>queryConfig<span class="tsd-signature-symbol">: </span><a href="apiqueryconfig.html" class="tsd-signature-type">ApiQueryConfig</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TQueryResult</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../globals.html#tantquerymanager" class="tsd-signature-type">TAntQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TQueryResult</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/api-model-manager.ts#L32">api/api-model-manager.ts:32</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Adds a query to the manager.</p>
-								</div>
-							</div>
-							<h4 class="tsd-type-parameters-title">Type parameters</h4>
-							<ul class="tsd-type-parameters">
-								<li>
-									<h4>TQueryResult<span class="tsd-signature-symbol">: </span><a href="../globals.html#queryresult" class="tsd-signature-type">QueryResult</a></h4>
-								</li>
-							</ul>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>queryConfig: <a href="apiqueryconfig.html" class="tsd-signature-type">ApiQueryConfig</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TQueryResult</span><span class="tsd-signature-symbol">&gt;</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../globals.html#tantquerymanager" class="tsd-signature-type">TAntQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TQueryResult</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>This instance.</p>
-						</li>
-					</ul>
-				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -366,25 +492,25 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-has-type-parameter">
-						<a href="apimodelmanager.html" class="tsd-kind-icon">Api<wbr>Model<wbr>Manager</a>
+						<a href="schedulermodelmanager.html" class="tsd-kind-icon">Scheduler<wbr>Model<wbr>Manager</a>
 						<ul>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="apimodelmanager.html#config" class="tsd-kind-icon">config</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-								<a href="apimodelmanager.html#delete" class="tsd-kind-icon">delete</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-								<a href="apimodelmanager.html#get" class="tsd-kind-icon">get</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-								<a href="apimodelmanager.html#mdelete" class="tsd-kind-icon">m<wbr>Delete</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-								<a href="apimodelmanager.html#mget" class="tsd-kind-icon">m<wbr>Get</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
+								<a href="schedulermodelmanager.html#addmultipleresultquery" class="tsd-kind-icon">add<wbr>Multiple<wbr>Result<wbr>Query</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-has-type-parameter">
-								<a href="apimodelmanager.html#query" class="tsd-kind-icon">query</a>
+								<a href="schedulermodelmanager.html#addsingleresultquery" class="tsd-kind-icon">add<wbr>Single<wbr>Result<wbr>Query</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="schedulermodelmanager.html#delete" class="tsd-kind-icon">delete</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="schedulermodelmanager.html#get" class="tsd-kind-icon">get</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="schedulermodelmanager.html#mdelete" class="tsd-kind-icon">m<wbr>Delete</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="schedulermodelmanager.html#mget" class="tsd-kind-icon">m<wbr>Get</a>
 							</li>
 						</ul>
 					</li>

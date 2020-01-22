@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ApiSingleResultQueryManager | AntJs API Doc</title>
+	<title>PersistencyBaseOptions | AntJs API Doc</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,133 +56,77 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="apisingleresultquerymanager.html">ApiSingleResultQueryManager</a>
+					<a href="persistencybaseoptions.html">PersistencyBaseOptions</a>
 				</li>
 			</ul>
-			<h1>Interface ApiSingleResultQueryManager&lt;TEntity&gt;</h1>
+			<h1>Interface PersistencyBaseOptions</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-type-parameters">
-				<h3>Type parameters</h3>
-				<ul class="tsd-type-parameters">
-					<li>
-						<h4>TEntity<span class="tsd-signature-symbol">: </span><a href="entity.html" class="tsd-signature-type">Entity</a></h4>
-					</li>
-				</ul>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="apiquerymanager.html" class="tsd-signature-type">ApiQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span>
+						<span class="target">PersistencyBaseOptions</span>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">ApiSingleResultQueryManager</span>
+								<a href="persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a>
+							</li>
+							<li>
+								<a href="persistencyupdateoptions.html" class="tsd-signature-type">PersistencyUpdateOptions</a>
 							</li>
 						</ul>
 					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel">
-				<h3>Implemented by</h3>
-				<ul class="tsd-hierarchy">
-					<li><a href="../classes/antsingleresultquerymanager.html" class="tsd-signature-type">AntSingleResultQueryManager</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-inherited">
-							<h3>Methods</h3>
+						<section class="tsd-index-section ">
+							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="apisingleresultquerymanager.html#get" class="tsd-kind-icon">get</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="apisingleresultquerymanager.html#mget" class="tsd-kind-icon">m<wbr>Get</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="persistencybaseoptions.html#ignoreprimarylayer" class="tsd-kind-icon">ignore<wbr>Primary<wbr>Layer</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="persistencybaseoptions.html#ignoresecondarylayer" class="tsd-kind-icon">ignore<wbr>Secondary<wbr>Layer</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-					<a name="get" class="tsd-anchor"></a>
-					<h3>get</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Inherited from <a href="apiquerymanager.html">ApiQueryManager</a>.<a href="apiquerymanager.html#get">get</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/query/api-query-manager.ts#L10">api/query/api-query-manager.ts:10</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Gets a query result.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>params: <span class="tsd-signature-type">any</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>query params.</p>
-									</div>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">&gt;</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>query results.</p>
-						</li>
-					</ul>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="ignoreprimarylayer" class="tsd-anchor"></a>
+					<h3>ignore<wbr>Primary<wbr>Layer</h3>
+					<div class="tsd-signature tsd-kind-icon">ignore<wbr>Primary<wbr>Layer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/persistency-base-options.ts#L5">persistence/primary/options/persistency-base-options.ts:5</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Ignores the primary layer when performing the current operation.</p>
+						</div>
+					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-					<a name="mget" class="tsd-anchor"></a>
-					<h3>m<wbr>Get</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">m<wbr>Get<span class="tsd-signature-symbol">(</span>paramsArray<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Inherited from <a href="apiquerymanager.html">ApiQueryManager</a>.<a href="apiquerymanager.html#mget">mGet</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/query/api-query-manager.ts#L18">api/query/api-query-manager.ts:18</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Gets the result of multiple queries.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>paramsArray: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Queries parameters.</p>
-									</div>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">&gt;</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Cache options.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>Queries results.</p>
-						</li>
-					</ul>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="ignoresecondarylayer" class="tsd-anchor"></a>
+					<h3>ignore<wbr>Secondary<wbr>Layer</h3>
+					<div class="tsd-signature tsd-kind-icon">ignore<wbr>Secondary<wbr>Layer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/persistency-base-options.ts#L9">persistence/primary/options/persistency-base-options.ts:9</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Ignores the secondary layer when performing the current operation.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -198,14 +142,14 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-has-type-parameter">
-						<a href="apisingleresultquerymanager.html" class="tsd-kind-icon">Api<wbr>Single<wbr>Result<wbr>Query<wbr>Manager</a>
+					<li class="current tsd-kind-interface">
+						<a href="persistencybaseoptions.html" class="tsd-kind-icon">Persistency<wbr>Base<wbr>Options</a>
 						<ul>
-							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-								<a href="apisingleresultquerymanager.html#get" class="tsd-kind-icon">get</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="persistencybaseoptions.html#ignoreprimarylayer" class="tsd-kind-icon">ignore<wbr>Primary<wbr>Layer</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-								<a href="apisingleresultquerymanager.html#mget" class="tsd-kind-icon">m<wbr>Get</a>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="persistencybaseoptions.html#ignoresecondarylayer" class="tsd-kind-icon">ignore<wbr>Secondary<wbr>Layer</a>
 							</li>
 						</ul>
 					</li>

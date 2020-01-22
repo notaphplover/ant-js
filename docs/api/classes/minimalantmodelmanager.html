@@ -78,7 +78,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="antmodelmanager.html" class="tsd-signature-type">AntModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/apimodelconfig.html" class="tsd-signature-type">ApiModelConfig</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/primarymodelmanager.html" class="tsd-signature-type">PrimaryModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>
+						<a href="antmodelmanager.html" class="tsd-signature-type">AntModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/apimodelconfig.html" class="tsd-signature-type">ApiModelConfig</a><span class="tsd-signature-symbol">, </span><a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/schedulermodelmanager.html" class="tsd-signature-type">SchedulerModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">MinimalAntModelManager</span>
@@ -108,30 +108,32 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="minimalantmodelmanager.html#_config" class="tsd-kind-icon">_config</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="minimalantmodelmanager.html#_model" class="tsd-kind-icon">_model</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="minimalantmodelmanager.html#_modelmanager" class="tsd-kind-icon">_model<wbr>Manager</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="minimalantmodelmanager.html#_modelmanagergenerator" class="tsd-kind-icon">_model<wbr>Manager<wbr>Generator</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="minimalantmodelmanager.html#_secondaryentitymanager" class="tsd-kind-icon">_secondary<wbr>Entity<wbr>Manager</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="minimalantmodelmanager.html#_primarymanager" class="tsd-kind-icon">_primary<wbr>Manager</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="minimalantmodelmanager.html#_scheduledmanager" class="tsd-kind-icon">_scheduled<wbr>Manager</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="minimalantmodelmanager.html#_secondarymanager" class="tsd-kind-icon">_secondary<wbr>Manager</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="minimalantmodelmanager.html#modelmanager" class="tsd-kind-icon">model<wbr>Manager</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="minimalantmodelmanager.html#secondarymodelmanager" class="tsd-kind-icon">secondary<wbr>Model<wbr>Manager</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="minimalantmodelmanager.html#primarymanager" class="tsd-kind-icon">primary<wbr>Manager</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="minimalantmodelmanager.html#scheduledmanager" class="tsd-kind-icon">scheduled<wbr>Manager</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="minimalantmodelmanager.html#secondarymanager" class="tsd-kind-icon">secondary<wbr>Manager</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="minimalantmodelmanager.html#_generatemodelmanager" class="tsd-kind-icon">_generate<wbr>Model<wbr>Manager</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="minimalantmodelmanager.html#_generateprimarymanager" class="tsd-kind-icon">_generate<wbr>Primary<wbr>Manager</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected"><a href="minimalantmodelmanager.html#_generatescheduledmanager" class="tsd-kind-icon">_generate<wbr>Scheduled<wbr>Manager</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><a href="minimalantmodelmanager.html#_generatesecondarymanager" class="tsd-kind-icon">_generate<wbr>Secondary<wbr>Manager</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="minimalantmodelmanager.html#config" class="tsd-kind-icon">config</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="minimalantmodelmanager.html#delete" class="tsd-kind-icon">delete</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="minimalantmodelmanager.html#get" class="tsd-kind-icon">get</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="minimalantmodelmanager.html#mdelete" class="tsd-kind-icon">m<wbr>Delete</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="minimalantmodelmanager.html#mget" class="tsd-kind-icon">m<wbr>Get</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="minimalantmodelmanager.html#mupdate" class="tsd-kind-icon">m<wbr>Update</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited"><a href="minimalantmodelmanager.html#query" class="tsd-kind-icon">query</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="minimalantmodelmanager.html#update" class="tsd-kind-icon">update</a></li>
 							</ul>
 						</section>
 					</div>
@@ -150,7 +152,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/test/api/minimal-ant-model-manager.ts#L23">test/api/minimal-ant-model-manager.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/test/api/minimal-ant-model-manager.ts#L31">test/api/minimal-ant-model-manager.ts:31</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -183,7 +185,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#_config">_config</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/api/ant-model-manager.ts#L28">api/ant-model-manager.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/ant-model-manager.ts#L24">api/ant-model-manager.ts:24</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -199,28 +201,12 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#_model">_model</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/api/ant-model-manager.ts#L32">api/ant-model-manager.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/ant-model-manager.ts#L28">api/ant-model-manager.ts:28</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Model to manage</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-					<a name="_modelmanager" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _model<wbr>Manager</h3>
-					<div class="tsd-signature tsd-kind-icon">_model<wbr>Manager<span class="tsd-signature-symbol">:</span> <a href="../interfaces/primarymodelmanager.html" class="tsd-signature-type">PrimaryModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#_modelmanager">_modelManager</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/api/ant-model-manager.ts#L36">api/ant-model-manager.ts:36</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>AntJS model manager</p>
 						</div>
 					</div>
 				</section>
@@ -230,7 +216,7 @@
 					<div class="tsd-signature tsd-kind-icon">_model<wbr>Manager<wbr>Generator<span class="tsd-signature-symbol">:</span> <a href="antjsmodelmanagergenerator.html" class="tsd-signature-type">AntJsModelManagerGenerator</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/test/api/minimal-ant-model-manager.ts#L19">test/api/minimal-ant-model-manager.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/test/api/minimal-ant-model-manager.ts#L21">test/api/minimal-ant-model-manager.ts:21</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -240,35 +226,65 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
-					<a name="_secondaryentitymanager" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _secondary<wbr>Entity<wbr>Manager</h3>
-					<div class="tsd-signature tsd-kind-icon">_secondary<wbr>Entity<wbr>Manager<span class="tsd-signature-symbol">:</span> <a href="secondaryentitymanagermock.html" class="tsd-signature-type">SecondaryEntityManagerMock</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<a name="_primarymanager" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _primary<wbr>Manager</h3>
+					<div class="tsd-signature tsd-kind-icon">_primary<wbr>Manager<span class="tsd-signature-symbol">:</span> <a href="../interfaces/primarymodelmanager.html" class="tsd-signature-type">PrimaryModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/test/api/minimal-ant-model-manager.ts#L23">test/api/minimal-ant-model-manager.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/test/api/minimal-ant-model-manager.ts#L26">test/api/minimal-ant-model-manager.ts:26</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Secondary entity manager.</p>
+							<p>Primary manager.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="_scheduledmanager" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _scheduled<wbr>Manager</h3>
+					<div class="tsd-signature tsd-kind-icon">_scheduled<wbr>Manager<span class="tsd-signature-symbol">:</span> <a href="../interfaces/schedulermodelmanager.html" class="tsd-signature-type">SchedulerModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#_scheduledmanager">_scheduledManager</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/ant-model-manager.ts#L32">api/ant-model-manager.ts:32</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Scheduled manager</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+					<a name="_secondarymanager" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _secondary<wbr>Manager</h3>
+					<div class="tsd-signature tsd-kind-icon">_secondary<wbr>Manager<span class="tsd-signature-symbol">:</span> <a href="secondaryentitymanagermock.html" class="tsd-signature-type">SecondaryEntityManagerMock</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/test/api/minimal-ant-model-manager.ts#L31">test/api/minimal-ant-model-manager.ts:31</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Secondary manager.</p>
 						</div>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-					<a name="modelmanager" class="tsd-anchor"></a>
-					<h3>model<wbr>Manager</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> modelManager<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/primarymodelmanager.html" class="tsd-signature-type">PrimaryModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="primarymanager" class="tsd-anchor"></a>
+					<h3>primary<wbr>Manager</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> primaryManager<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/primarymodelmanager.html" class="tsd-signature-type">PrimaryModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#modelmanager">modelManager</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/test/api/minimal-ant-model-manager.ts#L40">test/api/minimal-ant-model-manager.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/test/api/minimal-ant-model-manager.ts#L50">test/api/minimal-ant-model-manager.ts:50</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -281,17 +297,35 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
+					<a name="scheduledmanager" class="tsd-anchor"></a>
+					<h3>scheduled<wbr>Manager</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> scheduledManager<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/schedulermodelmanager.html" class="tsd-signature-type">SchedulerModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#scheduledmanager">scheduledManager</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/test/api/minimal-ant-model-manager.ts#L54">test/api/minimal-ant-model-manager.ts:54</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/schedulermodelmanager.html" class="tsd-signature-type">SchedulerModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="secondarymodelmanager" class="tsd-anchor"></a>
-					<h3>secondary<wbr>Model<wbr>Manager</h3>
+					<a name="secondarymanager" class="tsd-anchor"></a>
+					<h3>secondary<wbr>Manager</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> secondaryModelManager<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="secondaryentitymanagermock.html" class="tsd-signature-type">SecondaryEntityManagerMock</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> secondaryManager<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="secondaryentitymanagermock.html" class="tsd-signature-type">SecondaryEntityManagerMock</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/test/api/minimal-ant-model-manager.ts#L47">test/api/minimal-ant-model-manager.ts:47</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/test/api/minimal-ant-model-manager.ts#L61">test/api/minimal-ant-model-manager.ts:61</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -307,36 +341,97 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
-					<a name="_generatemodelmanager" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _generate<wbr>Model<wbr>Manager</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
-						<li class="tsd-signature tsd-kind-icon">_generate<wbr>Model<wbr>Manager<span class="tsd-signature-symbol">(</span>model<span class="tsd-signature-symbol">: </span><a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/primarymodelmanager.html" class="tsd-signature-type">PrimaryModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+					<a name="_generateprimarymanager" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _generate<wbr>Primary<wbr>Manager</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">_generate<wbr>Primary<wbr>Manager<span class="tsd-signature-symbol">(</span>model<span class="tsd-signature-symbol">: </span><a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span>, config<span class="tsd-signature-symbol">: </span><a href="../interfaces/apimodelconfig.html" class="tsd-signature-type">ApiModelConfig</a>, secondaryManager<span class="tsd-signature-symbol">: </span><a href="secondaryentitymanagermock.html" class="tsd-signature-type">SecondaryEntityManagerMock</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/primarymodelmanager.html" class="tsd-signature-type">PrimaryModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#_generatemodelmanager">_generateModelManager</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/test/api/minimal-ant-model-manager.ts#L56">test/api/minimal-ant-model-manager.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/test/api/minimal-ant-model-manager.ts#L68">test/api/minimal-ant-model-manager.ts:68</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Generates a model manager.</p>
-								</div>
+								<dl class="tsd-comment-tags">
+									<dt>inheritdoc</dt>
+									<dd></dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>model: <a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Model to manage.</p>
-									</div>
+								</li>
+								<li>
+									<h5>config: <a href="../interfaces/apimodelconfig.html" class="tsd-signature-type">ApiModelConfig</a></h5>
+								</li>
+								<li>
+									<h5>secondaryManager: <a href="secondaryentitymanagermock.html" class="tsd-signature-type">SecondaryEntityManagerMock</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/primarymodelmanager.html" class="tsd-signature-type">PrimaryModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>Model manager generated.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+					<a name="_generatescheduledmanager" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _generate<wbr>Scheduled<wbr>Manager</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">_generate<wbr>Scheduled<wbr>Manager<span class="tsd-signature-symbol">(</span>model<span class="tsd-signature-symbol">: </span><a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/schedulermodelmanager.html" class="tsd-signature-type">SchedulerModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#_generatescheduledmanager">_generateScheduledManager</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/test/api/minimal-ant-model-manager.ts#L86">test/api/minimal-ant-model-manager.ts:86</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>inheritdoc</dt>
+									<dd></dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>model: <a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/schedulermodelmanager.html" class="tsd-signature-type">SchedulerModelManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+					<a name="_generatesecondarymanager" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _generate<wbr>Secondary<wbr>Manager</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">_generate<wbr>Secondary<wbr>Manager<span class="tsd-signature-symbol">(</span>model<span class="tsd-signature-symbol">: </span><a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="secondaryentitymanagermock.html" class="tsd-signature-type">SecondaryEntityManagerMock</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/test/api/minimal-ant-model-manager.ts#L93">test/api/minimal-ant-model-manager.ts:93</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>inheritdoc</dt>
+									<dd></dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>model: <a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="secondaryentitymanagermock.html" class="tsd-signature-type">SecondaryEntityManagerMock</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -353,7 +448,7 @@
 								<p>Implementation of <a href="../interfaces/apimodelmanager.html">ApiModelManager</a>.<a href="../interfaces/apimodelmanager.html#config">config</a></p>
 								<p>Inherited from <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#config">config</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/api/ant-model-manager.ts#L61">api/ant-model-manager.ts:61</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/ant-model-manager.ts#L53">api/ant-model-manager.ts:53</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -368,7 +463,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#config">config</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/api/ant-model-manager.ts#L67">api/ant-model-manager.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/ant-model-manager.ts#L59">api/ant-model-manager.ts:59</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -394,7 +489,7 @@
 					<a name="delete" class="tsd-anchor"></a>
 					<h3>delete</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">delete<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">delete<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -402,12 +497,12 @@
 								<p>Implementation of <a href="../interfaces/apimodelmanager.html">ApiModelManager</a>.<a href="../interfaces/apimodelmanager.html#delete">delete</a></p>
 								<p>Inherited from <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#delete">delete</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/api/ant-model-manager.ts#L86">api/ant-model-manager.ts:86</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/ant-model-manager.ts#L78">api/ant-model-manager.ts:78</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Deletes an entity from the cache layer.</p>
+									<p>Deletes an entity.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -419,7 +514,7 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Delete options.</p>
 									</div>
@@ -434,7 +529,7 @@
 					<a name="get" class="tsd-anchor"></a>
 					<h3>get</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -442,7 +537,7 @@
 								<p>Implementation of <a href="../interfaces/apimodelmanager.html">ApiModelManager</a>.<a href="../interfaces/apimodelmanager.html#get">get</a></p>
 								<p>Inherited from <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#get">get</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/api/ant-model-manager.ts#L95">api/ant-model-manager.ts:95</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/ant-model-manager.ts#L87">api/ant-model-manager.ts:87</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -459,7 +554,7 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Cache options.</p>
 									</div>
@@ -474,7 +569,7 @@
 					<a name="mdelete" class="tsd-anchor"></a>
 					<h3>m<wbr>Delete</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">m<wbr>Delete<span class="tsd-signature-symbol">(</span>ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">m<wbr>Delete<span class="tsd-signature-symbol">(</span>ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -482,12 +577,12 @@
 								<p>Implementation of <a href="../interfaces/apimodelmanager.html">ApiModelManager</a>.<a href="../interfaces/apimodelmanager.html#mdelete">mDelete</a></p>
 								<p>Inherited from <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#mdelete">mDelete</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/api/ant-model-manager.ts#L104">api/ant-model-manager.ts:104</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/ant-model-manager.ts#L96">api/ant-model-manager.ts:96</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Deletes multiple entities from the cache layer.</p>
+									<p>Deletes multiple entities.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -499,7 +594,7 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Delete options.</p>
 									</div>
@@ -514,7 +609,7 @@
 					<a name="mget" class="tsd-anchor"></a>
 					<h3>m<wbr>Get</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">m<wbr>Get<span class="tsd-signature-symbol">(</span>ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">m<wbr>Get<span class="tsd-signature-symbol">(</span>ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -522,7 +617,7 @@
 								<p>Implementation of <a href="../interfaces/apimodelmanager.html">ApiModelManager</a>.<a href="../interfaces/apimodelmanager.html#mget">mGet</a></p>
 								<p>Inherited from <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#mget">mGet</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/api/ant-model-manager.ts#L113">api/ant-model-manager.ts:113</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/ant-model-manager.ts#L105">api/ant-model-manager.ts:105</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -539,7 +634,7 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Cache options.</p>
 									</div>
@@ -547,46 +642,6 @@
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>Entities found.</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a name="mupdate" class="tsd-anchor"></a>
-					<h3>m<wbr>Update</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">m<wbr>Update<span class="tsd-signature-symbol">(</span>entities<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/persistencyupdateoptions.html" class="tsd-signature-type">PersistencyUpdateOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/apimodelmanager.html">ApiModelManager</a>.<a href="../interfaces/apimodelmanager.html#mupdate">mUpdate</a></p>
-								<p>Inherited from <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#mupdate">mUpdate</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/api/ant-model-manager.ts#L122">api/ant-model-manager.ts:122</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Updates multiple entities at the cache layer.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>entities: <span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Entities to be updated.</p>
-									</div>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/persistencyupdateoptions.html" class="tsd-signature-type">PersistencyUpdateOptions</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Update options.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>Priomise of entities updated.</p>
 						</li>
 					</ul>
 				</section>
@@ -602,7 +657,7 @@
 								<p>Implementation of <a href="../interfaces/apimodelmanager.html">ApiModelManager</a>.<a href="../interfaces/apimodelmanager.html#query">query</a></p>
 								<p>Inherited from <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#query">query</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/api/ant-model-manager.ts#L131">api/ant-model-manager.ts:131</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/api/ant-model-manager.ts#L114">api/ant-model-manager.ts:114</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -624,46 +679,6 @@
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../globals.html#tantquerymanager" class="tsd-signature-type">TAntQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TResult</span><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>This instance.</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-					<a name="update" class="tsd-anchor"></a>
-					<h3>update</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">update<span class="tsd-signature-symbol">(</span>entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/persistencyupdateoptions.html" class="tsd-signature-type">PersistencyUpdateOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/apimodelmanager.html">ApiModelManager</a>.<a href="../interfaces/apimodelmanager.html#update">update</a></p>
-								<p>Inherited from <a href="antmodelmanager.html">AntModelManager</a>.<a href="antmodelmanager.html#update">update</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/api/ant-model-manager.ts#L142">api/ant-model-manager.ts:142</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Updates an entity at the cache layer.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>entity: <span class="tsd-signature-type">TEntity</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Entitty to update.</p>
-									</div>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/persistencyupdateoptions.html" class="tsd-signature-type">PersistencyUpdateOptions</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>Update options.</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>Promise of entity updated.</p>
 						</li>
 					</ul>
 				</section>
@@ -693,23 +708,35 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 								<a href="minimalantmodelmanager.html#_model" class="tsd-kind-icon">_model</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="minimalantmodelmanager.html#_modelmanager" class="tsd-kind-icon">_model<wbr>Manager</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
 								<a href="minimalantmodelmanager.html#_modelmanagergenerator" class="tsd-kind-icon">_model<wbr>Manager<wbr>Generator</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
-								<a href="minimalantmodelmanager.html#_secondaryentitymanager" class="tsd-kind-icon">_secondary<wbr>Entity<wbr>Manager</a>
+								<a href="minimalantmodelmanager.html#_primarymanager" class="tsd-kind-icon">_primary<wbr>Manager</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-								<a href="minimalantmodelmanager.html#modelmanager" class="tsd-kind-icon">model<wbr>Manager</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="minimalantmodelmanager.html#_scheduledmanager" class="tsd-kind-icon">_scheduled<wbr>Manager</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+								<a href="minimalantmodelmanager.html#_secondarymanager" class="tsd-kind-icon">_secondary<wbr>Manager</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="minimalantmodelmanager.html#secondarymodelmanager" class="tsd-kind-icon">secondary<wbr>Model<wbr>Manager</a>
+								<a href="minimalantmodelmanager.html#primarymanager" class="tsd-kind-icon">primary<wbr>Manager</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
+								<a href="minimalantmodelmanager.html#scheduledmanager" class="tsd-kind-icon">scheduled<wbr>Manager</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="minimalantmodelmanager.html#secondarymanager" class="tsd-kind-icon">secondary<wbr>Manager</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+								<a href="minimalantmodelmanager.html#_generateprimarymanager" class="tsd-kind-icon">_generate<wbr>Primary<wbr>Manager</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-protected">
-								<a href="minimalantmodelmanager.html#_generatemodelmanager" class="tsd-kind-icon">_generate<wbr>Model<wbr>Manager</a>
+								<a href="minimalantmodelmanager.html#_generatescheduledmanager" class="tsd-kind-icon">_generate<wbr>Scheduled<wbr>Manager</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+								<a href="minimalantmodelmanager.html#_generatesecondarymanager" class="tsd-kind-icon">_generate<wbr>Secondary<wbr>Manager</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="minimalantmodelmanager.html#config" class="tsd-kind-icon">config</a>
@@ -726,14 +753,8 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 								<a href="minimalantmodelmanager.html#mget" class="tsd-kind-icon">m<wbr>Get</a>
 							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="minimalantmodelmanager.html#mupdate" class="tsd-kind-icon">m<wbr>Update</a>
-							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-inherited">
 								<a href="minimalantmodelmanager.html#query" class="tsd-kind-icon">query</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="minimalantmodelmanager.html#update" class="tsd-kind-icon">update</a>
 							</li>
 						</ul>
 					</li>
