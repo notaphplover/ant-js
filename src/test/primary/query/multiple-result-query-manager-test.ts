@@ -105,7 +105,8 @@ export class MultipleResultQueryManagerTest implements Test {
         await this._beforeAllPromise;
         const entity1: NamedEntity = {
           id: 0,
-          name: 'sample-name', };
+          name: 'sample-name',
+        };
         const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const queryManager = new NamesStartingByLetter(
           model,
@@ -136,7 +137,8 @@ export class MultipleResultQueryManagerTest implements Test {
         await this._beforeAllPromise;
         const entity1: NamedEntity = {
           id: 0,
-          name: 'sample-name', };
+          name: 'sample-name',
+        };
         const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const queryManager = new NamesStartingByLetter(
           model,
@@ -167,7 +169,8 @@ export class MultipleResultQueryManagerTest implements Test {
         await this._beforeAllPromise;
         const entity1: NamedEntity = {
           id: 0,
-          name: 'sample-name', };
+          name: 'sample-name',
+        };
         const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const queryManager = new NamesStartingByLetter(
           model,
@@ -199,7 +202,8 @@ export class MultipleResultQueryManagerTest implements Test {
         await this._beforeAllPromise;
         const entity1: NamedEntity = {
           id: 0,
-          name: 'sample-name', };
+          name: 'sample-name',
+        };
         const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const queryManager = new NamesStartingByLetter(
           model,
