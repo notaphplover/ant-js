@@ -90,16 +90,12 @@
 								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="antjsdeleteoptions.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-private-protected">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="antjsdeleteoptions.html#_negativecache" class="tsd-kind-icon">_negative<wbr>Cache</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Accessors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="antjsdeleteoptions.html#negativecache" class="tsd-kind-icon">negative<wbr>Cache</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="antjsdeleteoptions.html#ignoreprimarylayer" class="tsd-kind-icon">ignore<wbr>Primary<wbr>Layer</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="antjsdeleteoptions.html#ignoresecondarylayer" class="tsd-kind-icon">ignore<wbr>Secondary<wbr>Layer</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="antjsdeleteoptions.html#negativecache" class="tsd-kind-icon">negative<wbr>Cache</a></li>
 							</ul>
 						</section>
 					</div>
@@ -111,13 +107,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Ant<wbr>JsDelete<wbr>Options<span class="tsd-signature-symbol">(</span>negativeCache<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="antjsdeleteoptions.html" class="tsd-signature-type">AntJsDeleteOptions</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Ant<wbr>JsDelete<wbr>Options<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="antjsdeleteoptions.html" class="tsd-signature-type">AntJsDeleteOptions</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/options/antjs-delete-options.ts#L7">persistence/primary/options/antjs-delete-options.ts:7</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/antjs-delete-options.ts#L20">persistence/primary/options/antjs-delete-options.ts:20</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -128,10 +124,10 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> negativeCache: <span class="tsd-signature-type">boolean</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<div class="lead">
-											<p>True to use negative cache</p>
+											<p>delete options.</p>
 										</div>
 									</div>
 								</li>
@@ -141,51 +137,55 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-private-protected">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
-					<a name="_negativecache" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _negative<wbr>Cache</h3>
-					<div class="tsd-signature tsd-kind-icon">_negative<wbr>Cache<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="ignoreprimarylayer" class="tsd-anchor"></a>
+					<h3>ignore<wbr>Primary<wbr>Layer</h3>
+					<div class="tsd-signature tsd-kind-icon">ignore<wbr>Primary<wbr>Layer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/persistencydeleteoptions.html">PersistencyDeleteOptions</a>.<a href="../interfaces/persistencydeleteoptions.html#ignoreprimarylayer">ignorePrimaryLayer</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/options/antjs-delete-options.ts#L7">persistence/primary/options/antjs-delete-options.ts:7</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/antjs-delete-options.ts#L12">persistence/primary/options/antjs-delete-options.ts:12</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>True to use negative cache.</p>
+							<p>Ignores the primary layer when performing the current operation.</p>
 						</div>
 					</div>
 				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="ignoresecondarylayer" class="tsd-anchor"></a>
+					<h3>ignore<wbr>Secondary<wbr>Layer</h3>
+					<div class="tsd-signature tsd-kind-icon">ignore<wbr>Secondary<wbr>Layer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/persistencydeleteoptions.html">PersistencyDeleteOptions</a>.<a href="../interfaces/persistencydeleteoptions.html#ignoresecondarylayer">ignoreSecondaryLayer</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/antjs-delete-options.ts#L16">persistence/primary/options/antjs-delete-options.ts:16</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Ignores the secondary layer when performing the current operation.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="negativecache" class="tsd-anchor"></a>
 					<h3>negative<wbr>Cache</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> negativeCache<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/options/antjs-delete-options.ts#L20">persistence/primary/options/antjs-delete-options.ts:20</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>True if negative cache must be used.</p>
-								</div>
-								<dl class="tsd-comment-tags">
-									<dt>inheritdoc</dt>
-									<dd></dd>
-								</dl>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-						</li>
-					</ul>
+					<div class="tsd-signature tsd-kind-icon">negative<wbr>Cache<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/persistencydeleteoptions.html">PersistencyDeleteOptions</a>.<a href="../interfaces/persistencydeleteoptions.html#negativecache">negativeCache</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/antjs-delete-options.ts#L20">persistence/primary/options/antjs-delete-options.ts:20</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>True if negative cache must be used.</p>
+						</div>
+					</div>
 				</section>
 			</section>
 		</div>
@@ -207,10 +207,13 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="antjsdeleteoptions.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
-								<a href="antjsdeleteoptions.html#_negativecache" class="tsd-kind-icon">_negative<wbr>Cache</a>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="antjsdeleteoptions.html#ignoreprimarylayer" class="tsd-kind-icon">ignore<wbr>Primary<wbr>Layer</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="antjsdeleteoptions.html#ignoresecondarylayer" class="tsd-kind-icon">ignore<wbr>Secondary<wbr>Layer</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="antjsdeleteoptions.html#negativecache" class="tsd-kind-icon">negative<wbr>Cache</a>
 							</li>
 						</ul>

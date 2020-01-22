@@ -70,10 +70,15 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">PersistencyUpdateOptions</span>
+						<a href="persistencybaseoptions.html" class="tsd-signature-type">PersistencyBaseOptions</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<a href="persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a>
+								<span class="target">PersistencyUpdateOptions</span>
+								<ul class="tsd-hierarchy">
+									<li>
+										<a href="persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a>
+									</li>
+								</ul>
 							</li>
 						</ul>
 					</li>
@@ -93,6 +98,8 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="persistencyupdateoptions.html#cachemode" class="tsd-kind-icon">cache<wbr>Mode</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="persistencyupdateoptions.html#ignoreprimarylayer" class="tsd-kind-icon">ignore<wbr>Primary<wbr>Layer</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-inherited"><a href="persistencyupdateoptions.html#ignoresecondarylayer" class="tsd-kind-icon">ignore<wbr>Secondary<wbr>Layer</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="persistencyupdateoptions.html#ttl" class="tsd-kind-icon">ttl</a></li>
 							</ul>
 						</section>
@@ -107,12 +114,44 @@
 					<div class="tsd-signature tsd-kind-icon">cache<wbr>Mode<span class="tsd-signature-symbol">:</span> <a href="../enums/cachemode.html" class="tsd-signature-type">CacheMode</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/options/persistency-update-options.ts#L7">persistence/primary/options/persistency-update-options.ts:7</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/persistency-update-options.ts#L8">persistence/primary/options/persistency-update-options.ts:8</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Determines if the entity must be cached if not found in cache.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="ignoreprimarylayer" class="tsd-anchor"></a>
+					<h3>ignore<wbr>Primary<wbr>Layer</h3>
+					<div class="tsd-signature tsd-kind-icon">ignore<wbr>Primary<wbr>Layer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="persistencybaseoptions.html">PersistencyBaseOptions</a>.<a href="persistencybaseoptions.html#ignoreprimarylayer">ignorePrimaryLayer</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/persistency-base-options.ts#L5">persistence/primary/options/persistency-base-options.ts:5</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Ignores the primary layer when performing the current operation.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+					<a name="ignoresecondarylayer" class="tsd-anchor"></a>
+					<h3>ignore<wbr>Secondary<wbr>Layer</h3>
+					<div class="tsd-signature tsd-kind-icon">ignore<wbr>Secondary<wbr>Layer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="persistencybaseoptions.html">PersistencyBaseOptions</a>.<a href="persistencybaseoptions.html#ignoresecondarylayer">ignoreSecondaryLayer</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/persistency-base-options.ts#L9">persistence/primary/options/persistency-base-options.ts:9</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Ignores the secondary layer when performing the current operation.</p>
 						</div>
 					</div>
 				</section>
@@ -122,7 +161,7 @@
 					<div class="tsd-signature tsd-kind-icon">ttl<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/options/persistency-update-options.ts#L12">persistence/primary/options/persistency-update-options.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/persistency-update-options.ts#L13">persistence/primary/options/persistency-update-options.ts:13</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -150,6 +189,12 @@
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="persistencyupdateoptions.html#cachemode" class="tsd-kind-icon">cache<wbr>Mode</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="persistencyupdateoptions.html#ignoreprimarylayer" class="tsd-kind-icon">ignore<wbr>Primary<wbr>Layer</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-inherited">
+								<a href="persistencyupdateoptions.html#ignoresecondarylayer" class="tsd-kind-icon">ignore<wbr>Secondary<wbr>Layer</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="persistencyupdateoptions.html#ttl" class="tsd-kind-icon">ttl</a>

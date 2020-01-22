@@ -78,16 +78,13 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="primaryentitymanagerbase.html" class="tsd-signature-type">PrimaryEntityManagerBase</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span>
+						<a href="primaryentitymanager.html" class="tsd-signature-type">PrimaryEntityManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span>
 						<ul class="tsd-hierarchy">
 							<li>
 								<span class="target">BasePrimaryModelManager</span>
 								<ul class="tsd-hierarchy">
 									<li>
 										<a href="primarymodelmanager.html" class="tsd-signature-type">PrimaryModelManager</a>
-									</li>
-									<li>
-										<a href="apimodelmanager.html" class="tsd-signature-type">ApiModelManager</a>
 									</li>
 								</ul>
 							</li>
@@ -119,13 +116,13 @@
 					<a name="delete" class="tsd-anchor"></a>
 					<h3>delete</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">delete<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">?: </span><a href="persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">delete<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">: </span><a href="persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/primary-model-manager.ts#L14">persistence/primary/primary-model-manager.ts:14</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/primary-model-manager.ts#L14">persistence/primary/primary-model-manager.ts:14</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -142,7 +139,7 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a></h5>
+									<h5>options: <a href="persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Delete options.</p>
 									</div>
@@ -157,14 +154,14 @@
 					<a name="get" class="tsd-anchor"></a>
 					<h3>get</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">?: </span><a href="persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">: </span><a href="persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="primaryentitymanagerbase.html">PrimaryEntityManagerBase</a>.<a href="primaryentitymanagerbase.html#get">get</a></p>
+								<p>Inherited from <a href="primaryentitymanager.html">PrimaryEntityManager</a>.<a href="primaryentitymanager.html#get">get</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/primary-entity-manager.ts#L12">persistence/primary/primary-entity-manager.ts:12</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/primary-entity-manager.ts#L11">persistence/primary/primary-entity-manager.ts:11</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -178,7 +175,7 @@
 									<h5>id: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a></h5>
+									<h5>options: <a href="persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Cache options.</p>
 									</div>
@@ -193,13 +190,13 @@
 					<a name="mdelete" class="tsd-anchor"></a>
 					<h3>m<wbr>Delete</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">m<wbr>Delete<span class="tsd-signature-symbol">(</span>ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><a href="persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">m<wbr>Delete<span class="tsd-signature-symbol">(</span>ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">: </span><a href="persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/primary-model-manager.ts#L21">persistence/primary/primary-model-manager.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/primary-model-manager.ts#L21">persistence/primary/primary-model-manager.ts:21</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -216,7 +213,7 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a></h5>
+									<h5>options: <a href="persistencydeleteoptions.html" class="tsd-signature-type">PersistencyDeleteOptions</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Delete options.</p>
 									</div>
@@ -231,14 +228,14 @@
 					<a name="mget" class="tsd-anchor"></a>
 					<h3>m<wbr>Get</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">m<wbr>Get<span class="tsd-signature-symbol">(</span>ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><a href="persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">m<wbr>Get<span class="tsd-signature-symbol">(</span>ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">: </span><a href="persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="primaryentitymanagerbase.html">PrimaryEntityManagerBase</a>.<a href="primaryentitymanagerbase.html#mget">mGet</a></p>
+								<p>Inherited from <a href="primaryentitymanager.html">PrimaryEntityManager</a>.<a href="primaryentitymanager.html#mget">mGet</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/primary-entity-manager.ts#L19">persistence/primary/primary-entity-manager.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/primary-entity-manager.ts#L18">persistence/primary/primary-entity-manager.ts:18</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -255,7 +252,7 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a></h5>
+									<h5>options: <a href="persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Cache options.</p>
 									</div>
@@ -270,13 +267,13 @@
 					<a name="mupdate" class="tsd-anchor"></a>
 					<h3>m<wbr>Update</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">m<wbr>Update<span class="tsd-signature-symbol">(</span>entities<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><a href="persistencyupdateoptions.html" class="tsd-signature-type">PersistencyUpdateOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">m<wbr>Update<span class="tsd-signature-symbol">(</span>entities<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">: </span><a href="persistencyupdateoptions.html" class="tsd-signature-type">PersistencyUpdateOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/primary-model-manager.ts#L28">persistence/primary/primary-model-manager.ts:28</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/primary-model-manager.ts#L28">persistence/primary/primary-model-manager.ts:28</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -293,7 +290,7 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="persistencyupdateoptions.html" class="tsd-signature-type">PersistencyUpdateOptions</a></h5>
+									<h5>options: <a href="persistencyupdateoptions.html" class="tsd-signature-type">PersistencyUpdateOptions</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Cache options.</p>
 									</div>
@@ -308,13 +305,13 @@
 					<a name="update" class="tsd-anchor"></a>
 					<h3>update</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">update<span class="tsd-signature-symbol">(</span>entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span>, options<span class="tsd-signature-symbol">?: </span><a href="persistencyupdateoptions.html" class="tsd-signature-type">PersistencyUpdateOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">update<span class="tsd-signature-symbol">(</span>entity<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TEntity</span>, options<span class="tsd-signature-symbol">: </span><a href="persistencyupdateoptions.html" class="tsd-signature-type">PersistencyUpdateOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/primary-model-manager.ts#L35">persistence/primary/primary-model-manager.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/primary-model-manager.ts#L35">persistence/primary/primary-model-manager.ts:35</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -331,7 +328,7 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="persistencyupdateoptions.html" class="tsd-signature-type">PersistencyUpdateOptions</a></h5>
+									<h5>options: <a href="persistencyupdateoptions.html" class="tsd-signature-type">PersistencyUpdateOptions</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Cache options.</p>
 									</div>

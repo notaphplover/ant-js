@@ -90,19 +90,14 @@
 								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="antjssearchoptions.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-private-protected">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="antjssearchoptions.html#_deleteoptions" class="tsd-kind-icon">_delete<wbr>Options</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="antjssearchoptions.html#_updateoptions" class="tsd-kind-icon">_update<wbr>Options</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Accessors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="antjssearchoptions.html#cachemode" class="tsd-kind-icon">cache<wbr>Mode</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="antjssearchoptions.html#negativecache" class="tsd-kind-icon">negative<wbr>Cache</a></li>
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="antjssearchoptions.html#ttl" class="tsd-kind-icon">ttl</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="antjssearchoptions.html#cachemode" class="tsd-kind-icon">cache<wbr>Mode</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="antjssearchoptions.html#ignoreprimarylayer" class="tsd-kind-icon">ignore<wbr>Primary<wbr>Layer</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="antjssearchoptions.html#ignoresecondarylayer" class="tsd-kind-icon">ignore<wbr>Secondary<wbr>Layer</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="antjssearchoptions.html#negativecache" class="tsd-kind-icon">negative<wbr>Cache</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="antjssearchoptions.html#ttl" class="tsd-kind-icon">ttl</a></li>
 							</ul>
 						</section>
 					</div>
@@ -114,13 +109,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Ant<wbr>JsSearch<wbr>Options<span class="tsd-signature-symbol">(</span>deleteOptions<span class="tsd-signature-symbol">?: </span><a href="antjsdeleteoptions.html" class="tsd-signature-type">AntJsDeleteOptions</a>, updateOptions<span class="tsd-signature-symbol">?: </span><a href="antjsupdateoptions.html" class="tsd-signature-type">AntJsUpdateOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="antjssearchoptions.html" class="tsd-signature-type">AntJsSearchOptions</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Ant<wbr>JsSearch<wbr>Options<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="antjssearchoptions.html" class="tsd-signature-type">AntJsSearchOptions</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/options/antjs-search-options.ts#L15">persistence/primary/options/antjs-search-options.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/antjs-search-options.ts#L31">persistence/primary/options/antjs-search-options.ts:31</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -131,20 +126,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> deleteOptions: <a href="antjsdeleteoptions.html" class="tsd-signature-type">AntJsDeleteOptions</a><span class="tsd-signature-symbol"> =&nbsp;new AntJsDeleteOptions()</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<div class="lead">
-											<p>Delete options.</p>
-										</div>
-									</div>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> updateOptions: <a href="antjsupdateoptions.html" class="tsd-signature-type">AntJsUpdateOptions</a><span class="tsd-signature-symbol"> =&nbsp;new AntJsUpdateOptions()</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<div class="lead">
-											<p>Update options.</p>
-										</div>
-									</div>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;{}</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="antjssearchoptions.html" class="tsd-signature-type">AntJsSearchOptions</a></h4>
@@ -152,15 +134,64 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-private-protected">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
-					<a name="_deleteoptions" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _delete<wbr>Options</h3>
-					<div class="tsd-signature tsd-kind-icon">_delete<wbr>Options<span class="tsd-signature-symbol">:</span> <a href="antjsdeleteoptions.html" class="tsd-signature-type">AntJsDeleteOptions</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="cachemode" class="tsd-anchor"></a>
+					<h3>cache<wbr>Mode</h3>
+					<div class="tsd-signature tsd-kind-icon">cache<wbr>Mode<span class="tsd-signature-symbol">:</span> <a href="../enums/cachemode.html" class="tsd-signature-type">CacheMode</a></div>
 					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/persistencysearchoptions.html">PersistencySearchOptions</a>.<a href="../interfaces/persistencysearchoptions.html#cachemode">cacheMode</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/options/antjs-search-options.ts#L10">persistence/primary/options/antjs-search-options.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/antjs-search-options.ts#L15">persistence/primary/options/antjs-search-options.ts:15</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Determines if the entity must be cached if not found in cache.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="ignoreprimarylayer" class="tsd-anchor"></a>
+					<h3>ignore<wbr>Primary<wbr>Layer</h3>
+					<div class="tsd-signature tsd-kind-icon">ignore<wbr>Primary<wbr>Layer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/persistencysearchoptions.html">PersistencySearchOptions</a>.<a href="../interfaces/persistencysearchoptions.html#ignoreprimarylayer">ignorePrimaryLayer</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/antjs-search-options.ts#L19">persistence/primary/options/antjs-search-options.ts:19</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Ignores the primary layer when performing the current operation.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="ignoresecondarylayer" class="tsd-anchor"></a>
+					<h3>ignore<wbr>Secondary<wbr>Layer</h3>
+					<div class="tsd-signature tsd-kind-icon">ignore<wbr>Secondary<wbr>Layer<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/persistencysearchoptions.html">PersistencySearchOptions</a>.<a href="../interfaces/persistencysearchoptions.html#ignoresecondarylayer">ignoreSecondaryLayer</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/antjs-search-options.ts#L23">persistence/primary/options/antjs-search-options.ts:23</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Ignores the secondary layer when performing the current operation.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="negativecache" class="tsd-anchor"></a>
+					<h3>negative<wbr>Cache</h3>
+					<div class="tsd-signature tsd-kind-icon">negative<wbr>Cache<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/persistencysearchoptions.html">PersistencySearchOptions</a>.<a href="../interfaces/persistencysearchoptions.html#negativecache">negativeCache</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/antjs-search-options.ts#L27">persistence/primary/options/antjs-search-options.ts:27</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -169,101 +200,21 @@
 						</div>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
-					<a name="_updateoptions" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _update<wbr>Options</h3>
-					<div class="tsd-signature tsd-kind-icon">_update<wbr>Options<span class="tsd-signature-symbol">:</span> <a href="antjsupdateoptions.html" class="tsd-signature-type">AntJsUpdateOptions</a></div>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="ttl" class="tsd-anchor"></a>
+					<h3>ttl</h3>
+					<div class="tsd-signature tsd-kind-icon">ttl<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
+						<p>Implementation of <a href="../interfaces/persistencysearchoptions.html">PersistencySearchOptions</a>.<a href="../interfaces/persistencysearchoptions.html#ttl">ttl</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/options/antjs-search-options.ts#L15">persistence/primary/options/antjs-search-options.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/options/antjs-search-options.ts#L31">persistence/primary/options/antjs-search-options.ts:31</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Update options.</p>
+							<p>TTL of the entity (in milliseconds). A null value represents no TTL.</p>
 						</div>
 					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="cachemode" class="tsd-anchor"></a>
-					<h3>cache<wbr>Mode</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> cacheMode<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../enums/cachemode.html" class="tsd-signature-type">CacheMode</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/options/antjs-search-options.ts#L40">persistence/primary/options/antjs-search-options.ts:40</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Determines if the entity must be cached if not found in cache.</p>
-								</div>
-								<dl class="tsd-comment-tags">
-									<dt>inheritdoc</dt>
-									<dd></dd>
-								</dl>
-							</div>
-							<h4 class="tsd-returns-title">Returns <a href="../enums/cachemode.html" class="tsd-signature-type">CacheMode</a></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="negativecache" class="tsd-anchor"></a>
-					<h3>negative<wbr>Cache</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> negativeCache<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/options/antjs-search-options.ts#L33">persistence/primary/options/antjs-search-options.ts:33</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>True if negative cache must be used.</p>
-								</div>
-								<dl class="tsd-comment-tags">
-									<dt>inheritdoc</dt>
-									<dd></dd>
-								</dl>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="ttl" class="tsd-anchor"></a>
-					<h3>ttl</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> ttl<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/options/antjs-search-options.ts#L47">persistence/primary/options/antjs-search-options.ts:47</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>TTL of the entity (in milliseconds). A null value represents no TTL.</p>
-								</div>
-								<dl class="tsd-comment-tags">
-									<dt>inheritdoc</dt>
-									<dd></dd>
-								</dl>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
-						</li>
-					</ul>
 				</section>
 			</section>
 		</div>
@@ -285,19 +236,19 @@
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="antjssearchoptions.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
-								<a href="antjssearchoptions.html#_deleteoptions" class="tsd-kind-icon">_delete<wbr>Options</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-protected">
-								<a href="antjssearchoptions.html#_updateoptions" class="tsd-kind-icon">_update<wbr>Options</a>
-							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="antjssearchoptions.html#cachemode" class="tsd-kind-icon">cache<wbr>Mode</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="antjssearchoptions.html#ignoreprimarylayer" class="tsd-kind-icon">ignore<wbr>Primary<wbr>Layer</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="antjssearchoptions.html#ignoresecondarylayer" class="tsd-kind-icon">ignore<wbr>Secondary<wbr>Layer</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="antjssearchoptions.html#negativecache" class="tsd-kind-icon">negative<wbr>Cache</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="antjssearchoptions.html#ttl" class="tsd-kind-icon">ttl</a>
 							</li>
 						</ul>

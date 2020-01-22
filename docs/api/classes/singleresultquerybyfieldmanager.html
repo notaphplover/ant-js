@@ -91,7 +91,6 @@
 				<h3>Implements</h3>
 				<ul class="tsd-hierarchy">
 					<li><a href="../interfaces/baseprimaryquerymanager.html" class="tsd-signature-type">BasePrimaryQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><a href="../globals.html#tresult" class="tsd-signature-type">TResult</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
-					<li><a href="../interfaces/primaryquerymanager.html" class="tsd-signature-type">PrimaryQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
 					<li><a href="../interfaces/singleresultprimaryquerymanager.html" class="tsd-signature-type">SingleResultPrimaryQueryManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 			</section>
@@ -111,8 +110,9 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="singleresultquerybyfieldmanager.html#_entitykeygen" class="tsd-kind-icon">_entity<wbr>Key<wbr>Gen</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="singleresultquerybyfieldmanager.html#_field" class="tsd-kind-icon">_field</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="singleresultquerybyfieldmanager.html#_luakeygeneratorfromid" class="tsd-kind-icon">_lua<wbr>Key<wbr>Generator<wbr>From<wbr>Id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="singleresultquerybyfieldmanager.html#_manager" class="tsd-kind-icon">_manager</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="singleresultquerybyfieldmanager.html#_model" class="tsd-kind-icon">_model</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="singleresultquerybyfieldmanager.html#_mquery" class="tsd-kind-icon">_mquery</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="singleresultquerybyfieldmanager.html#_primaryentitymanager" class="tsd-kind-icon">_primary<wbr>Entity<wbr>Manager</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="singleresultquerybyfieldmanager.html#_query" class="tsd-kind-icon">_query</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="singleresultquerybyfieldmanager.html#_querykeygen" class="tsd-kind-icon">_query<wbr>Key<wbr>Gen</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><a href="singleresultquerybyfieldmanager.html#_queryprefix" class="tsd-kind-icon">_query<wbr>Prefix</a></li>
@@ -132,6 +132,8 @@
 						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="singleresultquerybyfieldmanager.html#_getmqueryignoringprimarylayer" class="tsd-kind-icon">_getMQuery<wbr>Ignoring<wbr>Primary<wbr>Layer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected"><a href="singleresultquerybyfieldmanager.html#_getqueryignoringprimarylayer" class="tsd-kind-icon">_get<wbr>Query<wbr>Ignoring<wbr>Primary<wbr>Layer</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="singleresultquerybyfieldmanager.html#get" class="tsd-kind-icon">get</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="singleresultquerybyfieldmanager.html#mget" class="tsd-kind-icon">m<wbr>Get</a></li>
 							</ul>
@@ -145,30 +147,32 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Single<wbr>Result<wbr>Query<wbr>ByField<wbr>Manager<span class="tsd-signature-symbol">(</span>query<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, primaryEntityManager<span class="tsd-signature-symbol">: </span><a href="../interfaces/primaryentitymanager.html" class="tsd-signature-type">PrimaryEntityManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span>, redis<span class="tsd-signature-symbol">: </span><a href="../interfaces/redismiddleware.html" class="tsd-signature-type">RedisMiddleware</a>, reverseHashKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, field<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, queryPrefix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, mQuery<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="singleresultquerybyfieldmanager.html" class="tsd-signature-type">SingleResultQueryByFieldManager</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Single<wbr>Result<wbr>Query<wbr>ByField<wbr>Manager<span class="tsd-signature-symbol">(</span>model<span class="tsd-signature-symbol">: </span><a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span>, manager<span class="tsd-signature-symbol">: </span><a href="../interfaces/primaryentitymanager.html" class="tsd-signature-type">PrimaryEntityManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span>, query<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, redis<span class="tsd-signature-symbol">: </span><a href="../interfaces/redismiddleware.html" class="tsd-signature-type">RedisMiddleware</a>, reverseHashKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, field<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, queryPrefix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, mQuery<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="singleresultquerybyfieldmanager.html" class="tsd-signature-type">SingleResultQueryByFieldManager</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/test/primary/query/single-result-query-by-field-manager.ts#L16">test/primary/query/single-result-query-by-field-manager.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/test/primary/query/single-result-query-by-field-manager.ts#L17">test/primary/query/single-result-query-by-field-manager.ts:17</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Creates a query by field manager.</p>
-								</div>
+								<dl class="tsd-comment-tags">
+									<dt>inheritdoc</dt>
+									<dd></dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
+									<h5>model: <a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>manager: <a href="../interfaces/primaryentitymanager.html" class="tsd-signature-type">PrimaryEntityManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
 									<h5>query: <span class="tsd-signature-type">function</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<div class="lead">
-											<p>Query.</p>
-										</div>
-									</div>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
 											<ul class="tsd-signatures tsd-kind-type-literal">
@@ -189,52 +193,19 @@
 									</ul>
 								</li>
 								<li>
-									<h5>primaryEntityManager: <a href="../interfaces/primaryentitymanager.html" class="tsd-signature-type">PrimaryEntityManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<div class="lead">
-											<p>Primary entity manager.</p>
-										</div>
-									</div>
-								</li>
-								<li>
 									<h5>redis: <a href="../interfaces/redismiddleware.html" class="tsd-signature-type">RedisMiddleware</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<div class="lead">
-											<p>Redis connection.</p>
-										</div>
-									</div>
 								</li>
 								<li>
 									<h5>reverseHashKey: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<div class="lead">
-											<p>Reverse hash key.</p>
-										</div>
-									</div>
 								</li>
 								<li>
 									<h5>field: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<div class="lead">
-											<p>Query field.</p>
-										</div>
-									</div>
 								</li>
 								<li>
 									<h5>queryPrefix: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<div class="lead">
-											<p>Query prefix.</p>
-										</div>
-									</div>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> mQuery: <span class="tsd-signature-type">function</span><span class="tsd-signature-symbol"> =&nbsp;null</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<div class="lead">
-											<p>Multiple result query.</p>
-										</div>
-									</div>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter-siganture">
 											<ul class="tsd-signatures tsd-kind-type-literal">
@@ -269,7 +240,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#_entitykeygen">_entityKeyGen</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/query/ant-primary-query-manager.ts#L14">persistence/primary/query/ant-primary-query-manager.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-primary-query-manager.ts#L16">persistence/primary/query/ant-primary-query-manager.ts:16</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -305,7 +276,7 @@
 					<div class="tsd-signature tsd-kind-icon">_field<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/test/primary/query/single-result-query-by-field-manager.ts#L12">test/primary/query/single-result-query-by-field-manager.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/test/primary/query/single-result-query-by-field-manager.ts#L13">test/primary/query/single-result-query-by-field-manager.ts:13</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -321,7 +292,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#_luakeygeneratorfromid">_luaKeyGeneratorFromId</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/query/ant-primary-query-manager.ts#L42">persistence/primary/query/ant-primary-query-manager.ts:42</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-primary-query-manager.ts#L48">persistence/primary/query/ant-primary-query-manager.ts:48</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -352,34 +323,50 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="_manager" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _manager</h3>
+					<div class="tsd-signature tsd-kind-icon">_manager<span class="tsd-signature-symbol">:</span> <a href="../interfaces/primaryentitymanager.html" class="tsd-signature-type">PrimaryEntityManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#_manager">_manager</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-primary-query-manager.ts#L32">persistence/primary/query/ant-primary-query-manager.ts:32</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Primary entity manager.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="_model" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _model</h3>
+					<div class="tsd-signature tsd-kind-icon">_model<span class="tsd-signature-symbol">:</span> <a href="../interfaces/model.html" class="tsd-signature-type">Model</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<p>Inherited from <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#_model">_model</a></p>
+						<ul>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-primary-query-manager.ts#L24">persistence/primary/query/ant-primary-query-manager.ts:24</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Query model</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 					<a name="_mquery" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _mquery</h3>
 					<div class="tsd-signature tsd-kind-icon">_mquery<span class="tsd-signature-symbol">:</span> <a href="../globals.html#tmquery" class="tsd-signature-type">TMQuery</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#_mquery">_mquery</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/query/ant-primary-query-manager.ts#L22">persistence/primary/query/ant-primary-query-manager.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-primary-query-manager.ts#L28">persistence/primary/query/ant-primary-query-manager.ts:28</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Multiple query</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-					<a name="_primaryentitymanager" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _primary<wbr>Entity<wbr>Manager</h3>
-					<div class="tsd-signature tsd-kind-icon">_primary<wbr>Entity<wbr>Manager<span class="tsd-signature-symbol">:</span> <a href="../interfaces/primaryentitymanager.html" class="tsd-signature-type">PrimaryEntityManager</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<p>Inherited from <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#_primaryentitymanager">_primaryEntityManager</a></p>
-						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/query/ant-primary-query-manager.ts#L26">persistence/primary/query/ant-primary-query-manager.ts:26</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Primary entity manager.</p>
 						</div>
 					</div>
 				</section>
@@ -390,7 +377,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#_query">_query</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/query/ant-primary-query-manager.ts#L30">persistence/primary/query/ant-primary-query-manager.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-primary-query-manager.ts#L36">persistence/primary/query/ant-primary-query-manager.ts:36</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -406,7 +393,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#_querykeygen">_queryKeyGen</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/query/ant-primary-query-manager.ts#L18">persistence/primary/query/ant-primary-query-manager.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-primary-query-manager.ts#L20">persistence/primary/query/ant-primary-query-manager.ts:20</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -442,7 +429,7 @@
 					<div class="tsd-signature tsd-kind-icon">_query<wbr>Prefix<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/test/primary/query/single-result-query-by-field-manager.ts#L16">test/primary/query/single-result-query-by-field-manager.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/test/primary/query/single-result-query-by-field-manager.ts#L17">test/primary/query/single-result-query-by-field-manager.ts:17</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -458,7 +445,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#_redis">_redis</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/query/ant-primary-query-manager.ts#L34">persistence/primary/query/ant-primary-query-manager.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-primary-query-manager.ts#L40">persistence/primary/query/ant-primary-query-manager.ts:40</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -474,7 +461,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#_reversehashkey">_reverseHashKey</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/query/ant-primary-query-manager.ts#L38">persistence/primary/query/ant-primary-query-manager.ts:38</a></li>
+							<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-primary-query-manager.ts#L44">persistence/primary/query/ant-primary-query-manager.ts:44</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -497,7 +484,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#entitykeygen">entityKeyGen</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/query/ant-primary-query-manager.ts#L81">persistence/primary/query/ant-primary-query-manager.ts:81</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-primary-query-manager.ts#L90">persistence/primary/query/ant-primary-query-manager.ts:90</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -539,7 +526,7 @@
 								<p>Inherited from <a href="antsingleresultprimaryquerymanager.html">AntSingleResultPrimaryQueryManager</a>.<a href="antsingleresultprimaryquerymanager.html#ismultiple">isMultiple</a></p>
 								<p>Overrides <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#ismultiple">isMultiple</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/query/ant-single-result-primary-query-manager.ts#L14">persistence/primary/query/ant-single-result-primary-query-manager.ts:14</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-single-result-primary-query-manager.ts#L14">persistence/primary/query/ant-single-result-primary-query-manager.ts:14</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -562,7 +549,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#querykeygen">queryKeyGen</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/query/ant-primary-query-manager.ts#L88">persistence/primary/query/ant-primary-query-manager.ts:88</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-primary-query-manager.ts#L97">persistence/primary/query/ant-primary-query-manager.ts:97</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -603,7 +590,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#reversehashkey">reverseHashKey</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/query/ant-primary-query-manager.ts#L95">persistence/primary/query/ant-primary-query-manager.ts:95</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-primary-query-manager.ts#L104">persistence/primary/query/ant-primary-query-manager.ts:104</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -618,11 +605,89 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="_getmqueryignoringprimarylayer" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _getMQuery<wbr>Ignoring<wbr>Primary<wbr>Layer</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">_getMQuery<wbr>Ignoring<wbr>Primary<wbr>Layer<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">: </span><a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#_getmqueryignoringprimarylayer">_getMQueryIgnoringPrimaryLayer</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-primary-query-manager.ts#L129">persistence/primary/query/ant-primary-query-manager.ts:129</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Gets a query result ignoring the primary layer.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>params: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>MQuery parameters.</p>
+									</div>
+								</li>
+								<li>
+									<h5>options: <a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>MQuery options.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>MQuery result.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+					<a name="_getqueryignoringprimarylayer" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagProtected">Protected</span> _get<wbr>Query<wbr>Ignoring<wbr>Primary<wbr>Layer</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+						<li class="tsd-signature tsd-kind-icon">_get<wbr>Query<wbr>Ignoring<wbr>Primary<wbr>Layer<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, options<span class="tsd-signature-symbol">: </span><a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="antsingleresultprimaryquerymanager.html">AntSingleResultPrimaryQueryManager</a>.<a href="antsingleresultprimaryquerymanager.html#_getqueryignoringprimarylayer">_getQueryIgnoringPrimaryLayer</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-single-result-primary-query-manager.ts#L113">persistence/primary/query/ant-single-result-primary-query-manager.ts:113</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Gets a query result ignoring the primary layer.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>params: <span class="tsd-signature-type">any</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Query parameters.</p>
+									</div>
+								</li>
+								<li>
+									<h5>options: <a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Query options.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>Query result</p>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="get" class="tsd-anchor"></a>
 					<h3>get</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<span class="tsd-signature-symbol">(</span>params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, options<span class="tsd-signature-symbol">: </span><a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -631,7 +696,7 @@
 								<p>Inherited from <a href="antsingleresultprimaryquerymanager.html">AntSingleResultPrimaryQueryManager</a>.<a href="antsingleresultprimaryquerymanager.html#get">get</a></p>
 								<p>Overrides <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#get">get</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/query/ant-single-result-primary-query-manager.ts#L23">persistence/primary/query/ant-single-result-primary-query-manager.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-single-result-primary-query-manager.ts#L23">persistence/primary/query/ant-single-result-primary-query-manager.ts:23</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -648,7 +713,7 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a></h5>
+									<h5>options: <a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Cache options.</p>
 									</div>
@@ -662,7 +727,7 @@
 					<a name="mget" class="tsd-anchor"></a>
 					<h3>m<wbr>Get</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">m<wbr>Get<span class="tsd-signature-symbol">(</span>paramsArray<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">m<wbr>Get<span class="tsd-signature-symbol">(</span>paramsArray<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span>, options<span class="tsd-signature-symbol">: </span><a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TEntity</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -671,7 +736,7 @@
 								<p>Inherited from <a href="antsingleresultprimaryquerymanager.html">AntSingleResultPrimaryQueryManager</a>.<a href="antsingleresultprimaryquerymanager.html#mget">mGet</a></p>
 								<p>Overrides <a href="antprimaryquerymanager.html">AntPrimaryQueryManager</a>.<a href="antprimaryquerymanager.html#mget">mGet</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/d63ac84/src/persistence/primary/query/ant-single-result-primary-query-manager.ts#L59">persistence/primary/query/ant-single-result-primary-query-manager.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/notaphplover/ant-js/blob/5f19934/src/persistence/primary/query/ant-single-result-primary-query-manager.ts#L65">persistence/primary/query/ant-single-result-primary-query-manager.ts:65</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -688,7 +753,7 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> options: <a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a></h5>
+									<h5>options: <a href="../interfaces/persistencysearchoptions.html" class="tsd-signature-type">PersistencySearchOptions</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>Cache options.</p>
 									</div>
@@ -729,10 +794,13 @@
 								<a href="singleresultquerybyfieldmanager.html#_luakeygeneratorfromid" class="tsd-kind-icon">_lua<wbr>Key<wbr>Generator<wbr>From<wbr>Id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="singleresultquerybyfieldmanager.html#_mquery" class="tsd-kind-icon">_mquery</a>
+								<a href="singleresultquerybyfieldmanager.html#_manager" class="tsd-kind-icon">_manager</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
-								<a href="singleresultquerybyfieldmanager.html#_primaryentitymanager" class="tsd-kind-icon">_primary<wbr>Entity<wbr>Manager</a>
+								<a href="singleresultquerybyfieldmanager.html#_model" class="tsd-kind-icon">_model</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="singleresultquerybyfieldmanager.html#_mquery" class="tsd-kind-icon">_mquery</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
 								<a href="singleresultquerybyfieldmanager.html#_query" class="tsd-kind-icon">_query</a>
@@ -760,6 +828,12 @@
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
 								<a href="singleresultquerybyfieldmanager.html#reversehashkey" class="tsd-kind-icon">reverse<wbr>Hash<wbr>Key</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="singleresultquerybyfieldmanager.html#_getmqueryignoringprimarylayer" class="tsd-kind-icon">_getMQuery<wbr>Ignoring<wbr>Primary<wbr>Layer</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-protected">
+								<a href="singleresultquerybyfieldmanager.html#_getqueryignoringprimarylayer" class="tsd-kind-icon">_get<wbr>Query<wbr>Ignoring<wbr>Primary<wbr>Layer</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 								<a href="singleresultquerybyfieldmanager.html#get" class="tsd-kind-icon">get</a>
