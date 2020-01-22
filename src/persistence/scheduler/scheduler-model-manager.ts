@@ -1,6 +1,5 @@
 import { MultipleQueryResult, SingleQueryResult, TMQuery, TQuery } from '../primary/query/query-types';
 import { Entity } from '../../model/entity';
-import { Model } from '../../model/model';
 import { MultipleResultPrimaryQueryManager } from '../primary/query/multiple-result-primary-query-manager';
 import { PersistencyDeleteOptions } from '../primary/options/persistency-delete-options';
 import { PersistencySearchOptions } from '../primary/options/persistency-search-options';
@@ -38,8 +37,7 @@ export interface SchedulerModelManagerBase<TEntity> {
   mGet(ids: number[] | string[], options?: Partial<PersistencySearchOptions>): Promise<TEntity[]>;
 }
 
-export interface SchedulerModelManager<TEntity extends Entity, TModel extends Model<TEntity>>
-  extends SchedulerModelManagerBase<TEntity> {
+export interface SchedulerModelManager<TEntity extends Entity> extends SchedulerModelManagerBase<TEntity> {
   /**
    * Adds a single result query to the manager and returns it.
    * @param query Single ids query handler.

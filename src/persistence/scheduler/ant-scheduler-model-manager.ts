@@ -19,7 +19,10 @@ export class AntScheduleModelManager<
   TModel extends Model<TEntity>,
   TPrimaryManager extends PrimaryModelManager<TEntity>,
   TSecondaryManager extends SecondaryEntityManager<TEntity>
-> implements SchedulerModelManager<TEntity, TModel> {
+> implements SchedulerModelManager<TEntity> {
+  /**
+   * Manager's model.
+   */
   protected _model: TModel;
   /**
    * Primary manager

@@ -13,7 +13,7 @@ export class MinimalAntModelManager<TEntity extends Entity> extends AntModelMana
   TEntity,
   ApiModelConfig,
   Model<TEntity>,
-  SchedulerModelManager<TEntity, Model<TEntity>>
+  SchedulerModelManager<TEntity>
 > {
   /**
    * Model manager generator.
@@ -51,7 +51,7 @@ export class MinimalAntModelManager<TEntity extends Entity> extends AntModelMana
     return this._primaryManager;
   }
 
-  public get scheduledManager(): SchedulerModelManager<TEntity, Model<TEntity>> {
+  public get scheduledManager(): SchedulerModelManager<TEntity> {
     return super.scheduledManager;
   }
   /**
@@ -83,7 +83,7 @@ export class MinimalAntModelManager<TEntity extends Entity> extends AntModelMana
   /**
    * @inheritdoc
    */
-  protected _generateScheduledManager(model: Model<TEntity>): SchedulerModelManager<TEntity, Model<TEntity>> {
+  protected _generateScheduledManager(model: Model<TEntity>): SchedulerModelManager<TEntity> {
     return new AntScheduleModelManager(model, this._primaryManager, this._secondaryManager);
   }
 

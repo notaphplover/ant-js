@@ -16,7 +16,7 @@ export abstract class AntModelManager<
   TEntity extends Entity,
   TConfig extends ApiModelConfig,
   TModel extends Model<TEntity>,
-  TScheduledManager extends SchedulerModelManager<TEntity, TModel>
+  TScheduledManager extends SchedulerModelManager<TEntity>
 > implements ApiModelManager<TEntity, TConfig> {
   /**
    * AntJS model config.
