@@ -25,6 +25,9 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
     if (options.ignorePrimaryLayer) {
       return this._getQueryIgnoringPrimaryLayer(params, options);
     }
+    if (options.ignoreSecondaryLayer) {
+      throw new Error('this configuration is not currently supported');
+    }
     const key = this.queryKeyGen(params);
     const luaScript = this._luaGetGenerator();
     const resultsJSON = await this._redis.eval(luaScript, 1, key);
@@ -58,6 +61,9 @@ export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
     }
     if (options.ignorePrimaryLayer) {
       return this._getMQueryIgnoringPrimaryLayer(paramsArray, options);
+    }
+    if (options.ignoreSecondaryLayer) {
+      throw new Error('this configuration is not currently supported');
     }
     const keys = _.map(paramsArray, this.queryKeyGen.bind(this));
     const luaScript = this._luaMGetGenerator();
