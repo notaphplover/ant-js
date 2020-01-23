@@ -14,7 +14,7 @@ import { SchedulerModelManager } from './scheduler-model-manager';
 import { SecondaryEntityManager } from '../secondary/secondary-entity-manager';
 import { SingleResultPrimaryQueryManager } from '../primary/query/single-result-primary-query-manager';
 
-export class AntScheduleModelManager<
+export class AntSchedulerModelManager<
   TEntity extends Entity,
   TModel extends Model<TEntity>,
   TPrimaryManager extends PrimaryModelManager<TEntity>,
