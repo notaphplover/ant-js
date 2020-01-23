@@ -1,4 +1,4 @@
-import { AntJsUpdateOptions } from '../../../persistence/primary/options/antjs-update-options';
+import { AntJsUpdateOptions } from '../../../persistence/options/antjs-update-options';
 import { RedisCachedScript } from '../../../persistence/primary/script/redis-cached-script';
 import { RedisWrapper } from '../redis-wrapper';
 import { Test } from '../../../testapi/api/test';

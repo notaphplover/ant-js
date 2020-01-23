@@ -1,6 +1,6 @@
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/antjs-model-manager-generator';
 import { AntModel } from '../../model/ant-model';
-import { AntScheduleModelManager } from '../../persistence/scheduler/ant-scheduler-model-manager';
+import { AntSchedulerModelManager } from '../../persistence/scheduler/ant-scheduler-model-manager';
 import { Entity } from '../../model/entity';
 import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
 import { RedisWrapper } from '../primary/redis-wrapper';
@@ -47,7 +47,7 @@ export class AntSchedulerModelManagerTest implements Test {
       async (done) => {
         const model = new AntModel('id', { prefix });
         const [primaryManager, secondaryManager] = this._modelManagerGenerator.generateModelManager({ model });
-        const schedulerModelManager = new AntScheduleModelManager(model, primaryManager, secondaryManager);
+        const schedulerModelManager = new AntSchedulerModelManager(model, primaryManager, secondaryManager);
 
         const methodsToTest: Array<keyof PrimaryModelManager<any>> = ['delete', 'get', 'mDelete', 'mGet'];
         for (const methodToTest of methodsToTest) {
@@ -89,7 +89,7 @@ export class AntSchedulerModelManagerTest implements Test {
       async (done) => {
         const model = new AntModel('id', { prefix });
         const [primaryManager] = this._modelManagerGenerator.generateModelManager({ model });
-        const schedulerModelManager = new AntScheduleModelManager(model, primaryManager);
+        const schedulerModelManager = new AntSchedulerModelManager(model, primaryManager);
 
         const methodsToTest: Array<keyof PrimaryModelManager<any>> = ['delete', 'get', 'mDelete', 'mGet'];
         for (const methodToTest of methodsToTest) {
@@ -131,7 +131,7 @@ export class AntSchedulerModelManagerTest implements Test {
       async (done) => {
         const model = new AntModel('id', { prefix });
         const [primaryManager, secondaryManager] = this._modelManagerGenerator.generateModelManager({ model });
-        const schedulerModelManager = new AntScheduleModelManager(model, primaryManager, secondaryManager);
+        const schedulerModelManager = new AntSchedulerModelManager(model, primaryManager, secondaryManager);
 
         const methodsToTest: Array<keyof SecondaryEntityManager<any>> = ['delete', 'getById', 'getByIds', 'mDelete'];
         for (const methodToTest of methodsToTest) {
@@ -164,7 +164,7 @@ export class AntSchedulerModelManagerTest implements Test {
       async (done) => {
         const model = new AntModel('id', { prefix });
         const [primaryManager, secondaryManager] = this._modelManagerGenerator.generateModelManager({ model });
-        const schedulerModelManager = new AntScheduleModelManager(model, primaryManager, secondaryManager);
+        const schedulerModelManager = new AntSchedulerModelManager(model, primaryManager, secondaryManager);
 
         const methodsToTest: Array<keyof PrimaryModelManager<any>> = ['delete', 'mDelete'];
         for (const methodToTest of methodsToTest) {
@@ -195,7 +195,7 @@ export class AntSchedulerModelManagerTest implements Test {
       async (done) => {
         const model = new AntModel('id', { prefix });
         const [primaryManager, secondaryManager] = this._modelManagerGenerator.generateModelManager({ model });
-        const schedulerModelManager = new AntScheduleModelManager(model, primaryManager, secondaryManager);
+        const schedulerModelManager = new AntSchedulerModelManager(model, primaryManager, secondaryManager);
 
         const methodsToTest: Array<keyof SecondaryEntityManager<any>> = ['delete', 'mDelete'];
         for (const methodToTest of methodsToTest) {

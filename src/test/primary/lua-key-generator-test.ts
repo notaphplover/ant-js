@@ -1,4 +1,4 @@
-import { AntJsSearchOptions } from '../../persistence/primary/options/antjs-search-options';
+import { AntJsSearchOptions } from '../../persistence/options/antjs-search-options';
 import { AntModel } from '../../model/ant-model';
 import { AntPrimaryEntityManager } from '../../persistence/primary/ant-primary-entity-manager';
 import { Entity } from '../../model/entity';

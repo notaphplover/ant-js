@@ -1,9 +1,9 @@
-import { AntJsDeleteOptions } from '../../persistence/primary/options/antjs-delete-options';
-import { AntJsSearchOptions } from '../../persistence/primary/options/antjs-search-options';
+import { AntJsDeleteOptions } from '../../persistence/options/antjs-delete-options';
+import { AntJsSearchOptions } from '../../persistence/options/antjs-search-options';
 import { AntModel } from '../../model/ant-model';
 import { AntPrimaryEntityManager } from '../../persistence/primary/ant-primary-entity-manager';
 import { AntPrimaryModelManager } from '../../persistence/primary/ant-primary-model-manager';
-import { CacheMode } from '../../persistence/primary/options/cache-mode';
+import { CacheMode } from '../../persistence/options/cache-mode';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 import { PrimaryEntityManager } from '../../persistence/primary/primary-entity-manager';

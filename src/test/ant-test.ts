@@ -1,6 +1,6 @@
 import * as AntJs from '../ant';
 import { AntManager } from '../api/ant-manager';
-import { CacheMode } from '../persistence/primary/options/cache-mode';
+import { CacheMode } from '../persistence/options/cache-mode';
 import { Test } from '../testapi/api/test';
 
 export class AntTest implements Test {

@@ -1,6 +1,6 @@
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/antjs-model-manager-generator';
 import { AntModelManager } from '../../api/ant-model-manager';
-import { AntScheduleModelManager } from '../../persistence/scheduler/ant-scheduler-model-manager';
+import { AntSchedulerModelManager } from '../../persistence/scheduler/ant-scheduler-model-manager';
 import { ApiModelConfig } from '../../api/config/api-model-config';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
@@ -84,7 +84,7 @@ export class MinimalAntModelManager<TEntity extends Entity> extends AntModelMana
    * @inheritdoc
    */
   protected _generateScheduledManager(model: Model<TEntity>): SchedulerModelManager<TEntity> {
-    return new AntScheduleModelManager(model, this._primaryManager, this._secondaryManager);
+    return new AntSchedulerModelManager(model, this._primaryManager, this._secondaryManager);
   }
 
   /**

@@ -1,4 +1,4 @@
-import { PersistencyDeleteOptions } from '../options/persistency-delete-options';
+import { PersistencyDeleteOptions } from '../../options/persistency-delete-options';
 import { RedisCachedScript } from './redis-cached-script';
 import { RedisCachedScriptSet } from './redis-cached-script-set';
 

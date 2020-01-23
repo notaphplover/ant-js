@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
-import { CacheMode } from './options/cache-mode';
+import { CacheMode } from '../options/cache-mode';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
-import { PersistencyDeleteOptions } from './options/persistency-delete-options';
-import { PersistencySearchOptions } from './options/persistency-search-options';
-import { PersistencyUpdateOptions } from './options/persistency-update-options';
+import { PersistencyDeleteOptions } from '../options/persistency-delete-options';
+import { PersistencySearchOptions } from '../options/persistency-search-options';
+import { PersistencyUpdateOptions } from '../options/persistency-update-options';
 import { PrimaryEntityManager } from './primary-entity-manager';
 import { RedisMiddleware } from './redis-middleware';
 import { SecondaryEntityManager } from '../secondary/secondary-entity-manager';

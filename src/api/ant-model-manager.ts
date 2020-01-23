@@ -8,8 +8,8 @@ import { ApiQueryConfig } from './config/api-query-config';
 import { ApiSingleResultQueryManager } from './query/api-single-result-query-manager';
 import { Entity } from '../model/entity';
 import { Model } from '../model/model';
-import { PersistencyDeleteOptions } from '../persistence/primary/options/persistency-delete-options';
-import { PersistencySearchOptions } from '../persistence/primary/options/persistency-search-options';
+import { PersistencyDeleteOptions } from '../persistence/options/persistency-delete-options';
+import { PersistencySearchOptions } from '../persistence/options/persistency-search-options';
 import { SchedulerModelManager } from '../persistence/scheduler/scheduler-model-manager';
 
 export abstract class AntModelManager<

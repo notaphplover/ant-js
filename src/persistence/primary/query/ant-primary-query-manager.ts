@@ -3,7 +3,7 @@ import { QueryResult, TMQuery, TQuery, TResult } from './query-types';
 import { BasePrimaryQueryManager } from './primary-query-manager';
 import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
-import { PersistencySearchOptions } from '../options/persistency-search-options';
+import { PersistencySearchOptions } from '../../options/persistency-search-options';
 import { PrimaryEntityManager } from '../primary-entity-manager';
 import { RedisMiddleware } from '../redis-middleware';
 import { luaKeyGenerator } from '../lua-key-generator';

@@ -1,7 +1,7 @@
-import { AntJsSearchOptions } from '../../persistence/primary/options/antjs-search-options';
+import { AntJsSearchOptions } from '../../persistence/options/antjs-search-options';
 import { ApiQueryManager } from './api-query-manager';
 import { Entity } from '../../model/entity';
-import { PersistencySearchOptions } from '../../persistence/primary/options/persistency-search-options';
+import { PersistencySearchOptions } from '../../persistence/options/persistency-search-options';
 import { QueryManager } from '../../persistence/primary/query/query-manager';
 
 export abstract class AntQueryManager<TEntity extends Entity, TResult extends TEntity | TEntity[]>
