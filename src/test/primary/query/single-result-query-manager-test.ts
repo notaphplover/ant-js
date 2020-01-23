@@ -1,5 +1,5 @@
-import { AntJsDeleteOptions } from '../../../persistence/primary/options/antjs-delete-options';
-import { AntJsSearchOptions } from '../../../persistence/primary/options/antjs-search-options';
+import { AntJsDeleteOptions } from '../../../persistence/options/antjs-delete-options';
+import { AntJsSearchOptions } from '../../../persistence/options/antjs-search-options';
 import { AntModel } from '../../../model/ant-model';
 import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
 import { Entity } from '../../../model/entity';

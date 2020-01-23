@@ -1,6 +1,6 @@
 import { Entity } from '../../model/entity';
-import { PersistencyDeleteOptions } from './options/persistency-delete-options';
-import { PersistencyUpdateOptions } from './options/persistency-update-options';
+import { PersistencyDeleteOptions } from '../options/persistency-delete-options';
+import { PersistencyUpdateOptions } from '../options/persistency-update-options';
 import { PrimaryEntityManager } from './primary-entity-manager';
 import { PrimaryQueryManager } from './query/primary-query-manager';
 

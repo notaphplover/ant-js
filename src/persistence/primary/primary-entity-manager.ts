@@ -1,5 +1,5 @@
 import { Entity } from '../../model/entity';
-import { PersistencySearchOptions } from './options/persistency-search-options';
+import { PersistencySearchOptions } from '../options/persistency-search-options';
 
 export interface PrimaryEntityManager<TEntity extends Entity> {
   /**

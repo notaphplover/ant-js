@@ -1,5 +1,5 @@
 import { Entity } from '../../model/entity';
-import { PersistencySearchOptions } from '../../persistence/primary/options/persistency-search-options';
+import { PersistencySearchOptions } from '../../persistence/options/persistency-search-options';
 
 export interface ApiQueryManager<TEntity extends Entity, TResult extends TEntity | TEntity[]> {
   /**

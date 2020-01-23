@@ -1,5 +1,5 @@
-import { CacheMode } from '../options/cache-mode';
-import { PersistencyUpdateOptions } from '../options/persistency-update-options';
+import { CacheMode } from '../../options/cache-mode';
+import { PersistencyUpdateOptions } from '../../options/persistency-update-options';
 import { RedisCachedScript } from './redis-cached-script';
 import { RedisCachedScriptSet } from './redis-cached-script-set';
 

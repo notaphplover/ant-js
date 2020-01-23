@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { AntJsSearchOptions } from '../../../persistence/primary/options/antjs-search-options';
+import { AntJsSearchOptions } from '../../../persistence/options/antjs-search-options';
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { AntSingleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-single-result-primary-query-manager';
 import { ApiModelManagerGeneratorOptions } from './api-model-manager-generator-options';

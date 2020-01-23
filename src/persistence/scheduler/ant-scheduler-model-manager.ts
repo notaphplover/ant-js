@@ -1,13 +1,13 @@
 import { MultipleQueryResult, SingleQueryResult, TMQuery, TQuery } from '../primary/query/query-types';
-import { AntJsDeleteOptions } from '../primary/options/antjs-delete-options';
-import { AntJsSearchOptions } from '../primary/options/antjs-search-options';
+import { AntJsDeleteOptions } from '../options/antjs-delete-options';
+import { AntJsSearchOptions } from '../options/antjs-search-options';
 import { AntMultipleResultPrimaryQueryManager } from '../primary/query/ant-multiple-result-primary-query-manager';
 import { AntSingleResultPrimaryQueryManager } from '../primary/query/ant-single-result-primary-query-manager';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 import { MultipleResultPrimaryQueryManager } from '../primary/query/multiple-result-primary-query-manager';
-import { PersistencyDeleteOptions } from '../primary/options/persistency-delete-options';
-import { PersistencySearchOptions } from '../primary/options/persistency-search-options';
+import { PersistencyDeleteOptions } from '../options/persistency-delete-options';
+import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { PrimaryModelManager } from '../primary/primary-model-manager';
 import { RedisMiddleware } from '../primary/redis-middleware';
 import { SchedulerModelManager } from './scheduler-model-manager';

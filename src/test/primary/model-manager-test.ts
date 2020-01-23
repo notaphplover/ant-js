@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
-import { AntJsDeleteOptions } from '../../persistence/primary/options/antjs-delete-options';
+import { AntJsDeleteOptions } from '../../persistence/options/antjs-delete-options';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/antjs-model-manager-generator';
-import { AntJsSearchOptions } from '../../persistence/primary/options/antjs-search-options';
-import { AntJsUpdateOptions } from '../../persistence/primary/options/antjs-update-options';
+import { AntJsSearchOptions } from '../../persistence/options/antjs-search-options';
+import { AntJsUpdateOptions } from '../../persistence/options/antjs-update-options';
 import { AntModel } from '../../model/ant-model';
-import { CacheMode } from '../../persistence/primary/options/cache-mode';
+import { CacheMode } from '../../persistence/options/cache-mode';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 import { MultipleResultQueryByFieldManager } from './query/multiple-result-query-by-field-manager';
