@@ -1,12 +1,14 @@
 import { NamedEntity, NamesStartingByLetter } from './names-starting-by-letter';
 import { NamedEntityAlternative, NamesStartingByLetterAlternative } from './names-starting-by-letter-alternative';
-import { AntJsDeleteOptions } from '../../../persistence/options/antjs-delete-options';
 import { AntJsSearchOptions } from '../../../persistence/options/antjs-search-options';
 import { AntModel } from '../../../model/ant-model';
 import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
+import { AntSchedulerModelManager } from '../../../persistence/scheduler/ant-scheduler-model-manager';
 import { Model } from '../../../model/model';
 import { PrimaryModelManager } from '../../../persistence/primary/primary-model-manager';
 import { RedisWrapper } from '../redis-wrapper';
+import { SchedulerModelManager } from '../../../persistence/scheduler/scheduler-model-manager';
+import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/secondary-entity-manager-mock';
 import { Test } from '../../../testapi/api/test';
 
@@ -65,11 +67,17 @@ export class MultipleResultQueryManagerTest implements Test {
   private _helperGenerateBaseInstances(
     prefix: string,
     entities: NamedEntity[],
-  ): [Model<NamedEntity>, PrimaryModelManager<NamedEntity>, SecondaryEntityManagerMock<NamedEntity>] {
+  ): [Model<NamedEntity>, SchedulerModelManager<NamedEntity>, SecondaryEntityManagerMock<NamedEntity>] {
     const model = new AntModel<NamedEntity>('id', { prefix });
     const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntity>(model, entities);
-    const primaryManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
-    return [model, primaryManager, secondaryEntityManager];
+    const primaryManager = new AntPrimaryModelManager(model, this._redis.redis, true);
+    const schedulerManager = new AntSchedulerModelManager<
+      NamedEntity,
+      Model<NamedEntity>,
+      PrimaryModelManager<NamedEntity>,
+      SecondaryEntityManager<NamedEntity>
+    >(model, primaryManager, secondaryEntityManager);
+    return [model, schedulerManager, secondaryEntityManager];
   }
 
   private _itMustBeInitializable(): void {
@@ -79,11 +87,11 @@ export class MultipleResultQueryManagerTest implements Test {
       itsName,
       async (done) => {
         await this._beforeAllPromise;
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         expect(() => {
           new NamesStartingByLetter(
             model,
-            primaryManager,
+            manager,
             secondaryEntityManager,
             this._redis.redis,
             prefix + 'reverse/',
@@ -107,10 +115,10 @@ export class MultipleResultQueryManagerTest implements Test {
           id: 0,
           name: 'sample-name',
         };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -139,10 +147,10 @@ export class MultipleResultQueryManagerTest implements Test {
           id: 0,
           name: 'sample-name',
         };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -171,10 +179,10 @@ export class MultipleResultQueryManagerTest implements Test {
           id: 0,
           name: 'sample-name',
         };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -204,10 +212,10 @@ export class MultipleResultQueryManagerTest implements Test {
           id: 0,
           name: 'sample-name',
         };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -248,10 +256,17 @@ export class MultipleResultQueryManagerTest implements Test {
           name: 'sample-name',
         };
         const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntity>(model, [initialEntity]);
-        const primaryManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
+        const primaryManager = new AntPrimaryModelManager(model, this._redis.redis, true);
+        const schedulerManager = new AntSchedulerModelManager<
+          NamedEntity,
+          Model<NamedEntity>,
+          PrimaryModelManager<NamedEntity>,
+          SecondaryEntityManager<NamedEntity>
+        >(model, primaryManager, secondaryEntityManager);
+
         const entitiesStartingWithLetterQuery = new NamesStartingByLetter(
           model,
-          primaryManager,
+          schedulerManager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -276,10 +291,10 @@ export class MultipleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity: NamedEntity = { id: 0, name: 'Pepe' };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -308,10 +323,10 @@ export class MultipleResultQueryManagerTest implements Test {
           entities.push(entity);
           entitiesMap.set(entity.id, entity);
         }
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, entities);
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, entities);
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -345,10 +360,10 @@ export class MultipleResultQueryManagerTest implements Test {
           entities.push(entity);
           entitiesMap.set(entity.id, entity);
         }
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, entities);
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, entities);
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -375,18 +390,18 @@ export class MultipleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: NamedEntity = { id: 1, name: 'Pepe' };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
-        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false);
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
         await queryManager.get(entity1, new AntJsSearchOptions());
-        await modelManager.delete(entity1.id, new AntJsDeleteOptions());
+        await modelManager.delete(entity1.id);
         const entityFound = await queryManager.get(entity1, new AntJsSearchOptions());
         expect(entityFound).toEqual([entity1]);
         done();
@@ -405,18 +420,25 @@ export class MultipleResultQueryManagerTest implements Test {
         const model = new AntModel<NamedEntityAlternative>('id', { prefix });
         const entity1: NamedEntityAlternative = { id: '1', name: 'Pepe' };
         const secondaryEntityManager = new SecondaryEntityManagerMock<NamedEntityAlternative>(model, [entity1]);
-        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false, secondaryEntityManager);
-        const primaryManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
+        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, false);
+
+        const schedulerManager = new AntSchedulerModelManager<
+          NamedEntityAlternative,
+          Model<NamedEntityAlternative>,
+          PrimaryModelManager<NamedEntityAlternative>,
+          SecondaryEntityManager<NamedEntityAlternative>
+        >(model, modelManager, secondaryEntityManager);
+
         const queryManager = new NamesStartingByLetterAlternative(
           model,
-          primaryManager,
+          schedulerManager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
         await queryManager.get(entity1, new AntJsSearchOptions());
-        await modelManager.delete(entity1.id, new AntJsDeleteOptions());
+        await modelManager.delete(entity1.id);
         const entityFound = await queryManager.get(entity1, new AntJsSearchOptions());
         expect(entityFound).toEqual([entity1]);
         done();
@@ -433,10 +455,10 @@ export class MultipleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity: NamedEntity = { id: 0, name: 'Pepe' };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -459,13 +481,10 @@ export class MultipleResultQueryManagerTest implements Test {
         await this._beforeAllPromise;
         const entity1: NamedEntity = { id: 0, name: 'Pepe' };
         const entity2: NamedEntity = { id: 1, name: 'Juan' };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [
-          entity1,
-          entity2,
-        ]);
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1, entity2]);
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -488,10 +507,10 @@ export class MultipleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity1: NamedEntity = { id: 0, name: 'Pepe' };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -513,10 +532,10 @@ export class MultipleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity: NamedEntity = { id: 0, name: 'Pepe' };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -541,10 +560,10 @@ export class MultipleResultQueryManagerTest implements Test {
         for (let i = 0; i < entitiesSize; ++i) {
           entities.push({ id: i, name: 'Pepe' + i });
         }
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, entities);
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, entities);
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -565,10 +584,10 @@ export class MultipleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity: NamedEntity = { id: 0, name: 'Pepe' };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -590,10 +609,10 @@ export class MultipleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity: NamedEntity = { id: 0, name: 'Pepe' };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -615,10 +634,10 @@ export class MultipleResultQueryManagerTest implements Test {
       async (done) => {
         await this._beforeAllPromise;
         const entity: NamedEntity = { id: 0, name: 'Pepe' };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, new Array());
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
@@ -639,17 +658,17 @@ export class MultipleResultQueryManagerTest implements Test {
         await this._beforeAllPromise;
         done();
         const entity1: NamedEntity = { id: 0, name: 'Pepe' };
-        const [model, primaryManager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
-        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, true, secondaryEntityManager);
+        const [model, manager, secondaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity1]);
+        const modelManager = new AntPrimaryModelManager(model, this._redis.redis, true);
         const queryManager = new NamesStartingByLetter(
           model,
-          primaryManager,
+          manager,
           secondaryEntityManager,
           this._redis.redis,
           prefix + 'reverse/',
           prefix + 'names-starting-with/',
         );
-        modelManager.delete(entity1[model.id], new AntJsDeleteOptions());
+        modelManager.delete(entity1[model.id]);
         const entityFound = await queryManager.get({ name: entity1.name }, new AntJsSearchOptions());
         expect(entityFound).toEqual(new Array());
       },

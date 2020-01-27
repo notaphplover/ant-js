@@ -1,8 +1,8 @@
 import { AntSingleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-single-result-primary-query-manager';
 import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
-import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
+import { SchedulerModelManager } from '../../../persistence/scheduler/scheduler-model-manager';
 
 export class SingleResultQueryByFieldManager<TEntity extends Entity> extends AntSingleResultPrimaryQueryManager<
   TEntity
@@ -21,7 +21,7 @@ export class SingleResultQueryByFieldManager<TEntity extends Entity> extends Ant
    */
   public constructor(
     model: Model<TEntity>,
-    manager: PrimaryEntityManager<TEntity>,
+    manager: SchedulerModelManager<TEntity>,
     query: (params: any) => Promise<number | string>,
     redis: RedisMiddleware,
     reverseHashKey: string,

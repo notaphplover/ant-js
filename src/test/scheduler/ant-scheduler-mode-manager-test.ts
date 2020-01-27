@@ -51,28 +51,20 @@ export class AntSchedulerModelManagerTest implements Test {
 
         const methodsToTest: Array<keyof PrimaryModelManager<any>> = ['delete', 'get', 'mDelete', 'mGet'];
         for (const methodToTest of methodsToTest) {
-          spyOn(primaryManager, methodToTest as any).and.returnValue(Promise.resolve(methodToTest) as any);
+          spyOn(primaryManager, methodToTest as any).and.callThrough();
         }
 
         const entity: Entity = { id: 0 };
 
-        const [deleteResult, getResult, mDeleteResult, mGetResult] = await Promise.all([
+        await Promise.all([
           schedulerModelManager.delete(entity.id),
           schedulerModelManager.get(entity.id),
           schedulerModelManager.mDelete([entity.id]),
           schedulerModelManager.mGet([entity.id]),
         ]);
 
-        const results: { [key: string]: any } = {
-          delete: deleteResult,
-          get: getResult,
-          mDelete: mDeleteResult,
-          mGet: mGetResult,
-        };
-
         for (const methodToTest of methodsToTest) {
           expect(primaryManager[methodToTest]).toHaveBeenCalled();
-          expect(results[methodToTest]).toBe(methodToTest);
         }
 
         done();
@@ -82,7 +74,7 @@ export class AntSchedulerModelManagerTest implements Test {
   }
 
   private _itMustCallPrimaryManagerMethodsEvenIfNoSecondaryManagerIsProvided(): void {
-    const itsName = 'must call primary manager methods';
+    const itsName = 'must call primary manager methods even if no secondary manager is provided';
     const prefix = this._declareName + '/' + itsName + '/';
     it(
       itsName,
@@ -93,28 +85,20 @@ export class AntSchedulerModelManagerTest implements Test {
 
         const methodsToTest: Array<keyof PrimaryModelManager<any>> = ['delete', 'get', 'mDelete', 'mGet'];
         for (const methodToTest of methodsToTest) {
-          spyOn(primaryManager, methodToTest as any).and.returnValue(Promise.resolve(methodToTest) as any);
+          spyOn(primaryManager, methodToTest as any).and.callThrough();
         }
 
         const entity: Entity = { id: 0 };
 
-        const [deleteResult, getResult, mDeleteResult, mGetResult] = await Promise.all([
+        await Promise.all([
           schedulerModelManager.delete(entity.id),
           schedulerModelManager.get(entity.id),
           schedulerModelManager.mDelete([entity.id]),
           schedulerModelManager.mGet([entity.id]),
         ]);
 
-        const results: { [key: string]: any } = {
-          delete: deleteResult,
-          get: getResult,
-          mDelete: mDeleteResult,
-          mGet: mGetResult,
-        };
-
         for (const methodToTest of methodsToTest) {
           expect(primaryManager[methodToTest]).toHaveBeenCalled();
-          expect(results[methodToTest]).toBe(methodToTest);
         }
 
         done();

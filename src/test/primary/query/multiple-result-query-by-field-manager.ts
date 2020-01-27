@@ -2,8 +2,8 @@ import { TMQuery, TQuery } from '../../../persistence/primary/query/query-types'
 import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
 import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
-import { PrimaryEntityManager } from '../../../persistence/primary/primary-entity-manager';
 import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
+import { SchedulerModelManager } from '../../../persistence/scheduler/scheduler-model-manager';
 
 export class MultipleResultQueryByFieldManager<TEntity extends Entity> extends AntMultipleResultPrimaryQueryManager<
   TEntity
@@ -22,7 +22,7 @@ export class MultipleResultQueryByFieldManager<TEntity extends Entity> extends A
    */
   public constructor(
     model: Model<TEntity>,
-    manager: PrimaryEntityManager<TEntity>,
+    manager: SchedulerModelManager<TEntity>,
     query: TQuery<number[] | string[]>,
     redis: RedisMiddleware,
     reverseHashKey: string,

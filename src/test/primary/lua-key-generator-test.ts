@@ -5,8 +5,6 @@ import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 import { PrimaryEntityManager } from '../../persistence/primary/primary-entity-manager';
 import { RedisWrapper } from './redis-wrapper';
-import { SecondaryEntityManager } from '../../persistence/secondary/secondary-entity-manager';
-import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondary-entity-manager-mock';
 import { Test } from '../../testapi/api/test';
 import { luaKeyGenerator } from '../../persistence/primary/lua-key-generator';
 
@@ -54,16 +52,10 @@ export class LuaKeyGeneratorTest implements Test {
     prefix: string,
     entities: EntityTest[],
     useNegativeCache = true,
-  ): [Model<EntityTest>, PrimaryEntityManager<EntityTest>, SecondaryEntityManagerMock<EntityTest>] {
+  ): [Model<EntityTest>, PrimaryEntityManager<EntityTest>] {
     const model = new AntModel<EntityTest>('id', { prefix });
-    const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
-    const primaryEntityManager = new AntPrimaryEntityManager<EntityTest, SecondaryEntityManager<EntityTest>>(
-      model,
-      this._redis.redis,
-      useNegativeCache,
-      secondaryEntityManager,
-    );
-    return [model, primaryEntityManager, secondaryEntityManager];
+    const primaryEntityManager = new AntPrimaryEntityManager<EntityTest>(model, this._redis.redis, useNegativeCache);
+    return [model, primaryEntityManager];
   }
 
   private _itMustGenerateALuaCodeByAnAlias(): void {
@@ -75,7 +67,7 @@ export class LuaKeyGeneratorTest implements Test {
         await this._beforeAllPromise;
         const entity: EntityTest = { field: 'sample', id: 0 };
         const [model, primaryEntityManager] = this._helperGenerateBaseInstances(prefix, [entity]);
-        await primaryEntityManager.get(entity[model.id], new AntJsSearchOptions());
+        await primaryEntityManager.cacheMiss(entity[model.id], entity, new AntJsSearchOptions());
         const luaKey = 'key';
         const luaExpression = luaKeyGenerator({ prefix })(luaKey);
         const valueFound = await this._redis.redis.eval(

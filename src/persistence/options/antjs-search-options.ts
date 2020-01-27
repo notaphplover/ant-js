@@ -2,7 +2,6 @@ import {
   DEFAULT_CACHE_MODE_OPTION,
   DEFAULT_IGNORE_PRIMARY_LAYER,
   DEFAULT_IGNORE_SECONDARY_LAYER,
-  DEFAULT_NEGATIVE_CACHE_OPTION,
   DEFAULT_TTL_OPTION,
 } from './default-options';
 import { CacheMode } from './cache-mode';
@@ -24,10 +23,6 @@ export class AntJsSearchOptions implements PersistencySearchOptions {
   /**
    * @inheritdoc
    */
-  public readonly negativeCache: boolean;
-  /**
-   * @inheritdoc
-   */
   public readonly ttl: number;
 
   /**
@@ -39,7 +34,6 @@ export class AntJsSearchOptions implements PersistencySearchOptions {
     this.cacheMode = options.cacheMode ?? DEFAULT_CACHE_MODE_OPTION;
     this.ignorePrimaryLayer = options.ignorePrimaryLayer ?? DEFAULT_IGNORE_PRIMARY_LAYER;
     this.ignoreSecondaryLayer = options.ignoreSecondaryLayer ?? DEFAULT_IGNORE_SECONDARY_LAYER;
-    this.negativeCache = options.negativeCache ?? DEFAULT_NEGATIVE_CACHE_OPTION;
     this.ttl = options.ttl ?? DEFAULT_TTL_OPTION;
   }
 }
