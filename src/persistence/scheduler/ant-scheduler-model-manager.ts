@@ -251,9 +251,9 @@ export class AntSchedulerModelManager<
    * @returns Entities found.
    */
   private _mGetIgnoringPrimary(ids: number[] | string[], options: PersistencySearchOptions): Promise<TEntity[]> {
-    return null == this._secondaryManager || options.ignoreSecondaryLayer ?
-      Promise.resolve(new Array()) :
-      this._secondaryManager.getByIds(ids);
+    return null == this._secondaryManager || options.ignoreSecondaryLayer
+      ? Promise.resolve(new Array())
+      : this._secondaryManager.getByIds(ids);
   }
 
   /**
