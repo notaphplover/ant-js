@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
-import { AntJsDeleteOptions } from '../../persistence/options/antjs-delete-options';
 import { AntJsModelManagerGenerator } from '../../testapi/api/generator/antjs-model-manager-generator';
 import { AntJsSearchOptions } from '../../persistence/options/antjs-search-options';
 import { AntJsUpdateOptions } from '../../persistence/options/antjs-update-options';
 import { AntModel } from '../../model/ant-model';
+import { AntSchedulerModelManager } from '../../persistence/scheduler/ant-scheduler-model-manager';
 import { CacheMode } from '../../persistence/options/cache-mode';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
@@ -12,6 +12,7 @@ import { PrimaryEntityManager } from '../../persistence/primary/primary-entity-m
 import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
 import { PrimaryQueryManager } from '../../persistence/primary/query/primary-query-manager';
 import { RedisWrapper } from './redis-wrapper';
+import { SchedulerModelManager } from '../../persistence/scheduler/scheduler-model-manager';
 import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondary-entity-manager-mock';
 import { SingleResultPrimaryQueryManager } from '../../persistence/primary/query/single-result-primary-query-manager';
 import { SingleResultQueryByFieldManager } from './query/single-result-query-by-field-manager';
@@ -113,10 +114,7 @@ export class ModelManagerTest implements Test {
     primaryEntityManager: PrimaryEntityManager<EntityTest>,
     queriesMap: Map<string, PrimaryQueryManager<EntityTest>>,
   ): Promise<[EntityTest, EntityTest[]]> {
-    const searchEntityByPrimaryEntityManager = await primaryEntityManager.get(
-      entity[model.id],
-      new AntJsSearchOptions(),
-    );
+    const searchEntityByPrimaryEntityManager = await primaryEntityManager.get(entity[model.id]);
     const searchEntityByQueryManager = new Array();
     for (const [property, query] of queriesMap) {
       const searchArgs: any = {};
@@ -154,9 +152,15 @@ export class ModelManagerTest implements Test {
           },
         });
 
-        const singleResultQueryManager = new SingleResultQueryByFieldManager<EntityTest>(
+        const schedulerManager = new AntSchedulerModelManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        ) as SchedulerModelManager<EntityTest>;
+
+        const singleResultQueryManager = new SingleResultQueryByFieldManager<EntityTest>(
+          model,
+          schedulerManager,
           entityByStrFieldParam(model, secondaryEntityManager),
           this._redis.redis,
           prefix + 'reverse/strField/',
@@ -166,7 +170,7 @@ export class ModelManagerTest implements Test {
 
         modelManager.addQuery(singleResultQueryManager);
         await singleResultQueryManager.get(entity1, new AntJsSearchOptions());
-        await modelManager.delete(entity1.id, new AntJsDeleteOptions());
+        await modelManager.delete(entity1.id);
 
         const entity1Search = await singleResultQueryManager.get(entity1, new AntJsSearchOptions());
         expect(entity1Search).toBeNull();
@@ -232,8 +236,9 @@ export class ModelManagerTest implements Test {
           },
         });
 
+        await modelManager.cacheMisses([entity1.id, entity2.id], [entity1, entity2], new AntJsSearchOptions());
         await secondaryEntityManager.delete(entity1.id);
-        await modelManager.delete(entity1.id, new AntJsDeleteOptions());
+        await modelManager.delete(entity1.id);
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
@@ -298,8 +303,9 @@ export class ModelManagerTest implements Test {
           },
         });
 
+        await modelManager.cacheMisses([entity1.id, entity2.id], [entity1, entity2], new AntJsSearchOptions());
         await secondaryEntityManager.delete(entity1.id);
-        await modelManager.delete(entity1.id, new AntJsDeleteOptions());
+        await modelManager.delete(entity1.id);
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
@@ -314,7 +320,7 @@ export class ModelManagerTest implements Test {
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
 
-        expect(searchEntity1ByPrimaryEntityManager).toBeNull();
+        expect(searchEntity1ByPrimaryEntityManager).toBeUndefined();
         for (const search of searchEntity1ByQueryManager) {
           expect(search).toBeNull();
         }
@@ -367,8 +373,13 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        await modelManager.cacheMisses(
+          [entity1.id, entity2.id, entity3.id],
+          [entity1, entity2, entity3],
+          new AntJsSearchOptions(),
+        );
         await secondaryEntityManager.mDelete([entity1.id, entity2.id]);
-        await modelManager.mDelete([entity1.id, entity2.id], new AntJsDeleteOptions());
+        await modelManager.mDelete([entity1.id, entity2.id]);
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
@@ -446,8 +457,13 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        await modelManager.cacheMisses(
+          [entity1.id, entity2.id, entity3.id],
+          [entity1, entity2, entity3],
+          new AntJsSearchOptions(),
+        );
         await secondaryEntityManager.mDelete([entity1.id, entity2.id]);
-        await modelManager.mDelete([entity1.id, entity2.id], new AntJsDeleteOptions());
+        await modelManager.mDelete([entity1.id, entity2.id]);
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
@@ -468,11 +484,11 @@ export class ModelManagerTest implements Test {
           queryManagersByProperty as Map<string, SingleResultPrimaryQueryManager<EntityTest>>,
         );
 
-        expect(searchEntity1ByPrimaryEntityManager).toBeNull();
+        expect(searchEntity1ByPrimaryEntityManager).toBeUndefined();
         for (const search of searchEntity1ByQueryManager) {
           expect(search).toBeNull();
         }
-        expect(searchEntity2ByPrimaryEntityManager).toBeNull();
+        expect(searchEntity2ByPrimaryEntityManager).toBeUndefined();
         for (const search of searchEntity2ByQueryManager) {
           expect(search).toBeNull();
         }
@@ -508,21 +524,17 @@ export class ModelManagerTest implements Test {
           numberField: 1,
           strField: '2',
         };
-        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, [initialEntity]);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model,
           redisOptions: {
             useEntityNegativeCache: true,
-          },
-          secondaryOptions: {
-            manager: secondaryEntityManager,
           },
         });
 
         // The entity should be written at cache now.
         await modelManager.update(initialEntity, new AntJsUpdateOptions());
         // This should be a cache hit.
-        const entityFound = await modelManager.get(initialEntity.id, new AntJsSearchOptions());
+        const entityFound = await modelManager.get(initialEntity.id);
 
         expect(entityFound).toEqual(fakeInitialEntity);
         done();
@@ -560,7 +572,8 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        await modelManager.mDelete(new Array(), new AntJsDeleteOptions());
+        await modelManager.cacheMiss(entity1[model.id], entity1, new AntJsSearchOptions());
+        await modelManager.mDelete(new Array());
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
           entity1,
@@ -591,24 +604,15 @@ export class ModelManagerTest implements Test {
           numberField: 1,
           strField: 'a',
         };
-        const entity2: EntityTest = {
-          id: 1,
-          numberField: 2,
-          strField: 'b',
-        };
-        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model,
           redisOptions: {
             useEntityNegativeCache: true,
           },
-          secondaryOptions: {
-            manager: secondaryEntityManager,
-          },
         });
-        const entityFound = await modelManager.get(entity1[model.id], new AntJsSearchOptions());
+        await modelManager.cacheMiss(entity1[model.id], entity1, new AntJsSearchOptions());
+        const entityFound = await modelManager.get(entity1[model.id]);
         expect(entityFound).toEqual(entity1);
         done();
       },
@@ -633,19 +637,19 @@ export class ModelManagerTest implements Test {
           numberField: 2,
           strField: 'b',
         };
-        const entities: EntityTest[] = [entity1, entity2];
         const model = modelTestGenerator(prefix);
-        const secondaryEntityManager = new SecondaryEntityManagerMock<EntityTest>(model, entities);
         const [modelManager] = this._modelManagerGenerator.generateModelManager({
           model,
           redisOptions: {
             useEntityNegativeCache: true,
           },
-          secondaryOptions: {
-            manager: secondaryEntityManager,
-          },
         });
-        const entityFound = await modelManager.mGet([entity1[model.id], entity2[model.id]], new AntJsSearchOptions());
+        await modelManager.cacheMisses(
+          [entity1[model.id], entity2[model.id]],
+          [entity1, entity2],
+          new AntJsSearchOptions(),
+        );
+        const entityFound = await modelManager.mGet([entity1[model.id], entity2[model.id]]);
         expect(entityFound).toContain(entity1);
         expect(entityFound).toContain(entity2);
         done();
@@ -688,9 +692,15 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const query = new MultipleResultQueryByFieldManager(
+        const schedulerManager = new AntSchedulerModelManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        ) as SchedulerModelManager<EntityTest>;
+
+        const query = new MultipleResultQueryByFieldManager(
+          model,
+          schedulerManager,
           (params: any) =>
             Promise.resolve(
               _.map(
@@ -706,10 +716,10 @@ export class ModelManagerTest implements Test {
         modelManager.addQuery(query);
         await query.mGet([entity1, entity2, entity3], new AntJsSearchOptions());
         await secondaryEntityManager.delete(entity1.id);
-        await modelManager.delete(entity1.id, new AntJsDeleteOptions());
-        expect(await modelManager.get(entity1.id, new AntJsSearchOptions())).toBeNull();
-        expect(await modelManager.get(entity2.id, new AntJsSearchOptions())).toEqual(entity2);
-        expect(await modelManager.get(entity3.id, new AntJsSearchOptions())).toEqual(entity3);
+        await modelManager.delete(entity1.id);
+        expect(await modelManager.get(entity1.id)).toBeNull();
+        expect(await modelManager.get(entity2.id)).toEqual(entity2);
+        expect(await modelManager.get(entity3.id)).toEqual(entity3);
         expect(await query.get(entity2, new AntJsSearchOptions())).toEqual([entity2]);
         expect(await query.get(entity3, new AntJsSearchOptions())).toEqual([entity3]);
         done();
@@ -752,9 +762,15 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const query = new MultipleResultQueryByFieldManager(
+        const schedulerManager = new AntSchedulerModelManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        ) as SchedulerModelManager<EntityTest>;
+
+        const query = new MultipleResultQueryByFieldManager(
+          model,
+          schedulerManager,
           (params: any) =>
             Promise.resolve(
               _.map(
@@ -770,10 +786,10 @@ export class ModelManagerTest implements Test {
         modelManager.addQuery(query);
         await query.mGet([entity1, entity2, entity3], new AntJsSearchOptions());
         await secondaryEntityManager.mDelete([entity1.id, entity3.id]);
-        await modelManager.mDelete([entity1.id, entity3.id], new AntJsDeleteOptions());
-        expect(await modelManager.get(entity1.id, new AntJsSearchOptions())).toBeNull();
-        expect(await modelManager.get(entity2.id, new AntJsSearchOptions())).toEqual(entity2);
-        expect(await modelManager.get(entity3.id, new AntJsSearchOptions())).toBeNull();
+        await modelManager.mDelete([entity1.id, entity3.id]);
+        expect(await modelManager.get(entity1.id)).toBeNull();
+        expect(await modelManager.get(entity2.id)).toEqual(entity2);
+        expect(await modelManager.get(entity3.id)).toBeNull();
         expect(await query.get(entity2, new AntJsSearchOptions())).toEqual([entity2]);
         expect(await query.get(entity3, new AntJsSearchOptions())).toEqual(new Array());
         done();
@@ -821,9 +837,14 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const query = new MultipleResultQueryByFieldManager(
+        const schedulerManager = new AntSchedulerModelManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        ) as SchedulerModelManager<EntityTest>;
+        const query = new MultipleResultQueryByFieldManager(
+          model,
+          schedulerManager,
           (params: any) =>
             Promise.resolve(
               _.map(
@@ -840,10 +861,11 @@ export class ModelManagerTest implements Test {
         await query.mGet([entity1, entity2, entity3], new AntJsSearchOptions());
         secondaryEntityManager.store.set(entity1After[model.id], entity1After);
         await modelManager.update(entity1After, new AntJsUpdateOptions());
-        const [entity1SearchResult, entity2SearchResult, entity3SearchResult] = await modelManager.mGet(
-          [entity1After.id, entity2.id, entity3.id],
-          new AntJsSearchOptions(),
-        );
+        const [entity1SearchResult, entity2SearchResult, entity3SearchResult] = await modelManager.mGet([
+          entity1After.id,
+          entity2.id,
+          entity3.id,
+        ]);
         const [querySearchByStrAResult, querySearchByStrBResult] = await Promise.all([
           query.get({ strField: 'a' }, new AntJsSearchOptions()),
           query.get({ strField: 'b' }, new AntJsSearchOptions()),
@@ -905,9 +927,14 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const query = new MultipleResultQueryByFieldManager(
+        const schedulerManager = new AntSchedulerModelManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        ) as SchedulerModelManager<EntityTest>;
+        const query = new MultipleResultQueryByFieldManager(
+          model,
+          schedulerManager,
           (params: any) =>
             Promise.resolve(
               _.map(
@@ -925,10 +952,11 @@ export class ModelManagerTest implements Test {
         secondaryEntityManager.store.set(entity1After[model.id], entity1After);
         secondaryEntityManager.store.set(entity3After[model.id], entity3After);
         await modelManager.mUpdate([entity1After, entity3After], new AntJsUpdateOptions());
-        const [entity1SearchResult, entity2SearchResult, entity3SearchResult] = await modelManager.mGet(
-          [entity1After.id, entity2.id, entity3After.id],
-          new AntJsSearchOptions(),
-        );
+        const [entity1SearchResult, entity2SearchResult, entity3SearchResult] = await modelManager.mGet([
+          entity1After.id,
+          entity2.id,
+          entity3After.id,
+        ]);
         const [querySearchByStrAResult, querySearchByStrBResult, querySearchByStrCResult] = await Promise.all([
           query.get({ strField: 'a' }, new AntJsSearchOptions()),
           query.get({ strField: 'b' }, new AntJsSearchOptions()),
@@ -976,9 +1004,14 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const query = new SingleResultQueryByFieldManager(
+        const schedulerManager = new AntSchedulerModelManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        ) as SchedulerModelManager<EntityTest>;
+        const query = new SingleResultQueryByFieldManager(
+          model,
+          schedulerManager,
           entityByStrFieldParam(model, secondaryEntityManager),
           this._redis.redis,
           prefix + 'reverse/',
@@ -988,9 +1021,9 @@ export class ModelManagerTest implements Test {
         modelManager.addQuery(query);
         await Promise.all([query.get(entity1, new AntJsSearchOptions()), query.get(entity2, new AntJsSearchOptions())]);
         await secondaryEntityManager.delete(entity1.id);
-        await modelManager.delete(entity1.id, new AntJsDeleteOptions());
-        expect(await modelManager.get(entity1.id, new AntJsSearchOptions())).toBeNull();
-        expect(await modelManager.get(entity2.id, new AntJsSearchOptions())).toEqual(entity2);
+        await modelManager.delete(entity1.id);
+        expect(await modelManager.get(entity1.id)).toBeNull();
+        expect(await modelManager.get(entity2.id)).toEqual(entity2);
         expect(await query.get(entity1, new AntJsSearchOptions())).toBeNull();
         expect(await query.get(entity2, new AntJsSearchOptions())).toEqual(entity2);
         done();
@@ -1028,9 +1061,14 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const query = new SingleResultQueryByFieldManager(
+        const schedulerManager = new AntSchedulerModelManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        ) as SchedulerModelManager<EntityTest>;
+        const query = new SingleResultQueryByFieldManager(
+          model,
+          schedulerManager,
           entityByStrFieldParam(model, secondaryEntityManager),
           this._redis.redis,
           prefix + 'reverse/',
@@ -1040,9 +1078,9 @@ export class ModelManagerTest implements Test {
         modelManager.addQuery(query);
         await Promise.all([query.get(entity1, new AntJsSearchOptions()), query.get(entity2, new AntJsSearchOptions())]);
         await secondaryEntityManager.mDelete([entity1.id, entity2.id]);
-        await modelManager.mDelete([entity1.id, entity2.id], new AntJsDeleteOptions());
-        expect(await modelManager.get(entity1.id, new AntJsSearchOptions())).toBeNull();
-        expect(await modelManager.get(entity2.id, new AntJsSearchOptions())).toBeNull();
+        await modelManager.mDelete([entity1.id, entity2.id]);
+        expect(await modelManager.get(entity1.id)).toBeNull();
+        expect(await modelManager.get(entity2.id)).toBeNull();
         expect(await query.get(entity1, new AntJsSearchOptions())).toBeNull();
         expect(await query.get(entity2, new AntJsSearchOptions())).toBeNull();
         done();
@@ -1085,9 +1123,14 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const query = new SingleResultQueryByFieldManager(
+        const schedulerManager = new AntSchedulerModelManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        ) as SchedulerModelManager<EntityTest>;
+        const query = new SingleResultQueryByFieldManager(
+          model,
+          schedulerManager,
           entityByStrFieldParam(model, secondaryEntityManager),
           this._redis.redis,
           prefix + 'reverse/',
@@ -1098,8 +1141,8 @@ export class ModelManagerTest implements Test {
         await Promise.all([query.get(entity1, new AntJsSearchOptions()), query.get(entity2, new AntJsSearchOptions())]);
         secondaryEntityManager.store.set(entity1After[model.id], entity1After);
         await modelManager.update(entity1After, new AntJsUpdateOptions());
-        expect(await modelManager.get(entity1After.id, new AntJsSearchOptions())).toEqual(entity1After);
-        expect(await modelManager.get(entity2.id, new AntJsSearchOptions())).toEqual(entity2);
+        expect(await modelManager.get(entity1After.id)).toEqual(entity1After);
+        expect(await modelManager.get(entity2.id)).toEqual(entity2);
         expect(await query.get(entity1, new AntJsSearchOptions())).toBeNull();
         expect(await query.get(entity1After, new AntJsSearchOptions())).toEqual(entity1After);
         expect(await query.get(entity2, new AntJsSearchOptions())).toEqual(entity2);
@@ -1148,9 +1191,14 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-        const query = new SingleResultQueryByFieldManager(
+        const schedulerManager = new AntSchedulerModelManager(
           model,
           modelManager as PrimaryModelManager<EntityTest>,
+          secondaryEntityManager,
+        ) as SchedulerModelManager<EntityTest>;
+        const query = new SingleResultQueryByFieldManager(
+          model,
+          schedulerManager,
           entityByStrFieldParam(model, secondaryEntityManager),
           this._redis.redis,
           prefix + 'reverse/',
@@ -1162,8 +1210,8 @@ export class ModelManagerTest implements Test {
         secondaryEntityManager.store.set(entity1After[model.id], entity1After);
         secondaryEntityManager.store.set(entity2After[model.id], entity2After);
         await modelManager.mUpdate([entity1After, entity2After], new AntJsUpdateOptions());
-        expect(await modelManager.get(entity1After.id, new AntJsSearchOptions())).toEqual(entity1After);
-        expect(await modelManager.get(entity2After.id, new AntJsSearchOptions())).toEqual(entity2After);
+        expect(await modelManager.get(entity1After.id)).toEqual(entity1After);
+        expect(await modelManager.get(entity2After.id)).toEqual(entity2After);
         expect(await query.get(entity1, new AntJsSearchOptions())).toBeNull();
         expect(await query.get(entity1After, new AntJsSearchOptions())).toEqual(entity1After);
         expect(await query.get(entity2, new AntJsSearchOptions())).toBeNull();
@@ -1213,7 +1261,7 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
-
+        await modelManager.cacheMisses([entity1.id, entity2.id], [entity1, entity2], new AntJsSearchOptions());
         await modelManager.update(entity1After, new AntJsUpdateOptions());
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
@@ -1270,7 +1318,7 @@ export class ModelManagerTest implements Test {
         });
         await modelManager.update(entity1, new AntJsUpdateOptions({ cacheMode: CacheMode.CacheAndOverwrite }));
 
-        expect(await modelManager.get(entity1[model.id], new AntJsSearchOptions())).toEqual(entity1);
+        expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
 
         done();
       },
@@ -1308,7 +1356,7 @@ export class ModelManagerTest implements Test {
           new AntJsUpdateOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000 }),
         );
 
-        expect(await modelManager.get(entity1[model.id], new AntJsSearchOptions())).toEqual(entity1);
+        expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
 
         done();
       },
@@ -1356,8 +1404,8 @@ export class ModelManagerTest implements Test {
         await modelManager.update(entity2, new AntJsUpdateOptions({ cacheMode: CacheMode.CacheIfNotExist }));
         await modelManager.update(entity2After, new AntJsUpdateOptions({ cacheMode: CacheMode.CacheIfNotExist }));
 
-        expect(await modelManager.get(entity1[model.id], new AntJsSearchOptions())).toEqual(entity1);
-        expect(await modelManager.get(entity2[model.id], new AntJsSearchOptions())).toEqual(entity2);
+        expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
+        expect(await modelManager.get(entity2[model.id])).toEqual(entity2);
 
         done();
       },
@@ -1414,8 +1462,8 @@ export class ModelManagerTest implements Test {
           new AntJsUpdateOptions({ cacheMode: CacheMode.CacheIfNotExist, ttl: 10000 }),
         );
 
-        expect(await modelManager.get(entity1[model.id], new AntJsSearchOptions())).toEqual(entity1);
-        expect(await modelManager.get(entity2[model.id], new AntJsSearchOptions())).toEqual(entity2);
+        expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
+        expect(await modelManager.get(entity2[model.id])).toEqual(entity2);
 
         done();
       },
@@ -1462,6 +1510,7 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        await modelManager.cacheMisses([entity1.id, entity2.id], [entity1, entity2], new AntJsSearchOptions());
         await modelManager.update(entity1After, new AntJsUpdateOptions());
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
@@ -1530,6 +1579,7 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        await modelManager.cacheMisses([entity1.id, entity2.id], [entity1, entity2], new AntJsSearchOptions());
         await modelManager.mUpdate([entity1After], new AntJsUpdateOptions());
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
@@ -1589,7 +1639,7 @@ export class ModelManagerTest implements Test {
           new AntJsUpdateOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000 }),
         );
 
-        expect(await modelManager.get(entity1[model.id], new AntJsSearchOptions())).toEqual(entity1);
+        expect(await modelManager.get(entity1[model.id])).toEqual(entity1);
 
         done();
       },
@@ -1636,6 +1686,11 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        await modelManager.cacheMisses(
+          [entity1[model.id], entity2[model.id]],
+          [entity1, entity2],
+          new AntJsSearchOptions(),
+        );
         await modelManager.mUpdate([entity1After], new AntJsUpdateOptions());
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await this._helperSearchEntity(
@@ -1694,6 +1749,7 @@ export class ModelManagerTest implements Test {
             manager: secondaryEntityManager,
           },
         });
+        await modelManager.cacheMiss(entity1[model.id], entity1, new AntJsSearchOptions());
         await modelManager.mUpdate(new Array(), new AntJsUpdateOptions());
 
         const [searchEntity1ByPrimaryEntityManager, searchEntity1ByQueryManager] = await await this._helperSearchEntity(

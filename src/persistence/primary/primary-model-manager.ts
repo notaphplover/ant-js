@@ -1,5 +1,4 @@
 import { Entity } from '../../model/entity';
-import { PersistencyDeleteOptions } from '../options/persistency-delete-options';
 import { PersistencyUpdateOptions } from '../options/persistency-update-options';
 import { PrimaryEntityManager } from './primary-entity-manager';
 import { PrimaryQueryManager } from './query/primary-query-manager';
@@ -8,17 +7,15 @@ export interface BasePrimaryModelManager<TEntity extends Entity> extends Primary
   /**
    * Deletes an entity from the cache layer.
    * @param id id of the entity to delete.
-   * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  delete(id: number | string, options: PersistencyDeleteOptions): Promise<any>;
+  delete(id: number | string): Promise<any>;
   /**
    * Deletes multiple entities from the cache layer.
    * @param ids Ids of the entities to delete.
-   * @param options Delete options.
    * @returns Promise of entities deleted.
    */
-  mDelete(ids: number[] | string[], options: PersistencyDeleteOptions): Promise<any>;
+  mDelete(ids: number[] | string[]): Promise<any>;
   /**
    * Updates multiple entities at the cache layer.
    * @param entities Entities to be updated.

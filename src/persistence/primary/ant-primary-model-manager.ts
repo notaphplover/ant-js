@@ -3,17 +3,14 @@ import { AntPrimaryEntityManager } from './ant-primary-entity-manager';
 import { DeleteEntitiesCachedScriptSet } from './script/delete-entities-cached-script-set';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
-import { PersistencyDeleteOptions } from '../options/persistency-delete-options';
 import { PersistencyUpdateOptions } from '../options/persistency-update-options';
 import { PrimaryModelManager } from './primary-model-manager';
 import { PrimaryQueryManager } from './query/primary-query-manager';
 import { RedisCachedScript } from './script/redis-cached-script';
 import { RedisMiddleware } from './redis-middleware';
-import { SecondaryEntityManager } from '../secondary/secondary-entity-manager';
 import { UpdateEntitiesCachedScriptSet } from './script/update-entities-cached-script-set';
 
-export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager extends SecondaryEntityManager<TEntity>>
-  extends AntPrimaryEntityManager<TEntity, TSecondaryManager>
+export class AntPrimaryModelManager<TEntity extends Entity> extends AntPrimaryEntityManager<TEntity>
   implements PrimaryModelManager<TEntity> {
   /**
    * Cached script for deleting an entity.
@@ -45,13 +42,8 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @param secondaryEntityManager Secondary entity manager.
    * @param queryManagers Query managers.
    */
-  public constructor(
-    model: Model<TEntity>,
-    redis: RedisMiddleware,
-    negativeEntityCache: boolean,
-    secondaryEntityManager?: TSecondaryManager,
-  ) {
-    super(model, redis, negativeEntityCache, secondaryEntityManager);
+  public constructor(model: Model<TEntity>, redis: RedisMiddleware, negativeEntityCache: boolean) {
+    super(model, redis, negativeEntityCache);
 
     this._initializeCachedQueries();
 
@@ -73,8 +65,8 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @param options Delete options.
    * @returns Promise of entity deleted.
    */
-  public async delete(id: number | string, options: PersistencyDeleteOptions): Promise<any> {
-    return this._luaDeleteCachedQuery.eval(options, (scriptArg: string) => {
+  public async delete(id: number | string): Promise<any> {
+    return this._luaDeleteCachedQuery.eval(this.negativeCache, (scriptArg: string) => {
       const evalParams = [scriptArg, this._queryManagers.length];
       for (const queryManager of this._queryManagers) {
         evalParams.push(queryManager.reverseHashKey);
@@ -93,11 +85,11 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @param options Delete options.
    * @returns Promise of entities deleted.
    */
-  public async mDelete(ids: number[] | string[], options: PersistencyDeleteOptions): Promise<any> {
+  public async mDelete(ids: number[] | string[]): Promise<any> {
     if (null == ids || 0 === ids.length) {
       return Promise.resolve();
     }
-    return this._luaMDeleteCachedQuery.eval(options, (scriptArg) => {
+    return this._luaMDeleteCachedQuery.eval(this.negativeCache, (scriptArg) => {
       const evalParams = [scriptArg, this._queryManagers.length];
       for (const queryManager of this._queryManagers) {
         evalParams.push(queryManager.reverseHashKey);
@@ -178,10 +170,10 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    */
   private _initializeCachedQueries(): void {
     this._luaDeleteCachedQuery = new DeleteEntitiesCachedScriptSet(
-      (optios) => new RedisCachedScript(this._luaSyncDeleteGenerator(optios), this._redis),
+      (negativeCache) => new RedisCachedScript(this._luaSyncDeleteGenerator(negativeCache), this._redis),
     );
     this._luaMDeleteCachedQuery = new DeleteEntitiesCachedScriptSet(
-      (optios) => new RedisCachedScript(this._luaSyncMDeleteGenerator(optios), this._redis),
+      (negativeCache) => new RedisCachedScript(this._luaSyncMDeleteGenerator(negativeCache), this._redis),
     );
     this._luaMUpdateCachedQuerySet = new UpdateEntitiesCachedScriptSet(
       (options) => new RedisCachedScript(this._luaSyncMUpdateGenerator(options), this._redis),
@@ -198,7 +190,7 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
    * @param options Delete options.
    * @returns script generated.
    */
-  private _luaSyncDeleteGenerator(options: PersistencyDeleteOptions): string {
+  private _luaSyncDeleteGenerator(negativeCache: boolean): string {
     const reverseHashKey = 'KEYS[i]';
 
     const entityId = 'ARGV[1]';
@@ -206,7 +198,7 @@ export class AntPrimaryModelManager<TEntity extends Entity, TSecondaryManager ex
     const queriesNumber = '#KEYS';
     const ithQCode = 'ARGV[1 + i]';
 
-    const deleteSentence = this._evaluateUseNegativeCache(options)
+    const deleteSentence = negativeCache
       ? `redis.call('set', ${entityKey}, '${VOID_RESULT_STRING}')`
       : `redis.call('del', ${entityKey})`;
 
@@ -242,7 +234,7 @@ ${deleteSentence}`;
    *
    * @returns script generated.
    */
-  private _luaSyncMDeleteGenerator(options: PersistencyDeleteOptions): string {
+  private _luaSyncMDeleteGenerator(negativeCache: boolean): string {
     const queriesNumber = '#KEYS';
     const entitiesCount = '#ARGV - #KEYS';
     const ithQCode = 'ARGV[entitiesCount + i]';
@@ -250,7 +242,7 @@ ${deleteSentence}`;
     const jthEntityId = 'ARGV[j]';
     const jthEntityKey: string = this._luaKeyGeneratorFromId(jthEntityId);
 
-    const deleteSentence = this._evaluateUseNegativeCache(options)
+    const deleteSentence = negativeCache
       ? `redis.call('set', ${jthEntityKey}, '${VOID_RESULT_STRING}')`
       : `redis.call('del', ${jthEntityKey})`;
 

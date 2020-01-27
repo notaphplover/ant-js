@@ -2,17 +2,14 @@ import * as _ from 'lodash';
 import { CacheMode } from '../options/cache-mode';
 import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
-import { PersistencyDeleteOptions } from '../options/persistency-delete-options';
 import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { PersistencyUpdateOptions } from '../options/persistency-update-options';
 import { PrimaryEntityManager } from './primary-entity-manager';
 import { RedisMiddleware } from './redis-middleware';
-import { SecondaryEntityManager } from '../secondary/secondary-entity-manager';
 import { VOID_RESULT_STRING } from './lua-constants';
 import { luaKeyGenerator } from './lua-key-generator';
 
-export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager extends SecondaryEntityManager<TEntity>>
-  implements PrimaryEntityManager<TEntity> {
+export class AntPrimaryEntityManager<TEntity extends Entity> implements PrimaryEntityManager<TEntity> {
   /**
    * Lua expression generator.
    */
@@ -24,15 +21,11 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
   /**
    * True to use negative entity cache.
    */
-  protected _negativeEntityCache: boolean;
+  protected _negativeCache: boolean;
   /**
    * Redis connection.
    */
   protected _redis: RedisMiddleware;
-  /**
-   * Secondary model manager of the model.
-   */
-  protected _successor: TSecondaryManager;
 
   /**
    * Creates a new primary model manager.
@@ -40,20 +33,21 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
    * @param model Model of the entities managed.
    * @param redis Redis connection.
    * @param successor Secondary entity manager.
-   * @param negativeEntityCache True to use negative entity cache.
+   * @param negativeCache True to use negative entity cache.
    */
-  public constructor(
-    model: Model<TEntity>,
-    redis: RedisMiddleware,
-    negativeEntityCache: boolean,
-    successor?: TSecondaryManager,
-  ) {
+  public constructor(model: Model<TEntity>, redis: RedisMiddleware, negativeCache: boolean) {
     this._model = model;
-    this._negativeEntityCache = negativeEntityCache;
+    this._negativeCache = negativeCache;
     this._redis = redis;
-    this._successor = successor;
 
     this._luaKeyGeneratorFromId = luaKeyGenerator(this.model.keyGen);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public get negativeCache(): boolean {
+    return this._negativeCache;
   }
 
   /**
@@ -64,45 +58,81 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
   }
 
   /**
-   * Gets an entity by its id.
-   * @param id: Entity's id.
-   * @returns Model found.
+   * @inheritdoc
    */
-  public get(id: number | string, options: PersistencySearchOptions): Promise<TEntity> {
-    if (options.ignorePrimaryLayer) {
-      if (options.ignoreSecondaryLayer) {
-        return Promise.resolve(null);
-      } else {
-        return this._successor.getById(id);
-      }
+  public async cacheMiss(id: number | string, entity: TEntity, options: PersistencySearchOptions): Promise<void> {
+    if (null == entity && this.negativeCache) {
+      await this._deleteEntityUsingNegativeCache(id, options);
     } else {
-      if (options.ignoreSecondaryLayer) {
-        throw new Error('this configuration is not currently supported');
-      } else {
-        return this._innerGetById(id, options);
-      }
+      await this._updateEntity(entity, options);
     }
   }
 
   /**
-   * Gets a collection of entities by its ids.
+   * @inheritdoc
+   */
+  public cacheMisses(ids: number[] | string[], entities: TEntity[], options: PersistencySearchOptions): Promise<void> {
+    if (0 === ids.length) {
+      return Promise.resolve();
+    }
+    const tasks: Promise<any>[] = [this._updateEntities(entities, options)];
+
+    if (this.negativeCache && entities.length !== ids.length) {
+      tasks.push(
+        this._deleteEntitiesUsingNegativeCache(this._cacheMissesFindIdsToApplyNegativeCache(ids, entities), options),
+      );
+    }
+
+    return Promise.all(tasks).then(() => undefined);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public async get(id: number | string): Promise<TEntity> {
+    if (null == id) {
+      return null;
+    }
+
+    const cachedEntity = await this._redis.get(this._getKey(id));
+
+    if (!cachedEntity) {
+      return undefined;
+    }
+
+    if (VOID_RESULT_STRING === cachedEntity) {
+      return null;
+    } else {
+      return this.model.primaryToEntity(JSON.parse(cachedEntity));
+    }
+  }
+
+  /**
+   * Gets a collection of entities at the primary layer by its ids.
    * @param ids Entities ids.
    * @returns Entities found.
    */
-  public mGet(ids: number[] | string[], options: PersistencySearchOptions): Promise<TEntity[]> {
-    if (options.ignorePrimaryLayer) {
-      if (options.ignoreSecondaryLayer) {
-        return Promise.resolve(new Array());
+  public async mGet(ids: number[] | string[]): Promise<TEntity[]> {
+    if (0 === ids.length) {
+      return new Array();
+    }
+    const keysArray = _.map(ids as Array<number | string>, this._getKey.bind(this));
+    const entities: any[] = await this._redis.mget(...keysArray);
+
+    for (let i = 0; i < keysArray.length; ++i) {
+      if (VOID_RESULT_STRING === entities[i]) {
+        entities[i] = null;
       } else {
-        return this._successor.getByIds(ids);
-      }
-    } else {
-      if (options.ignoreSecondaryLayer) {
-        throw new Error('this configuration is not currently supported');
-      } else {
-        return this._innerGetByIds(ids, options);
+        const cacheResult = JSON.parse(entities[i]);
+        if (null == cacheResult) {
+          entities[i] = undefined;
+        } else {
+          entities[i] = cacheResult;
+        }
       }
     }
+
+    return this.model.mPrimaryToEntity(entities);
   }
 
   /**
@@ -147,101 +177,11 @@ export class AntPrimaryEntityManager<TEntity extends Entity, TSecondaryManager e
   }
 
   /**
-   * Evaluates search options in order of determining if negative cache should be used.
-   * @param options Search options to evaluate.
-   * @returns True if negative cache should be used.
-   */
-  protected _evaluateUseNegativeCache(options: PersistencyDeleteOptions): boolean {
-    return options.negativeCache || this._negativeEntityCache;
-  }
-
-  /**
    * Gets the key of an entity.
    * @param id entity's id.
    */
   protected _getKey(id: number | string): string {
-    return this.model.keyGen.prefix + id;
-  }
-
-  /**
-   * Gets an entity by its id.
-   * @param id Entity's id.
-   * @param options Cache options.
-   */
-  protected async _innerGetById(id: number | string, options: PersistencySearchOptions): Promise<TEntity> {
-    if (null == id) {
-      return null;
-    }
-    const cachedEntity = await this._redis.get(this._getKey(id));
-    if (cachedEntity) {
-      if (VOID_RESULT_STRING === cachedEntity) {
-        return null;
-      } else {
-        return this.model.primaryToEntity(JSON.parse(cachedEntity));
-      }
-    }
-    if (!this._successor) {
-      return null;
-    }
-    return this._successor.getById(id).then((entity) => {
-      if (null == entity && this._evaluateUseNegativeCache(options)) {
-        this._deleteEntityUsingNegativeCache(id, options);
-        return null;
-      } else {
-        this._updateEntity(entity, options);
-        return entity;
-      }
-    });
-  }
-
-  /**
-   * Gets entities by its ids.
-   * @param ids Entities ids.
-   * @param idsAreDifferent True if the ids are different.
-   * @param options Cache options.
-   * @returns Entities found.
-   */
-  protected async _innerGetByIds(ids: number[] | string[], options: PersistencySearchOptions): Promise<TEntity[]> {
-    if (0 === ids.length) {
-      return Promise.resolve(new Array());
-    }
-    return this._innerGetByDistinctIdsNotMapped(ids, options);
-  }
-
-  /**
-   * Gets entities by its ids.
-   * @param ids Entities ids.
-   * @param options Cache options.
-   * @returns Entities found.
-   */
-  protected async _innerGetByDistinctIdsNotMapped(
-    ids: number[] | string[],
-    options: PersistencySearchOptions,
-  ): Promise<TEntity[]> {
-    // Get the different ones.
-    ids = Array.from(new Set<number | string>(ids)) as number[] | string[];
-    const keysArray = _.map(ids as Array<number | string>, this._getKey.bind(this));
-    const entities: string[] = await this._redis.mget(...keysArray);
-    let results = new Array<TEntity>();
-    const missingIds: number[] | string[] = new Array();
-
-    for (let i = 0; i < keysArray.length; ++i) {
-      if (VOID_RESULT_STRING === entities[i]) {
-        continue;
-      }
-      const cacheResult = JSON.parse(entities[i]);
-      if (null == cacheResult) {
-        missingIds.push(ids[i] as number & string);
-      } else {
-        results.push(cacheResult);
-      }
-    }
-
-    results = this.model.mPrimaryToEntity(results);
-
-    await this._innerGetByDistinctIdsNotMappedProcessMissingIds(missingIds, results, options);
-
-    return results;
+    return this.model.keyGen.prefix + JSON.stringify(id);
   }
 
   /**
@@ -379,50 +319,30 @@ end`;
   }
 
   /**
-   * Process missing ids.
-   * @param missingIds Missing ids to process.
-   * @param results Results array.
-   * @param options Cache options.
+   * Finds the ids to apply negative cache.
+   *
+   * Ids to apply negative cache are those from the ids params with no associated entity at entities params.
+   *
+   * @param ids Ids of the entities to be cached (ordered ASC).
+   * @param entities Entities found (ordered by id ASC).
+   * @returns Ids to apply negative cache.
    */
-  private async _innerGetByDistinctIdsNotMappedProcessMissingIds(
-    missingIds: number[] | string[],
-    results: TEntity[],
-    options: PersistencySearchOptions,
-  ): Promise<void> {
-    if (this._successor && missingIds.length > 0) {
-      let missingData: TEntity[];
-      if (this._evaluateUseNegativeCache(options)) {
-        missingData = await this._successor.getByIdsOrderedAsc(missingIds);
-        if (missingData.length === missingIds.length) {
-          this._updateEntities(missingData, options);
-        } else {
-          const sortedIds =
-            'number' === typeof missingIds[0]
-              ? (missingIds as number[]).sort((a: number, b: number) => a - b)
-              : missingIds.sort();
-          let offset = 0;
-          const idsToApplyNegativeCache: number[] | string[] = new Array();
-          for (let i = 0; i < missingData.length; ++i) {
-            const missingDataId = missingData[i][this.model.id];
-            if (sortedIds[i + offset] !== missingDataId) {
-              idsToApplyNegativeCache.push(sortedIds[i] as number & string);
-              ++offset;
-              --i;
-            }
-          }
-          for (let i = missingData.length + offset; i < sortedIds.length; ++i) {
-            idsToApplyNegativeCache.push(sortedIds[i] as number & string);
-          }
-          this._deleteEntitiesUsingNegativeCache(idsToApplyNegativeCache, options);
-        }
-      } else {
-        missingData = await this._successor.getByIds(missingIds);
-        this._updateEntities(missingData, options);
-      }
-      for (const missingEntity of missingData) {
-        results.push(missingEntity);
+  private _cacheMissesFindIdsToApplyNegativeCache(ids: number[] | string[], entities: TEntity[]): number[] | string[] {
+    let offset = 0;
+    const idsToApplyNegativeCache: number[] | string[] = new Array();
+    for (let i = 0; i < entities.length; ++i) {
+      const missingDataId = entities[i][this.model.id];
+      while (ids[i + offset] !== missingDataId) {
+        // We found and id to delete (keep in mind that ids and entities are sorted)
+        (idsToApplyNegativeCache as Array<number | string>).push(ids[i]);
+        ++offset;
       }
     }
+    for (let i = entities.length + offset; i < ids.length; ++i) {
+      (idsToApplyNegativeCache as Array<number | string>).push(ids[i]);
+    }
+
+    return idsToApplyNegativeCache;
   }
 
   /**

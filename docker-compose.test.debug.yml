@@ -6,3 +6,6 @@ services:
       NODE_DEBUG_PORT_INNER: ${NODE_DEBUG_PORT_INNER}
     ports:
       - "${NODE_DEBUG_PORT_OUTER}:${NODE_DEBUG_PORT_INNER}"
+  ant_redis:
+    ports:
+      - "${REDIS_DEBUG_PORT_OUTER}:6379"

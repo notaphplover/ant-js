@@ -4,8 +4,8 @@ import { BasePrimaryQueryManager } from './primary-query-manager';
 import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
 import { PersistencySearchOptions } from '../../options/persistency-search-options';
-import { PrimaryEntityManager } from '../primary-entity-manager';
 import { RedisMiddleware } from '../redis-middleware';
+import { SchedulerModelManager } from '../../scheduler/scheduler-model-manager';
 import { luaKeyGenerator } from '../lua-key-generator';
 
 export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResult extends QueryResult>
@@ -27,9 +27,9 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
    */
   protected _mquery: TMQuery<TQueryResult>;
   /**
-   * Primary entity manager.
+   * Model manager.
    */
-  protected _manager: PrimaryEntityManager<TEntity>;
+  protected _manager: SchedulerModelManager<TEntity>;
   /**
    * Query to obtain ids.
    */
@@ -59,7 +59,7 @@ export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResul
    */
   public constructor(
     model: Model<TEntity>,
-    manager: PrimaryEntityManager<TEntity>,
+    manager: SchedulerModelManager<TEntity>,
     query: TQuery<TQueryResult>,
     redis: RedisMiddleware,
     reverseHashKey: string,

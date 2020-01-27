@@ -1,4 +1,5 @@
 import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
+import { AntSchedulerModelManager } from '../../../persistence/scheduler/ant-scheduler-model-manager';
 import { ApiModelManagerGeneratorOptions } from './api-model-manager-generator-options';
 import { ApiModelManagerGeneratorRedisOptions } from './api-model-manager-generator-redis-options';
 import { ApiModelManagerGeneratorSecodaryManagerOptions } from './api-model-manager-generator-secodary-manager-options';
@@ -6,6 +7,7 @@ import { Entity } from '../../../model/entity';
 import { Model } from '../../../model/model';
 import { ModelManagerGenerator } from './model-manager-generator';
 import { PrimaryModelManager } from '../../../persistence/primary/primary-model-manager';
+import { SchedulerModelManager } from '../../../persistence/scheduler/scheduler-model-manager';
 import { SecondaryEntityManagerMock } from '../secondary/secondary-entity-manager-mock';
 
 type TModelManagerOptions = ApiModelManagerGeneratorOptions<
@@ -17,7 +19,8 @@ type TModelManagerOptions = ApiModelManagerGeneratorOptions<
 export class AntJsModelManagerGenerator extends ModelManagerGenerator<
   TModelManagerOptions,
   PrimaryModelManager<Entity>,
-  SecondaryEntityManagerMock<Entity>
+  SecondaryEntityManagerMock<Entity>,
+  SchedulerModelManager<Entity>
 > {
   /**
    * @inheritdoc
@@ -29,16 +32,20 @@ export class AntJsModelManagerGenerator extends ModelManagerGenerator<
   /**
    * @inheritdoc
    */
-  protected _generateModelManager(
-    options: TModelManagerOptions,
-    secondaryManager: SecondaryEntityManagerMock<Entity>,
-  ): PrimaryModelManager<Entity> {
+  protected _generateModelManager(options: TModelManagerOptions): PrimaryModelManager<Entity> {
     return new AntPrimaryModelManager(
       options.model,
       options.redisOptions.redis,
       options.redisOptions.useEntityNegativeCache ?? true,
-      secondaryManager,
     );
+  }
+
+  protected _generateSchedulerManager(
+    model: Model<Entity>,
+    primaryManager: PrimaryModelManager<Entity>,
+    secondaryManager: SecondaryEntityManagerMock<Entity>,
+  ): SchedulerModelManager<Entity> {
+    return new AntSchedulerModelManager(model, primaryManager, secondaryManager);
   }
 
   /**

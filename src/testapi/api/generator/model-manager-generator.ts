@@ -12,6 +12,7 @@ import { MultipleResultPrimaryQueryManager } from '../../../persistence/primary/
 import { PrimaryModelManager } from '../../../persistence/primary/primary-model-manager';
 import { PrimaryQueryManager } from '../../../persistence/primary/query/primary-query-manager';
 import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
+import { SchedulerModelManager } from '../../../persistence/scheduler/scheduler-model-manager';
 import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
 import { SingleResultPrimaryQueryManager } from '../../../persistence/primary/query/single-result-primary-query-manager';
 
@@ -22,7 +23,8 @@ export abstract class ModelManagerGenerator<
     ApiModelManagerGeneratorSecodaryManagerOptions<TSecondaryManager>
   >,
   TModelManager extends PrimaryModelManager<Entity>,
-  TSecondaryManager extends SecondaryEntityManager<Entity>
+  TSecondaryManager extends SecondaryEntityManager<Entity>,
+  TSchedulerManager extends SchedulerModelManager<Entity>
 > {
   /**
    * Default redis middleware.
@@ -67,20 +69,21 @@ export abstract class ModelManagerGenerator<
       secondaryManagerOptions.manager = this._generateDefaultSecondaryManager(options);
     }
 
+    const modelManager = this._generateModelManager(options);
     const secondaryManager = secondaryManagerOptions.manager;
-    const modelManager = this._generateModelManager(options, secondaryManager);
+    const schedulerManager = this._generateSchedulerManager(options.model, modelManager, secondaryManager);
 
     const singleResultQueryManagers: Map<
       string,
       SingleResultPrimaryQueryManager<Entity>
-    > = this._generateSingleResultQueryManagers(options, secondaryManager, modelManager);
+    > = this._generateSingleResultQueryManagers(options, secondaryManager, schedulerManager);
 
     this._attachQueryManagers(modelManager, singleResultQueryManagers.values());
 
     const multipleResultQueryManagers: Map<
       string,
       MultipleResultPrimaryQueryManager<Entity>
-    > = this._generateMultipleResultQueryManagers(options, secondaryManager, modelManager);
+    > = this._generateMultipleResultQueryManagers(options, secondaryManager, schedulerManager);
 
     this._attachQueryManagers(modelManager, multipleResultQueryManagers.values());
 
@@ -144,11 +147,17 @@ export abstract class ModelManagerGenerator<
   }
 
   /**
+   * Generates a secondary model manager.
+   * @param options Generation options.
+   * @returns secondary model manager generated.
+   */
+  protected abstract _generateDefaultSecondaryManager(options: TOptions): TSecondaryManager;
+
+  /**
    * Generates a raw model manager.
    * @param options Generation options.
-   * @param secondaryManager seconday manager to be user by the model manager.
    */
-  protected abstract _generateModelManager(options: TOptions, secondaryManager: TSecondaryManager): TModelManager;
+  protected abstract _generateModelManager(options: TOptions): TModelManager;
 
   /**
    * Generates a single result query manager.
@@ -158,7 +167,7 @@ export abstract class ModelManagerGenerator<
   protected _generateMultipleResultQueryManagers<TEntity extends Entity>(
     options: TOptions,
     secondaryManager: TSecondaryManager,
-    primaryManager: TModelManager,
+    manager: TSchedulerManager,
   ): Map<string, MultipleResultPrimaryQueryManager<TEntity>> {
     const queryManagersMap = new Map<string, MultipleResultPrimaryQueryManager<TEntity>>();
     const mrqmOptions = options.redisOptions.multipleResultQueryManagersOptions;
@@ -171,7 +180,7 @@ export abstract class ModelManagerGenerator<
       const queryKeyGen = this._buildQueryKeyGen(mrqmOptions.queryPrefix, property);
       const queryManager = new AntMultipleResultPrimaryQueryManager(
         options.model,
-        primaryManager,
+        manager,
         (params: any) =>
           this._searchEntitiesByProperty(secondaryManager, property, params[property]).then((entities) =>
             _.map(entities, (entity) => entity[options.model.id]),
@@ -207,11 +216,17 @@ export abstract class ModelManagerGenerator<
   }
 
   /**
-   * Generates a secondary model manager.
-   * @param options Generation options.
-   * @returns secondary model manager generated.
+   * Generates an scheduler model manager from a primary and a secondary managers.
+   * @param model Model to manage.
+   * @param primaryManager Primary manager.
+   * @param secondaryManager Secondary manager.
+   * @returns Scheduler manager built.
    */
-  protected abstract _generateDefaultSecondaryManager(options: TOptions): TSecondaryManager;
+  protected abstract _generateSchedulerManager(
+    model: Model<Entity>,
+    primaryManager: TModelManager,
+    secondaryManager: TSecondaryManager,
+  ): TSchedulerManager;
 
   /**
    * Generates a single result query manager.
@@ -221,7 +236,7 @@ export abstract class ModelManagerGenerator<
   protected _generateSingleResultQueryManagers<TEntity extends Entity>(
     options: TOptions,
     secondaryManager: TSecondaryManager,
-    primaryManager: TModelManager,
+    manager: TSchedulerManager,
   ): Map<string, SingleResultPrimaryQueryManager<TEntity>> {
     const queryManagersMap = new Map<string, SingleResultPrimaryQueryManager<TEntity>>();
     const srqmOptions = options.redisOptions.singleResultQueryManagersOptions;
@@ -234,7 +249,7 @@ export abstract class ModelManagerGenerator<
       const queryKeyGen = this._buildQueryKeyGen(srqmOptions.queryPrefix, property);
       const queryManager = new AntSingleResultPrimaryQueryManager(
         options.model,
-        primaryManager,
+        manager,
         (params: any) =>
           this._searchEntityByProperty(secondaryManager, property, params[property]).then((entity) => {
             if (null == entity) {
