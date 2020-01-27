@@ -440,12 +440,12 @@ export class PrimaryEntityManagerTest implements Test {
         await primaryManager.cacheMiss(
           entity[model.id],
           entity,
-          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000, },
-        ));
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000 }),
+        );
         await primaryManager.cacheMiss(
           entity[model.id],
           null,
-          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000, }),
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000 }),
         );
         const entityFound = await primaryManager.get(entity[model.id]);
         expect(entityFound).toBeNull();
@@ -471,8 +471,8 @@ export class PrimaryEntityManagerTest implements Test {
         await primaryManager.cacheMiss(
           entity[model.id],
           entity,
-          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite },
-        ));
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite }),
+        );
         await primaryManager.cacheMiss(
           entity[model.id],
           null,
@@ -500,8 +500,9 @@ export class PrimaryEntityManagerTest implements Test {
           id: 1,
         };
         await primaryManager.cacheMiss(
-          entity[model.id], entity,
-          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000, }),
+          entity[model.id],
+          entity,
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000 }),
         );
         const entityFound = await primaryManager.get(entity[model.id]);
         expect(entityFound).toEqual(entity);
@@ -572,12 +573,12 @@ export class PrimaryEntityManagerTest implements Test {
         await primaryManager.cacheMisses(
           [entity[model.id]],
           [entity],
-          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000, },
-        ));
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000 }),
+        );
         await primaryManager.cacheMisses(
           [entity[model.id]],
           new Array(),
-          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000, }),
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000 }),
         );
         const entityFound = await primaryManager.get(entity[model.id]);
         expect(entityFound).toBeNull();
@@ -603,8 +604,8 @@ export class PrimaryEntityManagerTest implements Test {
         await primaryManager.cacheMisses(
           [entity[model.id]],
           [entity],
-          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite },
-        ));
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite }),
+        );
         await primaryManager.cacheMisses(
           [entity[model.id]],
           [],
@@ -632,8 +633,9 @@ export class PrimaryEntityManagerTest implements Test {
           id: 1,
         };
         await primaryManager.cacheMisses(
-          [entity[model.id]], [entity],
-          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000, }),
+          [entity[model.id]],
+          [entity],
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000 }),
         );
         const entityFound = await primaryManager.get(entity[model.id]);
         expect(entityFound).toEqual(entity);
