@@ -53,6 +53,16 @@ export class PrimaryEntityManagerTest implements Test {
       this._itInvokesPrimaryToEntityAtGet();
       this._itInvokesPrimaryToEntityAtMGet();
       this._itMustBeInitializable();
+      this._itMustCacheAnEntity();
+      this._itMustCacheAnEntityDeletingAMissingEntity();
+      this._itMustCacheAnEntityDeletingAMissingEntityWithCacheAndOverwriteModeAndTtl();
+      this._itMustCacheAnEntityDeletingAMissingEntityWithNoCacheMode();
+      this._itMustCacheAnEntityWithCacheAndOverWriteModeAndTTL();
+      this._itMustCacheMultipleEntities();
+      this._itMustCacheMultipleEntitiesDeletingMissingEntity();
+      this._itMustCacheMultipleEntitiesDeletingAMissingEntityWithCacheAndOverwriteModeAndTtl();
+      this._itMustCacheMultipleEntitiesDeletingAMissingEntityWithNoCacheMode();
+      this._itMustCacheMultipleEntitiesWithCacheAndOverWriteModeAndTTL();
       this._itMustFindAnEntityAtCache();
       this._itMustFindNullIfNullIdIsProvided();
       this._itMustFindMultipleEntitiesAtCache();
@@ -363,6 +373,270 @@ export class PrimaryEntityManagerTest implements Test {
         expect(() => {
           new AntPrimaryEntityManager(model, this._redis.redis, true);
         }).not.toThrowError();
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustCacheAnEntity(): void {
+    const itsName = 'mustCacheAnEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const model = new AntModel<EntityTest>('id', { prefix });
+        const primaryManager = new AntPrimaryEntityManager<EntityTest>(model, this._redis.redis, true);
+        const entity: EntityTest = {
+          field: 'sample-field',
+          id: 1,
+        };
+        await primaryManager.cacheMiss(entity[model.id], entity, new AntJsSearchOptions());
+        const entityFound = await primaryManager.get(entity[model.id]);
+        expect(entityFound).toEqual(entity);
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustCacheAnEntityDeletingAMissingEntity(): void {
+    const itsName = 'mustCacheAnEntityDeletingAMissingEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const model = new AntModel<EntityTest>('id', { prefix });
+        const primaryManager = new AntPrimaryEntityManager<EntityTest>(model, this._redis.redis, true);
+        const entity: EntityTest = {
+          field: 'sample-field',
+          id: 1,
+        };
+        await primaryManager.cacheMiss(entity[model.id], entity, new AntJsSearchOptions());
+        await primaryManager.cacheMiss(entity[model.id], null, new AntJsSearchOptions());
+        const entityFound = await primaryManager.get(entity[model.id]);
+        expect(entityFound).toBeNull();
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustCacheAnEntityDeletingAMissingEntityWithCacheAndOverwriteModeAndTtl(): void {
+    const itsName = 'mustCacheAnEntityDeletingAMissingEntityWithCacheAndOverwriteModeAndTtl';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const model = new AntModel<EntityTest>('id', { prefix });
+        const primaryManager = new AntPrimaryEntityManager<EntityTest>(model, this._redis.redis, true);
+        const entity: EntityTest = {
+          field: 'sample-field',
+          id: 1,
+        };
+        await primaryManager.cacheMiss(
+          entity[model.id],
+          entity,
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000, },
+        ));
+        await primaryManager.cacheMiss(
+          entity[model.id],
+          null,
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000, }),
+        );
+        const entityFound = await primaryManager.get(entity[model.id]);
+        expect(entityFound).toBeNull();
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustCacheAnEntityDeletingAMissingEntityWithNoCacheMode(): void {
+    const itsName = 'mustCacheAnEntityDeletingAMissingEntityWithNoCacheMode';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const model = new AntModel<EntityTest>('id', { prefix });
+        const primaryManager = new AntPrimaryEntityManager<EntityTest>(model, this._redis.redis, true);
+        const entity: EntityTest = {
+          field: 'sample-field',
+          id: 1,
+        };
+        await primaryManager.cacheMiss(
+          entity[model.id],
+          entity,
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite },
+        ));
+        await primaryManager.cacheMiss(
+          entity[model.id],
+          null,
+          new AntJsSearchOptions({ cacheMode: CacheMode.NoCache }),
+        );
+        const entityFound = await primaryManager.get(entity[model.id]);
+        expect(entityFound).toEqual(entity);
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustCacheAnEntityWithCacheAndOverWriteModeAndTTL(): void {
+    const itsName = 'mustCacheAnEntityWithCacheAndOverWriteModeAndTTL';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const model = new AntModel<EntityTest>('id', { prefix });
+        const primaryManager = new AntPrimaryEntityManager<EntityTest>(model, this._redis.redis, true);
+        const entity: EntityTest = {
+          field: 'sample-field',
+          id: 1,
+        };
+        await primaryManager.cacheMiss(
+          entity[model.id], entity,
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000, }),
+        );
+        const entityFound = await primaryManager.get(entity[model.id]);
+        expect(entityFound).toEqual(entity);
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustCacheMultipleEntities(): void {
+    const itsName = 'mustCacheMultipleEntities';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const model = new AntModel<EntityTest>('id', { prefix });
+        const primaryManager = new AntPrimaryEntityManager<EntityTest>(model, this._redis.redis, true);
+        const entity: EntityTest = {
+          field: 'sample-field',
+          id: 1,
+        };
+        await primaryManager.cacheMisses([entity[model.id]], [entity], new AntJsSearchOptions());
+        const entityFound = await primaryManager.get(entity[model.id]);
+        expect(entityFound).toEqual(entity);
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustCacheMultipleEntitiesDeletingMissingEntity(): void {
+    const itsName = 'mustCacheMultipleEntitiesDeletingAMissingEntity';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const model = new AntModel<EntityTest>('id', { prefix });
+        const primaryManager = new AntPrimaryEntityManager<EntityTest>(model, this._redis.redis, true);
+        const entity: EntityTest = {
+          field: 'sample-field',
+          id: 1,
+        };
+        await primaryManager.cacheMisses([entity[model.id]], [entity], new AntJsSearchOptions());
+        await primaryManager.cacheMisses([entity[model.id]], new Array(), new AntJsSearchOptions());
+        const entityFound = await primaryManager.get(entity[model.id]);
+        expect(entityFound).toBeNull();
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustCacheMultipleEntitiesDeletingAMissingEntityWithCacheAndOverwriteModeAndTtl(): void {
+    const itsName = 'mustCacheMultipleEntitiesDeletingAMissingEntityWithCacheAndOverwriteModeAndTtl';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const model = new AntModel<EntityTest>('id', { prefix });
+        const primaryManager = new AntPrimaryEntityManager<EntityTest>(model, this._redis.redis, true);
+        const entity: EntityTest = {
+          field: 'sample-field',
+          id: 1,
+        };
+        await primaryManager.cacheMisses(
+          [entity[model.id]],
+          [entity],
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000, },
+        ));
+        await primaryManager.cacheMisses(
+          [entity[model.id]],
+          new Array(),
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000, }),
+        );
+        const entityFound = await primaryManager.get(entity[model.id]);
+        expect(entityFound).toBeNull();
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustCacheMultipleEntitiesDeletingAMissingEntityWithNoCacheMode(): void {
+    const itsName = 'mustCacheMultipleEntitiesDeletingAMissingEntityWithNoCacheMode';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const model = new AntModel<EntityTest>('id', { prefix });
+        const primaryManager = new AntPrimaryEntityManager<EntityTest>(model, this._redis.redis, true);
+        const entity: EntityTest = {
+          field: 'sample-field',
+          id: 1,
+        };
+        await primaryManager.cacheMisses(
+          [entity[model.id]],
+          [entity],
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite },
+        ));
+        await primaryManager.cacheMisses(
+          [entity[model.id]],
+          [],
+          new AntJsSearchOptions({ cacheMode: CacheMode.NoCache }),
+        );
+        const entityFound = await primaryManager.get(entity[model.id]);
+        expect(entityFound).toEqual(entity);
+        done();
+      },
+      MAX_SAFE_TIMEOUT,
+    );
+  }
+
+  private _itMustCacheMultipleEntitiesWithCacheAndOverWriteModeAndTTL(): void {
+    const itsName = 'mustCacheMultipleEntitiesWithCacheAndOverWriteModeAndTTL';
+    const prefix = this._declareName + '/' + itsName + '/';
+    it(
+      itsName,
+      async (done) => {
+        await this._beforeAllPromise;
+        const model = new AntModel<EntityTest>('id', { prefix });
+        const primaryManager = new AntPrimaryEntityManager<EntityTest>(model, this._redis.redis, true);
+        const entity: EntityTest = {
+          field: 'sample-field',
+          id: 1,
+        };
+        await primaryManager.cacheMisses(
+          [entity[model.id]], [entity],
+          new AntJsSearchOptions({ cacheMode: CacheMode.CacheAndOverwrite, ttl: 10000, }),
+        );
+        const entityFound = await primaryManager.get(entity[model.id]);
+        expect(entityFound).toEqual(entity);
         done();
       },
       MAX_SAFE_TIMEOUT,
