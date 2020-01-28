@@ -1,16 +1,16 @@
 import { NamedEntity, NamesStartingByLetter } from './names-starting-by-letter';
 import { NamedEntityAlternative, NamesStartingByLetterAlternative } from './names-starting-by-letter-alternative';
-import { AntJsSearchOptions } from '../../../persistence/options/antjs-search-options';
-import { AntModel } from '../../../model/ant-model';
-import { AntPrimaryModelManager } from '../../../persistence/primary/ant-primary-model-manager';
-import { AntSchedulerModelManager } from '../../../persistence/scheduler/ant-scheduler-model-manager';
-import { Model } from '../../../model/model';
-import { PrimaryModelManager } from '../../../persistence/primary/primary-model-manager';
-import { RedisWrapper } from '../redis-wrapper';
-import { SchedulerModelManager } from '../../../persistence/scheduler/scheduler-model-manager';
-import { SecondaryEntityManager } from '../../../persistence/secondary/secondary-entity-manager';
-import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/secondary-entity-manager-mock';
-import { Test } from '../../../testapi/api/test';
+import { AntJsSearchOptions } from '../../persistence/options/antjs-search-options';
+import { AntModel } from '../../model/ant-model';
+import { AntPrimaryModelManager } from '../../persistence/primary/ant-primary-model-manager';
+import { AntSchedulerModelManager } from '../../persistence/scheduler/ant-scheduler-model-manager';
+import { Model } from '../../model/model';
+import { PrimaryModelManager } from '../../persistence/primary/primary-model-manager';
+import { RedisWrapper } from '../primary/redis-wrapper';
+import { SchedulerModelManager } from '../../persistence/scheduler/scheduler-model-manager';
+import { SecondaryEntityManager } from '../../persistence/secondary/secondary-entity-manager';
+import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondary-entity-manager-mock';
+import { Test } from '../../testapi/api/test';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;
 

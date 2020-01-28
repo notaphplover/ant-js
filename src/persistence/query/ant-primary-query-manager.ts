@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
 import { QueryResult, TMQuery, TQuery, TResult } from './query-types';
 import { BasePrimaryQueryManager } from './primary-query-manager';
-import { Entity } from '../../../model/entity';
-import { Model } from '../../../model/model';
-import { PersistencySearchOptions } from '../../options/persistency-search-options';
-import { RedisMiddleware } from '../redis-middleware';
-import { SchedulerModelManager } from '../../scheduler/scheduler-model-manager';
-import { luaKeyGenerator } from '../lua-key-generator';
+import { Entity } from '../../model/entity';
+import { Model } from '../../model/model';
+import { PersistencySearchOptions } from '../options/persistency-search-options';
+import { RedisMiddleware } from '../primary/redis-middleware';
+import { SchedulerModelManager } from '../scheduler/scheduler-model-manager';
+import { luaKeyGenerator } from '../primary/lua-key-generator';
 
 export abstract class AntPrimaryQueryManager<TEntity extends Entity, TQueryResult extends QueryResult>
   implements BasePrimaryQueryManager<TEntity, TResult<TEntity, TQueryResult>> {

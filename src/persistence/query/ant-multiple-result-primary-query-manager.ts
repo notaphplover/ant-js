@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
-import { SEPARATOR_STRING, VOID_RESULT_STRING } from '../lua-constants';
+import { SEPARATOR_STRING, VOID_RESULT_STRING } from '../primary/lua-constants';
 import { AntPrimaryQueryManager } from './ant-primary-query-manager';
-import { Entity } from '../../../model/entity';
+import { Entity } from '../../model/entity';
 import { MultipleResultPrimaryQueryManager } from './multiple-result-primary-query-manager';
-import { PersistencySearchOptions } from '../../options/persistency-search-options';
+import { PersistencySearchOptions } from '../options/persistency-search-options';
 
 export class AntMultipleResultPrimaryQueryManager<TEntity extends Entity>
   extends AntPrimaryQueryManager<TEntity, number[] | string[]>

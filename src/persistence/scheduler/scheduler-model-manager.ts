@@ -1,10 +1,10 @@
-import { MultipleQueryResult, SingleQueryResult, TMQuery, TQuery } from '../primary/query/query-types';
+import { MultipleQueryResult, SingleQueryResult, TMQuery, TQuery } from '../query/query-types';
 import { Entity } from '../../model/entity';
-import { MultipleResultPrimaryQueryManager } from '../primary/query/multiple-result-primary-query-manager';
+import { MultipleResultPrimaryQueryManager } from '../query/multiple-result-primary-query-manager';
 import { PersistencyDeleteOptions } from '../options/persistency-delete-options';
 import { PersistencySearchOptions } from '../options/persistency-search-options';
 import { RedisMiddleware } from '../primary/redis-middleware';
-import { SingleResultPrimaryQueryManager } from '../primary/query/single-result-primary-query-manager';
+import { SingleResultPrimaryQueryManager } from '../query/single-result-primary-query-manager';
 
 export interface SchedulerModelManagerBase<TEntity> {
   /**

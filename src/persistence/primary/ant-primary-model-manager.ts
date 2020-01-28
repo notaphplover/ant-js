@@ -5,7 +5,7 @@ import { Entity } from '../../model/entity';
 import { Model } from '../../model/model';
 import { PersistencyUpdateOptions } from '../options/persistency-update-options';
 import { PrimaryModelManager } from './primary-model-manager';
-import { PrimaryQueryManager } from './query/primary-query-manager';
+import { PrimaryQueryManager } from '../query/primary-query-manager';
 import { RedisCachedScript } from './script/redis-cached-script';
 import { RedisMiddleware } from './redis-middleware';
 import { UpdateEntitiesCachedScriptSet } from './script/update-entities-cached-script-set';

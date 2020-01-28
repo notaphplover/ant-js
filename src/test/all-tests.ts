@@ -6,12 +6,12 @@ import { AntTest } from './ant-test';
 import { LuaKeyGeneratorTest } from './primary/lua-key-generator-test';
 import { ModelManagerTest } from './primary/model-manager-test';
 import { ModelTest } from './model/model-test';
-import { MultipleResultQueryManagerTest } from './primary/query/multiple-result-query-manager-test';
+import { MultipleResultQueryManagerTest } from './query/multiple-result-query-manager-test';
 import { PrimaryEntityManagerTest } from './primary/primary-entity-manager-test';
 import { RedisAwaiter } from '../testapi/api/RedisAwaiter';
 import { RedisCachedScriptTest } from './primary/script/redis-cached-script-test';
 import { RedisWrapper } from './primary/redis-wrapper';
-import { SingleResultQueryManagerTest } from './primary/query/single-result-query-manager-test';
+import { SingleResultQueryManagerTest } from './query/single-result-query-manager-test';
 import { Test } from '../testapi/api/test';
 import { UpdateEntitiesCachedScriptSetTest } from './primary/script/update-entities-cached-script-set-test';
 

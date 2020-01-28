@@ -1,4 +1,4 @@
-import { Entity } from '../../../model/entity';
+import { Entity } from '../../model/entity';
 
 export type MultipleQueryResult = number[] | string[];
 export type SingleQueryResult = number | string;
