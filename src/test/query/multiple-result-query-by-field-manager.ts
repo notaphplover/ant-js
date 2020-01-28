@@ -1,10 +1,11 @@
-import { AntSingleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-single-result-primary-query-manager';
-import { Entity } from '../../../model/entity';
-import { Model } from '../../../model/model';
-import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
-import { SchedulerModelManager } from '../../../persistence/scheduler/scheduler-model-manager';
+import { TMQuery, TQuery } from '../../persistence/query/query-types';
+import { AntMultipleResultPrimaryQueryManager } from '../../persistence/query/ant-multiple-result-primary-query-manager';
+import { Entity } from '../../model/entity';
+import { Model } from '../../model/model';
+import { RedisMiddleware } from '../../persistence/primary/redis-middleware';
+import { SchedulerModelManager } from '../../persistence/scheduler/scheduler-model-manager';
 
-export class SingleResultQueryByFieldManager<TEntity extends Entity> extends AntSingleResultPrimaryQueryManager<
+export class MultipleResultQueryByFieldManager<TEntity extends Entity> extends AntMultipleResultPrimaryQueryManager<
   TEntity
 > {
   /**
@@ -22,12 +23,12 @@ export class SingleResultQueryByFieldManager<TEntity extends Entity> extends Ant
   public constructor(
     model: Model<TEntity>,
     manager: SchedulerModelManager<TEntity>,
-    query: (params: any) => Promise<number | string>,
+    query: TQuery<number[] | string[]>,
     redis: RedisMiddleware,
     reverseHashKey: string,
     field: string,
     queryPrefix: string,
-    mQuery: (paramsArray: any) => Promise<number[] | string[]> = null,
+    mQuery: TMQuery<number[] | string[]> = null,
   ) {
     /**
      * Gets a key for a certain query.

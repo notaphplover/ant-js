@@ -1,4 +1,4 @@
-import { QueryResult, TMQuery, TQuery } from '../../persistence/primary/query/query-types';
+import { QueryResult, TMQuery, TQuery } from '../../persistence/query/query-types';
 import { Entity } from '../../model/entity';
 
 export interface ApiQueryConfig<TEntity extends Entity, TQueryResult extends QueryResult> {

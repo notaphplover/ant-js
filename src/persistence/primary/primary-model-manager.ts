@@ -1,7 +1,7 @@
 import { Entity } from '../../model/entity';
 import { PersistencyUpdateOptions } from '../options/persistency-update-options';
 import { PrimaryEntityManager } from './primary-entity-manager';
-import { PrimaryQueryManager } from './query/primary-query-manager';
+import { PrimaryQueryManager } from '../query/primary-query-manager';
 
 export interface BasePrimaryModelManager<TEntity extends Entity> extends PrimaryEntityManager<TEntity> {
   /**

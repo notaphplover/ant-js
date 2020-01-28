@@ -1,4 +1,4 @@
-import { Entity } from '../../../model/entity';
+import { Entity } from '../../model/entity';
 import { QueryManager } from './query-manager';
 
 export interface BasePrimaryQueryManager<TEntity extends Entity, TResult extends TEntity | TEntity[]>

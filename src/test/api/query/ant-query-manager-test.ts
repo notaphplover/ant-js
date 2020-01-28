@@ -7,7 +7,7 @@ import { MinimalAntQueryManager } from './minimal-ant-query-manager';
 import { Model } from '../../../model/model';
 import { RedisWrapper } from '../../primary/redis-wrapper';
 import { SchedulerModelManager } from '../../../persistence/scheduler/scheduler-model-manager';
-import { SingleResultQueryByFieldManager } from '../../primary/query/single-result-query-by-field-manager';
+import { SingleResultQueryByFieldManager } from '../../query/single-result-query-by-field-manager';
 import { Test } from '../../../testapi/api/test';
 
 const MAX_SAFE_TIMEOUT = Math.pow(2, 31) - 1;

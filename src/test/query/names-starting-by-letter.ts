@@ -1,11 +1,11 @@
 import * as _ from 'lodash';
-import { AntMultipleResultPrimaryQueryManager } from '../../../persistence/primary/query/ant-multiple-result-primary-query-manager';
-import { Entity } from '../../../model/entity';
-import { Model } from '../../../model/model';
-import { RedisMiddleware } from '../../../persistence/primary/redis-middleware';
-import { SchedulerModelManager } from '../../../persistence/scheduler/scheduler-model-manager';
-import { SecondaryEntityManagerMock } from '../../../testapi/api/secondary/secondary-entity-manager-mock';
-import { iterableFilter } from '../../util/iterable-filter';
+import { AntMultipleResultPrimaryQueryManager } from '../../persistence/query/ant-multiple-result-primary-query-manager';
+import { Entity } from '../../model/entity';
+import { Model } from '../../model/model';
+import { RedisMiddleware } from '../../persistence/primary/redis-middleware';
+import { SchedulerModelManager } from '../../persistence/scheduler/scheduler-model-manager';
+import { SecondaryEntityManagerMock } from '../../testapi/api/secondary/secondary-entity-manager-mock';
+import { iterableFilter } from '../util/iterable-filter';
 
 export type NamedEntity = { id: number; name: string } & Entity;
 
